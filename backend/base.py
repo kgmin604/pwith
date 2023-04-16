@@ -3,13 +3,8 @@ from flask import Flask, render_template, request, jsonify, make_response
 
 app = Flask(__name__)
 # CORS(app)
-# @app.route("/join", methods=['GET', 'POST'])
-# def join() :
-#     if requests.methods == 'POST' :
 
-#     print()
-# if __name__ == '__main__' :
-#     app.run(debug=True)
+
 @app.route("/join", methods=['GET', 'POST'])
 def join() :
     if request.method == 'GET' :
@@ -34,4 +29,6 @@ def join() :
         return jsonify(
             {'status': 'success'}
         )
-        # return redirect(url_for('/join'))
+
+# if __name__ == '__main__' :
+#     app.run(debug=True)
