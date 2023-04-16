@@ -1,3 +1,64 @@
+.group-flex {
+  position: relative;
+  width: 1130px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+
+.top-area {
+  border-bottom: solid;
+  border-color: #98afca;
+}
+
+.categoryIcon {
+  width: 100px;
+  font-family: "TmoneyRoundWind";
+  top: 50%;
+}
+
+.loginIcon {
+  width: 70px;
+  height: 40px;
+  top: 50%;
+  font-family: "TmoneyRoundWind";
+  color: #98afca;
+  border-radius: 5px;
+  border: solid 1px;
+  border-color: #98afca;
+  background-color: white;
+  float: right;
+  margin-left: 30px;
+  margin-right: 10px;
+}
+
+.joinIcon {
+  width: 90px;
+  height: 40px;
+  top: 50%;
+  text-align: center;
+  font-family: "TmoneyRoundWind";
+  color: white;
+  border-radius: 5px;
+  border: solid 1px;
+  border-color: #98afca;
+  background-color: #98afca;
+  float: right;
+  margin-right: 10px;
+}
+
+.mybtn {
+  cursor: pointer;
+}
+
+@font-face {
+  font-family: "TmoneyRoundWind";
+  src: url("https://cdn.jsdelivr.net/gh/webfontworld/tmoney/TmoneyRoundWind-Regular.ttf")
+    format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 .App {
   text-align: center;
 }

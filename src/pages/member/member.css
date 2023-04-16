@@ -1,0 +1,56 @@
+.round-box{
+    width: 400px;
+    height: 400px;
+    border-radius: 20px;
+    border:solid 1px;
+    border-color: lightgray;
+    margin: 0 auto;
+    margin-top: 40px;
+}
+
+.top-message{
+    width: 350px;
+    height: 100px;
+    margin : 0 auto;
+    margin-bottom: 20px;
+    padding-top: 20px;
+    text-align: center;
+    line-height: 100px;
+    font-family: 'TmoneyRoundWind';
+    font-size: 25px;
+    color:#98AFCA;
+    border-bottom: solid 2px;
+    border-color: #98AFCA;
+}
+
+.box-design1{
+    border-radius: 5px;
+    width: 300px;
+    height: 40px;
+    margin: 0 auto;
+    margin-top: 20px;
+    border: solid 1px;
+    border-color: #98AFCA;
+    background-color: white;
+}
+
+.box-design2{
+    border-radius: 5px;
+    width: 300px;
+    height: 40px;
+    margin: 0 auto;
+    margin-top: 30px;
+    border: solid 1px;
+    font-family: 'TmoneyRoundWind';
+    line-height: 40px;
+    color:white;
+    border-color: white;
+    background-color: #98AFCA;
+}
+
+@font-face {
+    font-family: 'TmoneyRoundWind';
+    src: url('https://cdn.jsdelivr.net/gh/webfontworld/tmoney/TmoneyRoundWind-Regular.ttf') format("truetype");
+    font-weight: normal;
+    font-style: normal;
+  }
