@@ -28,26 +28,26 @@ function Join() {
   //     });
   // }
 
-  function postData() {
-    let num1 = document.getElementById("memberId").value;
-    let num2 = document.getElementById("memberPw").value;
-    let num3 = document.getElementById("pwChk").value;
-    let num4 = document.getElementById("memberName").value;
-    let num5 = document.getElementById("memberEmail").value;
-    // 이거 react에서 많이 쓰는 방식 맞니? 일단 기본 문법으로 써봤어. 더 좋은 코드 있으면 예쁘게 바꿔줘 ~! - 채영
+  function postJoin() {
+    let id = document.getElementById("memberId").value;
+    let pw = document.getElementById("memberPw").value;
+    let chk = document.getElementById("pwChk").value;
+    let name = document.getElementById("memberName").value;
+    let email = document.getElementById("memberEmail").value;
+    // 이거 react에서 많이 쓰는 방식 맞니? 일단 기본 문법으로 써봤어. 더 좋은 코드 있으면 예쁘게 바꿔줘 ~~!
 
     axios({
       method: "POST",
       url: "/join",
       data: {
-        memberId: `${num1}`,
-        memberPw: `${num2}`,
-        pwChk: `${num3}`,
-        memberName: `${num4}`,
-        memberEmail: `${num5}`,
+        memberId: `${id}`,
+        memberPw: `${pw}`,
+        pwChk: `${chk}`,
+        memberName: `${name}`,
+        memberEmail: `${email}`,
       },
     })
-      .then(function a(response) {
+      .then(function (response) {
         console.log(response);
       })
       .catch(function (error) {
@@ -71,7 +71,8 @@ function Join() {
         <br></br>
         {/* 닉네임 안 쓰기로 했어서 지웠어 */}
       </form>
-      <button onClick={postData}>입력</button>
+
+      <button onClick={postJoin}>입력</button>
     </>
   );
 }
