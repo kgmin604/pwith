@@ -35,7 +35,7 @@ class Member(UserMixin):
             # sql = f"INSERT INTO member(memId, memPw, memName, memEmail) VALUES ('{memId}', '{pw}', '{name}', '{email}')"
             sql = f"INSERT INTO member(memId, memPw, memName, memEmail) VALUES ('{str(memId)}', '{str(pw)}', '{str(name)}', '{str(email)}')"
             cursor_db.execute(sql)
-            mysql_db.commit()
+            mysql_db.commit() # insert, delete, update 등 DB에 변화를 저장할 때 사용
             return Member.findById(memId)
         else :
             return mem
