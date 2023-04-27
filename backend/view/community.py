@@ -3,29 +3,35 @@ from bs4 import BeautifulSoup
 
 header = {'User-Agent':'Mozilla/5.0'}
 news_title = []
+news_img = []
 news_content = []
 
-for page in range(1, 3) :
+page = 0
+daum_url = 'https://news.daum.net/breakingnews/digital?page={}'
 
-    daum_url = f'https://news.daum.net/breakingnews/digital?page={page}'
+def connectUrl(url, page=1) :
+    response = requests.get(url.format(page), headers=header)
+    # print(url.format(page))
+    return BeautifulSoup(response.text, 'html.parser')
 
-    response = requests.get(daum_url, headers=header)
+len_page = len(connectUrl(daum_url, 1).select('.num_page'))
 
-    soup = BeautifulSoup(response.text, 'html.parser')
+for page in range(1, len_page + 1) :
+
+    soup = connectUrl(daum_url, page)
 
     url_tags = soup.select('.list_allnews > li > div > strong > a')
 
     for url_tag in url_tags :
-        url = url_tag.get('href')
 
-        response = requests.get(url, headers=header)
+        soup = connectUrl(url_tag.get('href'), page)
 
-        soup = BeautifulSoup(response.text, 'html.parser')
+        title = soup.select_one('.tit_view')
+        img = soup.select_one('.link_figure > img')
+        content = soup.select_one('.article_view')
 
-        title = soup.select('.tit_view')[0].text
-        content = soup.select('.article_view')[0].text.replace('\n', ' ')
-
-        news_title.append(title)
-        news_content.append(content)
+        news_title.append(title.text) if title is not None else news_title.append('')
+        news_content.append(content.text.replace('\n', ' ')) if content is not None else news_content.append('')
+        news_img.append(img.get('data-src')) if img is not None else news_img.append('')
 
 print(news_title)
