@@ -1,77 +1,170 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Join() {
-  // const [joinData, setJoinData] = useState(null);
 
-  // function getData() { // GET 방식 test
-  //   axios({
-  //     method: "GET",
-  //     url: "/join",
-  //   })
-  //     .then((response) => {
-  //       const res = response.data;
-  //       setJoinData({
-  //         memberId: res.id,
-  //         memberPw: res.pw,
-  //         pwChk: res.pwChk,
-  //         memberName: res.name,
-  //         memberEmail: res.email,
-  //       });
-  //     })
-  //     .catch((error) => {
-  //       if (error.response) {
-  //         console.log(error.response);
-  //         console.log(error.response.status);
-  //         console.log(error.response.headers);
-  //       }
-  //     });
-  // }
+  let navigate = useNavigate();
+
+  let [userinput, setUserinput] = useState({
+    'joinId': '',
+    'joinPw': '',
+    'joinPwChk' : '',
+    'joinName' : '',
+    'joinEmail' : ''
+  });
+  let [msg,setMsg] = useState({
+    'joinId': '',
+    'joinPw': '',
+    'joinPwChk' : '',
+    'joinName' : '',
+    'joinEmail' : ''
+  })
+  let [is,setIs] = useState({
+    'joinId': true,
+    'joinPw': false,
+    'joinPwChk' : false,
+    'joinName' : true,
+    'joinEmail' : false
+  })
+  let [poseMsg,setPostMsg] = useState('');
+  
+  function inputChange(e){
+    let copyUserinput = {...userinput};
+    copyUserinput[e.target.id] = e.target.value;
+    setUserinput(copyUserinput);
+    setTimeout(()=>{console.log(copyUserinput)},10)
+    
+    let copyMsg = {...msg};
+    let copyIs = {...is};
+
+    if(e.target.id === 'joinPw'){
+      const pwRE = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/; // 하나 이상의 문자, 하나 이상의 숫자, 하나 이상의 특수문자, 8글자 이상
+      if(!pwRE.test(copyUserinput['joinPw'])){
+        copyMsg['joinPw'] = '비밀번호 조건을 만족하지 않습니다.';
+        setMsg(copyMsg);
+        copyIs['joinPw'] = false;
+        setIs(copyIs);
+      }
+      else{
+        copyMsg['joinPw'] = '조건 만족!';
+        setMsg(copyMsg);
+        copyIs['joinPw'] = true;
+        setIs(copyIs);
+      }
+    }
+    if(e.target.id === 'joinPwChk'){
+      let copyIs = {...is};
+      if(copyUserinput['joinPw']===copyUserinput['joinPwChk']){
+        copyMsg['joinPwChk'] = '비밀번호가 일치합니다.';
+        setMsg(copyMsg);
+        copyIs['joinPwChk'] = true;
+        setIs(copyIs);
+      }
+      else{
+        copyMsg['joinPwChk'] = '비밀번호가 일치하지 않습니다.';
+        setMsg(copyMsg); 
+        copyIs['joinPwChk'] = false;
+        setIs(copyIs);
+      }
+    }
+    if(e.target.id === 'joinEmail'){
+      const emailRE = /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+      if(!emailRE.test(copyUserinput['joinEmail'])){
+        copyMsg['joinEmail'] = '올바른 이메일 형식이 아닙니다.';
+        setMsg(copyMsg);
+        copyIs['joinEmail'] = false;
+        setIs(copyIs);
+      }
+      else{
+        copyMsg['joinEmail'] = '올바른 이메일 형식입니다.';
+        setMsg(copyMsg);
+        copyIs['joinEmail'] = true;
+        setIs(copyIs);
+      }
+    }
+  }
+
+  function checkID(){
+    // 아이디 중복 확인
+  }
 
   function postData() {
-    let num1 = document.getElementById("memberId").value;
-    let num2 = document.getElementById("memberPw").value;
-    let num3 = document.getElementById("pwChk").value;
-    let num4 = document.getElementById("memberName").value;
-    let num5 = document.getElementById("memberEmail").value;
-    // 이거 react에서 많이 쓰는 방식 맞니? 일단 기본 문법으로 써봤어. 더 좋은 코드 있으면 예쁘게 바꿔줘 ~! - 채영
-
     axios({
       method: "POST",
       url: "/join",
       data: {
-        memberId: `${num1}`,
-        memberPw: `${num2}`,
-        pwChk: `${num3}`,
-        memberName: `${num4}`,
-        memberEmail: `${num5}`,
+        memberId: `${userinput['joinId']}`,
+        memberPw: `${userinput['joinPw']}`,
+        pwChk: `${userinput['joinPwChk']}`,
+        memberName: `${userinput['joinName']}`,
+        memberEmail: `${userinput['joinEmail']}`,
       },
     })
       .then(function a(response) {
         console.log(response);
+        alert('회원 가입 완료!');
+        navigate("/");
       })
       .catch(function (error) {
         console.log(error);
       });
   }
 
+  function isPost(){
+    if(!is['joinId']){
+      setPostMsg('아이디 중복 확인을 해주세요.');
+    }
+    else if(!is['joinPw']){
+      setPostMsg('조건에 맞는 비밀번호를 입력해주세요.');
+    }
+    else if(!is['joinPwChk']){
+      setPostMsg('비밀번호와 일치하지 않습니다.');
+    }
+    else if(!is['joinName']){
+      setPostMsg('이름을 입력해주세요.');
+    }
+    else if(!is['joinEmail']){
+      setPostMsg('형식에 맞는 이메일을 입력해주세요.');
+    }
+    else{
+      setPostMsg('');
+      postData();
+    }
+  }
+
   return (
-    // 서버에 데이터를 전달하기 위해서는 axios를 사용해야 하고, form 태그 필요해서 추가
     <>
-      <form method="POST">
-        <input placeholder="아이디" id="memberId"></input>
-        <br></br>
-        <input placeholder="비밀번호" id="memberPw"></input>
-        <br></br>
-        <input placeholder="비밀번호 확인" id="pwChk"></input>
-        <br></br>
-        <input placeholder="이름" id="memberName"></input>
-        <br></br>
-        <input placeholder="이메일" id="memberEmail"></input>
-        <br></br>
-        {/* 닉네임 안 쓰기로 했어서 지웠어 */}
-      </form>
-      <button onClick={postData}>입력</button>
+      <div style={{'height':'730px', 'margin-bottom':'100px'}} className='round-box'>
+        <div style={{'margin-bottom':'40px'}} className = "top-message">회원가입</div>
+        <form method="POST">
+          <div className="jointext">
+            <span>아이디</span>
+            <span className="idcheckBtn" onClick={checkID}> 중복 확인</span>
+          </div>
+          <input className="box-design1" id="joinId" onChange={e=>inputChange(e)}></input>
+          <div className="msgtext"> {msg['joinId']} </div>
+
+          <div className="jointext">비밀번호</div>
+          <input className="box-design1" type='password' id="joinPw" onChange={e=>inputChange(e)}></input>
+          <div className="msgtext"> {msg['joinPw']} </div>
+
+          <div className="jointext">비밀번호 확인</div>
+          <input className="box-design1" type='password' id="joinPwChk" onChange={e=>inputChange(e)}></input>
+          <div className="msgtext"> {msg['joinPwChk']} </div>
+
+          <div className="jointext">이름</div>
+          <input className="box-design1" id="joinName" onChange={e=>inputChange(e)}></input>
+          <div className="msgtext"> {msg['joinName']} </div>
+
+          <div className="jointext">이메일</div>
+          <input className="box-design1" id="joinEmail" onChange={e=>inputChange(e)}></input>
+          <div className="msgtext"> {msg['joinEmail']} </div>
+
+          <div className="box-design2 mybtn" onClick={isPost}>회원가입</div>
+          <div className="msgtext"> {poseMsg} </div>
+        </form>
+      </div>
     </>
   );
 }

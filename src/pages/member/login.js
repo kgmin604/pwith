@@ -10,8 +10,8 @@ function Login(props){
                 <div className="top-message">로그인</div>
 
                 <form method='POST'>
-                    <input className="box-design1" placeholder=" 아이디" name="userid"></input>
-                    <input className="box-design1" placeholder=" 비밀번호" type='password' name="userpw"></input>
+                    <input style={{'margin-top':'20px'}} className="box-design1" placeholder=" 아이디" name="userid"></input>
+                    <input style={{'margin-top':'20px'}} className="box-design1" placeholder=" 비밀번호" type='password' name="userpw"></input>
                     <div className="box-design2 mybtn" onClick={()=>{props.setUser('경민')}}>로그인</div>
                 </form>
                 

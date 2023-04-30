@@ -9,7 +9,7 @@
 }
 
 .top-message{
-    width: 350px;
+    width: 300px;
     height: 100px;
     margin : 0 auto;
     margin-bottom: 20px;
@@ -28,7 +28,6 @@
     width: 300px;
     height: 40px;
     margin: 0 auto;
-    margin-top: 20px;
     border: solid 1px;
     border-color: #98AFCA;
     background-color: white;
@@ -48,6 +47,34 @@
     background-color: #98AFCA;
 }
 
+.jointext{
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    text-align: left;
+    width: 300px;
+    height: 20px;
+}
+
+.msgtext{
+    margin: 0 auto;
+    width: 300px;
+    height: 15px;
+    font-size: 12px;
+    color:red;
+    text-align: left;
+}
+
+.idcheckBtn{
+    height: 20px;
+    float: right;
+    margin: 0;
+    font-size: 12px;
+    text-align: center;
+    vertical-align: bottom;
+    color: gray;
+    cursor: pointer;
+}
 @font-face {
     font-family: 'TmoneyRoundWind';
     src: url('https://cdn.jsdelivr.net/gh/webfontworld/tmoney/TmoneyRoundWind-Regular.ttf') format("truetype");
