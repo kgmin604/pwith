@@ -1,20 +1,53 @@
 import './member.css';
 import '../../App.css';
-import {  useNavigate } from 'react-router-dom'; 
+import axios from "axios";
+import { useNavigate } from 'react-router-dom'; 
 
 function Login(props){
+    
     let navigate = useNavigate();
+
+    function postLogin() {
+        let id = document.getElementById("memberId").value;
+        let pw = document.getElementById("memberPw").value;
+    
+        axios({
+          method: "POST",
+          url: "/login",
+          data: {
+            memberId: `${id}`,
+            memberPw: `${pw}`
+          },
+        })
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+
     return(
         <>
             <div className='round-box'>
                 <div className="top-message">로그인</div>
 
                 <form method='POST'>
+<<<<<<< HEAD
                     <input style={{'margin-top':'20px'}} className="box-design1" placeholder=" 아이디" name="userid"></input>
                     <input style={{'margin-top':'20px'}} className="box-design1" placeholder=" 비밀번호" type='password' name="userpw"></input>
                     <div className="box-design2 mybtn" onClick={()=>{props.setUser('경민')}}>로그인</div>
+=======
+                    <input className="box-design1" placeholder=" 아이디" id="memberId"></input>
+                    <input className="box-design1" placeholder=" 비밀번호" type='password' id="memberPw"></input>
+>>>>>>> af89458c16cf57c3a289056942848c82a944b97c
                 </form>
                 
+                {/* <div className="box-design2 mybtn" onClick={ ()=>{postLogin(); props.setUser('경민');} }>로그인</div> */}
+                <div className="box-design2 mybtn" onClick={() => {props.setUser(postLogin)}}>로그인</div>
+                {/* '경민' 자리에 member의 이름이 들어가면 될까? 저 값은 어디서 확인 가능? */}
+                
+
                 <div style={{'width':'300px','height':'30px', 'margin':'0 auto','margin-top':'20px'}}>
                     <div 
                         className='mybtn'

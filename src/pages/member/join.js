@@ -90,6 +90,8 @@ function Join() {
   }
 
   function postData() {
+    
+
     axios({
       method: "POST",
       url: "/join",
@@ -101,7 +103,7 @@ function Join() {
         memberEmail: `${userinput['joinEmail']}`,
       },
     })
-      .then(function a(response) {
+      .then(function (response) {
         console.log(response);
         alert('회원 가입 완료!');
         navigate("/");

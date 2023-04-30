@@ -9,8 +9,8 @@ class Member(UserMixin):
         self.name = name
         self.email = email
 
-    def get_id(self):
-        return str(self.id)
+    # def get_id(self):
+    #     return str(self.id)
 
     @staticmethod
     def findById(memId):
@@ -22,8 +22,7 @@ class Member(UserMixin):
         mem = cursor_db.fetchone()
         if not mem:
             return None
-
-        member = Member(mem[0], mem[1], mem[2])
+        member = Member(mem[0], mem[1], mem[2], mem[3])
         return member
 
     @staticmethod
@@ -35,7 +34,7 @@ class Member(UserMixin):
             # sql = f"INSERT INTO member(memId, memPw, memName, memEmail) VALUES ('{memId}', '{pw}', '{name}', '{email}')"
             sql = f"INSERT INTO member(memId, memPw, memName, memEmail) VALUES ('{str(memId)}', '{str(pw)}', '{str(name)}', '{str(email)}')"
             cursor_db.execute(sql)
-            mysql_db.commit() # insert, delete, update 등 DB에 변화를 저장할 때 사용
+            mysql_db.commit() # DB에 변화를 저장할 때 사용
             return Member.findById(memId)
         else :
             return mem

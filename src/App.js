@@ -22,10 +22,7 @@ function App() {
     <div className="App">
       <Navbar bg="white" variant="light" style={{ height: "200px" }}>
         <Container className="grounp-flex top-area">
-          <img
-            src="/pwith-logo.png"
-            className="btn"
-            onClick={() => navigate("/")}
+          <img src="/pwith-logo.png" className="btn" onClick={() => navigate("/")}
           />
           <Nav className="me-auto">
             <Nav.Link
