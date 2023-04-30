@@ -65,7 +65,7 @@
     text-align: left;
 }
 
-.idcheckBtn{
+.smallMsg{
     height: 20px;
     float: right;
     margin: 0;
@@ -73,7 +73,6 @@
     text-align: center;
     vertical-align: bottom;
     color: gray;
-    cursor: pointer;
 }
 @font-face {
     font-family: 'TmoneyRoundWind';

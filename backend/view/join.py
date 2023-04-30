@@ -12,6 +12,13 @@ def join() :
     else :
         data = request.get_json(silent=True) # silent: parsing fail 에러 방지
 
+        if(data['requestType']==1) :
+            if isDuplicated(data['memberId']) : # 버튼 클릭 시 동작하도록
+                return {'is':0} # 사용 불가
+            else:
+                return {'is':1} # 사용 가능
+        
+
         memId = data['memberId']
         memPw = data['memberPw']
         pwChk = data['pwChk']
@@ -19,11 +26,11 @@ def join() :
         memEmail = data['memberEmail']
         print(memId, memPw, pwChk, memName, memEmail)
         
-        if isDuplicated(memId) : # 버튼 클릭 시 동작하도록
-            return 'using_id'
-        else :
-            Member.insert(memId, memPw, memName, memEmail)
-
+        #if isDuplicated(memId) : # 버튼 클릭 시 동작하도록
+        #    return 'using_id'
+        #else :
+            #Member.insert(memId, memPw, memName, memEmail)
+        Member.insert(memId, memPw, memName, memEmail) # 경민 추가
         return jsonify(
             {'status': 'success'}
         )

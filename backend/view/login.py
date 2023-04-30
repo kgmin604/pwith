@@ -18,14 +18,18 @@ def login() :
         print(memId, memPw)
 
         mem = Member.findById(memId)
+        res = {'code': 0, 'id':'', 'name':''}
         if not mem :
             print('no member')
-            return ''
+            res['code']=400
+            return res
 
         login_user(mem) # session 생성
         print('yes member')
-        memName = mem.name
-        return memName
+        res['code']=401
+        res['id'] = mem.id
+        res['name'] = mem.name
+        return res
 
 
 @login_required

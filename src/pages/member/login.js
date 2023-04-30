@@ -1,51 +1,65 @@
 import './member.css';
 import '../../App.css';
 import axios from "axios";
+import { useState } from "react";
 import { useNavigate } from 'react-router-dom'; 
+import { useDispatch } from "react-redux"
+import { loginUser, clearUser } from "./../../store.js"
 
 function Login(props){
     
     let navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    let [userinput, setUserinput] = useState({
+      'memId': '',
+      'memPw': '',
+    });
+
+    function inputChange(e){
+      let copyUserinput = {...userinput};
+      copyUserinput[e.target.id] = e.target.value;
+      setUserinput(copyUserinput);
+    }
 
     function postLogin() {
-        let id = document.getElementById("memberId").value;
-        let pw = document.getElementById("memberPw").value;
-    
         axios({
           method: "POST",
           url: "/login",
           data: {
-            memberId: `${id}`,
-            memberPw: `${pw}`
+            memberId: `${userinput['memId']}`,
+            memberPw: `${userinput['memPw']}`
           },
         })
           .then(function (response) {
             console.log(response);
+            if(response.data.code===400){
+              alert("아이디 또는 비밀번호를 잘못 입력했습니다.");
+            }
+            if(response.data.code===401){
+              dispatch(loginUser(response.data));
+              navigate("/");
+            }
           })
           .catch(function (error) {
             console.log(error);
           });
       }
-
+    
+    function checkLogin(){
+      userinput['memId']==="" || userinput['memPw'] === "" ? alert("아이디 또는 비밀번호를 입력해주세요."): postLogin();
+    }
     return(
         <>
             <div className='round-box'>
                 <div className="top-message">로그인</div>
 
                 <form method='POST'>
-<<<<<<< HEAD
-                    <input style={{'margin-top':'20px'}} className="box-design1" placeholder=" 아이디" name="userid"></input>
-                    <input style={{'margin-top':'20px'}} className="box-design1" placeholder=" 비밀번호" type='password' name="userpw"></input>
-                    <div className="box-design2 mybtn" onClick={()=>{props.setUser('경민')}}>로그인</div>
-=======
-                    <input className="box-design1" placeholder=" 아이디" id="memberId"></input>
-                    <input className="box-design1" placeholder=" 비밀번호" type='password' id="memberPw"></input>
->>>>>>> af89458c16cf57c3a289056942848c82a944b97c
+                    <input style={{'margin-top':'20px'}} className="box-design1" placeholder=" 아이디" id="memId" onChange={e=>inputChange(e)}></input>
+                    <input style={{'margin-top':'20px'}} className="box-design1" placeholder=" 비밀번호" type='password' id="memPw" onChange={e=>inputChange(e)}></input>
+                    <div className="box-design2 mybtn" onClick={checkLogin}>로그인</div>
                 </form>
                 
-                {/* <div className="box-design2 mybtn" onClick={ ()=>{postLogin(); props.setUser('경민');} }>로그인</div> */}
-                <div className="box-design2 mybtn" onClick={() => {props.setUser(postLogin)}}>로그인</div>
-                {/* '경민' 자리에 member의 이름이 들어가면 될까? 저 값은 어디서 확인 가능? */}
                 
 
                 <div style={{'width':'300px','height':'30px', 'margin':'0 auto','margin-top':'20px'}}>

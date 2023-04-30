@@ -4,9 +4,27 @@
   height: 100%;
   margin: 0 auto;
   padding: 0 30px;
+  
+}
+
+.top-msg{
+  width: 1280px;
+  height: 50px;
+  font-size: 12px;
+  margin: 0 auto;
+  padding-top:10px;
+  padding-bottom: 0%;
+  text-align: right;
+  color: gray;
+  
 }
 
 .top-area {
+  overflow: hidden;
+  min-width: 1130px;
+}
+
+.top-bar{
   border-bottom: solid;
   border-color: #98afca;
 }

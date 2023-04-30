@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux"
+import { loginUser, clearUser } from "./../../store.js"
 
 function Join() {
 
@@ -21,7 +23,7 @@ function Join() {
     'joinEmail' : ''
   })
   let [is,setIs] = useState({
-    'joinId': true,
+    'joinId': false,
     'joinPw': false,
     'joinPwChk' : false,
     'joinName' : true,
@@ -33,7 +35,7 @@ function Join() {
     let copyUserinput = {...userinput};
     copyUserinput[e.target.id] = e.target.value;
     setUserinput(copyUserinput);
-    setTimeout(()=>{console.log(copyUserinput)},10)
+    //setTimeout(()=>{console.log(copyUserinput)},10)
     
     let copyMsg = {...msg};
     let copyIs = {...is};
@@ -54,7 +56,6 @@ function Join() {
       }
     }
     if(e.target.id === 'joinPwChk'){
-      let copyIs = {...is};
       if(copyUserinput['joinPw']===copyUserinput['joinPwChk']){
         copyMsg['joinPwChk'] = '비밀번호가 일치합니다.';
         setMsg(copyMsg);
@@ -87,15 +88,41 @@ function Join() {
 
   function checkID(){
     // 아이디 중복 확인
-  }
-
-  function postData() {
-    
-
     axios({
       method: "POST",
       url: "/join",
       data: {
+        requestType: 1, // 경민 추가
+        memberId: `${userinput['joinId']}`
+      },
+    })
+      .then(function (response) {
+        let copyMsg = {...msg};
+        let copyIs = {...is};
+        if(response.data.is===1){ // 사용 가능
+          copyMsg['joinId'] = '사용 가능한 아이디입니다.';
+          setMsg(copyMsg);
+          copyIs['joinId'] = true;
+          setIs(copyIs);
+        }
+        else{ // 사용 불가
+          copyMsg['joinId'] = '이미 있는 아이디입니다.';
+          setMsg(copyMsg);
+          copyIs['joinId'] = false;
+          setIs(copyIs);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  function postData() {
+    axios({
+      method: "POST",
+      url: "/join",
+      data: {
+        requestType: 2, // 경민 추가
         memberId: `${userinput['joinId']}`,
         memberPw: `${userinput['joinPw']}`,
         pwChk: `${userinput['joinPwChk']}`,
@@ -142,7 +169,7 @@ function Join() {
         <form method="POST">
           <div className="jointext">
             <span>아이디</span>
-            <span className="idcheckBtn" onClick={checkID}> 중복 확인</span>
+            <span className="smallMsg mybtn" onClick={checkID}> 중복 확인</span>
           </div>
           <input className="box-design1" id="joinId" onChange={e=>inputChange(e)}></input>
           <div className="msgtext"> {msg['joinId']} </div>
