@@ -4,8 +4,8 @@
     border-radius: 20px;
     border:solid 1px;
     border-color: lightgray;
-    margin: 0 auto;
-    margin-top: 40px;
+    margin: 100px auto;
+    text-align: center;
 }
 
 .top-message{

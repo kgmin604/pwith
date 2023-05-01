@@ -1,76 +1,88 @@
-ul{
-  list-style:none;
-}
-
 .wrap{
-  min-width: 1130px;
-}
-
-.group-flex {
-  position: relative;
-  width: 1130px;
+  width: 1280px;
   height: 100%;
   margin: 0 auto;
-  padding: 0 30px;
-  
+  min-width: 1280px;
+}
+
+.top-area {
+  overflow: hidden;
+  min-width: 1280px;
+  position: relative;
+  margin: 0 auto;
+  margin-bottom: 50px;
+  padding: 0px;
+}
+
+.navbar{
+  height: 75px;
+  border-bottom: solid;
+  border-color: #98afca;
+}
+
+.pwith-logo{
+  width: 120px;
+  height: 50px;
+  float : left;
+  margin: 0px;
+  padding: 0px 30px;
+  background-image: url('../public/pwith-logo.png');
+  background-size: cover;
+}
+
+.navbar-menu{
+  width: 500px;
+  height: 50px;
+  float:left; 
+  text-align:center;
+  list-style: none;
+  margin: 0 10px;
+  padding: 0;
+}
+
+.navbar-btn{
+  width: 100px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  float: left;
+  font-family: "TmoneyRoundWind";
+  cursor: pointer;
 }
 
 .top-msg{
   width: 1280px;
   height: 50px;
   font-size: 12px;
-  margin: 0 auto;
-  padding-top:10px;
+  padding-top:15px;
   padding-bottom: 0%;
   text-align: right;
   color: gray;
-  
 }
 
-.top-area {
-  overflow: hidden;
-  min-width: 1130px;
-}
-
-.top-bar{
-  border-bottom: solid;
-  border-color: #98afca;
-}
-
-.categoryIcon {
-  width: 100px;
-  font-family: "TmoneyRoundWind";
-  top: 50%;
-}
-
-.loginIcon {
-  width: 70px;
+.mem-area{
+  width: 200px;
   height: 40px;
-  top: 50%;
-  font-family: "TmoneyRoundWind";
-  color: #98afca;
-  border-radius: 5px;
-  border: solid 1px;
-  border-color: #98afca;
-  background-color: white;
+  margin: 10px;
+  padding: 0;
   float: right;
-  margin-left: 30px;
-  margin-right: 10px;
+  cursor: pointer;
 }
 
-.joinIcon {
-  width: 90px;
+.mem-btn{
   height: 40px;
+  line-height: 40px;
   top: 50%;
+  font-family: "TmoneyRoundWind";
   text-align: center;
-  font-family: "TmoneyRoundWind";
-  color: white;
+  color: #98afca;
+  background-color : white;
   border-radius: 5px;
   border: solid 1px;
   border-color: #98afca;
-  background-color: #98afca;
-  float: right;
-  margin-right: 10px;
+  margin: 0 10px;
+  float: left;
+  cursor: pointer;
 }
 
 .mybtn {
@@ -87,39 +99,4 @@ ul{
 
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }

@@ -23,48 +23,26 @@ function App() {
   let dispatch = useDispatch();
 
   return (
-    <div className="App">
-      <div className="wrap">
-        {
-          user.id === "" ? <div className="top-msg"></div> :
-          <div className="top-msg"> {user.name}님 안녕하세요!{" "}
-          <u className="mybtn">로그아웃</u></div>
-        }
-        <Navbar className = "top-area" bg="white" variant="light" style={{ 'height': "120px" }}>
-          <Container className="grounp-flex top-bar">
-            <img src="/pwith-logo.png" className="btn" onClick={() => navigate("/")}
-            />
-            <Nav className="me-auto">
-              <Nav.Link
-                className="categoryIcon"
-                style={{ "margin-left": "40px" }}
-                onClick={() => navigate("/study")}
-              >
-                스터디 모집
-              </Nav.Link>
-              <Nav.Link
-                className="categoryIcon"
-                onClick={() => navigate("./studyroom")}
-              >
-                스터디룸
-              </Nav.Link>
-              <Nav.Link
-                className="categoryIcon"
-                onClick={() => navigate("./community")}
-              >
-                커뮤니티
-              </Nav.Link>
-              <Nav.Link
-                className="categoryIcon"
-                onClick={() => navigate("./mentoring")}
-              >
-                멘토링
-              </Nav.Link>
+    <div className="wrap">
+      <div className="top-area">
+          {
+            user.id === "" ? <div className="top-msg"></div> :
+            <div className="top-msg"> {user.name}님 안녕하세요!{" "}
+            <u className="mybtn">로그아웃</u></div>
+          }
 
-              <Form
+          <nav className = "navbar">
+            <div className="btn pwith-logo" onClick={() => navigate("/")}></div>
+            <ul className="navbar-menu" style={{'margin-right':'40px'}}>
+              <li className="navbar-btn" onClick={() => navigate("/study")}>스터디</li>
+              <li className="navbar-btn" onClick={() => navigate("/studyroom")}>스터디룸</li>
+              <li className="navbar-btn" onClick={() => navigate("/community")}>커뮤니티</li>
+              <li className="navbar-btn" onClick={() => navigate("/mentoring")}>멘토링</li>
+            </ul>
+            <Form
                 className="d-flex"
-                style={{ "margin-left": "250px", height: "40px" }}
-              >
+                style={{'width':'280px','height': "40px" }}
+                >
                 <Form.Control
                   type="search"
                   placeholder="검색"
@@ -74,69 +52,44 @@ function App() {
                 <div
                   className="btn"
                   style={{
-                    border: "solid 1px",
+                    'border': "solid 1px",
                     "border-color": "#98AFCA",
                     "background-color": "white",
-                    height: "40px",
+                    'height': "40px",
                   }}
                 >
                   🔍{" "}
                 </div>
               </Form>
-
-              {user.id === "" ? (
-                <Nav className="me-auto">
-                  <Nav.Link
-                    className="loginIcon"
-                    style={{ color: "#98AFCA" }}
-                    onClick={() => navigate("./login")}
-                  >
-                    로그인
-                  </Nav.Link>
-                  <Nav.Link
-                    className="joinIcon"
-                    style={{ color: "white" }}
-                    onClick={() => navigate("./join")}
-                  >
-                    회원가입
-                  </Nav.Link>
-                </Nav>
-              ) : (
-                <Nav className="me-auto">
-                  <Nav.Link
-                    className="loginIcon"
-                    style={{ color: "#98AFCA" }}
-                    onClick={() => navigate("./mypage/chat")}
-                  >
-                    쪽지함
-                  </Nav.Link>
-                  <Nav.Link
-                    className="joinIcon"
-                    style={{ color: "white" }}
-                    onClick={() => navigate("./mypage")}
-                  >
-                    MyPage
-                  </Nav.Link>
-                </Nav>
-              )}
-            </Nav>
-          </Container>
-        </Navbar>
-
+              {
+                user.id === "" ? (
+                  <div className="mem-area">
+                    <div className="mem-btn" style={{'width':'70px'}} onClick={() => navigate("./login")}>로그인</div>
+                    <div className="mem-btn" style={{'width':'90px', 'color':'white', 'background-color':'#98afca'}}
+                    onClick={() => navigate("./join")}>회원가입</div>
+                  </div>
+                ) : (
+                  <div className="mem-area">
+                    <div className="mem-btn" style={{'width':'70px'}} onClick={() => navigate("./mypage/chat")}>채팅함</div>
+                    <div className="mem-btn" style={{'width':'90px', 'color':'white', 'background-color':'#98afca'}}
+                    onClick={() => navigate("./chat")}>Mypage</div>
+                  </div>
+                )
+              }
+          </nav>
+        </div>
         <Routes>
-        <Route path="/" element={<div>메인페이지입니다 🌷🌼🌻🌸</div>} />
-        <Route path="/study" element={<StudyMain />} />
-        <Route path="/studyroom" element={<RoomMain />} />
-        <Route path="/community" element={<CommunityMain />} />
-        <Route path="/mentoring" element={<MentoringMain />} />
-        <Route path="/login" element={<Login/>} />
-        <Route path="/join" element={<Join />} />
-        <Route path="/help" element={<Help />} />
-        <Route path="/mypage" element={<Mypage />} />
-      </Routes>
-
+          <Route path="/" element={<div>메인페이지입니다 🌷🌼🌻🌸</div>} />
+          <Route path="/study" element={<StudyMain />} />
+          <Route path="/studyroom" element={<RoomMain />} />
+          <Route path="/community" element={<CommunityMain />} />
+          <Route path="/mentoring" element={<MentoringMain />} />
+          <Route path="/login" element={<Login/>} />
+          <Route path="/join" element={<Join />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/mypage" element={<Mypage />} />
+        </Routes>
       </div>
-    </div>
   );
 }
 
