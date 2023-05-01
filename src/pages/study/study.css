@@ -1,0 +1,54 @@
+.btn-blue {
+      background-color: #98AFCA;
+      color: white;
+}
+
+.btn-outline-blue {
+    background-color: white;
+    color: #98AFCA;
+    outline-color: #98AFCA;
+}
+
+
+.form-wrapper{
+    width: 60%;
+    margin: 0 auto;
+}
+
+.title-input {
+    width: 500px;
+    height: 40px;
+    margin: 10px;
+    border: 1px solid #282c34;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.ck.ck-editor__editable:not(.ck-editor__nested-editable) {
+    min-height: 400px;
+}
+
+
+.StudyMain{
+    font-family: "TmoneyRoundWind";
+    text-align: center;
+}
+
+.StudyCreate{
+    text-align: center;
+}
+
+.StudyPost{
+    text-align: center;
+}
+
+
+.studyContent{
+    margin:10px;
+    padding: 10px;
+}
+
+.studyTitle{
+    margin:10px;
+}
+
