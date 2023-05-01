@@ -13,6 +13,7 @@ import Login from "./pages/member/login.js";
 import Join from "./pages/member/join.js";
 import Help from "./pages/member/help.js";
 import Mypage from "./pages/member/mypage.js";
+import StudyCreate from "./pages/study/StudyCreate.js";
 
 function App() {
   let navigate = useNavigate();
@@ -103,6 +104,7 @@ function App() {
       <Routes>
         <Route path="/" element={<div>메인페이지입니다 🌷🌼🌻🌸</div>} />
         <Route path="/study" element={<StudyMain />} />
+        <Route path="/study/create" element={<StudyCreate/>} />
         <Route path="/studyroom" element={<RoomMain />} />
         <Route path="/community" element={<CommunityMain />} />
         <Route path="/mentoring" element={<MentoringMain />} />
@@ -110,6 +112,7 @@ function App() {
         <Route path="/join" element={<Join />} />
         <Route path="/help" element={<Help />} />
         <Route path="/mypage" element={<Mypage />} />
+
       </Routes>
     </div>
   );
