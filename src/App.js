@@ -15,6 +15,9 @@ import Help from "./pages/member/help.js";
 import Mypage from "./pages/member/mypage.js";
 import { useDispatch, useSelector } from "react-redux"
 import { loginUser, clearUser } from "./store.js"
+import StudyCreate from "./pages/study/StudyCreate.js";
+import StudyPost from "./pages/study/StudyPost.js";
+
 
 function App() {
 
@@ -88,6 +91,8 @@ function App() {
           <Route path="/join" element={<Join />} />
           <Route path="/help" element={<Help />} />
           <Route path="/mypage" element={<Mypage />} />
+          <Route path="/study/create" element={<StudyCreate/>} />
+          <Route path="/study/:id" element={ <StudyPost/> }/> {/* 글상세페이지 */}
         </Routes>
       </div>
   );
