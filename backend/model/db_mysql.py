@@ -1,8 +1,8 @@
 import pymysql
 
-MYSQL_HOST = 'localhost'
+MYSQL_HOST = '192.168.165.10'
 MYSQL_PORT = 3306
-MYSQL_USER = 'root'
+MYSQL_USER = 'pwith'
 MYSQL_PW = '1234'
 MYSQL_DB = 'pwith_db'
 
