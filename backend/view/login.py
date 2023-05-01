@@ -38,6 +38,4 @@ def login() :
 def logout() :
     logout_user() # session 삭제
     # return redirect(url_for('home'))
-    return jsonify(
-        {'status' : 'success'}
-    )
+    return ''
