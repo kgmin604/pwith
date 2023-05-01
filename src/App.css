@@ -10,7 +10,7 @@
   min-width: 1280px;
   position: relative;
   margin: 0 auto;
-  margin-bottom: 50px;
+  margin-bottom: 70px;
   padding: 0px;
 }
 
@@ -28,7 +28,6 @@
   padding: 0px 30px;
   background-image: url('../public/pwith-logo.png');
   background-size: cover;
-  border: 0px;
 }
 
 .navbar-menu{
@@ -49,11 +48,6 @@
   float: left;
   font-family: "TmoneyRoundWind";
   cursor: pointer;
-  color:grey;
-}
-
-.navbar-btn:hover{
-  color:black;
 }
 
 .top-msg{

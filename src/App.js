@@ -25,18 +25,23 @@ function App() {
   let user = useSelector((state)=>state.user);
   let dispatch = useDispatch();
 
+  if(sessionStorage.getItem("authentication") !== null){
+    dispatch(loginUser( {'id':sessionStorage.getItem('id'), 'name':sessionStorage.getItem('name') }));
+  }
+
+
   return (
     <div className="wrap">
       <div className="top-area">
           {
             user.id === "" ? <div className="top-msg"></div> :
             <div className="top-msg"> {user.name}님 안녕하세요!{" "}
-            <u className="mybtn">로그아웃</u></div>
+            <u className="mybtn" onClick={() => navigate("/logout")}>로그아웃</u></div>
           }
 
           <nav className = "navbar">
             <div className="btn pwith-logo" onClick={() => navigate("/")}></div>
-            <ul className="navbar-menu" style={{'margin-right':'100px'}}>
+            <ul className="navbar-menu" style={{'margin-right':'40px'}}>
               <li className="navbar-btn" onClick={() => navigate("/study")}>스터디</li>
               <li className="navbar-btn" onClick={() => navigate("/studyroom")}>스터디룸</li>
               <li className="navbar-btn" onClick={() => navigate("/community")}>커뮤니티</li>
@@ -73,9 +78,9 @@ function App() {
                   </div>
                 ) : (
                   <div className="mem-area">
-                    <div className="mem-btn" style={{'width':'70px'}} onClick={() => navigate("./mypage/chat")}>쪽지함</div>
+                    <div className="mem-btn" style={{'width':'70px'}} onClick={() => navigate("./mypage/chat")}>채팅함</div>
                     <div className="mem-btn" style={{'width':'90px', 'color':'white', 'background-color':'#98afca'}}
-                    onClick={() => navigate("./chat")}>MyPage</div>
+                    onClick={() => navigate("./mypage")}>MyPage</div>
                   </div>
                 )
               }

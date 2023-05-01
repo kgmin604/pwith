@@ -38,6 +38,9 @@ function Login(props){
             }
             if(response.data.code===401){
               dispatch(loginUser(response.data));
+              sessionStorage.setItem("authentication", true);
+              sessionStorage.setItem("id", response.data.id);
+              sessionStorage.setItem("name", response.data.name);
               navigate("/");
             }
           })
