@@ -9,8 +9,11 @@ class Member(UserMixin):
         self.name = name
         self.email = email
 
-    # def get_id(self):
-    #     return str(self.id)
+    def getId(self): # UserMixin's get_id()
+        return str(self.id)
+
+    def getName(self):
+        return str(self.name)
 
     @staticmethod
     def findById(memId):
