@@ -75,11 +75,7 @@ function App() {
                   <div className="mem-area">
                     <div className="mem-btn" style={{'width':'70px'}} onClick={() => navigate("./mypage/chat")}>채팅함</div>
                     <div className="mem-btn" style={{'width':'90px', 'color':'white', 'background-color':'#98afca'}}
-<<<<<<< HEAD
                     onClick={() => navigate("./mypage")}>MyPage</div>
-=======
-                    onClick={() => navigate("./chat")}>Mypage</div>
->>>>>>> parent of 375f9c9 (메인페이지 구현 변경)
                   </div>
                 )
               }
