@@ -74,6 +74,18 @@
     vertical-align: bottom;
     color: gray;
 }
+
+.mypageList{
+    width: 300px;
+    height: 500px;
+    float: left;
+    border:solid;
+}
+
+.mypageList-btn{
+    cursor: pointer;
+}
+
 @font-face {
     font-family: 'TmoneyRoundWind';
     src: url('https://cdn.jsdelivr.net/gh/webfontworld/tmoney/TmoneyRoundWind-Regular.ttf') format("truetype");

@@ -24,7 +24,7 @@ function App() {
 
   return (
     <div className="App">
-      <div>
+      <div className="wrap">
         {
           user.id === "" ? <div className="top-msg"></div> :
           <div className="top-msg"> {user.name}님 안녕하세요!{" "}
@@ -122,10 +122,8 @@ function App() {
             </Nav>
           </Container>
         </Navbar>
-      </div>
-      
 
-      <Routes>
+        <Routes>
         <Route path="/" element={<div>메인페이지입니다 🌷🌼🌻🌸</div>} />
         <Route path="/study" element={<StudyMain />} />
         <Route path="/studyroom" element={<RoomMain />} />
@@ -136,6 +134,8 @@ function App() {
         <Route path="/help" element={<Help />} />
         <Route path="/mypage" element={<Mypage />} />
       </Routes>
+
+      </div>
     </div>
   );
 }
