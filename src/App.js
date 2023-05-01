@@ -14,6 +14,8 @@ import Join from "./pages/member/join.js";
 import Help from "./pages/member/help.js";
 import Mypage from "./pages/member/mypage.js";
 import StudyCreate from "./pages/study/StudyCreate.js";
+import StudyPost from "./pages/study/StudyPost.js";
+
 
 function App() {
   let navigate = useNavigate();
@@ -105,6 +107,7 @@ function App() {
         <Route path="/" element={<div>메인페이지입니다 🌷🌼🌻🌸</div>} />
         <Route path="/study" element={<StudyMain />} />
         <Route path="/study/create" element={<StudyCreate/>} />
+        <Route path="/study/:id" element={ <StudyPost/> }/> {/* 글상세페이지 */}
         <Route path="/studyroom" element={<RoomMain />} />
         <Route path="/community" element={<CommunityMain />} />
         <Route path="/mentoring" element={<MentoringMain />} />
