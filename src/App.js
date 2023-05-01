@@ -18,7 +18,6 @@ import { loginUser, clearUser } from "./store.js"
 import StudyCreate from "./pages/study/StudyCreate.js";
 import StudyPost from "./pages/study/StudyPost.js";
 
-
 function App() {
 
   let navigate = useNavigate();
@@ -29,6 +28,25 @@ function App() {
     dispatch(loginUser( {'id':sessionStorage.getItem('id'), 'name':sessionStorage.getItem('name') }));
   }
 
+  function logout(){
+    axios({
+      method: "GET",
+      url: "/logout",
+      data: {
+        requestType: 'lotout'
+      },
+    })
+      .then(function (response) {
+        console.log(response);
+        sessionStorage.removeItem("authentication");
+        sessionStorage.removeItem("id");
+        sessionStorage.removeItem("name");
+        dispatch(clearUser());
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
   return (
     <div className="wrap">
@@ -36,7 +54,7 @@ function App() {
           {
             user.id === "" ? <div className="top-msg"></div> :
             <div className="top-msg"> {user.name}님 안녕하세요!{" "}
-            <u className="mybtn" onClick={() => navigate("/logout")}>로그아웃</u></div>
+            <u className="mybtn" onClick={logout}>로그아웃</u></div>
           }
 
           <nav className = "navbar">
