@@ -28,6 +28,7 @@
   padding: 0px 30px;
   background-image: url('../public/pwith-logo.png');
   background-size: cover;
+  border: 0px;
 }
 
 .navbar-menu{
@@ -48,6 +49,11 @@
   float: left;
   font-family: "TmoneyRoundWind";
   cursor: pointer;
+  color:grey;
+}
+
+.navbar-btn:hover{
+  color:black;
 }
 
 .top-msg{
