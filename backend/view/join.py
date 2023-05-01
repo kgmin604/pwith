@@ -12,11 +12,11 @@ def join() :
     else :
         data = request.get_json(silent=True) # silent: parsing fail 에러 방지
 
-        if(data['requestType']==1) :
+        if(data['requestType']=='checkId') :
             if isDuplicated(data['memberId']) : # 버튼 클릭 시 동작하도록
-                return {'is':0} # 사용 불가
+                return {'code':0} # 사용 불가
             else:
-                return {'is':1} # 사용 가능
+                return {'code':1} # 사용 가능
         
 
         memId = data['memberId']

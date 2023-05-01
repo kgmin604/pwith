@@ -25,13 +25,18 @@ function App() {
   let user = useSelector((state)=>state.user);
   let dispatch = useDispatch();
 
+  if(sessionStorage.getItem("authentication") !== null){
+    dispatch(loginUser( {'id':sessionStorage.getItem('id'), 'name':sessionStorage.getItem('name') }));
+  }
+
+
   return (
     <div className="wrap">
       <div className="top-area">
           {
             user.id === "" ? <div className="top-msg"></div> :
             <div className="top-msg"> {user.name}님 안녕하세요!{" "}
-            <u className="mybtn">로그아웃</u></div>
+            <u className="mybtn" onClick={() => navigate("/logout")}>로그아웃</u></div>
           }
 
           <nav className = "navbar">

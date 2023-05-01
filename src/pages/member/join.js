@@ -92,20 +92,20 @@ function Join() {
       method: "POST",
       url: "/join",
       data: {
-        requestType: 1, // 경민 추가
+        requestType: 'checkId', // 경민 추가
         memberId: `${userinput['joinId']}`
       },
     })
       .then(function (response) {
         let copyMsg = {...msg};
         let copyIs = {...is};
-        if(response.data.is===1){ // 사용 가능
+        if(response.data.code===1){ // 사용 가능
           copyMsg['joinId'] = '사용 가능한 아이디입니다.';
           setMsg(copyMsg);
           copyIs['joinId'] = true;
           setIs(copyIs);
         }
-        else{ // 사용 불가
+        else if(response.data.code===0) { // 사용 불가
           copyMsg['joinId'] = '이미 있는 아이디입니다.';
           setMsg(copyMsg);
           copyIs['joinId'] = false;
@@ -122,7 +122,7 @@ function Join() {
       method: "POST",
       url: "/join",
       data: {
-        requestType: 2, // 경민 추가
+        requestType: 'join', // 경민 추가
         memberId: `${userinput['joinId']}`,
         memberPw: `${userinput['joinPw']}`,
         pwChk: `${userinput['joinPwChk']}`,
