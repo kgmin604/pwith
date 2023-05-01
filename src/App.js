@@ -72,7 +72,7 @@ function App() {
                   <div className="mem-area">
                     <div className="mem-btn" style={{'width':'70px'}} onClick={() => navigate("./mypage/chat")}>쪽지함</div>
                     <div className="mem-btn" style={{'width':'90px', 'color':'white', 'background-color':'#98afca'}}
-                    onClick={() => navigate("./chat")}>MyPage</div>
+                    onClick={() => navigate("./mypage")}>MyPage</div>
                   </div>
                 )
               }
