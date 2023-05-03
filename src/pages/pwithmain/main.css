@@ -1,0 +1,20 @@
+.ad-img1{
+    width: 1280px;
+    height: 400px;
+    background-image: url('./img/test1.png');
+    background-size: cover;
+}
+
+.ad-img2{
+    width: 1280px;
+    height: 400px;
+    background-image: url('./img/test2.png');
+    background-size: cover;
+}
+
+.ad-img3{
+    width: 1280px;
+    height: 400px;
+    background-image: url('./img/test3.png');
+    background-size: cover;
+}
