@@ -2,8 +2,11 @@ import axios from "axios";
 import { useState } from "react";
 import "./main.css";
 import SimpleSlider from "./mainSlider.js";
+import { useNavigate } from "react-router-dom";
 
 function PwithMain(){
+
+    let navigate = useNavigate();
     // {'id':-1,'title':''}, {'id':-1,'title':''}, {'id':-1,'title':''}, {'id':-1,'title':''}, {'id':-1,'title':''} // 초기화용
     let [studyList, setStudyList] = useState([
         {'id':1,'title':'제목1'}, {'id':2,'title':'제목2'}, {'id':3,'title':'제목3'}, {'id':4,'title':'제목4'}, {'id':5,'title':'제목5'}
@@ -23,7 +26,8 @@ function PwithMain(){
             <SimpleSlider/>
             <div className="main-area">
                 <div className="posting-part" style={{'margin-right':'40px'}}>
-                    <h5 className="posting-header">모집중인 스터디</h5>
+                    <h5 className="posting-header">모집중인 스터디
+                    <span className="posting-plus" onClick={()=>{navigate("/study")}}>(+)</span></h5>
                     <ul className="posting-list">
                     {
                         studyList.map((a,i)=>{
@@ -35,7 +39,8 @@ function PwithMain(){
                     </ul>
                 </div>
                 <div className="posting-part" style={{'margin-right':'40px'}}>
-                    <h5 className="posting-header">최신 IT 뉴스</h5>
+                    <h5 className="posting-header">최신 IT 뉴스
+                    <span className="posting-plus" onClick={()=>{navigate("/community/IT")}}>(+)</span></h5>
                     <ul className="posting-list">
                     {
                         newsList.map((a,i)=>{
@@ -47,7 +52,8 @@ function PwithMain(){
                     </ul>
                 </div>
                 <div className="posting-part">
-                    <h5 className="posting-header">멘토링 신청하기</h5>
+                    <h5 className="posting-header">멘토링 신청하기
+                    <span className="posting-plus" onClick={()=>{navigate("/mentoring")}}>(+)</span></h5>
                     <ul className="posting-list">
                     {
                         mentorList.map((a,i)=>{

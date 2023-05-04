@@ -25,6 +25,11 @@
     padding:10px;
     cursor: pointer;
 }
+.posting-plus{
+    float:right;
+    margin: 0px 0px;
+    cursor: pointer;
+}
 .posting{
     margin: 10px 0px;
     color: grey;
