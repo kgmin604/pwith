@@ -101,6 +101,13 @@
   cursor: pointer;
 }
 
+.bottom-area{
+  margin: 0 auto;
+  width: 100%;
+  height: 80px;
+  background-color: lightgray;
+}
+
 @font-face {
   font-family: "TmoneyRoundWind";
   src: url("https://cdn.jsdelivr.net/gh/webfontworld/tmoney/TmoneyRoundWind-Regular.ttf")

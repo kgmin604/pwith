@@ -1,8 +1,65 @@
+.main-area{
+    width: 1280px;
+    height: 260px;
+    margin: 35px auto;
+}
+
+.posting-part{
+    width: 400px;
+    height: 280px;
+    margin: 0;
+    float:left;
+}
+
+.posting-header{
+    width: 400px;
+    color: #98afca;;
+    border-bottom: solid;
+    border-color: #98afca;
+    font-family: "TmoneyRoundWind";
+    padding: 10px;
+    padding-left: 10px;
+}
+
+.posting-list{
+    padding:10px;
+    cursor: pointer;
+}
+.posting{
+    margin: 10px 0px;
+    color: grey;
+}
+
+.study-content{
+    width: 310px;
+    height: 270px;
+    border:solid #98afca 0.5px;
+    margin: 20px 5px;
+    float: left;
+}
+
+.study-content-img{
+    width:250px; 
+    height:180px;
+    background-color:#98afca;
+    margin: 25px auto;
+    cursor: pointer;
+}
+
+.study-content-header{
+    font-family: "TmoneyRoundWind";
+    font-size:large;
+    text-align: center;
+    margin: 10px;
+    cursor: pointer;
+}
+
 .ad-img1{
     width: 1280px;
     height: 400px;
     background-image: url('./img/test1.png');
     background-size: cover;
+    cursor: pointer;
 }
 
 .ad-img2{
@@ -10,6 +67,7 @@
     height: 400px;
     background-image: url('./img/test2.png');
     background-size: cover;
+    cursor: pointer;
 }
 
 .ad-img3{
@@ -17,4 +75,5 @@
     height: 400px;
     background-image: url('./img/test3.png');
     background-size: cover;
+    cursor: pointer;
 }

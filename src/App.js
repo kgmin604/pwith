@@ -54,6 +54,7 @@ function App() {
   }
 
   return (
+    <>
     <div className="wrap">
       <div className="top-area">
         {user.id === "" ? (
@@ -85,7 +86,7 @@ function App() {
             </li>
           </ul>
           
-          <Form className="d-flex" style={{ width: "280px", height: "40px" }}>
+          <Form className="d-flex" style={{ 'width': "280px", 'height': "40px", 'margin-left':'80px' }}>
             <Form.Control
               type="search"
               placeholder="검색"
@@ -163,6 +164,11 @@ function App() {
         <Route path="/study/:id" element={<StudyPost />} /> {/* 글상세페이지 */}
       </Routes>
     </div>
+    <div className="bottom-area">
+        <div style={{'width':'1280px', 'margin':'0 auto','line-height':'80px','font-size':'small'}}>
+          @Pwith team</div>
+    </div>
+    </>
   );
 }
 
