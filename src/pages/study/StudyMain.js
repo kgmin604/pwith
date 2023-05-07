@@ -1,11 +1,22 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./study.css";
 import "../../App.css";
+import React, { useState } from 'react';
 import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 
 function StudyMain() {
   let navigate = useNavigate();
+
+  const [postContent, setPostContent] = useState({//글정보
+    'no':'',//글번호
+    'title': '',//글제목
+    'view':'',//조회수
+    'date':'',//날짜
+    'headCount':'',//인원
+    'content': '',//글내용
+})
+    const [postList, setPostList]=useState([0,1,2,3,4,5])//글정보가 담길 배열들
 
   return (
     <div className="StudyMain">
@@ -43,29 +54,23 @@ function StudyMain() {
               </tr>
             </thead>
             <tbody>
-              {/* <tr>
-          <td>1</td>
-          <td colSpan={2}>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-          <td>@fat</td>
-        </tr> */}
 
-        //컴포넌트로 묶어야할 듯
-              <tr>
-                <td>2</td>
+        {/* 컴포넌트로 묶어야할 듯 */}
+
+        {
+          postList.map(function(){//임시 정보
+            return(
+              <tr className="postCol">
+                <td>0</td>
                 <td colSpan={2}>Jacob</td>
                 <td>Thornton</td>
                 <td>@fat</td>
                 <td>@fat</td>
               </tr>
-              <tr>
-                <td>3</td>
-                <td colSpan={2}>Larry the Bird</td>
-                <td>@twitter</td>
-                <td>@fat</td>
-                <td>@fat</td>
-              </tr>
+            )
+          }
+          )
+        }
             </tbody>
           </Table>
         </div>
@@ -77,6 +82,8 @@ function StudyMain() {
 
   );
 }
+
+
 
 
 export default StudyMain;
