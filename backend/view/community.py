@@ -4,9 +4,11 @@ from bs4 import BeautifulSoup
 # 🍒 다음 뉴스 크롤링
 
 header = {'User-Agent':'Mozilla/5.0'}
+news_date = ''
 news_title = []
 news_img = []
 news_content = []
+news_url = []
 
 page = 0
 daum_url = 'https://news.daum.net/breakingnews/digital?page={}'
@@ -16,7 +18,9 @@ def connectUrl(url, page=1) :
     # print(url.format(page))
     return BeautifulSoup(response.text, 'html.parser')
 
-len_page = len(connectUrl(daum_url, 1).select('.num_page'))
+soup = connectUrl(daum_url, 1)
+news_date = soup.select_one('.box_calendar > .screen_out').text
+len_page = len(soup.select('.num_page'))
 
 for page in range(1, len_page + 1) :
 
@@ -27,6 +31,7 @@ for page in range(1, len_page + 1) :
     for url_tag in url_tags :
 
         soup = connectUrl(url_tag.get('href'), page)
+        news_url.append(url_tag.get('href'))
 
         title = soup.select_one('.tit_view')
         img = soup.select_one('.link_figure > img')
@@ -36,7 +41,9 @@ for page in range(1, len_page + 1) :
         news_content.append(content.text.replace('\n', ' ')) if content is not None else news_content.append('')
         news_img.append(img.get('data-src')) if img is not None else news_img.append('')
 
+print(news_date)
 print(news_title)
+print(news_url)
 
 # 🍒 네이버 뉴스 크롤링
 
