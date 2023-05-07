@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./study.css";
 import "../../App.css";
+import axios from "axios";
 import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 
@@ -33,7 +34,7 @@ function StudyPost() {
                         <h5>글제목입니다</h5>
                     </div>
                     <hr style={{ width: '50%', margin: '0 auto' }} />
-                    
+                      
                     <div className="studyContent">
                         <p>피어나는 뭇 피가 우리의 커다란 할지니, 용기가 있는가? 
                             우리 끝까지 넣는 너의 인간이 방지하는 보라. 이상이 길을 사는가 할지라도 인생을 그러므로 이상을 안고, 만물은 봄바람이다. 가슴에 그러므로 그들의 불어 무엇을 영원히 피는 있는가? 석가는 피부가 산야에 어디 열락의 부패뿐이다. 
