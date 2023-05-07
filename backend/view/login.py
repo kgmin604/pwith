@@ -17,18 +17,18 @@ def login() :
         memPw = data['memberPw']
         res = {'code': 0, 'id':'', 'name':''}
 
-        mem = Member.findById(memId)
+        mem = Member.findByIdPw(memId, memPw)
 
         if not mem :
             res['code']=400
-            # print('no member')
+            # print('wrong id or wrong pw')
             return res
 
         login_user(mem)
-        res['code']=401
+        res['code'] = 401
         res['id'] = mem.getId()
         res['name'] = mem.getName()
-        # print('yes member')
+        # print('login 성공')
 
         print(current_user.getName() + '님 환영해요.') # current_user로 해당 계정 접근 가능 🚨
         return res

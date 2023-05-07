@@ -1,5 +1,5 @@
 // import logo from './logo.svg';
-import axios from "axios"; // axios 추가 - 채영
+import axios from "axios";
 import "./App.css";
 import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // bootstrap css 파일 사용
