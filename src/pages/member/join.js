@@ -24,10 +24,10 @@ function Join() {
   })
   let [is,setIs] = useState({
     'joinId': false,
-    'joinPw': false,
+    'joinPw': true,
     'joinPwChk' : false,
     'joinName' : true,
-    'joinEmail' : false
+    'joinEmail' : true
   })
   let [poseMsg,setPostMsg] = useState('');
   
@@ -41,6 +41,7 @@ function Join() {
     let copyIs = {...is};
 
     if(e.target.id === 'joinPw'){
+      /*
       const pwRE = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/; // 하나 이상의 문자, 하나 이상의 숫자, 하나 이상의 특수문자, 8글자 이상
       if(!pwRE.test(copyUserinput['joinPw'])){
         copyMsg['joinPw'] = '비밀번호 조건을 만족하지 않습니다.';
@@ -54,6 +55,7 @@ function Join() {
         copyIs['joinPw'] = true;
         setIs(copyIs);
       }
+      */
     }
     if(e.target.id === 'joinPwChk'){
       if(copyUserinput['joinPw']===copyUserinput['joinPwChk']){
@@ -70,6 +72,7 @@ function Join() {
       }
     }
     if(e.target.id === 'joinEmail'){
+      /*
       const emailRE = /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
       if(!emailRE.test(copyUserinput['joinEmail'])){
         copyMsg['joinEmail'] = '올바른 이메일 형식이 아닙니다.';
@@ -83,6 +86,7 @@ function Join() {
         copyIs['joinEmail'] = true;
         setIs(copyIs);
       }
+      */
     }
   }
 

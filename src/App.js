@@ -5,6 +5,7 @@ import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // bootstrap css 파일 사용
 import { Navbar, Container, Nav, Form, Button } from "react-bootstrap"; // bootstrap의 component 사용
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import PwithMain from "./pages/pwithmain/PwithMain.js";
 import StudyMain from "./pages/study/StudyMain.js";
 import RoomMain from "./pages/studyroom/RoomMain.js";
 import CommunityMain from "./pages/community/CommunityMain.js";
@@ -23,11 +24,11 @@ function App() {
   let user = useSelector((state) => state.user);
   let dispatch = useDispatch();
 
-  if (sessionStorage.getItem("authentication") !== null) {
+  if (localStorage.getItem("authentication") !== null) {
     dispatch(
       loginUser({
-        id: sessionStorage.getItem("id"),
-        name: sessionStorage.getItem("name"),
+        id: localStorage.getItem("id"),
+        name: localStorage.getItem("name"),
       })
     );
   }
@@ -42,9 +43,9 @@ function App() {
     })
       .then(function (response) {
         console.log(response);
-        sessionStorage.removeItem("authentication");
-        sessionStorage.removeItem("id");
-        sessionStorage.removeItem("name");
+        localStorage.removeItem("authentication");
+        localStorage.removeItem("id");
+        localStorage.removeItem("name");
         dispatch(clearUser());
       })
       .catch(function (error) {
@@ -53,6 +54,7 @@ function App() {
   }
 
   return (
+    <>
     <div className="wrap">
       <div className="top-area">
         {user.id === "" ? (
@@ -67,7 +69,7 @@ function App() {
           </div>
         )}
 
-        <nav className="navbar">
+        <nav className="navbar" style={{}}>
           <div className="btn pwith-logo" onClick={() => navigate("/")}></div>
           <ul className="navbar-menu" style={{ "margin-right": "40px" }}>
             <li className="navbar-btn" onClick={() => navigate("/study")}>
@@ -83,7 +85,8 @@ function App() {
               멘토링
             </li>
           </ul>
-          <Form className="d-flex" style={{ width: "280px", height: "40px" }}>
+          
+          <Form className="d-flex" style={{ 'width': "280px", 'height': "40px", 'margin-left':'80px' }}>
             <Form.Control
               type="search"
               placeholder="검색"
@@ -148,7 +151,7 @@ function App() {
         </nav>
       </div>
       <Routes>
-        <Route path="/" element={<div>메인페이지입니다 🌷🌼🌻🌸</div>} />
+        <Route path="/" element={ <PwithMain/> } />
         <Route path="/study" element={<StudyMain />} />
         <Route path="/studyroom" element={<RoomMain />} />
         <Route path="/community" element={<CommunityMain />} />
@@ -161,6 +164,11 @@ function App() {
         <Route path="/study/:id" element={<StudyPost />} /> {/* 글상세페이지 */}
       </Routes>
     </div>
+    <div className="bottom-area">
+        <div style={{'width':'1280px', 'margin':'0 auto','line-height':'80px','font-size':'small'}}>
+          @Pwith team</div>
+    </div>
+    </>
   );
 }
 
