@@ -15,29 +15,29 @@ def login() :
 
         memId = data['memberId']
         memPw = data['memberPw']
-        print(memId, memPw)
         res = {'code': 0, 'id':'', 'name':''}
 
         mem = Member.findById(memId)
 
         if not mem :
-            print('no member')
             res['code']=400
+            # print('no member')
             return res
 
-        login_user(mem) # session 생성
-        print('yes member')
+        login_user(mem)
         res['code']=401
         res['id'] = mem.getId()
         res['name'] = mem.getName()
+        # print('yes member')
 
-        print(current_user.getName()) # current_user로 해당 계정 접근 가능 🚨
+        print(current_user.getName() + '님 환영해요.') # current_user로 해당 계정 접근 가능 🚨
         return res
 
 @login_required
 @bp.route('/logout')
 def logout() :
-    logout_user() # session 삭제
-    print("로그아웃이야~!~!~!!~~!")
-    # return redirect(url_for('home'))
-    return ''
+    logout_user() # True 반환
+    print('로그아웃 성공')
+    return jsonify(
+        {'status':'success'}
+    )

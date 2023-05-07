@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 
+# 🍒 다음 뉴스 크롤링
+
 header = {'User-Agent':'Mozilla/5.0'}
 news_title = []
 news_img = []
@@ -37,6 +39,7 @@ for page in range(1, len_page + 1) :
 print(news_title)
 
 # 🍒 네이버 뉴스 크롤링
+
 # header = {'User-Agent':'Mozilla/5.0'}
 # news_title = []
 # news_img = []
