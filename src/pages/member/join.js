@@ -24,10 +24,10 @@ function Join() {
   })
   let [is,setIs] = useState({
     'joinId': false,
-    'joinPw': false,
+    'joinPw': true,
     'joinPwChk' : false,
     'joinName' : true,
-    'joinEmail' : false
+    'joinEmail' : true
   })
   let [poseMsg,setPostMsg] = useState('');
   
@@ -41,6 +41,7 @@ function Join() {
     let copyIs = {...is};
 
     if(e.target.id === 'joinPw'){
+      /*
       const pwRE = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/; // 하나 이상의 문자, 하나 이상의 숫자, 하나 이상의 특수문자, 8글자 이상
       if(!pwRE.test(copyUserinput['joinPw'])){
         copyMsg['joinPw'] = '비밀번호 조건을 만족하지 않습니다.';
@@ -54,6 +55,7 @@ function Join() {
         copyIs['joinPw'] = true;
         setIs(copyIs);
       }
+      */
     }
     if(e.target.id === 'joinPwChk'){
       if(copyUserinput['joinPw']===copyUserinput['joinPwChk']){
@@ -70,6 +72,7 @@ function Join() {
       }
     }
     if(e.target.id === 'joinEmail'){
+      /*
       const emailRE = /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
       if(!emailRE.test(copyUserinput['joinEmail'])){
         copyMsg['joinEmail'] = '올바른 이메일 형식이 아닙니다.';
@@ -83,6 +86,7 @@ function Join() {
         copyIs['joinEmail'] = true;
         setIs(copyIs);
       }
+      */
     }
   }
 
@@ -92,20 +96,20 @@ function Join() {
       method: "POST",
       url: "/join",
       data: {
-        requestType: 1, // 경민 추가
+        requestType: 'checkId', // 경민 추가
         memberId: `${userinput['joinId']}`
       },
     })
       .then(function (response) {
         let copyMsg = {...msg};
         let copyIs = {...is};
-        if(response.data.is===1){ // 사용 가능
+        if(response.data.code===1){ // 사용 가능
           copyMsg['joinId'] = '사용 가능한 아이디입니다.';
           setMsg(copyMsg);
           copyIs['joinId'] = true;
           setIs(copyIs);
         }
-        else{ // 사용 불가
+        else if(response.data.code===0) { // 사용 불가
           copyMsg['joinId'] = '이미 있는 아이디입니다.';
           setMsg(copyMsg);
           copyIs['joinId'] = false;
@@ -122,7 +126,7 @@ function Join() {
       method: "POST",
       url: "/join",
       data: {
-        requestType: 2, // 경민 추가
+        requestType: 'join', // 경민 추가
         memberId: `${userinput['joinId']}`,
         memberPw: `${userinput['joinPw']}`,
         pwChk: `${userinput['joinPwChk']}`,

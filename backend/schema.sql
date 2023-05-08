@@ -7,5 +7,5 @@ CREATE TABLE member
     isMento BOOLEAN,
     joinStudy JSON,
     feedback JSON,
-    PRIMARY KEY(id)
+    PRIMARY KEY(memId)
 );

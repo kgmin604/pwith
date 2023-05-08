@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify, make_response
-from view import join, login
 from flask_login import LoginManager
+from view import join, login
+from controller.member_mgmt import Member
+
 # from flask_cors import CORS
 
 app = Flask(__name__)
@@ -12,9 +14,12 @@ app.register_blueprint(login.bp)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-
+ 
+# 로그인 되어있는지 판단하기 전에 사용자 정보 조회
 @login_manager.user_loader
-def loadUser(memId) : # 사용자 정보 조회
+def loadUser(memId) : # logout 시 호출됨. why? 🚨
+    print(memId)
+    print(Member.findById(memId))
     return Member.findById(memId)
 
 # login_required로 요청된 기능에서 로그인되어 있지 않은 경우
@@ -25,33 +30,6 @@ def unauthorized() :
 @app.route('/')
 def home() :
     return redirect('/')
-
-### 🚨 flask-react 테스트용 코드 🚨 ###
-# @app.route("/join", methods=['GET', 'POST'])
-# def join() :
-#     if request.method == 'GET' :
-#         response_body = {
-#             "id": "hele",
-#             "pw": "pw",
-#             "pwchk": "pwchk",
-#             "name": "scy",
-#             "email":"email"
-#         }
-#         return response_body
-#     else :
-#         data = request.get_json(silent=True) # silent: parsing fail 에러 방지
-#         account = {
-#             'id': data['memberId'],
-#             'pw': data['memberPw'],
-#             'chk': data['pwChk'],
-#             'name': data['memberName'],
-#             'email': data['memberEmail']
-#             }
-#         print(account)
-#         return jsonify(
-#             {'status': 'success'}
-#         )
-#### 🚨 여기까지 🚨 ###
 
 # if __name__ == "__main__":
 #     app.run(host="127.0.0.1", port="5000")

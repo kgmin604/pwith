@@ -12,38 +12,27 @@ def join() :
     else :
         data = request.get_json(silent=True) # silent: parsing fail 에러 방지
 
-        if(data['requestType']==1) :
-            if isDuplicated(data['memberId']) : # 버튼 클릭 시 동작하도록
-                return {'is':0} # 사용 불가
+        if(data['requestType'] == 'checkId') : # 중복 확인
+            if isDuplicated(data['memberId']) :
+                return {'code':0} # 사용 불가
             else:
-                return {'is':1} # 사용 가능
-        
+                return {'code':1} # 사용 가능
 
         memId = data['memberId']
         memPw = data['memberPw']
         pwChk = data['pwChk']
         memName = data['memberName']
         memEmail = data['memberEmail']
-        print(memId, memPw, pwChk, memName, memEmail)
-        
-        #if isDuplicated(memId) : # 버튼 클릭 시 동작하도록
-        #    return 'using_id'
-        #else :
-            #Member.insert(memId, memPw, memName, memEmail)
-        Member.insert(memId, memPw, memName, memEmail) # 경민 추가
+
+        Member.insert(memId, memPw, memName, memEmail)
+        print(memId + '회원가입 성공')
+
         return jsonify(
             {'status': 'success'}
         )
 
-
-def isDuplicated(memId) : # id 중복 검사 -> 프론트 버튼 구현
+def isDuplicated(memId) :
     if not Member.findById(memId) :
         return False
     else :
         return True
-
-def checkPassword(pw, pwChk) : # 비밀번호 확인 -> 프론트 구현?
-    if pw == pwChk :
-        return True
-    else :
-        return False

@@ -10,7 +10,7 @@
   min-width: 1280px;
   position: relative;
   margin: 0 auto;
-  margin-bottom: 50px;
+  margin-bottom: 30px;
   padding: 0px;
 }
 
@@ -28,7 +28,6 @@
   padding: 0px 30px;
   background-image: url('../public/pwith-logo.png');
   background-size: cover;
-  border: 0px;
 }
 
 .navbar-menu{
@@ -54,6 +53,13 @@
 
 .navbar-btn:hover{
   color:black;
+}
+
+.navbar-modal{
+  width: 100px;
+  height: 50px;
+  position: absolute;
+  z-index: 1;
 }
 
 .top-msg{
@@ -93,6 +99,13 @@
 
 .mybtn {
   cursor: pointer;
+}
+
+.bottom-area{
+  margin: 0 auto;
+  width: 100%;
+  height: 80px;
+  background-color: lightgray;
 }
 
 @font-face {
