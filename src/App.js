@@ -3,7 +3,7 @@ import axios from "axios"; // axios 추가 - 채영
 import "./App.css";
 import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // bootstrap css 파일 사용
-import { Navbar, Container, Nav, Form, Button } from "react-bootstrap"; // bootstrap의 component 사용
+import { Form } from "react-bootstrap"; // bootstrap의 component 사용
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import PwithMain from "./pages/pwithmain/PwithMain.js";
 import StudyMain from "./pages/study/StudyMain.js";
@@ -14,6 +14,7 @@ import Login from "./pages/member/login.js";
 import Join from "./pages/member/join.js";
 import Help from "./pages/member/help.js";
 import Mypage from "./pages/member/mypage.js";
+import { Account, WritingList, Chat, Mentor } from "./pages/member/mypageComp.js";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, clearUser } from "./store.js";
 import StudyCreate from "./pages/study/StudyCreate.js";
@@ -28,7 +29,7 @@ function App() {
     dispatch(
       loginUser({
         id: localStorage.getItem("id"),
-        name: localStorage.getItem("name"),
+        name: localStorage.getItem("name")
       })
     );
   }
@@ -47,6 +48,7 @@ function App() {
         localStorage.removeItem("id");
         localStorage.removeItem("name");
         dispatch(clearUser());
+        navigate("/");
       })
       .catch(function (error) {
         console.log(error);
@@ -133,7 +135,7 @@ function App() {
                 style={{ width: "70px" }}
                 onClick={() => navigate("./mypage/chat")}
               >
-                채팅함
+                알림함
               </div>
               <div
                 className="mem-btn"
@@ -142,7 +144,7 @@ function App() {
                   color: "white",
                   "background-color": "#98afca",
                 }}
-                onClick={() => navigate("./mypage")}
+                onClick={() => navigate("./mypage/account")}
               >
                 MyPage
               </div>
@@ -159,7 +161,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/join" element={<Join />} />
         <Route path="/help" element={<Help />} />
-        <Route path="/mypage" element={<Mypage />} />
+        <Route path="/mypage" element={<Mypage />}>
+          <Route path="account" element={ <Account/> } />
+          <Route path="writinglist" element={ <WritingList/> } />
+          <Route path="chat" element={ <Chat/> } />
+          <Route path="mentor" element={ <Mentor/> } />
+        </Route>
         <Route path="/study/create" element={<StudyCreate />} />
         <Route path="/study/:id" element={<StudyPost />} /> {/* 글상세페이지 */}
       </Routes>

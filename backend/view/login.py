@@ -16,7 +16,7 @@ def login() :
         memId = data['memberId']
         memPw = data['memberPw']
         print(memId, memPw)
-        res = {'code': 0, 'id':'', 'name':''}
+        res = {'code': 0, 'id':'', 'name':'', 'email':''}
 
         mem = Member.findById(memId)
 

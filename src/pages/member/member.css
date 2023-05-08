@@ -1,3 +1,5 @@
+/*join, login*/
+
 .round-box{
     width: 400px;
     height: 400px;
@@ -75,6 +77,12 @@
     color: gray;
 }
 
+/*공통 마이페이지*/
+.my-header{
+    font-family: 'GangwonEduPowerExtraBoldA';
+    color: #98AFCA;
+}
+
 .mypage-wrap{
     height: 100%;
     margin-bottom: 900px;
@@ -105,20 +113,125 @@
 }
 .mypageList-btn:hover{
     color:black;
-  }
+}
+.mypageList-btn:active{
+    background-color: #98AFCA;
+    color: white;
+}
 
 .mypage-area{
     width: 1100px;
     margin: 0 0;
     height: 720px;
-    border:solid 1px;
+    /*border:solid 1px;*/
     float:left;
-    padding : 30px;
+    padding: 10px 50px;
 }
 
-@font-face {
+
+/* 회원정보관리 */
+
+.acc-wrap{
+    width: 100%;
+    height: 260px;
+    border-top: solid #98AFCA ;
+    border-bottom: solid #98AFCA ;
+    background-color: aliceblue;
+}
+
+.acc-box{
+    width: 50%;
+    height: 50px;
+    margin: 10px 0;
+    line-height: 50px;
+}
+
+.acc-header{
+    width: 150px;
+    height: 50px;
+    margin: 0 0;
+    padding: 0 40px;
+    font-size:medium;
+    font-family: 'Noto Sans KR';
+    float: left;
+}
+
+/* 채팅 */
+
+.chat-select{
+    width: 100%;
+    height: 35px;
+    padding: 0 0;
+    margin: 0px 0px;
+}
+
+.chat-btn-click{
+    width: 80px;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
     font-family: 'TmoneyRoundWind';
-    src: url('https://cdn.jsdelivr.net/gh/webfontworld/tmoney/TmoneyRoundWind-Regular.ttf') format("truetype");
-    font-weight: normal;
-    font-style: normal;
-  }
+    font-size: small;
+    border-top: solid #98AFCA 2px;
+    border-right: solid #98AFCA 2px;
+    border-left: solid #98AFCA 2px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    text-align: center;
+    margin: 0 0px;
+    margin-right: 5px;
+    color:white;
+    background-color:#98AFCA;
+    float: left;
+}
+
+.chat-btn{
+    width: 80px;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+    font-family: 'TmoneyRoundWind';
+    font-size: small;
+    border-top: solid #98AFCA 2px;
+    border-right: solid #98AFCA 2px;
+    border-left: solid #98AFCA 2px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    text-align: center;
+    margin: 0 0px;
+    margin-right: 5px;
+    color:grey;
+    background-color: white;
+    float: left;
+}
+
+.chat-bottom{
+    width: 1000px;
+    height: 600px;
+    margin: 0 0;
+    padding: 0 0;
+    border: solid #98AFCA 2px;
+    float: left;
+}
+
+.chat-list{
+    width: 40%;
+    height: 100%;
+    margin: 0 0;
+    border-right: solid #98AFCA 2px;
+    float: left;
+}
+
+.chat-list-content{
+    width: 100%;
+    height: 70px;
+    background-color: beige;
+}
+
+.chatting{
+    width: 60%;
+    height: 100%;
+    margin: 0 0;
+    background-color: aliceblue;
+    float: left;
+}

@@ -65,7 +65,7 @@ function PwithMain(){
                     </ul>
                 </div>
             </div>
-            <div className="main-area" style={{'height':'350px', 'margin-bottom':'50px'}}>
+            <div className="main-area" style={{'height':'350px', 'margin-bottom':'80px'}}>
                 <h5 className="posting-header">무엇을 배워볼까?!</h5>
                 <div>
                 {
