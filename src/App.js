@@ -82,7 +82,7 @@ function App() {
             <li className="navbar-btn" onClick={() => navigate("/studyroom")}>
               스터디룸
             </li>
-            <li className="navbar-btn" onClick={() => navigate("/community")}>
+            <li className="navbar-btn" onClick={() => navigate("/community/sumup")}>
               커뮤니티
             </li>
             <li className="navbar-btn" onClick={() => navigate("/mentoring")}>
