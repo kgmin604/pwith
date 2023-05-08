@@ -36,7 +36,7 @@ function StudyPost() {
                     <hr style={{ width: '50%', margin: '0 auto' }} />
 
                     {/* 글작성자만 보이도록 구현해야함 */}
-                    <Stack direction="horizontal" className="rewrite-delete-Btn" gap={3} style={{'display': 'flex','justifyContent': 'right', 'alignItems': 'right'}}> 
+                    <Stack direction="horizontal" className="rewrite-delete-Btn align-right" gap={3}> 
                         <Button variant='blue'>수정</Button>
                         <Button variant='blue'>삭제</Button>
                     </Stack>

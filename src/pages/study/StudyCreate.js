@@ -11,7 +11,7 @@ import {useNavigate } from "react-router-dom";
 function StudyCreate() {
     let navigate = useNavigate();
 
-    const [postContent, setPostContent] = useState({
+    let [postContent, setPostContent] = useState({
         'title': '',
         'content': ''
     })//제목과 내용이 담길 변수-> 백엔드에 전달해줘야함
