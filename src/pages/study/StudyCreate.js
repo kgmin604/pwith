@@ -64,10 +64,7 @@ function StudyCreate() {
                 <CKEditor
                     editor={ClassicEditor}
                     data=" "
-
                     onReady={editor => {
-
-                        // console.log( 'Editor is ready to use!', editor );
                     }}
                     onChange={(event, editor) => {
                         const data = editor.getData();
@@ -78,21 +75,10 @@ function StudyCreate() {
                         })
                         console.log(postContent);
                     }}
-                // onBlur={ ( event, editor ) => {
-                //     console.log( 'Blur.', editor );
-                // } }
-                // onFocus={ ( event, editor ) => {
-                //     console.log( 'Focus.', editor );
-                // } }
                 />
 
                 <Button className="submit-button" variant="blue" style={{ margin: "5px" }}
-                    onClick={() => {
-                        // setViewContent(viewContent.concat({ ...postContent }));
-                        checkPost();
-                        // console.log(viewContent);
-                    }}
-                >입력</Button>
+                    onClick={() => {checkPost();}}>입력</Button>
             </div>
 
 

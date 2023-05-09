@@ -156,7 +156,9 @@ function App() {
       </div>
       <Routes>
         <Route path="/" element={ <PwithMain/> } />
-        <Route path="/study" element={<StudyMain />} />
+        <Route path="/study" element={<StudyMain />}></Route>
+          <Route path="/study/create" element={<StudyCreate />} />
+          <Route path="/study/:id" element={<StudyPost />} /> {/* 글상세페이지 */}   
         <Route path="/studyroom" element={<RoomMain />} />
         <Route path="/community" element={<CommunityMain />} >
               <Route path="sumup" element={<CommunitySumup /> }/>
@@ -169,8 +171,6 @@ function App() {
         <Route path="/join" element={<Join />} />
         <Route path="/help" element={<Help />} />
         <Route path="/mypage" element={<Mypage />} />
-        <Route path="/study/create" element={<StudyCreate />} />
-        <Route path="/study/:id" element={<StudyPost />} /> {/* 글상세페이지 */}
       </Routes>
     </div>
     <div className="bottom-area">
