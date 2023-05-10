@@ -4,11 +4,15 @@ import "../../App.css";
 import React, { useState, useEffect} from 'react';
 import { Form, Nav, Stack, Button, Table, Accordion } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import StudyCategory from "./StudyCategory";
 import axios from "axios";
+import { loginUser } from "../../store";
 
 function StudyMain() {
   let navigate = useNavigate();
+  let user = useSelector((state) => state.user);
+  let dispatch = useDispatch();
 
   const [postContent, setPostContent] = useState({//글정보
     'no': '',//글번호
@@ -34,7 +38,16 @@ function StudyMain() {
         console.log(error);
         alert("글을 불러오지 못했습니다.");
       });
-  }, []);
+  },[]);
+
+  if (localStorage.getItem("authentication") !== null) {
+    dispatch(
+      loginUser({
+        id: localStorage.getItem("id"),
+        name: localStorage.getItem("name"),
+      })
+    );
+  }
 
     
 
@@ -50,10 +63,15 @@ function StudyMain() {
             <Form.Control className="me-auto" placeholder="원하는 스터디를 찾아보세요!" />
             <Button variant="blue">🔍</Button>
             <div className="vr" />
+            {user.id === "" ? null: 
+            (<div>
+              
             <Nav.Link onClick={() => navigate("./create")}>
               <Button variant="blue"
               >New</Button>
             </Nav.Link>
+            </div>)}
+            
           </Stack>
 
           <Table bordered hover>
@@ -72,26 +90,21 @@ function StudyMain() {
               {/* onClick={navigate(`./${row[0]}`) */}
 
               {
-                postList.map(row=> (//임시 정보
-                      <tr className="postCol" key={row[0]} >
+                postList.map(row=> (
+                      <tr className="postCol" key={row[0]} onClick={console.log(1)}>
                       <td>{row[0]}</td> 
                       <td colSpan={2}>{row[1]}</td>
                       <td>{row[6]}</td>
                       <td>{row[3]}</td>
                       <td>{row[8]}</td>
                     </tr>
-                  
                   )
                 )
               }
             </tbody>
           </Table>
           <div>
-      {postList.map(row => (
-        <div key={row[0]}>
-          
-        </div>
-      ))}
+
     </div>
 
           

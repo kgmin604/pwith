@@ -6,6 +6,7 @@ import axios from "axios";
 import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate,useParams } from "react-router-dom";
 
+
 function StudyPost(props) {
     let navigate = useNavigate();
 
