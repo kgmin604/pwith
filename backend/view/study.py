@@ -37,6 +37,7 @@ def write():
         studyID = studyPost.incIndex(index)     #index 자동으로 1씩 증가
         title = data['title']
         # writer = session.get("id")      # 현재 사용자 id
+        # writer = data['writer'] #주연 추가-프론트에서 받아올 수 있음
         curDate = studyPost.curdate()      # 현재 시간
         content = data['content']
         # category = data['category']
