@@ -13,8 +13,11 @@ function StudyCreate() {
 
     let [postContent, setPostContent] = useState({
         'title': '',
-        'content': ''
-    })//제목과 내용이 담길 변수-> 백엔드에 전달해줘야함
+        'content': '',
+        // 'category':'',
+        // 'joiningP': '',
+        'totalP': ''
+    })//제목, 내용, 카테고리, 총 인원수 
     // const [viewContent, setViewContent] = useState([]);//각각 적힌 내용들이 담길 배열
 
     let [mainCategory, SetMainCategory] = useState();
@@ -26,7 +29,8 @@ function StudyCreate() {
             url: "/create",
             data: {
                 title: `${postContent['title']}`,//글 제목->title
-                content: `${postContent['content']}`//글 내용->content
+                content: `${postContent['content']}`,//글 내용->content
+                totalP: `${postContent['totalP']}`
             }
         })
             .then(function (response) {
@@ -78,7 +82,7 @@ function StudyCreate() {
                         })
                     }}
                 />
-
+                <div>
                 <span>카테고리: </span>
                 <select>
                     <option>선택</option>
@@ -92,6 +96,13 @@ function StudyCreate() {
                     <option>1</option>
                     <option>2</option>
                 </select> */}
+                </div>
+
+                <div>
+                    <span>인원수(최대 50명):</span>
+                    <input></input>
+                </div>
+                
 
                 <Button className="submit-button" variant="blue" style={{ margin: "5px" }}
                     onClick={() => { checkPost(); }}>입력</Button>
