@@ -33,19 +33,29 @@ def write():
         data = request.get_json(silent=True) # silent: parsing fail 에러 방지
         
         index = 0
+        view = 0
+        joinP = 0
         
         studyID = studyPost.incIndex(index)     #index 자동으로 1씩 증가
         title = data['title']
-        writer = session.get("id")      # 현재 사용자 id
+        # writer = session.get("id")      # 현재 사용자 id
         curDate = studyPost.curdate()      # 현재 시간
-        content = ['content']
-        category = data['category']
-        views = studyPost.incView(views)
-        joiningP = studyPost.incJoningP(joiningP)
-        totalP = ['totalP']
+        content = data['content']
+        # category = data['category']
+        views = studyPost.incView(view)
+        joiningP = studyPost.incJoningP(joinP)
+        totalP = data['totalP']
         
-        print(studyID, title, writer, curDate, content, category, views, joiningP, totalP)
-        studyPost.insertStudy(studyID, title, writer, curDate, content, category, views, joiningP, totalP)
+        # print(studyID, title, writer, curDate, content, category, views, joiningP, totalP)
+        # studyPost.insertStudy(studyID, title, writer, curDate, content, category, views, joiningP, totalP)
+        # print(studyID, title,  curDate, content, views, totalP)
+        
+        # 테스트용!!!!!!!! (totalP 는 실제 입력값 없음 디폴트 50으로 설정될거임)
+        studypost1 = studyPost(studyID, title, content, views, totalP)
+        studypost1.insertStudy(studyID, title, content, views, totalP)
+        print(studypost1)
+        
+        print(studyID, title, content, totalP)
         
         index += 1 #다음 studyPost 에는 index 1증가하기 위함
         views += 1

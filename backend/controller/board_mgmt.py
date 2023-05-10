@@ -2,6 +2,7 @@ from model.db_mysql import conn_mysql
 from datetime import datetime
 
 class studyPost() :
+    """
     def __init__(self, studyID, title, writer, curDate, content, category, views, joiningP, totalP):
         self.studyID = studyID
         self.title = title
@@ -12,7 +13,8 @@ class studyPost() :
         self.views = views
         self.joningP = joiningP
         self.totalP = totalP
-        
+    
+    
     @staticmethod
     def insertStudy(studyID, title, writer, curDate, content, category, views, joiningP, totalP):
         mysql_db = conn_mysql()
@@ -38,6 +40,27 @@ class studyPost() :
         
         sql = f"UPDATE study set title = " +title + "curDate = " + curDate + "content = " + content+ "views =" + views +"category = "+category+"joiningP = "+joiningP +"totalP = "+ totalP +  "WHERE studyID = " + studyID
         cursor_db.execute(sql)
+        mysql_db.commit() 
+        """
+    
+    # 테스트용 !!!!!!!!!!!!!!!!!!!!!!
+    def __init__(self, studyID, title, content, views, totalP):
+        self.studyID = studyID
+        self.title = title
+        self.content = content
+        self.views = views
+        self.totalP = totalP
+        
+    # 테스트용 네 개 필드만 채우기
+    @staticmethod
+    def insertStudy(studyID, title, content, views, totalP):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = f"INSERT INTO study ( studyID, title, content, views ) VALUES ( %s, %s, %s, %s);"
+        val = (studyID, title, content, views)
+        
+        cursor_db.execute(sql, val)
         mysql_db.commit() 
         
     @staticmethod
