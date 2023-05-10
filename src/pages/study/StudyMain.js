@@ -1,31 +1,50 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./study.css";
 import "../../App.css";
-import React, { useState } from 'react';
-import { Form, Nav, Stack, Button, Table,Accordion } from "react-bootstrap";
+import React, { useState, useEffect} from 'react';
+import { Form, Nav, Stack, Button, Table, Accordion } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import StudyCategory from "./StudyCategory";
+import axios from "axios";
 
 function StudyMain() {
   let navigate = useNavigate();
 
   const [postContent, setPostContent] = useState({//글정보
-    'no':'',//글번호
+    'no': '',//글번호
     'title': '',//글제목
-    'view':'',//조회수
-    'date':'',//날짜
-    'headCount':'',//인원
+    'view': '',//조회수
+    'date': '',//날짜
+    'headCount': '',//인원
     'content': '',//글내용
-})
-    const [postList, setPostList]=useState([0,1,2,3,4,5])//글정보가 담길 배열들
+  })
+
+  const [postList, setPostList] = useState([])//글정보가 담길 배열들
+
+  useEffect(() => {
+    axios({
+      method: "GET",
+      url: "/study",
+    })
+      .then(function (response) {
+        setPostList(response.data);
+
+      })
+      .catch(function (error) {
+        console.log(error);
+        alert("글을 불러오지 못했습니다.");
+      });
+  }, []);
+
+    
 
   return (
     <div className="StudyMain">
       <div class="row">
         <div class="col-md-3">
-        {Category()}
+          {Category()}
         </div>
-        
+
         <div class="col-md-6">
           <Stack direction="horizontal" gap={3} style={{ padding: "5px" }}>
             <Form.Control className="me-auto" placeholder="원하는 스터디를 찾아보세요!" />
@@ -49,24 +68,34 @@ function StudyMain() {
             </thead>
             <tbody>
 
-        {/* 컴포넌트로 묶어야할 듯 */}
+              {/* 컴포넌트로 묶어야할 듯 */}
+              {/* onClick={navigate(`./${row[0]}`) */}
 
-        {
-          postList.map(function(){//임시 정보
-            return(
-              <tr className="postCol">
-                <td>0</td>
-                <td colSpan={2}>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-                <td>@fat</td>
-              </tr>
-            )
-          }
-          )
-        }
+              {
+                postList.map(row=> (//임시 정보
+                      <tr className="postCol" key={row[0]} >
+                      <td>{row[0]}</td> 
+                      <td colSpan={2}>{row[1]}</td>
+                      <td>{row[6]}</td>
+                      <td>{row[3]}</td>
+                      <td>{row[8]}</td>
+                    </tr>
+                  
+                  )
+                )
+              }
             </tbody>
           </Table>
+          <div>
+      {postList.map(row => (
+        <div key={row[0]}>
+          
+        </div>
+      ))}
+    </div>
+
+          
+
         </div>
         <div class="col-md-3">추천스터디</div>
       </div>
@@ -86,7 +115,7 @@ function Category() {
   return <Accordion defaultActiveKey="0">
     <Accordion.Item eventKey="0">
       <Accordion.Header>개발 · 프로그래밍</Accordion.Header>
-      <Accordion.Body onClick={() => { } }> ALL</Accordion.Body>
+      <Accordion.Body onClick={() => { }}> ALL</Accordion.Body>
       <Accordion.Body>웹개발</Accordion.Body>
       <Accordion.Body>풀스택</Accordion.Body>
       <Accordion.Body>모바일 앱 개발</Accordion.Body>

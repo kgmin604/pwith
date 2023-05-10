@@ -1,5 +1,6 @@
 from model.db_mysql import conn_mysql
 from datetime import datetime
+from flask import Flask, jsonify
 
 class studyPost() :
     """
@@ -89,4 +90,7 @@ class studyPost() :
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
         print(rows)
-        mysql_db.commit() 
+        mysql_db.commit()
+        
+        
+        return rows

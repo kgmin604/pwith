@@ -18,11 +18,11 @@ CREATE TABLE study
     curDate DATE,
     content VARCHAR(500),
     category VARCHAR(10),
-    views INT,
+    views INT DEFAULT 0,
     joiningP INT,
-    totalP INT,
+    totalP INT DEFAULT 50,
     PRIMARY KEY(studyId),
-    FOREIGN KEY(writer) REFERENCE member(memId)
+    FOREIGN KEY(writer) REFERENCES member(memId)
 )
 
 CREATE TABLE boot

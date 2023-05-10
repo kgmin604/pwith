@@ -9,13 +9,11 @@ bp = Blueprint('study', __name__, url_prefix='')
 @bp.route('/study', methods=['GET', 'POST'])
 def show():
     if request.method =='GET':
-        return jsonify(
-            {'status':'success'}
-        )
-    else:
         data = request.get_json(silent=True)
         
-        studyPost.getStudy()
+        data=jsonify(studyPost.getStudy()) 
+        return data
+    else:
         return jsonify(
             {'status : success'}
         )
