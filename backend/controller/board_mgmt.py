@@ -1,4 +1,5 @@
 from model.db_mysql import conn_mysql
+from datetime import datetime
 
 class studyPost() :
     def __init__(self, studyID, title, writer, curDate, content, category, views, joiningP, totalP):
@@ -50,3 +51,19 @@ class studyPost() :
     @staticmethod
     def incJoningP(joningP):        #가입자 1씩 증가하는 함수
         return joningP+1
+    
+    @staticmethod
+    def curdate():
+        now = datetime.now()
+        return now.date()
+    
+    @staticmethod
+    def getStudy():
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = "select * from study"
+        cursor_db.execute(sql)
+        rows = cursor_db.fetchall()
+        print(rows)
+        mysql_db.commit() 
