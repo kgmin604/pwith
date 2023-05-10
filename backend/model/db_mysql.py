@@ -40,3 +40,23 @@ def conn_mysql():
 # mysql_conn.commit()
 
 # DB는 mysql 터미널에서 CREATE DATABASE pwith_db; 명령어로 만들었고, 위 주석 실행해서 member 테이블 만들었음
+
+
+# CREATE TABLE STUDY
+# (
+#     studyID	INT,
+#     title	    VARCHAR(50),
+#     writer	VARCHAR(10),	
+#     curDate	DATE,	
+#     content	VARCHAR(500),	
+#     category	VARCHAR(20),	
+#     views	    INT,	
+#     joiningP	INT,	
+#     totalP	INT	DEFAULT 50,
+#     FOREIGN KEY (writer)
+#     REFERENCES member(memName) ON UPDATE CASCADE
+
+## 외래키 부분이 에러나는데 왜그럴까..?
+
+# );
+# '''

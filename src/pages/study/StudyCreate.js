@@ -6,7 +6,7 @@ import axios from "axios";
 import { Button } from "react-bootstrap";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function StudyCreate() {
     let navigate = useNavigate();
@@ -17,30 +17,33 @@ function StudyCreate() {
     })//제목과 내용이 담길 변수-> 백엔드에 전달해줘야함
     // const [viewContent, setViewContent] = useState([]);//각각 적힌 내용들이 담길 배열
 
-    function postStudyContent(){
+    let [mainCategory, SetMainCategory] = useState();
+    let [subCategory, SetSubCategory] = useState();
+
+    function postStudyContent() {
         axios({
-            method:"POST",
-            url:"/create",
-            data:{
-                title:`${postContent['title']}`,//글 제목->title
-                content:`${postContent['content']}`//글 내용->content
+            method: "POST",
+            url: "/create",
+            data: {
+                title: `${postContent['title']}`,//글 제목->title
+                content: `${postContent['content']}`//글 내용->content
             }
         })
-            .then(function(response){
+            .then(function (response) {
                 console.log(response);
                 navigate("../study");
                 alert("새 글이 등록되었습니다.");
-                
+
             })
             .catch(function (error) {
                 console.log(error);
-                
-              });
+
+            });
     }
 
-    function checkPost(){
-        postContent['title'] ===""||postContent['content'] ===""  ? alert("제목 또는 내용을 입력해주세요."): postStudyContent();
-      }
+    function checkPost() {
+        postContent['title'] === "" || postContent['content'] === "" ? alert("제목 또는 내용을 입력해주세요.") : postStudyContent();
+    }
 
 
 
@@ -73,12 +76,25 @@ function StudyCreate() {
                             ...postContent,
                             content: data
                         })
-                        console.log(postContent);
                     }}
                 />
 
+                <span>카테고리: </span>
+                <select>
+                    <option>선택</option>
+                    <option>개발 프로그래밍</option>
+                    <option>보안 네트워크</option>
+                    <option>데이터 사이언스</option>
+                    <option>게임 개발</option>
+                </select>
+                {/* <select>
+                    <option>선택2</option>
+                    <option>1</option>
+                    <option>2</option>
+                </select> */}
+
                 <Button className="submit-button" variant="blue" style={{ margin: "5px" }}
-                    onClick={() => {checkPost();}}>입력</Button>
+                    onClick={() => { checkPost(); }}>입력</Button>
             </div>
 
 
