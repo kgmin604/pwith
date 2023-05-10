@@ -22,7 +22,7 @@ def show():
 
 
 #글 작성 페이지
-@bp.route('/create', methods=['GET', 'POST'])
+@bp.route('/study/create', methods=['GET', 'POST'])
 @login_required
 def write():
     if request.method == 'GET' :

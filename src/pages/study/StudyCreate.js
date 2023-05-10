@@ -14,8 +14,7 @@ function StudyCreate() {
     let [postContent, setPostContent] = useState({
         'title': '',
         'content': '',
-        // 'category':'',
-        // 'joiningP': '',
+        'category':'',
         'totalP': ''
     })//제목, 내용, 카테고리, 총 인원수 
     // const [viewContent, setViewContent] = useState([]);//각각 적힌 내용들이 담길 배열
@@ -26,10 +25,11 @@ function StudyCreate() {
     function postStudyContent() {
         axios({
             method: "POST",
-            url: "/create",
+            url: "/study/create",
             data: {
                 title: `${postContent['title']}`,//글 제목->title
                 content: `${postContent['content']}`,//글 내용->content
+                content: `${postContent['content']}`,
                 totalP: `${postContent['totalP']}`
             }
         })
@@ -45,7 +45,15 @@ function StudyCreate() {
             });
     }
 
-    function checkPost() {
+    // function checkTitle() {
+    //     postContent['title'] === "" || postContent['content'] === "" ? alert("제목 또는 내용을 입력해주세요.") : checkCategory();
+    // }
+
+    // function checkCategory() {
+    //     postContent['category'] === "" ? alert("카테고리를 설정해주세요") : postStudyContent();
+    // }
+
+    function checkTitle() {
         postContent['title'] === "" || postContent['content'] === "" ? alert("제목 또는 내용을 입력해주세요.") : postStudyContent();
     }
 
@@ -105,7 +113,7 @@ function StudyCreate() {
                 
 
                 <Button className="submit-button" variant="blue" style={{ margin: "5px" }}
-                    onClick={() => { checkPost(); }}>입력</Button>
+                    onClick={() => { checkTitle(); }}>입력</Button>
             </div>
 
 
