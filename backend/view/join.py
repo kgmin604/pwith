@@ -12,7 +12,7 @@ def join() :
     else :
         data = request.get_json(silent=True) # silent: parsing fail 에러 방지
 
-        if(data['requestType'] == 'checkId') : # 버튼 클릭 시 동작하도록
+        if(data['requestType'] == 'checkId') : # 중복 확인
             if isDuplicated(data['memberId']) :
                 return {'code':0} # 사용 불가
             else:
@@ -23,15 +23,15 @@ def join() :
         pwChk = data['pwChk']
         memName = data['memberName']
         memEmail = data['memberEmail']
-        print(memId, memPw, pwChk, memName, memEmail)
 
         Member.insert(memId, memPw, memName, memEmail)
+        print(memId + '회원가입 성공')
 
         return jsonify(
             {'status': 'success'}
         )
 
-def isDuplicated(memId) : # id 중복 검사 -> 프론트 버튼 구현
+def isDuplicated(memId) :
     if not Member.findById(memId) :
         return False
     else :

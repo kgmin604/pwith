@@ -119,3 +119,9 @@
 .App {
   text-align: center;
 }
+
+.align-right{
+  display: flex;
+  justify-content: right;
+  align-items: right;
+}

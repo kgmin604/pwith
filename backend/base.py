@@ -14,9 +14,12 @@ app.register_blueprint(login.bp)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-
+ 
+# 로그인 되어있는지 판단하기 전에 사용자 정보 조회
 @login_manager.user_loader
-def loadUser(memId) : # 사용자 정보 조회
+def loadUser(memId) : # logout 시 호출됨. why? 🚨
+    print(memId)
+    print(Member.findById(memId))
     return Member.findById(memId)
 
 # login_required로 요청된 기능에서 로그인되어 있지 않은 경우
