@@ -29,7 +29,7 @@ function StudyCreate() {
             data: {
                 title: `${postContent['title']}`,//글 제목->title
                 content: `${postContent['content']}`,//글 내용->content
-                content: `${postContent['content']}`,
+                category: `${postContent['category']}`,
                 totalP: `${postContent['totalP']}`
             }
         })
