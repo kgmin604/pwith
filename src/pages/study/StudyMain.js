@@ -2,8 +2,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./study.css";
 import "../../App.css";
 import React, { useState } from 'react';
-import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
+import { Form, Nav, Stack, Button, Table,Accordion } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import StudyCategory from "./StudyCategory";
 
 function StudyMain() {
   let navigate = useNavigate();
@@ -22,14 +23,7 @@ function StudyMain() {
     <div className="StudyMain">
       <div class="row">
         <div class="col-md-3">
-          <h5>분야별 스터디 보기</h5>
-          <hr style={{ width: '60%', margin: '0 auto' }} />
-          <Nav defaultActiveKey="/home" className="flex-column">
-            <Nav.Link href="#"><div style={{ color: '#282c34' }}>프론트엔드</div></Nav.Link>
-            <Nav.Link eventKey="link-1"><div style={{ color: '#282c34' }}>백엔드</div></Nav.Link>
-            <Nav.Link eventKey="link-2"><div style={{ color: '#282c34' }}>인공지능</div></Nav.Link>
-            <Nav.Link eventKey="link-2"><div style={{ color: '#282c34' }}>컴퓨터사이언스</div></Nav.Link>
-          </Nav>
+        {Category()}
         </div>
         
         <div class="col-md-6">
@@ -87,3 +81,54 @@ function StudyMain() {
 
 
 export default StudyMain;
+
+function Category() {
+  return <Accordion defaultActiveKey="0">
+    <Accordion.Item eventKey="0">
+      <Accordion.Header>개발 · 프로그래밍</Accordion.Header>
+      <Accordion.Body onClick={() => { } }> ALL</Accordion.Body>
+      <Accordion.Body>웹개발</Accordion.Body>
+      <Accordion.Body>풀스택</Accordion.Body>
+      <Accordion.Body>모바일 앱 개발</Accordion.Body>
+      <Accordion.Body>게임 개발</Accordion.Body>
+      <Accordion.Body>프로그래밍 언어</Accordion.Body>
+      <Accordion.Body>알고리즘 · 자료구조</Accordion.Body>
+      <Accordion.Body>데이터베이스</Accordion.Body>
+      <Accordion.Body>데스옵스 · 인프라</Accordion.Body>
+      <Accordion.Body>자격증</Accordion.Body>
+      <Accordion.Body>개발 도구</Accordion.Body>
+      <Accordion.Body>데이터 사이언스</Accordion.Body>
+      <Accordion.Body>데스크톱 앱 개발</Accordion.Body>
+      <Accordion.Body>교양 · 기타</Accordion.Body>
+    </Accordion.Item>
+    <Accordion.Item eventKey="1">
+      <Accordion.Header>보안 · 네트워크</Accordion.Header>
+      <Accordion.Body>ALL</Accordion.Body>
+      <Accordion.Body>보안</Accordion.Body>
+      <Accordion.Body>네트워크</Accordion.Body>
+      <Accordion.Body>시스템</Accordion.Body>
+      <Accordion.Body>클라우드</Accordion.Body>
+      <Accordion.Body>블록체인</Accordion.Body>
+      <Accordion.Body>자격증</Accordion.Body>
+      <Accordion.Body>기타</Accordion.Body>
+    </Accordion.Item>
+    <Accordion.Item eventKey="2">
+      <Accordion.Header>데이터 사이언스</Accordion.Header>
+      <Accordion.Body> ALL</Accordion.Body>
+      <Accordion.Body>데이터 분석</Accordion.Body>
+      <Accordion.Body>인공지능</Accordion.Body>
+      <Accordion.Body>데이터시각화</Accordion.Body>
+      <Accordion.Body>데아터 수집 · 처리</Accordion.Body>
+      <Accordion.Body> 자격증 </Accordion.Body>
+      <Accordion.Body>기타</Accordion.Body>
+    </Accordion.Item>
+    <Accordion.Item eventKey="2">
+      <Accordion.Header>게임 개발</Accordion.Header>
+      <Accordion.Body> ALL</Accordion.Body>
+      <Accordion.Body>게임 프로그래밍</Accordion.Body>
+      <Accordion.Body>게임 기획</Accordion.Body>
+      <Accordion.Body>게임 아트 · 그래픽</Accordion.Body>
+      <Accordion.Body>기타</Accordion.Body>
+    </Accordion.Item>
+  </Accordion>;
+}
