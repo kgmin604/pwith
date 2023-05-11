@@ -173,7 +173,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/join" element={<Join />} />
         <Route path="/help" element={<Help />} />
-<<<<<<< HEAD
         <Route path="/mypage" element={<Mypage />}>
           <Route path="account" element={ <Account/> } />
           <Route path="writinglist" element={ <WritingList/> } />
@@ -182,9 +181,6 @@ function App() {
         </Route>
         <Route path="/study/create" element={<StudyCreate />} />
         <Route path="/study/:id" element={<StudyPost />} /> {/* 글상세페이지 */}
-=======
-        <Route path="/mypage" element={<Mypage />} />
->>>>>>> 7eba46123bd46f74a395736d6eb1264a9415d03f
       </Routes>
     </div>
     <div className="bottom-area">
