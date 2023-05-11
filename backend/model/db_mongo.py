@@ -14,5 +14,7 @@ def conn_mongodb() :
     return pwith_db
 
 
-# MongoDB Compass로 pwith_db 라는 데이터베이스 안에 ITnews_crawling, lecture_crawling, book_crawling이라는 collection 세 개 추가하기.
-# mongoDB 없으면 설치해야 함.
+# 너희 컴퓨터에 MongoDB 없으면 설치해야 해.
+# MongoDB Compass로 pwith_db라는 데이터베이스 생성하고 ITnews_crawling, lecture_crawling, book_crawling이라는 collection 세 개 추가하기
+
+# 추가로, pymysql 모듈 설치했듯 pymongo 모듈도 설치해야 해. venv 가상환경에서 pip install pymongo 입력하기.
