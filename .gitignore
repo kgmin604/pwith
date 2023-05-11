@@ -151,6 +151,7 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-*.pyc
-__pycache__/
-backend/model/__pycache__
+# 위에 같은 애들 있어서 지웠어...!
+# *.pyc
+# __pycache__/
+# backend/model/__pycache__
