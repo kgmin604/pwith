@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, jsonify, make_response
+from flask import Flask, render_template, request, jsonify, make_response, redirect
 from flask_login import LoginManager
-from view import join, login
+from view import join, login, study
 from controller.member_mgmt import Member
 
 # from flask_cors import CORS
@@ -11,6 +11,7 @@ app.secret_key = 'cf7822958fb4032d2c973d58a88fceb6a2a6c3f02ce3167338cb2004478ecf
 
 app.register_blueprint(join.bp)
 app.register_blueprint(login.bp)
+app.register_blueprint(study.bp)
 
 login_manager = LoginManager()
 login_manager.init_app(app)

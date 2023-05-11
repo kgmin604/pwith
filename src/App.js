@@ -1,10 +1,13 @@
 // import logo from './logo.svg';
 import axios from "axios";
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // bootstrap css 파일 사용
-import { Navbar, Container, Nav, Form, Button } from "react-bootstrap"; // bootstrap의 component 사용
+import { Form } from "react-bootstrap"; // bootstrap의 component 사용
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+// import { useCookies, Cookies } from 'react-cookie';
+
 import PwithMain from "./pages/pwithmain/PwithMain.js";
 import StudyMain from "./pages/study/StudyMain.js";
 import RoomMain from "./pages/studyroom/RoomMain.js";
@@ -14,7 +17,7 @@ import Login from "./pages/member/login.js";
 import Join from "./pages/member/join.js";
 import Help from "./pages/member/help.js";
 import Mypage from "./pages/member/mypage.js";
-import { useDispatch, useSelector } from "react-redux";
+import { Account, WritingList, Chat, Mentor } from "./pages/member/mypageComp.js";
 import { loginUser, clearUser } from "./store.js";
 import StudyCreate from "./pages/study/StudyCreate.js";
 import StudyPost from "./pages/study/StudyPost.js";
@@ -27,8 +30,9 @@ function App() {
   let navigate = useNavigate();
   let user = useSelector((state) => state.user);
   let dispatch = useDispatch();
+  // const cookies = new Cookies();
 
-  if (localStorage.getItem("authentication") !== null) {
+  if (localStorage.getItem("id") !== null) {
     dispatch(
       loginUser({
         id: localStorage.getItem("id"),
@@ -47,10 +51,10 @@ function App() {
     })
       .then(function (response) {
         console.log(response);
-        localStorage.removeItem("authentication");
         localStorage.removeItem("id");
         localStorage.removeItem("name");
         dispatch(clearUser());
+        navigate("/");
       })
       .catch(function (error) {
         console.log(error);
@@ -72,9 +76,8 @@ function App() {
             </u>
           </div>
         )}
-
         <nav className="navbar" style={{}}>
-          <div className="btn pwith-logo" onClick={() => navigate("/")}></div>
+          <div className="btn pwith-logo" onClick={() => {navigate("/");}}></div>
           <ul className="navbar-menu" style={{ "margin-right": "40px" }}>
             <li className="navbar-btn" onClick={() => navigate("/study")}>
               스터디
@@ -135,9 +138,9 @@ function App() {
               <div
                 className="mem-btn"
                 style={{ width: "70px" }}
-                onClick={() => navigate("./mypage/chat")}
+                onClick={() => navigate("/")}
               >
-                채팅함
+                알림함
               </div>
               <div
                 className="mem-btn"
@@ -146,7 +149,7 @@ function App() {
                   color: "white",
                   "background-color": "#98afca",
                 }}
-                onClick={() => navigate("./mypage")}
+                onClick={() => navigate("./mypage/account")}
               >
                 MyPage
               </div>
@@ -156,7 +159,9 @@ function App() {
       </div>
       <Routes>
         <Route path="/" element={ <PwithMain/> } />
-        <Route path="/study" element={<StudyMain />} />
+        <Route path="/study" element={<StudyMain />}></Route>
+          <Route path="/study/create" element={<StudyCreate />} />
+          <Route path="/study/:id" element={<StudyPost />} /> {/* 글상세페이지 */}   
         <Route path="/studyroom" element={<RoomMain />} />
         <Route path="/community" element={<CommunityMain />} >
               <Route path="sumup" element={<CommunitySumup /> }/>
@@ -168,7 +173,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/join" element={<Join />} />
         <Route path="/help" element={<Help />} />
-        <Route path="/mypage" element={<Mypage />} />
+        <Route path="/mypage" element={<Mypage />}>
+          <Route path="account" element={ <Account/> } />
+          <Route path="writinglist" element={ <WritingList/> } />
+          <Route path="chat" element={ <Chat/> } />
+          <Route path="mentor" element={ <Mentor/> } />
+        </Route>
         <Route path="/study/create" element={<StudyCreate />} />
         <Route path="/study/:id" element={<StudyPost />} /> {/* 글상세페이지 */}
       </Routes>

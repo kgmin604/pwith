@@ -14,10 +14,10 @@ function CommunityMain() {
                 <div class="col-md-3">
                     <h5>커뮤니티</h5>
                     <hr style={{ width: '60%', margin: '0 auto' }} />
-                    <Nav defaultActiveKey="/home" className="flex-column">
-                        <Nav.Link href="../it"><div style={{ color: '#282c34' }}>IT 뉴스</div></Nav.Link>
-                        <Nav.Link eventKey="../"><div style={{ color: '#282c34' }}>부트캠프 후기</div></Nav.Link>
-                        <Nav.Link eventKey="link-2"><div style={{ color: '#282c34' }}>QnA</div></Nav.Link>
+                    <Nav defaultActiveKey="/community" className="flex-column">
+                        <Nav.Link href="/community/it"><div style={{ color: '#282c34' }}>IT 뉴스</div></Nav.Link>
+                        <Nav.Link href="/community/bootcamp"><div style={{ color: '#282c34' }}>부트캠프 후기</div></Nav.Link>
+                        <Nav.Link href="/community/qna"><div style={{ color: '#282c34' }}>QnA</div></Nav.Link>
                     </Nav>
                 </div>
 

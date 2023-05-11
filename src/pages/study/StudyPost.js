@@ -4,10 +4,28 @@ import "./study.css";
 import "../../App.css";
 import axios from "axios";
 import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, Link, useNavigate,useParams } from "react-router-dom";
 
-function StudyPost() {
+
+function StudyPost(props) {
     let navigate = useNavigate();
+
+    // let {id} = useParams();
+
+    // const [postList, setPostList] = useState([])
+    // axios({
+    //     method: "GET",
+    //     url: "/study",
+    //   })
+    //     .then(function (response) {
+    //       setPostList(response.data);
+  
+    //     })
+    //     .catch(function (error) {
+    //       console.log(error);
+    //       alert("글을 불러오지 못했습니다.");
+    //     });
+
     return (
         <div className="StudyPost">
             <div class="row">
