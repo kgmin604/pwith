@@ -20,7 +20,6 @@ def join() :
 
         memId = data['memberId']
         memPw = data['memberPw']
-        pwChk = data['pwChk']
         memName = data['memberName']
         memEmail = data['memberEmail']
 

@@ -129,7 +129,7 @@ function Join() {
         requestType: 'join', // 경민 추가
         memberId: `${userinput['joinId']}`,
         memberPw: `${userinput['joinPw']}`,
-        pwChk: `${userinput['joinPwChk']}`,
+        // pwChk: `${userinput['joinPwChk']}`,
         memberName: `${userinput['joinName']}`,
         memberEmail: `${userinput['joinEmail']}`,
       },
