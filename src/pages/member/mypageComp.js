@@ -4,6 +4,7 @@ import { useSelector } from "react-redux"
 import { Button } from "react-bootstrap";
 import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import ToggleButton from 'react-bootstrap/ToggleButton';
 
 function Account(){
     let user = useSelector((state) => state.user);
@@ -25,9 +26,21 @@ function Account(){
 }
 
 function WritingList(){
+    let [sel, setSel] = useState(1);
+
     return(
         <>
-        <div>2</div>
+            <div style={{'padding':'0 0', 'margin':'0 0'}}>
+                <h3 className="my-header">내가 쓴 글 목록</h3>
+                <div className="chat-select">
+                    <ul style={{'padding':'0 0'}}>
+                        <li className={sel===1? "chat-btn-click" : "chat-btn"} onClick={()=>setSel(1)}>스터디</li>
+                        <li className={sel===2? "chat-btn-click" : "chat-btn"} onClick={()=>setSel(2)}>커뮤니티</li>
+                    </ul>
+                </div>
+                <div className="chat-bottom">
+                </div>
+            </div>
         </>
     );
 }
@@ -64,9 +77,25 @@ function Chat(){
 }
 
 function Mentor(){
+     const [checked, setChecked] = useState(false);
+    const [radioValue, setRadioValue] = useState('1');
+
     return(
         <>
-        <div>4</div>
+            <div style={{'padding':'0 0', 'margin':'0 0'}}>
+                <h3 className="my-header">멘토 신청</h3>
+                <ToggleButton
+                    className="mb-2"
+                    id="toggle-check"
+                    type="checkbox"
+                    variant="outline-primary"
+                    checked={checked}
+                    value="1"
+                    onChange={(e) => setChecked(e.currentTarget.checked)}
+                >
+                    Checked
+                </ToggleButton>
+            </div>
         </>
     );
 }

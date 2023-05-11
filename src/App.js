@@ -1,10 +1,13 @@
 // import logo from './logo.svg';
 import axios from "axios"; // axios 추가 - 채영
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // bootstrap css 파일 사용
 import { Form } from "react-bootstrap"; // bootstrap의 component 사용
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+// import { useCookies, Cookies } from 'react-cookie';
+
 import PwithMain from "./pages/pwithmain/PwithMain.js";
 import StudyMain from "./pages/study/StudyMain.js";
 import RoomMain from "./pages/studyroom/RoomMain.js";
@@ -15,7 +18,6 @@ import Join from "./pages/member/join.js";
 import Help from "./pages/member/help.js";
 import Mypage from "./pages/member/mypage.js";
 import { Account, WritingList, Chat, Mentor } from "./pages/member/mypageComp.js";
-import { useDispatch, useSelector } from "react-redux";
 import { loginUser, clearUser } from "./store.js";
 import StudyCreate from "./pages/study/StudyCreate.js";
 import StudyPost from "./pages/study/StudyPost.js";
@@ -24,12 +26,13 @@ function App() {
   let navigate = useNavigate();
   let user = useSelector((state) => state.user);
   let dispatch = useDispatch();
+  // const cookies = new Cookies();
 
-  if (localStorage.getItem("authentication") !== null) {
+  if (localStorage.getItem("id") !== null) {
     dispatch(
       loginUser({
         id: localStorage.getItem("id"),
-        name: localStorage.getItem("name")
+        name: localStorage.getItem("name"),
       })
     );
   }
@@ -44,7 +47,6 @@ function App() {
     })
       .then(function (response) {
         console.log(response);
-        localStorage.removeItem("authentication");
         localStorage.removeItem("id");
         localStorage.removeItem("name");
         dispatch(clearUser());
@@ -70,9 +72,8 @@ function App() {
             </u>
           </div>
         )}
-
         <nav className="navbar" style={{}}>
-          <div className="btn pwith-logo" onClick={() => navigate("/")}></div>
+          <div className="btn pwith-logo" onClick={() => {navigate("/");}}></div>
           <ul className="navbar-menu" style={{ "margin-right": "40px" }}>
             <li className="navbar-btn" onClick={() => navigate("/study")}>
               스터디
@@ -133,7 +134,7 @@ function App() {
               <div
                 className="mem-btn"
                 style={{ width: "70px" }}
-                onClick={() => navigate("./mypage/chat")}
+                onClick={() => navigate("/")}
               >
                 알림함
               </div>
