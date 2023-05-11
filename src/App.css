@@ -131,3 +131,9 @@
   format('woff2'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Thin.woff) 
   format('woff'),url(//fonts.gstatic.com/ea/notosanskr/v2/NotoSansKR-Thin.otf) format('opentype');
 }
+
+.align-right{
+  display: flex;
+  justify-content: right;
+  align-items: right;
+}

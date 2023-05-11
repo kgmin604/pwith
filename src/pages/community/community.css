@@ -1,0 +1,14 @@
+.btn-blue {
+    background-color: #98AFCA;
+    color: white;
+}
+
+.CommunityMain{
+    font-family: "TmoneyRoundWind";
+    text-align: center;
+}
+
+.tableHead{
+    display: flex;
+    justify-content: space-between;
+}

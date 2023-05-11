@@ -1,5 +1,5 @@
 // import logo from './logo.svg';
-import axios from "axios"; // axios 추가 - 채영
+import axios from "axios";
 import "./App.css";
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // bootstrap css 파일 사용
@@ -21,6 +21,10 @@ import { Account, WritingList, Chat, Mentor } from "./pages/member/mypageComp.js
 import { loginUser, clearUser } from "./store.js";
 import StudyCreate from "./pages/study/StudyCreate.js";
 import StudyPost from "./pages/study/StudyPost.js";
+import CommunityIT from "./pages/community/CommunityIT";
+import CommunityBootcamp from "./pages/community/CommunityBootcamp";
+import CommunityQna from "./pages/community/CommunityQna";
+import CommunitySumup from "./pages/community/CommunitySumup";
 
 function App() {
   let navigate = useNavigate();
@@ -81,7 +85,7 @@ function App() {
             <li className="navbar-btn" onClick={() => navigate("/studyroom")}>
               스터디룸
             </li>
-            <li className="navbar-btn" onClick={() => navigate("/community")}>
+            <li className="navbar-btn" onClick={() => navigate("/community/sumup")}>
               커뮤니티
             </li>
             <li className="navbar-btn" onClick={() => navigate("/mentoring")}>
@@ -155,13 +159,21 @@ function App() {
       </div>
       <Routes>
         <Route path="/" element={ <PwithMain/> } />
-        <Route path="/study" element={<StudyMain />} />
+        <Route path="/study" element={<StudyMain />}></Route>
+          <Route path="/study/create" element={<StudyCreate />} />
+          <Route path="/study/:id" element={<StudyPost />} /> {/* 글상세페이지 */}   
         <Route path="/studyroom" element={<RoomMain />} />
-        <Route path="/community" element={<CommunityMain />} />
+        <Route path="/community" element={<CommunityMain />} >
+              <Route path="sumup" element={<CommunitySumup /> }/>
+              <Route path="bootcamp" element={<CommunityBootcamp />}/>
+              <Route path="it" element={<CommunityIT/>}/>
+              <Route path="qna" element={<CommunityQna/>}/>
+          </Route>
         <Route path="/mentoring" element={<MentoringMain />} />
         <Route path="/login" element={<Login />} />
         <Route path="/join" element={<Join />} />
         <Route path="/help" element={<Help />} />
+<<<<<<< HEAD
         <Route path="/mypage" element={<Mypage />}>
           <Route path="account" element={ <Account/> } />
           <Route path="writinglist" element={ <WritingList/> } />
@@ -170,6 +182,9 @@ function App() {
         </Route>
         <Route path="/study/create" element={<StudyCreate />} />
         <Route path="/study/:id" element={<StudyPost />} /> {/* 글상세페이지 */}
+=======
+        <Route path="/mypage" element={<Mypage />} />
+>>>>>>> 7eba46123bd46f74a395736d6eb1264a9415d03f
       </Routes>
     </div>
     <div className="bottom-area">

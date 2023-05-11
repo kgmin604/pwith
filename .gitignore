@@ -150,3 +150,7 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+*.pyc
+__pycache__/
+backend/model/__pycache__

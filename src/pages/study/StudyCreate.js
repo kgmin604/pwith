@@ -2,17 +2,60 @@ import React, { useState } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./study.css";
 import "../../App.css";
+import axios from "axios";
 import { Button } from "react-bootstrap";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { useNavigate } from "react-router-dom";
 
 function StudyCreate() {
-    const [postContent, setPostContent] = useState({
-        title: '',
-        content: ''
-    })//제목과 내용이 담길 변수-> 백엔드에 전달해줘야함
+    let navigate = useNavigate();
 
-    const [viewContent, setViewContent] = useState([]);//각각 적힌 내용들이 담길 배열
+    let [postContent, setPostContent] = useState({
+        'title': '',
+        'content': '',
+        'category':'',
+        'totalP': ''
+    })//제목, 내용, 카테고리, 총 인원수 
+    // const [viewContent, setViewContent] = useState([]);//각각 적힌 내용들이 담길 배열
+
+    let [mainCategory, SetMainCategory] = useState();
+    let [subCategory, SetSubCategory] = useState();
+
+    function postStudyContent() {
+        axios({
+            method: "POST",
+            url: "/study/create",
+            data: {
+                title: `${postContent['title']}`,//글 제목->title
+                content: `${postContent['content']}`,//글 내용->content
+                category: `${postContent['category']}`,
+                totalP: `${postContent['totalP']}`
+            }
+        })
+            .then(function (response) {
+                console.log(response);
+                navigate("../study");
+                alert("새 글이 등록되었습니다.");
+
+            })
+            .catch(function (error) {
+                console.log(error);
+
+            });
+    }
+
+    // function checkTitle() {
+    //     postContent['title'] === "" || postContent['content'] === "" ? alert("제목 또는 내용을 입력해주세요.") : checkCategory();
+    // }
+
+    // function checkCategory() {
+    //     postContent['category'] === "" ? alert("카테고리를 설정해주세요") : postStudyContent();
+    // }
+
+    function checkTitle() {
+        postContent['title'] === "" || postContent['content'] === "" ? alert("제목 또는 내용을 입력해주세요.") : postStudyContent();
+    }
 
 
 
@@ -36,10 +79,7 @@ function StudyCreate() {
                 <CKEditor
                     editor={ClassicEditor}
                     data=" "
-
                     onReady={editor => {
-
-                        // console.log( 'Editor is ready to use!', editor );
                     }}
                     onChange={(event, editor) => {
                         const data = editor.getData();
@@ -48,22 +88,32 @@ function StudyCreate() {
                             ...postContent,
                             content: data
                         })
-                        console.log(postContent);
                     }}
-                // onBlur={ ( event, editor ) => {
-                //     console.log( 'Blur.', editor );
-                // } }
-                // onFocus={ ( event, editor ) => {
-                //     console.log( 'Focus.', editor );
-                // } }
                 />
+                <div>
+                <span>카테고리: </span>
+                <select>
+                    <option>선택</option>
+                    <option>개발 프로그래밍</option>
+                    <option>보안 네트워크</option>
+                    <option>데이터 사이언스</option>
+                    <option>게임 개발</option>
+                </select>
+                {/* <select>
+                    <option>선택2</option>
+                    <option>1</option>
+                    <option>2</option>
+                </select> */}
+                </div>
+
+                <div>
+                    <span>인원수(최대 50명):</span>
+                    <input></input>
+                </div>
+                
 
                 <Button className="submit-button" variant="blue" style={{ margin: "5px" }}
-                    onClick={() => {
-                        setViewContent(viewContent.concat({ ...postContent }));
-                        console.log(viewContent);
-                    }}
-                >입력</Button>
+                    onClick={() => { checkTitle(); }}>입력</Button>
             </div>
 
 
