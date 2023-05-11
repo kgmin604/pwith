@@ -15,12 +15,8 @@ def login() :
 
         memId = data['memberId']
         memPw = data['memberPw']
-<<<<<<< HEAD
         print(memId, memPw)
         res = {'code': 0, 'id':'', 'name':'', 'email':''}
-=======
-        res = {'code': 0, 'id':'', 'name':''}
->>>>>>> 7eba46123bd46f74a395736d6eb1264a9415d03f
 
         mem = Member.findByIdPw(memId, memPw)
 

@@ -5,7 +5,7 @@ MYSQL_HOST = 'localhost'
 MYSQL_PORT = 3306
 # MYSQL_USER = 'pwith'
 MYSQL_USER = 'root'
-MYSQL_PW = '1234'
+MYSQL_PW = '0604'
 MYSQL_DB = 'pwith_db'
 
 mysql_conn = pymysql.connect(
