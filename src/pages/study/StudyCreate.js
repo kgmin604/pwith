@@ -34,7 +34,6 @@ function StudyCreate() {
             }
         })
             .then(function (response) {
-                console.log(response);
                 navigate("../study");
                 alert("새 글이 등록되었습니다.");
 
@@ -66,7 +65,6 @@ function StudyCreate() {
             [name]: value
         })
         console.log(postContent);
-
     };
 
 
