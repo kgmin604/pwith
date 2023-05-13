@@ -205,9 +205,9 @@ function App() {
           <Route path="/" element={<PwithMain />} />
           <Route path="/study" element={<StudyMain postList={postList} />}>
             <Route path="main" element={<StudyBoard postList={postList} />} />
-            <Route path="create" element={<StudyCreate />} />
             <Route path=":id" element={<StudyPost postList={postList} />} /> {/* 글상세페이지 */}
           </Route>
+          <Route path="/study/create" element={<StudyCreate />} />
           <Route path="/studyroom" element={<RoomMain />} />
           <Route path="/community" element={<CommunityMain />} >
             <Route path="main" element={<CommunitySumup />} />
