@@ -22,6 +22,8 @@ function StudyPost(props) {
     let joiningP = post[7];
     let totalP = post[8];
 
+    
+
 
 
 

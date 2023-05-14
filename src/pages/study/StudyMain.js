@@ -9,8 +9,7 @@ import axios from "axios";
 import { loginUser } from "../../store";
 
 function StudyMain(props) {
-
-
+  
   return (
     <div className="StudyMain">
       <div class="row">

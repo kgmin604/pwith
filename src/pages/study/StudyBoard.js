@@ -32,7 +32,7 @@ function StudyBoard(props) {
             {user.id === "" ? null :
                 (<div>
 
-                    <Nav.Link onClick={() => navigate("../create")}>
+                    <Nav.Link onClick={() => {navigate("../create");}}>
                         <Button variant="blue"
                         >New</Button>
                     </Nav.Link>
