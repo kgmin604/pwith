@@ -1,6 +1,24 @@
 import requests
 from bs4 import BeautifulSoup
-from model.db_mongo import conn_mongodb
+# from model.db_mongo import conn_mongodb
+
+
+# import pymongo
+
+# MONGO_HOST = 'localhost'
+
+# mongo_conn = pymongo.MongoClient('mongodb://%s' % MONGO_HOST)
+
+# def conn_mongodb() :
+#     try:
+#         mongo_conn.admin.command('ismaster')
+#         pwith_db = mongo_conn.pwith_db
+#     except:
+#         mongo_conn = pymongo.MongoClient('mongodb://%s' % MONGO_HOST)
+#         pwith_db = mongo_conn.pwith_db
+#     return pwith_db
+
+
 
 header = {'User-Agent':'Mozilla/5.0'}
 news_date = ''

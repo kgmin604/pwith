@@ -16,6 +16,18 @@ class Member(UserMixin):
         return str(self.name)
 
     @staticmethod
+    def changePw(memId, oldPw, newPw):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        sql = f"UPDATE member SET memPw = '{newPw}' WHERE memId = '{memId}' and memPw = '{oldPw}'"
+        print(sql)
+        done = cursor_db.execute(sql)
+        print(done)
+        mysql_db.commit()
+
+        return done
+
+    @staticmethod
     def findById(memId):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()

@@ -1,8 +1,9 @@
 from flask import Flask, session, Blueprint, render_template, redirect, request, jsonify, url_for
-from flask_login import login_required
+from flask_login import login_required, current_user
 from controller.board_mgmt import studyPost
 
 bp = Blueprint('study', __name__, url_prefix='')
+# blueprint의 url_prefix를 'study'로 설정함으로써 중복 제거 제안합니다! - 채영
 
 #페이지네이션, 스터디 메인 페이지, 마이페이지에서 멤버별로 글 보이게, 작성 페이지 프론트연결,
 
@@ -37,6 +38,7 @@ def write():
         studyID = studyPost.incIndex(index)     #index 자동으로 1씩 증가
         title = data['title']
         # writer = session.get("id")      # 현재 사용자 id
+        # current_user.getId()
         writer = data['writer'] #주연 추가-프론트에서 받아올 수 있음
         curDate = studyPost.curdate()      # 현재 시간
         content = data['content']
