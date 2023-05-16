@@ -48,13 +48,12 @@ function StudyCreate() {
             }
         })
             .then(function (response) {
-                navigate("../study/main");
                 alert("새 글이 등록되었습니다.");
+                navigate("../study/main");
 
             })
             .catch(function (error) {
                 console.log(error);
-
             });
     }
 

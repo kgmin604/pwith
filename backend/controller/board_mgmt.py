@@ -58,11 +58,16 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"INSERT INTO study ( studyID, title, content, views ) VALUES ( %s, %s, %s, %s);"
-        val = (studyID, title, content, views)
+        # sql = f"INSERT INTO study ( studyID, title, content, views ) VALUES ( %s, %s, %s, %s);"
+        sql = f"INSERT INTO study ( studyID, title, content, views ) VALUES ( {int(studyID)}, '{title}', '{content}', {int(views)});" # column 타입 맞추기 + 따옴표 꼭 붙여주기!
+        # 난 sql, val 나누는 방식 안 써봐서 일단 내가 쓰는 방식대로 수정했어! 정윤 입맛에 맞게 수정 고고~ - 채영🍒
+        print(sql)
+        # val = (studyID, title, content, views)
         
-        cursor_db.execute(sql, val)
-        mysql_db.commit() 
+        # cursor_db.execute(sql, val)
+        done = cursor_db.execute(sql)
+        mysql_db.commit()
+        return done
         
     @staticmethod
     def incIndex(id):       #인덱스 1씩 증가하는 함수
