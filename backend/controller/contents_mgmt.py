@@ -2,16 +2,18 @@
 
 import requests
 from bs4 import BeautifulSoup
-from json import loads
+from json import loads, decoder
+from model.db_mongo import conn_mongodb
+
+conn_mongodb().lecture_crawling.delete_many({})
 
 header = {'User-Agent':'Mozilla/5.0'}
-lecture_title = []
-lecture_tag = []
-lecture_link = []
-lecture_category = []
+# lecture_title = []
+# lecture_tag = []
+# lecture_link = []
+# lecture_category = []
 
-url = 'https://www.inflearn.com/courses/it-programming/programming-lang?order=popular&page={}' # 프로그래밍 언어 category. 인기순 정렬.
-# url = 'https://www.inflearn.com/courses/it-programming?order=popular&page={}' # 모든 강의 크롤링 후, tag로 우리 기준대로 분류하기
+url = 'https://www.inflearn.com/courses/it-programming?order=popular&page={}' # 개발/프로그래밍 인기순 정렬.
 
 def connectUrl(url, page=1) :
     response = requests.get(url.format(page), headers=header)
@@ -24,20 +26,38 @@ while True :
     lectures = soup.select('.course_card_front')
 
     for lecture in lectures :
+
         link = 'https://www.inflearn.com' + lecture.get('href')
 
         info = lecture.select_one('.course-data').get('fxd-data')
+        
+        try:
+            info = loads(info) # string to json
+        except decoder.JSONDecodeError as e: # json.decoder.JSONDecodeError
+            print("JSONDecodeError occurred: ", e)
+            continue
 
-        title = loads(info)['course_title']
-        tags = loads(info)['skill_tag'].split(',') # 또는 literal_eval() 사용
+        title = info['course_title'] 
+        first_category = info['first_category'].split(',')
+        second_category = info['second_category'].split(',')
+        tags = info['skill_tag'].split(',') # 또는 literal_eval() 사용
 
-        lecture_title.append(title)
-        lecture_tag.append(tags)
-        lecture_link.append(link)
+        print(pg, title)
+        # lecture_title.append(title)
+        # lecture_tag.append(tags)
+        # lecture_link.append(link)
+
+        lec = {
+            'title' : title,
+            'first_category' : first_category,
+            'second_category' : second_category,
+            'tags' : tags,
+            'link' : link
+        }
+
+        conn_mongodb().lecture_crawling.insert_one(lec)
 
     if not soup.select_one('.pagination-next') : # '다음 페이지' 아이콘 없을 때 (=마지막 페이지)
         break
     
     pg += 1
-
-print(lecture_title)

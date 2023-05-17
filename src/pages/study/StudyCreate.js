@@ -7,15 +7,29 @@ import { Button } from "react-bootstrap";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from '../../store';
 
 function StudyCreate() {
     let navigate = useNavigate();
+    let user = useSelector((state) => state.user);
+    let dispatch = useDispatch();
+
+    if (localStorage.getItem("authentication") !== null) {//id 값을 가져옴
+        dispatch(
+            loginUser({
+                id: localStorage.getItem("id"),
+                name: localStorage.getItem("name"),
+            })
+        );
+    }
 
     let [postContent, setPostContent] = useState({
         'title': '',
         'content': '',
         'category':'',
-        'totalP': ''
+        'totalP': '',
+        'writer':`${user.name}`
     })//제목, 내용, 카테고리, 총 인원수 
     // const [viewContent, setViewContent] = useState([]);//각각 적힌 내용들이 담길 배열
 
@@ -34,24 +48,16 @@ function StudyCreate() {
             }
         })
             .then(function (response) {
-                console.log(response);
-                navigate("../study");
                 alert("새 글이 등록되었습니다.");
+                navigate("../study/main");
 
             })
             .catch(function (error) {
                 console.log(error);
-
             });
     }
 
-    // function checkTitle() {
-    //     postContent['title'] === "" || postContent['content'] === "" ? alert("제목 또는 내용을 입력해주세요.") : checkCategory();
-    // }
-
-    // function checkCategory() {
-    //     postContent['category'] === "" ? alert("카테고리를 설정해주세요") : postStudyContent();
-    // }
+    
 
     function checkTitle() {
         postContent['title'] === "" || postContent['content'] === "" ? alert("제목 또는 내용을 입력해주세요.") : postStudyContent();
@@ -66,7 +72,6 @@ function StudyCreate() {
             [name]: value
         })
         console.log(postContent);
-
     };
 
 

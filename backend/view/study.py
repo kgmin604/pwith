@@ -1,8 +1,9 @@
 from flask import Flask, session, Blueprint, render_template, redirect, request, jsonify, url_for
-from flask_login import login_required
+from flask_login import login_required, current_user
 from controller.board_mgmt import studyPost
 
 bp = Blueprint('study', __name__, url_prefix='')
+# blueprint의 url_prefix를 'study'로 설정함으로써 중복 제거 제안합니다! - 채영
 
 #페이지네이션, 스터디 메인 페이지, 마이페이지에서 멤버별로 글 보이게, 작성 페이지 프론트연결,
 
@@ -30,17 +31,18 @@ def write():
     else :
         data = request.get_json(silent=True) # silent: parsing fail 에러 방지
         
-        index = 0
+        index = 31211 # create할 때마다 index 바꾸어야 중복 안 뜸 🍒
         view = 0
         joinP = 0
         
         studyID = studyPost.incIndex(index)     #index 자동으로 1씩 증가
         title = data['title']
         # writer = session.get("id")      # 현재 사용자 id
-        # writer = data['writer'] #주연 추가-프론트에서 받아올 수 있음
+        # current_user.getId()
+        # writer = data['writer'] #주연 추가-프론트에서 받아올 수 있음 (🍒 못 받아와서 주석 처리했어~! 아마 axios 프론트 부분에서 writer 전달 안 해줘서 그런 듯...? 아님 말구 >< 일단 확인 한 번 해줘~!)
         curDate = studyPost.curdate()      # 현재 시간
         content = data['content']
-        # category = data['category']
+        category = data['category']
         views = studyPost.incView(view)
         joiningP = studyPost.incJoningP(joinP)
         totalP = data['totalP']

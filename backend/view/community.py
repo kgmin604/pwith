@@ -1,21 +1,38 @@
 import requests
 from bs4 import BeautifulSoup
+# from model.db_mongo import conn_mongodb
 
-# 🍒 다음 뉴스 크롤링
+
+# import pymongo
+
+# MONGO_HOST = 'localhost'
+
+# mongo_conn = pymongo.MongoClient('mongodb://%s' % MONGO_HOST)
+
+# def conn_mongodb() :
+#     try:
+#         mongo_conn.admin.command('ismaster')
+#         pwith_db = mongo_conn.pwith_db
+#     except:
+#         mongo_conn = pymongo.MongoClient('mongodb://%s' % MONGO_HOST)
+#         pwith_db = mongo_conn.pwith_db
+#     return pwith_db
+
+
 
 header = {'User-Agent':'Mozilla/5.0'}
 news_date = ''
-news_title = []
-news_img = []
-news_content = []
-news_url = []
+# news_title = []
+# news_img = []
+# news_content = []
+# news_url = []
+news = {}
 
 page = 0
 daum_url = 'https://news.daum.net/breakingnews/digital?page={}'
 
 def connectUrl(url, page=1) :
     response = requests.get(url.format(page), headers=header)
-    # print(url.format(page))
     return BeautifulSoup(response.text, 'html.parser')
 
 soup = connectUrl(daum_url, 1)
@@ -31,58 +48,22 @@ for page in range(1, len_page + 1) :
     for url_tag in url_tags :
 
         soup = connectUrl(url_tag.get('href'), page)
-        news_url.append(url_tag.get('href'))
+        # news_url.append(url_tag.get('href'))
+        url = url_tag.get('href')
 
         title = soup.select_one('.tit_view')
         img = soup.select_one('.link_figure > img')
         content = soup.select_one('.article_view')
 
-        news_title.append(title.text) if title is not None else news_title.append('')
-        news_content.append(content.text.replace('\n', ' ')) if content is not None else news_content.append('')
-        news_img.append(img.get('data-src')) if img is not None else news_img.append('')
+        # news_title.append(title.text) if title is not None else news_title.append('')
+        # news_content.append(content.text.replace('\n', ' ')) if content is not None else news_content.append('')
+        # news_img.append(img.get('data-src')) if img is not None else news_img.append('')
 
-print(news_date)
-print(news_title)
-print(news_url)
-
-# 🍒 네이버 뉴스 크롤링
-
-# header = {'User-Agent':'Mozilla/5.0'}
-# news_title = []
-# news_img = []
-# news_content = []
-# category_list = [731, 226, 227, 230, 732, 283, 229, 228]
-
-# page = 0
-# category = 0
-# naver_url = 'https://news.naver.com/main/list.naver?mode=LS2D&mid=shm&sid1=105&sid2={0}&page={1}'
-
-# def connectUrl(url, category=731, page=1) :
-#     response = requests.get(url.format(category, page), headers=header)
-#     # print(url.format(category, page))
-#     return BeautifulSoup(response.text, 'html.parser')
-
-# for ctg in category_list : # category 변경
-
-#     soup = connectUrl(naver_url)
-#     len_page = len(soup.select('.paging > a')) + 1
-
-#     for page in range(1, len_page + 1) : # page 변경
-
-#         soup = connectUrl(naver_url, ctg, page)
-
-#         url_tags = soup.select('.newsflash_body > ul > li > dl > dt:nth-child(1) > a')
-
-#         for url_tag in url_tags : # 상세 기사 페이지
-
-#             soup = connectUrl(url_tag.get('href'), ctg, page)
-
-#             title = soup.select_one('#title_area')
-#             img = soup.select_one('#img1')
-#             content = soup.select_one('#dic_area')
-            
-#             news_title.append(title.text) if title is not None else news_title.append('')
-#             news_content.append(content.text) if content is not None else news_content.append('')
-#             news_img.append(img.get('data-src')) if img is not None else news_img.append('')
-
-# print(news_title)
+        news = {
+            'date' : news_date,
+            'title' : title.text if title is not None else '',
+            'content' : content.text.replace('\n', ' ') if content is not None else '',
+            'img' : img.get('data-org-src') if img is not None else '',
+            'url' : url
+        }
+        conn_mongodb().ITnews_crawling.insert_one(news)

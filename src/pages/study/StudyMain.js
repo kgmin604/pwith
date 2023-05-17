@@ -1,56 +1,15 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./study.css";
 import "../../App.css";
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Nav, Stack, Button, Table, Accordion } from "react-bootstrap";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import StudyCategory from "./StudyCategory";
 import axios from "axios";
 import { loginUser } from "../../store";
 
-function StudyMain() {
-  let navigate = useNavigate();
-  let user = useSelector((state) => state.user);
-  let dispatch = useDispatch();
-
-  const [postContent, setPostContent] = useState({//글정보
-    'no': '',//글번호
-    'title': '',//글제목
-    'view': '',//조회수
-    'date': '',//날짜
-    'headCount': '',//인원
-    'content': '',//글내용
-  })
-
-  const [postList, setPostList] = useState([])//글정보가 담길 배열들
-
-  useEffect(() => {
-    axios({
-      method: "GET",
-      url: "/study",
-    })
-      .then(function (response) {
-        setPostList(response.data);
-
-      })
-      .catch(function (error) {
-        console.log(error);
-        alert("글을 불러오지 못했습니다.");
-      });
-  },[]);
-
-  if (localStorage.getItem("authentication") !== null) {
-    dispatch(
-      loginUser({
-        id: localStorage.getItem("id"),
-        name: localStorage.getItem("name"),
-      })
-    );
-  }
-
-    
-
+function StudyMain(props) {
+  
   return (
     <div className="StudyMain">
       <div class="row">
@@ -59,57 +18,9 @@ function StudyMain() {
         </div>
 
         <div class="col-md-6">
-          <Stack direction="horizontal" gap={3} style={{ padding: "5px" }}>
-            <Form.Control className="me-auto" placeholder="원하는 스터디를 찾아보세요!" />
-            <Button variant="blue">🔍</Button>
-            <div className="vr" />
-            {user.id === "" ? null: 
-            (<div>
-              
-            <Nav.Link onClick={() => navigate("./create")}>
-              <Button variant="blue"
-              >New</Button>
-            </Nav.Link>
-            </div>)}
-            
-          </Stack>
-
-          <Table bordered hover>
-            <thead>
-              <tr>
-                <th>no.</th>
-                <th colSpan={2}>글제목</th>
-                <th>조회수</th>
-                <th>날짜</th>
-                <th>인원</th>
-              </tr>
-            </thead>
-            <tbody>
-
-              {/* 컴포넌트로 묶어야할 듯 */}
-              {/* onClick={navigate(`./${row[0]}`) */}
-
-              {
-                postList.map(row=> (
-                      <tr className="postCol" key={row[0]} onClick={console.log(1)}>
-                      <td>{row[0]}</td> 
-                      <td colSpan={2}>{row[1]}</td>
-                      <td>{row[6]}</td>
-                      <td>{row[3]}</td>
-                      <td>{row[8]}</td>
-                    </tr>
-                  )
-                )
-              }
-            </tbody>
-          </Table>
-          <div>
-
-    </div>
-
-          
-
+          <Outlet></Outlet>
         </div>
+ 
         <div class="col-md-3">추천스터디</div>
       </div>
 
@@ -117,14 +28,12 @@ function StudyMain() {
     </div>
 
   );
+
 }
 
 
 
-
-export default StudyMain;
-
-function Category() {
+function Category() {//카테고리
   return <Accordion defaultActiveKey="0">
     <Accordion.Item eventKey="0">
       <Accordion.Header>개발 · 프로그래밍</Accordion.Header>
@@ -174,3 +83,5 @@ function Category() {
     </Accordion.Item>
   </Accordion>;
 }
+
+export default StudyMain;
