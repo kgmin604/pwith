@@ -28,8 +28,7 @@ function StudyCreate() {
         'title': '',
         'content': '',
         'category':'',
-        'totalP': '',
-        'writer':`${user.name}`
+        'totalP': ''
     })//제목, 내용, 카테고리, 총 인원수 
     // const [viewContent, setViewContent] = useState([]);//각각 적힌 내용들이 담길 배열
 

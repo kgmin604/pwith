@@ -6,9 +6,30 @@ import { Form, Nav, Stack, Button, Table, Accordion } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { loginUser } from "../../store";
+import { updateStudyPostList } from "../../store.js";
 
-function StudyMain(props) {
+function StudyMain() {
+  let studyPostList = useSelector((state) => state.studyPostList);
+  let dispatch = useDispatch();
+
+  useEffect(() => {
+    // DB에서 게시글을 가져와서 postList 상태를 업데이트합니다.
+    const updateStudy = () => {
+      axios({
+        method: "GET",
+        url: "/study",
+      })
+        .then(function (response) {
+          dispatch(updateStudyPostList(response.data));
+        })
+        .catch(function (error) {
+          console.log(error);
+          alert("글을 불러오지 못했습니다.");
+        });
+    };
+
+    updateStudy();
+  }, []);
   
   return (
     <div className="StudyMain">
