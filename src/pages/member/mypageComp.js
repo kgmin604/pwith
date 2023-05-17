@@ -62,10 +62,24 @@ function Chat(){
                 <div className="chat-bottom">
                     <div className="chat-list">
                         <div className="chat-list-content">
-                            <img style={{'width':'70px','height':'70px','float':'left'}}></img>
+                            <div style={{'width':'60px','height':'60px','float':'left','borderRadius':'40px', 'backgroundColor':'white','border':'solid 1px gray','margin':'5px'}}></div>
                             <div style={{'float':'left', 'width':'70px', 'padding':'5px 10px'}}>
-                                <h5>이름</h5>
-                                <span>내용</span>
+                                <h5 className="chat-list-name">이름</h5>
+                                <span className="chat-list-name-cont">내용</span>
+                            </div>
+                        </div>
+                        <div className="chat-list-content">
+                            <div style={{'width':'60px','height':'60px','float':'left','borderRadius':'40px', 'backgroundColor':'white','border':'solid 1px gray','margin':'5px'}}></div>
+                            <div style={{'float':'left', 'width':'70px', 'padding':'5px 10px'}}>
+                                <h5 className="chat-list-name">이름</h5>
+                                <span className="chat-list-name-cont">내용</span>
+                            </div>
+                        </div>
+                        <div className="chat-list-content">
+                            <div style={{'width':'60px','height':'60px','float':'left','borderRadius':'40px', 'backgroundColor':'white','border':'solid 1px gray','margin':'5px'}}></div>
+                            <div style={{'float':'left', 'width':'70px', 'padding':'5px 10px'}}>
+                                <h5 className="chat-list-name">이름</h5>
+                                <span className="chat-list-name-cont">내용</span>
                             </div>
                         </div>
                     </div>

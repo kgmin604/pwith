@@ -54,7 +54,7 @@ function StudyMain() {
   return (
     <div className="StudyMain">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-3" style={{'margin-bottom':'500px'}}>
           {Category()}
         </div>
 

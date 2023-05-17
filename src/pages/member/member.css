@@ -225,7 +225,18 @@
 .chat-list-content{
     width: 100%;
     height: 70px;
-    background-color: beige;
+    border-bottom : solid 1px gray;
+}
+
+.chat-list-name{
+    font-family: 'TmoneyRoundWind';
+    margin-top:5px;
+    font-size: medium;
+}
+
+.chat-list-name-cont{
+    font-family: 'Noto Sans KR';
+    font-size: small;
 }
 
 .chatting{
