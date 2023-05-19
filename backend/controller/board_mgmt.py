@@ -61,7 +61,7 @@ class studyPost() :
         # sql = f"INSERT INTO study ( studyID, title, content, views ) VALUES ( %s, %s, %s, %s);"
         sql = f"INSERT INTO study ( studyID, title, content, views ) VALUES ( {int(studyID)}, '{title}', '{content}', {int(views)});" # column 타입 맞추기 + 따옴표 꼭 붙여주기!
         # 난 sql, val 나누는 방식 안 써봐서 일단 내가 쓰는 방식대로 수정했어! 정윤 입맛에 맞게 수정 고고~ - 채영🍒
-        print(sql)
+        # print(sql)
         # val = (studyID, title, content, views)
         
         # cursor_db.execute(sql, val)
@@ -94,7 +94,7 @@ class studyPost() :
         sql = "select * from study"
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
-        print(rows)
+        # print(rows)
         mysql_db.commit()
         
         

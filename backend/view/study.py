@@ -31,7 +31,7 @@ def write():
     else :
         data = request.get_json(silent=True) # silent: parsing fail 에러 방지
         
-        index = 31211 # create할 때마다 index 바꾸어야 중복 안 뜸 🍒
+        index = 99 # create할 때마다 index 바꾸어야 중복 안 뜸 🍒
         view = 0
         joinP = 0
         
@@ -39,7 +39,6 @@ def write():
         title = data['title']
         # writer = session.get("id")      # 현재 사용자 id
         # current_user.getId()
-        # writer = data['writer'] #주연 추가-프론트에서 받아올 수 있음 (🍒 못 받아와서 주석 처리했어~! 아마 axios 프론트 부분에서 writer 전달 안 해줘서 그런 듯...? 아님 말구 >< 일단 확인 한 번 해줘~!)
         curDate = studyPost.curdate()      # 현재 시간
         content = data['content']
         category = data['category']
