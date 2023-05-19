@@ -19,22 +19,23 @@ def show():
             {'status : success'}
         )
 
-# @bp.route('/study/<int:id>', methods=['GET', 'POST']) # 글 조회
-# def showDetail(id) :
-#     if request.method == 'GET' :
+# postman 테스트 완
+@bp.route('/study/<int:id>', methods=['GET', 'POST']) # 글 조회
+def showDetail(id) :
+    if request.method == 'GET' :
 
-#         toFront = {}
+        toFront = {}
 
-#         post = studyPost.findById(id)
+        post = studyPost.findById(id)
 
-#         toFront = {
-#             'title': post.getTitle(),
-#             'content': post.getContent(),
-#             'views': post.getViews(),
-#             'totalP': post.getTotalP()
-#         }
+        toFront = {
+            'title': post.getTitle(),
+            'content': post.getContent(),
+            'views': post.getViews(),
+            'totalP': post.getTotalP()
+        }
 
-#         return toFront
+        return toFront
 
 
 
