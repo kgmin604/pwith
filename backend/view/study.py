@@ -19,6 +19,24 @@ def show():
             {'status : success'}
         )
 
+# @bp.route('/study/<int:id>', methods=['GET', 'POST']) # 글 조회
+# def showDetail(id) :
+#     if request.method == 'GET' :
+
+#         toFront = {}
+
+#         post = studyPost.findById(id)
+
+#         toFront = {
+#             'title': post.getTitle(),
+#             'content': post.getContent(),
+#             'views': post.getViews(),
+#             'totalP': post.getTotalP()
+#         }
+
+#         return toFront
+
+
 
 #글 작성 페이지
 @bp.route('/study/create', methods=['GET', 'POST'])

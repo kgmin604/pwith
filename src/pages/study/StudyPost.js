@@ -23,7 +23,7 @@ function StudyPost(props) {
     let totalP = post[8];
 
     
-
+    
 
 
 

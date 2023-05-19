@@ -59,8 +59,7 @@ class studyPost() :
         cursor_db = mysql_db.cursor()
         
         # sql = f"INSERT INTO study ( studyID, title, content, views ) VALUES ( %s, %s, %s, %s);"
-        sql = f"INSERT INTO study ( studyID, title, content, views ) VALUES ( {int(studyID)}, '{title}', '{content}', {int(views)});" # column 타입 맞추기 + 따옴표 꼭 붙여주기!
-        # 난 sql, val 나누는 방식 안 써봐서 일단 내가 쓰는 방식대로 수정했어! 정윤 입맛에 맞게 수정 고고~ - 채영🍒
+        sql = f"INSERT INTO study ( studyID, title, content, views ) VALUES ( {int(studyID)}, '{title}', '{content}', {int(views)});"
         # print(sql)
         # val = (studyID, title, content, views)
         
@@ -95,7 +94,36 @@ class studyPost() :
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
         # print(rows)
-        mysql_db.commit()
+        # mysql_db.commit() # table에 변경 사항 없으면 commit() 없어도 되는 것으로 알고 있습니다! - 채영
         
         
         return rows
+
+    @staticmethod
+    def findById(id) : # 정윤 테스트 방식 맞추어 네 개의 값만 전달 - 채영
+
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT * FROM study WHERE studyId = {id}"
+        cursor_db.execute(sql)
+        res = cursor_db.fetchone() # tuple
+        print(res)
+        if not res :
+            return None
+
+        post = studyPost(res[0], res[1], res[4], res[6], res[8])
+        return post
+
+    # getter 함수 만듦 - 채영
+    def getTitle(self) :
+        return str(self.title)
+
+    def getContent(self) :
+        return str(self.content)
+
+    def getViews(self) :
+        return int(self.views)
+
+    def getTotalP(self) :
+        return int(self.totalP)
