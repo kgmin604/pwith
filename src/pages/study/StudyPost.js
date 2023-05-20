@@ -6,24 +6,31 @@ import axios from "axios";
 import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../../store";
+import { updateStudyPostList } from "../../store.js";
 
 function StudyPost(props) {
+    let studyPostList = useSelector((state) => state.studyPostList);
+    let dispatch = useDispatch();
     let { id } = useParams();
-    let index=parseInt(id)-1;
-    let post = props.postList[index];
-    let studyId = post[0];
-    let title = post[1];
-    let writer = post[2];
-    let date = post[3];
-    let content=post[4];
-    let category = post[5];
-    let views = post[6];
-    let joiningP = post[7];
-    let totalP = post[8];
+    let index = parseInt(id) - 1;
+    let post = studyPostList[index];
+    let studyId, title, writer, date, content, category, views, joiningP, totalP;
 
-    
-    
+    console.log(post);
+    if (Array.isArray(post)) {
+        console.log(post[0]);
+        studyId = post[0];
+        title = post[1];
+        writer = post[2];
+        date = post[3];
+        content = post[4];
+        category = post[5];
+        views = post[6];
+        joiningP = post[7];
+        totalP = post[8];
+    } else {
+        console.log('post is not an array');
+    }
 
 
 

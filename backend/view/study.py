@@ -7,7 +7,7 @@ bp = Blueprint('study', __name__, url_prefix='')
 
 #페이지네이션, 스터디 메인 페이지, 마이페이지에서 멤버별로 글 보이게, 작성 페이지 프론트연결,
 
-@bp.route('/study', methods=['GET', 'POST'])
+@bp.route('/study/main', methods=['GET', 'POST'])
 def show():
     if request.method =='GET':
         data = request.get_json(silent=True)
