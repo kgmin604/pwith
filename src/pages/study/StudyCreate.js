@@ -12,17 +12,6 @@ import { loginUser } from '../../store';
 
 function StudyCreate() {
     let navigate = useNavigate();
-    let user = useSelector((state) => state.user);
-    let dispatch = useDispatch();
-
-    if (localStorage.getItem("authentication") !== null) {//id 값을 가져옴
-        dispatch(
-            loginUser({
-                id: localStorage.getItem("id"),
-                name: localStorage.getItem("name"),
-            })
-        );
-    }
 
     let [postContent, setPostContent] = useState({
         'title': '',
