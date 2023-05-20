@@ -7,8 +7,39 @@ import { Button } from "react-bootstrap";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from '../../store';
+import Select from 'react-select'
+
+let totalP = [];
+for (let i = 4; i <= 50; i++) {
+    let op = {};
+
+    op.value = `${i}`;
+    op.label = `${i}` + '명';
+
+    totalP.push(op);
+}
+
+let category=[
+    {value:0, label:'웹개발'},
+    {value:1, label:'모바일 앱 개발'},
+    {value:2, label:'게임 개발'},  
+    {value:3, label:'프로그래밍 언어'},
+    {value:4, label:'알고리즘 · 자료구조'},
+    {value:5, label:'데이터베이스'},
+    {value:6, label:'자격증'},
+    {value:7, label:'개발 도구'},
+    {value:8, label:'데이터 사이언스'},
+    {value:9, label:'데스크톱 앱 개발'},
+    {value:10, label:'교양 · 기타'},
+];
+
+const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      width: '200px', // 원하는 크기로 설정
+    }),
+  };
+
 
 function StudyCreate() {
     let navigate = useNavigate();
@@ -16,13 +47,10 @@ function StudyCreate() {
     let [postContent, setPostContent] = useState({
         'title': '',
         'content': '',
-        'category':'',
-        'totalP': ''
+        'category': '',
+        'totalP': '50'
     })//제목, 내용, 카테고리, 총 인원수 
     // const [viewContent, setViewContent] = useState([]);//각각 적힌 내용들이 담길 배열
-
-    let [mainCategory, SetMainCategory] = useState();
-    let [subCategory, SetSubCategory] = useState();
 
     function postStudyContent() {
         axios({
@@ -46,10 +74,12 @@ function StudyCreate() {
             });
     }
 
-    
+
 
     function checkTitle() {
-        postContent['title'] === "" || postContent['content'] === "" ? alert("제목 또는 내용을 입력해주세요.") : postStudyContent();
+        postContent['title'] === "" || postContent['content'] === "" ? alert("제목 또는 내용을 입력해주세요.") : 
+        postContent['category']==="" ? alert("카테고리를 선택해주세요") :
+        postStudyContent();
     }
 
 
@@ -84,27 +114,36 @@ function StudyCreate() {
                         })
                     }}
                 />
-                <div>
-                <span>카테고리: </span>
-                <select>
-                    <option>선택</option>
-                    <option>개발 프로그래밍</option>
-                    <option>보안 네트워크</option>
-                    <option>데이터 사이언스</option>
-                    <option>게임 개발</option>
-                </select>
-                {/* <select>
-                    <option>선택2</option>
-                    <option>1</option>
-                    <option>2</option>
-                </select> */}
+                <div >
+                <div className="selectCategory" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin:'10px'}}>
+                <p>카테고리: </p>
+                    <Select styles={customStyles}
+                        onChange={(e) => setPostContent({
+                            ...postContent,
+                            category: e
+                        })}
+            	        placeholder = "-선택-"
+                        options = { category }
+                    />
                 </div>
 
-                <div>
-                    <span>인원수(최대 50명):</span>
-                    <input></input>
+                <div className="selectTotalP" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <p>인원수: </p>
+                    <Select
+                        onChange={(e) => setPostContent({
+                            ...postContent,
+                            totalP: e
+                        })}
+            	        placeholder = "50"
+                        options = { totalP }
+                        defaultValue={totalP[49]}
+                    />
+                    <p>/50</p>
+                        
                 </div>
-                
+                </div>
+
+
 
                 <Button className="submit-button" variant="blue" style={{ margin: "5px" }}
                     onClick={() => { checkTitle(); }}>입력</Button>
@@ -114,6 +153,5 @@ function StudyCreate() {
         </div>
     );
 }
-
 
 export default StudyCreate;
