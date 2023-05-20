@@ -17,7 +17,7 @@ function StudyMain() {
     const updateStudy = () => {
       axios({
         method: "GET",
-        url: "/study",
+        url: "/study/main",
       })
         .then(function (response) {
           dispatch(updateStudyPostList(response.data));
