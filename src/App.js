@@ -81,9 +81,9 @@ function App() {
             </div>
           )}
           <nav className="navbar" style={{}}>
-            <div className="btn pwith-logo" onClick={() => { navigate("/");}}></div>
+            <div className="btn pwith-logo" onClick={() => { navigate("/"); }}></div>
             <ul className="navbar-menu" style={{ "margin-right": "40px" }}>
-              <li className="navbar-btn" onClick={() => { navigate("/study/main");}}>
+              <li className="navbar-btn" onClick={() => { navigate("/study/main"); }}>
                 스터디
               </li>
               <li className="navbar-btn" onClick={() => navigate("/studyroom")}>
@@ -163,18 +163,18 @@ function App() {
         <Routes>
 
           <Route path="/" element={<PwithMain />} />
-          <Route path="/study" element={<StudyMain/>}>
+          <Route path="/study" element={<StudyMain />}>
             <Route path="main" element={<StudyBoard />} />
-            <Route path=":id" element={<StudyPost />} /> {/* 글상세페이지 */}
+            <Route path=":id" element={<StudyPost />} />
           </Route>
           <Route path="/study/create" element={<StudyCreate />} />
           <Route path="/studyroom" element={<RoomMain />} />
           <Route path="/community" element={<CommunityMain />} >
-            <Route path="main" element={<CommunityBoard />} />
-            <Route path="bootcamp" element={<CommunityBootcamp />} />
-            <Route path="it" element={<CommunityIT />} />
-            <Route path="qna" element={<CommunityQna />} />
+          <Route path="main" element={<CommunityBoard />} />
+          <Route path="it" element={<CommunityIT />} />
           </Route>
+          {/* <Route path="/community/bootcamp" element={<CommunityBootcamp />} /> */}
+          <Route path="/community/qna" element={<CommunityQna />} />
           <Route path="/mentoring" element={<MentoringMain />} />
           <Route path="/login" element={<Login />} />
           <Route path="/join" element={<Join />} />
@@ -185,8 +185,6 @@ function App() {
             <Route path="chat" element={<Chat />} />
             <Route path="mentor" element={<Mentor />} />
           </Route>
-          <Route path="/study/create" element={<StudyCreate />} />
-          <Route path="/study/:id" element={<StudyPost />} /> {/* 글상세페이지 */}
         </Routes>
       </div>
       <div className="bottom-area">
