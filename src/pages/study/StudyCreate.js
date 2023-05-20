@@ -79,6 +79,9 @@ function StudyCreate() {
         postContent['title'] === "" || postContent['content'] === "" ? alert("제목 또는 내용을 입력해주세요.") : 
         postContent['category']==="" ? alert("카테고리를 선택해주세요") :
         postStudyContent();
+
+        console.log(postContent);
+        
     }
 
 
@@ -89,7 +92,6 @@ function StudyCreate() {
             ...postContent,
             [name]: value
         })
-        console.log(postContent);
     };
 
 
@@ -106,7 +108,6 @@ function StudyCreate() {
                     }}
                     onChange={(event, editor) => {
                         const data = editor.getData();
-                        console.log({ event, editor, data });
                         setPostContent({
                             ...postContent,
                             content: data
@@ -119,7 +120,7 @@ function StudyCreate() {
                     <Select styles={customStyles}
                         onChange={(e) => setPostContent({
                             ...postContent,
-                            category: e
+                            category: e.value
                         })}
             	        placeholder = "-선택-"
                         options = { category }
@@ -131,7 +132,7 @@ function StudyCreate() {
                     <Select
                         onChange={(e) => setPostContent({
                             ...postContent,
-                            totalP: e
+                            totalP: e.value
                         })}
             	        placeholder = "50"
                         options = { totalP }
