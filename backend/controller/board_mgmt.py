@@ -96,11 +96,10 @@ class studyPost() :
         # print(rows)
         # mysql_db.commit() # table에 변경 사항 없으면 commit() 없어도 되는 것으로 알고 있습니다! - 채영
         
-        
         return rows
 
     @staticmethod
-    def findById(id) : # 정윤 테스트 방식 맞추어 네 개의 값만 전달 - 채영
+    def findById(id) : # 정윤이 테스트 방식에 맞추어 네 개의 값만 전달함 - 채영
 
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
@@ -114,6 +113,38 @@ class studyPost() :
 
         post = studyPost(res[0], res[1], res[4], res[6], res[8])
         return post
+
+    @staticmethod
+    def findByWriter(writer) : # 글쓴이로 검색 & 내 글 목록에서 사용 - 채영
+
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = f"SELECT * FROM study WHERE writer = '{writer}'"
+
+        cursor_db.execute(sql)
+        posts = cursor_db.fetchall() # tuple의 tuple
+
+        if not posts :
+            return None
+            
+        return posts
+
+    @staticmethod
+    def findByTitle(title) : # 제목으로 검색
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT * FROM study WHERE title = '{title}'"
+
+        cursor_db.execute(sql)
+        posts = cursor_db.fetchall() # page 만들 시 fetchmany() 사용
+
+        if not posts :
+            return None
+        
+        return posts
+
 
     # getter 함수 만듦 - 채영
     def getTitle(self) :

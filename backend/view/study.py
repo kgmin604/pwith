@@ -12,15 +12,21 @@ def show():
     if request.method =='GET':
         data = request.get_json(silent=True)
         
-        data=jsonify(studyPost.getStudy()) 
+        data = jsonify(studyPost.getStudy()) 
         return data
-    else:
-        return jsonify(
-            {'status : success'}
-        )
 
-# postman 테스트 완
-@bp.route('/study/<int:id>', methods=['GET', 'POST']) # 글 조회
+    else: # 글 검색 postman 테스트 완. - 채영
+
+        title = '안녕' # (제목) 검색어 전달될 예정
+        searchedPost = studyPost.findByTitle(title)
+
+        # writer = 'a' # (글쓴이) 검색어 전달될 예정
+        # searchedPost = studyPost().findByWriter(writer)
+        
+        return list(searchedPost)
+
+# postman 테스트 완. - 채영
+@bp.route('/study/<int:id>', methods=['GET']) # 글 조회
 def showDetail(id) :
     if request.method == 'GET' :
 
@@ -57,7 +63,7 @@ def write():
         studyID = studyPost.incIndex(index)     #index 자동으로 1씩 증가
         title = data['title']
         # writer = session.get("id")      # 현재 사용자 id
-        # current_user.getId()
+        # writer = current_user.getId()
         curDate = studyPost.curdate()      # 현재 시간
         content = data['content']
         category = data['category']
