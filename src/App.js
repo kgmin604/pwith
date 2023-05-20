@@ -35,47 +35,6 @@ function App() {
   // const cookies = new Cookies();
 
 
-  /*
-  스터디 모집글 관련 코드임-주연
-  */
-  const [postList, setPostList] = useState([])//글정보가 담길 배열들
-  useEffect(() => {
-    // DB에서 게시글을 가져와서 postList 상태를 업데이트합니다.
-    const updateStudy = () => {
-      axios({
-        method: "GET",
-        url: "/study",
-      })
-        .then(function (response) {
-          setPostList(response.data);
-          console.log(response.data);
-        })
-        .catch(function (error) {
-          console.log(error);
-          alert("글을 불러오지 못했습니다.");
-        });
-    };
-
-    updateStudy();
-  }, []);
-
-  const updateStudy = () => {
-    axios({
-      method: "GET",
-      url: "/study",
-    })
-      .then(function (response) {
-        setPostList(response.data);
-        console.log(response.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-        alert("글을 불러오지 못했습니다.");
-      });
-  };
-
-
-
   if (localStorage.getItem("id") !== null) {
     dispatch(
       loginUser({
@@ -122,9 +81,9 @@ function App() {
             </div>
           )}
           <nav className="navbar" style={{}}>
-            <div className="btn pwith-logo" onClick={() => { navigate("/"); updateStudy(); }}></div>
+            <div className="btn pwith-logo" onClick={() => { navigate("/"); }}></div>
             <ul className="navbar-menu" style={{ "margin-right": "40px" }}>
-              <li className="navbar-btn" onClick={() => { navigate("/study/main"); updateStudy(); }}>
+              <li className="navbar-btn" onClick={() => { navigate("/study/main"); }}>
                 스터디
               </li>
               <li className="navbar-btn" onClick={() => navigate("/studyroom")}>
@@ -204,18 +163,18 @@ function App() {
         <Routes>
 
           <Route path="/" element={<PwithMain />} />
-          <Route path="/study" element={<StudyMain postList={postList} />}>
-            <Route path="main" element={<StudyBoard postList={postList}/>} />
-            <Route path=":id" element={<StudyPost postList={postList}/>} /> {/* 글상세페이지 */}
+          <Route path="/study" element={<StudyMain />}>
+            <Route path="main" element={<StudyBoard />} />
+            <Route path=":id" element={<StudyPost />} />
           </Route>
           <Route path="/study/create" element={<StudyCreate />} />
           <Route path="/studyroom" element={<RoomMain />} />
           <Route path="/community" element={<CommunityMain />} >
-            <Route path="main" element={<CommunityBoard />} />
-            <Route path="bootcamp" element={<CommunityBootcamp />} />
-            <Route path="it" element={<CommunityIT />} />
-            <Route path="qna" element={<CommunityQna />} />
+          <Route path="main" element={<CommunityBoard />} />
+          <Route path="it" element={<CommunityIT />} />
           </Route>
+          {/* <Route path="/community/bootcamp" element={<CommunityBootcamp />} /> */}
+          <Route path="/community/qna" element={<CommunityQna />} />
           <Route path="/mentoring" element={<MentoringMain />} />
           <Route path="/login" element={<Login />} />
           <Route path="/join" element={<Join />} />
@@ -226,8 +185,6 @@ function App() {
             <Route path="chat" element={<Chat />} />
             <Route path="mentor" element={<Mentor />} />
           </Route>
-          <Route path="/study/create" element={<StudyCreate />} />
-          <Route path="/study/:id" element={<StudyPost />} /> {/* 글상세페이지 */}
         </Routes>
       </div>
       <div className="bottom-area">

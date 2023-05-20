@@ -12,3 +12,9 @@
     display: flex;
     justify-content: space-between;
 }
+
+*{
+    
+        font-family: "TmoneyRoundWind";
+        text-align: center;
+}

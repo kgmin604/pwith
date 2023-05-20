@@ -20,9 +20,22 @@ let user = createSlice({
       }
     }
 });
-export let { loginUser, clearUser } = user.actions
+
+let studyPostList = createSlice({
+  name : 'studyPostList',
+  initialState : [],
+  reducers : {
+    updateStudyPostList: (state,action)=>{
+      return action.payload;
+    }
+  }
+}) ;
+
+export let { loginUser, clearUser } = user.actions;
+export let {updateStudyPostList} = studyPostList.actions;
 export default configureStore({
   reducer: { 
-    user : user.reducer // 앞의 user는 작명, user.reducer의 user는 slice
+    user : user.reducer, // 앞의 user는 작명, user.reducer의 user는 slice
+    studyPostList : studyPostList.reducer
   }
 })

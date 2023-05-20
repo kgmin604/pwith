@@ -12,6 +12,8 @@ function StudyBoard(props) {
     let navigate = useNavigate();
     let user = useSelector((state) => state.user);
     let dispatch = useDispatch();
+
+    let studyPostList = useSelector((state) => state.studyPostList);
     
 
 
@@ -52,7 +54,7 @@ function StudyBoard(props) {
             </thead>
             <tbody>
 
-                {props.postList.map(function (row, index) {
+                {studyPostList.map(function (row, index) {
                     return (
                         <tr className="postCol" key={row[0]} onClick={() => navigate(`../${index + 1}`)}>
                             <td>{row[0]}</td>
