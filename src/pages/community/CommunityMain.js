@@ -16,7 +16,7 @@ function CommunityMain() {
                     <hr style={{ width: '60%', margin: '0 auto' }} />
                     <Nav defaultActiveKey="/community" className="flex-column">
                         <Nav.Link href="/community/it"><div style={{ color: '#282c34' }}>IT 뉴스</div></Nav.Link>
-                        <Nav.Link href="/community/bootcamp"><div style={{ color: '#282c34' }}>부트캠프 후기</div></Nav.Link>
+                        <Nav.Link href="/community/content"><div style={{ color: '#282c34' }}>학습 컨텐츠</div></Nav.Link>
                         <Nav.Link href="/community/qna"><div style={{ color: '#282c34' }}>QnA</div></Nav.Link>
                     </Nav>
                 </div>
