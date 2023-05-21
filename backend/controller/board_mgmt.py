@@ -16,7 +16,7 @@ class studyPost() :
     
     
     @staticmethod
-    def insertStudy( title, writer, curDate, content, category, views, joiningP, totalP):
+    def insertStudy( title, writer, curDate, content, category, views, joiningP, totalP):   # insert data
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
@@ -44,31 +44,7 @@ class studyPost() :
         cursor_db.execute(sql)
         mysql_db.commit() 
         '''
-    
-    # 테스트용 !!!!!!!!!!!!!!!!!!!!!!
-    #def __init__(self, studyID, title, content, views, totalP):
-    #    self.studyID = studyID
-    #    self.title = title
-    #    self.content = content
-    #    self.views = views
-    #    self.totalP = totalP
-        
-    # 테스트용 네 개 필드만 채우기
-    #@staticmethod
-    #def insertStudy(title, content, views, totalP):
-    #    mysql_db = conn_mysql()
-    #    cursor_db = mysql_db.cursor()
-    #    
-    #    # sql = f"INSERT INTO study ( studyID, title, content, views ) VALUES ( %s, %s, %s, %s);"
-    #    sql = f"INSERT INTO study ( studyID, title, content, views ) VALUES ( '{title}', '{content}', {int(views)});"
-    #    # print(sql)
-    #    # val = (studyID, title, content, views)
-    #    
-    #    # cursor_db.execute(sql, val)
-    #    done = cursor_db.execute(sql)
-    #    mysql_db.commit()
-    #    return done
-        
+     
     
     @staticmethod
     def incViews(writer):     #조회수 1씩 증가하는 함수
@@ -99,7 +75,7 @@ class studyPost() :
         return joiningP
     
     @staticmethod
-    def curdate():
+    def curdate():  # date 구하는 함수
         now = datetime.now()
         return now.date()
     

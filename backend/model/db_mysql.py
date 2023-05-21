@@ -45,6 +45,8 @@ def conn_mysql():
 #pwith_db.execute(sql)
 #mysql_conn.commit()
 
+#💙 study 테이블 생성
+
 #sql = '''
 # CREATE TABLE STUDY
 # (
@@ -66,7 +68,27 @@ def conn_mysql():
 #pwith_db.execute(sql)
 #mysql_conn.commit()
 
-##🚨 study 테이블 수정 여기까지 - 정윤
+#💙 qna 테이블 생성
+
+#sql = '''
+# CREATE TABLE STUDY
+# (
+#     QNAID	INT AUTO_INCREMENT PRIMARY KEY,
+#     title	    VARCHAR(50) NOT NULL,
+#     writer	VARCHAR(10),	
+#     curDate	DATE,	
+#     content	VARCHAR(500) NOT NULL,	
+#     category	INT,	
+#     views	    INT DEFAULT 0,	
+#     likes     INT DEFAULT 0,
+#     FOREIGN KEY (writer)
+#     REFERENCES member(memId) ON UPDATE CASCADE
+#     );
+#'''
+
+#pwith_db = mysql_conn.cursor()
+#pwith_db.execute(sql)
+#mysql_conn.commit()
 
 # DB는 mysql 터미널에서 CREATE DATABASE pwith_db; 명령어로 만들었고, 위 주석 실행해서 member 테이블 만들었음
 

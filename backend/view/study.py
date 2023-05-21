@@ -2,12 +2,12 @@ from flask import Flask, session, Blueprint, render_template, redirect, request,
 from flask_login import login_required, current_user
 from controller.board_mgmt import studyPost
 
-bp = Blueprint('study', __name__, url_prefix='')
+study_bp = Blueprint('study', __name__, url_prefix='/study')
 # blueprint의 url_prefix를 'study'로 설정함으로써 중복 제거 제안합니다! - 채영
 
 #페이지네이션, 스터디 메인 페이지, 마이페이지에서 멤버별로 글 보이게, 작성 페이지 프론트연결,
 
-@bp.route('/study/main', methods=['GET', 'POST'])
+@study_bp.route('/main', methods=['GET', 'POST'])
 def show():
     if request.method =='GET':
         data = request.get_json(silent=True)
@@ -26,7 +26,7 @@ def show():
         return list(searchedPost)
 
 # postman 테스트 완. - 채영
-@bp.route('/study/<int:id>', methods=['GET']) # 글 조회
+@study_bp.route('/<int:id>', methods=['GET']) # 글 조회
 def showDetail(id) :
     if request.method == 'GET' :
 
@@ -46,7 +46,7 @@ def showDetail(id) :
 
 
 #글 작성 페이지
-@bp.route('/study/create', methods=['GET', 'POST'])
+@study_bp.route('/create', methods=['GET', 'POST'])
 @login_required
 def write():
     if request.method == 'GET' :
@@ -81,7 +81,7 @@ def write():
         )
 """
 # update 
-@bp.route('/study/update')
+@study_bp.route('/update')
 @login_required
 def update():
     if request.method == 'GET' :
@@ -101,7 +101,7 @@ def update():
     studyPost.updateStudy(title, writer, curDate, content, category, totalP)
 
 #delete
-@bp.route('/study/delete')
+@study_bp.route('/delete')
 @login_required
 def delete():
     if request.method == 'GET' :
