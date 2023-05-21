@@ -3,9 +3,8 @@ from datetime import datetime
 from flask import Flask, jsonify
 
 class studyPost() :
-    """
-    def __init__(self, studyID, title, writer, curDate, content, category, views, joiningP, totalP):
-        self.studyID = studyID
+    
+    def __init__(self, title, writer, curDate, content, category, views, joiningP, totalP):
         self.title = title
         self.writer = writer
         self.curDate = curDate
@@ -17,14 +16,16 @@ class studyPost() :
     
     
     @staticmethod
-    def insertStudy(studyID, title, writer, curDate, content, category, views, joiningP, totalP):
+    def insertStudy( title, writer, curDate, content, category, views, joiningP, totalP):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"INSERT INTO study VALUES ('{studyID}', '{str(title)}', '{str(writer)}', '{curDate}', '{str(content)}', '{str(category)}', '{views}', '{joiningP}', '{totalP}')"
-        cursor_db.execute(sql)
+        sql = f"INSERT INTO study ( title, writer, curDate, content, category, views, joiningP, totalP )VALUES ('{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(category)}', '{int(views)}', '{int(joiningP)}', '{int(totalP)}')"
+        done = cursor_db.execute(sql)
         mysql_db.commit() 
+        return done
         
+    '''    
     @staticmethod
     def deleteStudy(studyID):
         mysql_db = conn_mysql()
@@ -42,43 +43,60 @@ class studyPost() :
         sql = f"UPDATE study set title = " +title + "curDate = " + curDate + "content = " + content+ "views =" + views +"category = "+category+"joiningP = "+joiningP +"totalP = "+ totalP +  "WHERE studyID = " + studyID
         cursor_db.execute(sql)
         mysql_db.commit() 
-        """
+        '''
     
     # 테스트용 !!!!!!!!!!!!!!!!!!!!!!
-    def __init__(self, studyID, title, content, views, totalP):
-        self.studyID = studyID
-        self.title = title
-        self.content = content
-        self.views = views
-        self.totalP = totalP
+    #def __init__(self, studyID, title, content, views, totalP):
+    #    self.studyID = studyID
+    #    self.title = title
+    #    self.content = content
+    #    self.views = views
+    #    self.totalP = totalP
         
     # 테스트용 네 개 필드만 채우기
+    #@staticmethod
+    #def insertStudy(title, content, views, totalP):
+    #    mysql_db = conn_mysql()
+    #    cursor_db = mysql_db.cursor()
+    #    
+    #    # sql = f"INSERT INTO study ( studyID, title, content, views ) VALUES ( %s, %s, %s, %s);"
+    #    sql = f"INSERT INTO study ( studyID, title, content, views ) VALUES ( '{title}', '{content}', {int(views)});"
+    #    # print(sql)
+    #    # val = (studyID, title, content, views)
+    #    
+    #    # cursor_db.execute(sql, val)
+    #    done = cursor_db.execute(sql)
+    #    mysql_db.commit()
+    #    return done
+        
+    
     @staticmethod
-    def insertStudy(studyID, title, content, views, totalP):
+    def incViews(writer):     #조회수 1씩 증가하는 함수
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        # sql = f"INSERT INTO study ( studyID, title, content, views ) VALUES ( %s, %s, %s, %s);"
-        sql = f"INSERT INTO study ( studyID, title, content, views ) VALUES ( {int(studyID)}, '{title}', '{content}', {int(views)});"
-        # print(sql)
-        # val = (studyID, title, content, views)
-        
-        # cursor_db.execute(sql, val)
-        done = cursor_db.execute(sql)
-        mysql_db.commit()
-        return done
-        
-    @staticmethod
-    def incIndex(id):       #인덱스 1씩 증가하는 함수
-        return id+1
+        sql = f"select views from study, member where studyID = member.memId and member.memId = ( %s );"
+        cursor_db.execute(sql, writer)
+        row = cursor_db.fetchone()
+        if row is None:  # better: if not row
+          views = 0
+        else:
+            views = row[0]
+        return views
     
     @staticmethod
-    def incView(views):     #조회수 1씩 증가하는 함수
-        return views+1
-    
-    @staticmethod
-    def incJoningP(joningP):        #가입자 1씩 증가하는 함수
-        return joningP+1
+    def incJoningP(writer):        #가입자 1씩 증가하는 함수
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = f"select joiningP from study, member where studyID = member.memId and member.memId = (%s);"
+        cursor_db.execute(sql, writer)
+        row = cursor_db.fetchone()
+        if row is None:  # better: if not row
+          joiningP = 0
+        else:
+            joiningP = row[0]
+        return joiningP
     
     @staticmethod
     def curdate():

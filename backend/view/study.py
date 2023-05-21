@@ -56,35 +56,25 @@ def write():
     else :
         data = request.get_json(silent=True) # silent: parsing fail 에러 방지
         
-        index = 99 # create할 때마다 index 바꾸어야 중복 안 뜸 🍒
-        view = 0
-        joinP = 0
-        
-        studyID = studyPost.incIndex(index)     #index 자동으로 1씩 증가
         title = data['title']
         # writer = session.get("id")      # 현재 사용자 id
-        # writer = current_user.getId()
+        writer = current_user.getId()
         curDate = studyPost.curdate()      # 현재 시간
         content = data['content']
         category = data['category']
-        views = studyPost.incView(view)
-        joiningP = studyPost.incJoningP(joinP)
+        views = studyPost.incViews(writer)
+        joiningP = studyPost.incJoningP(writer)
         totalP = data['totalP']
         
-        # print(studyID, title, writer, curDate, content, category, views, joiningP, totalP)
-        # studyPost.insertStudy(studyID, title, writer, curDate, content, category, views, joiningP, totalP)
-        # print(studyID, title,  curDate, content, views, totalP)
+        print(title, writer, curDate, content, category, views, joiningP, totalP)
+        studyPost.insertStudy( title, writer, curDate, content, category, views, joiningP, totalP)
+        print(title,  curDate, content, views, totalP)
         
         # 테스트용!!!!!!!! (totalP 는 실제 입력값 없음 디폴트 50으로 설정될거임)
-        studypost1 = studyPost(studyID, title, content, views, totalP)
-        studypost1.insertStudy(studyID, title, content, views, totalP)
-        print(studypost1)
+        #studypost1 = studyPost( title, content, views, totalP)
+        #studypost1.insertStudy( title, content, views, totalP)
+        #print(studypost1)
         
-        print(studyID, title, content, totalP)
-        
-        index += 1 #다음 studyPost 에는 index 1증가하기 위함
-        views += 1
-        joiningP += 1
         
         return jsonify(
             {'status': 'success'}
