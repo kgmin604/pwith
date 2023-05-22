@@ -33,6 +33,7 @@ function App() {
   let dispatch = useDispatch();
   // const cookies = new Cookies();
 
+<<<<<<< HEAD
   /*
   스터디 모집글 관련 코드임-주연
   */
@@ -71,6 +72,17 @@ function App() {
         alert("글을 불러오지 못했습니다.");
       });
   };
+=======
+
+  if (localStorage.getItem("id") !== null) {
+    dispatch(
+      loginUser({
+        id: localStorage.getItem("id"),
+        name: localStorage.getItem("name"),
+      })
+    );
+  }
+>>>>>>> 12284fa1301aac91b68f261908790236c40ad63b
 
   function logout() {
     axios({
