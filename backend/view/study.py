@@ -70,10 +70,6 @@ def write():
         studyPost.insertStudy( title, writer, curDate, content, category, views, joiningP, totalP)
         print(title,  curDate, content, views, totalP)
         
-        # 테스트용!!!!!!!! (totalP 는 실제 입력값 없음 디폴트 50으로 설정될거임)
-        #studypost1 = studyPost( title, content, views, totalP)
-        #studypost1.insertStudy( title, content, views, totalP)
-        #print(studypost1)
         
         
         return jsonify(
