@@ -17,7 +17,7 @@ import Login from "./pages/member/login.js";
 import Join from "./pages/member/join.js";
 import Help from "./pages/member/help.js";
 import Mypage from "./pages/member/mypage.js";
-import { Account, WritingList, Chat, Mentor } from "./pages/member/mypageComp.js";
+import { Account, WritingList, Chat, Mentor, PwChange, Email } from "./pages/member/mypageComp.js";
 import { loginUser, clearUser } from "./store.js";
 import StudyCreate from "./pages/study/StudyCreate.js";
 import StudyPost from "./pages/study/StudyPost.js";
@@ -32,6 +32,47 @@ function App() {
   let user = useSelector((state) => state.user);
   let dispatch = useDispatch();
   // const cookies = new Cookies();
+
+  /*
+  스터디 모집글 관련 코드임-주연
+  */
+  const [postList, setPostList] = useState([])//글정보가 담길 배열들
+  useEffect(() => {
+    // DB에서 게시글을 가져와서 postList 상태를 업데이트합니다.
+    const updateStudy = () => {
+      axios({
+        method: "GET",
+        url: "/study",
+      })
+        .then(function (response) {
+          setPostList(response.data);
+          console.log(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+          alert("글을 불러오지 못했습니다.");
+        });
+    };
+
+    updateStudy();
+  }, []);
+
+  const updateStudy = () => {
+    axios({
+      method: "GET",
+      url: "/study",
+    })
+      .then(function (response) {
+        setPostList(response.data);
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+        alert("글을 불러오지 못했습니다.");
+      });
+  };
+
+
 
 
   if (localStorage.getItem("id") !== null) {
@@ -160,7 +201,6 @@ function App() {
           </nav>
         </div>
         <Routes>
-
           <Route path="/" element={<PwithMain />} />
           <Route path="/study" element={<StudyMain />}>
             <Route path="main" element={<StudyBoard />} />
@@ -179,16 +219,18 @@ function App() {
           <Route path="/join" element={<Join />} />
           <Route path="/help" element={<Help />} />
           <Route path="/mypage" element={<Mypage />}>
+            <Route path="account/change" element={<PwChange />} />
+            <Route path="account/email" element={<Email />} />
             <Route path="account" element={<Account />} />
             <Route path="writinglist" element={<WritingList />} />
             <Route path="chat" element={<Chat />} />
-            <Route path="mentor" element={<Mentor />} />
           </Route>
         </Routes>
       </div>
       <div className="bottom-area">
-        <div style={{ 'width': '1280px', 'margin': '0 auto', 'line-height': '80px', 'font-size': 'small' }}>
-          @Pwith team</div>
+        <div style={{ 'width': '1200px', 'margin': '0 auto', 'line-height': '80px', 'font-size': 'small' }}>
+          @Pwith team
+        </div>
       </div>
     </>
   );

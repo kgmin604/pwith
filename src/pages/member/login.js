@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux"
 import { loginUser, clearUser } from "./../../store.js"
 
-function Login(props){
+function Login(){
     
     let navigate = useNavigate();
     const dispatch = useDispatch();
