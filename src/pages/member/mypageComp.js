@@ -83,6 +83,8 @@ function Chat(){
 }
 
 function PwChange(){
+    let navigate = useNavigate();
+    let user = useSelector((state) => state.user);
 
     let [userinput, setUserinput] = useState({
         'curPw': '',
@@ -140,7 +142,23 @@ function PwChange(){
     }
 
     function changePassword() { // axios 요청
-        
+        axios({
+            method: "POST",
+            url: "/account/changepw",
+            data: {
+              memId: `${user.id}`,
+              oldPw: `${userinput['curPw']}`,
+              newPw: `${userinput['newPw']}`,
+            },
+          })
+            .then(function (response) {
+              console.log(response);
+              alert('비밀번호가 변경되었습니다.');
+              navigate("/");
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
     }
 
     function clickBtn(){
@@ -163,8 +181,7 @@ function PwChange(){
             setMsg(copyMsg);
         }
         else{
-            alert('아싸~')
-            //changePassword();
+            changePassword();
         }
     }
 
@@ -172,6 +189,7 @@ function PwChange(){
         <>
            <h3 className="my-header">비밀번호 변경</h3>
             <div className="acc-wrap" style={{'height':'195px'}}>
+            <form method="POST">
                 <div className="acc-box" style={{'width':'100%'}}> 
                     <div className="acc-header" style={{'width':'200px'}}>현재 비밀번호</div>
                     <div className="pwc-box-wrap">
@@ -193,6 +211,7 @@ function PwChange(){
                     </div>
                     <div className="err-msg">{msg['newPwChk']}</div>
                 </div>
+            </form>
             </div>
 
             <div style={{'width':'100%'}}>

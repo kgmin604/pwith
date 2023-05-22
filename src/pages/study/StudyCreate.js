@@ -104,6 +104,9 @@ function StudyCreate() {
                 <CKEditor
                     editor={ClassicEditor}
                     data=" "
+                    config={{
+                        placeholder: "내용을 입력하세요.",
+                    }}
                     onReady={editor => {
                     }}
                     onChange={(event, editor) => {

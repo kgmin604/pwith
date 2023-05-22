@@ -23,10 +23,9 @@ import StudyCreate from "./pages/study/StudyCreate.js";
 import StudyPost from "./pages/study/StudyPost.js";
 import StudyBoard from "./pages/study/StudyBoard";
 import CommunityIT from "./pages/community/CommunityIT";
-import CommunityBootcamp from "./pages/community/CommunityBootcamp";
 import CommunityQna from "./pages/community/CommunityQna";
-import CommunitySumup from "./pages/community/CommunityBoard";
 import CommunityBoard from "./pages/community/CommunityBoard";
+import CommunityContent from "./pages/community/CommunityContent";
 
 function App() {
   let navigate = useNavigate();
@@ -212,8 +211,8 @@ function App() {
           <Route path="/community" element={<CommunityMain />} >
           <Route path="main" element={<CommunityBoard />} />
           <Route path="it" element={<CommunityIT />} />
+          <Route path="content" element={<CommunityContent/>} />
           </Route>
-          {/* <Route path="/community/bootcamp" element={<CommunityBootcamp />} /> */}
           <Route path="/community/qna" element={<CommunityQna />} />
           <Route path="/mentoring" element={<MentoringMain />} />
           <Route path="/login" element={<Login />} />

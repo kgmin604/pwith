@@ -33,21 +33,21 @@ class QNAPost() :
           views = 0
         else:
             views = row[0]
-        return views
+        return views+1
     
     @staticmethod
     def incLikes(writer):     #좋아요 1씩 증가하는 함수
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"select views from QNA, member where QNAID = member.memId and member.memId = ( %s );"
+        sql = f"select likes from QNA, member where QNAID = member.memId and member.memId = ( %s );"
         cursor_db.execute(sql, writer)
         row = cursor_db.fetchone()
         if row is None:  # better: if not row
-          views = 0
+          likes = 0
         else:
-            views = row[0]
-        return views
+            likes = row[0]
+        return likes+1
         
 
     @staticmethod

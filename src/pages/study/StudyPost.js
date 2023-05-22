@@ -7,6 +7,9 @@ import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { updateStudyPostList } from "../../store.js";
+import parse from 'html-react-parser';
+
+
 
 function StudyPost(props) {
     let studyPostList = useSelector((state) => state.studyPostList);
@@ -16,6 +19,8 @@ function StudyPost(props) {
     let post = studyPostList[index];
     let studyId, title, writer, date, content, category, views, joiningP, totalP;
 
+    const parse = require('html-react-parser');
+
     console.log(post);
     if (Array.isArray(post)) {
         console.log(post[0]);
@@ -23,7 +28,7 @@ function StudyPost(props) {
         title = post[1];
         writer = post[2];
         date = post[3];
-        content = post[4];
+        content = parse(post[4]);
         category = post[5];
         views = post[6];
         joiningP = post[7];

@@ -58,7 +58,7 @@ class studyPost() :
           views = 0
         else:
             views = row[0]
-        return views
+        return views+1
     
     @staticmethod
     def incJoningP(writer):        #가입자 1씩 증가하는 함수
@@ -72,7 +72,7 @@ class studyPost() :
           joiningP = 0
         else:
             joiningP = row[0]
-        return joiningP
+        return joiningP+1
     
     @staticmethod
     def curdate():  # date 구하는 함수

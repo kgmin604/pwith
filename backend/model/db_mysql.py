@@ -1,12 +1,9 @@
 import pymysql
 
-# MYSQL_HOST = '192.168.165.10'
-MYSQL_HOST = 'localhost'
+MYSQL_HOST = 'pwith-db.ci3orq0jhzyy.ap-northeast-2.rds.amazonaws.com'
 MYSQL_PORT = 3306
-# MYSQL_USER = 'pwith'
-MYSQL_USER = 'root'
-# MYSQL_PW = '1234'
-MYSQL_PW = '0604'
+MYSQL_USER = 'admin'
+MYSQL_PW = 'pwith1234'
 MYSQL_DB = 'pwith_db'
 
 mysql_conn = pymysql.connect(
@@ -48,7 +45,7 @@ def conn_mysql():
 #💙 study 테이블 생성
 
 #sql = '''
-# CREATE TABLE STUDY
+# CREATE TABLE study
 # (
 #     studyID	INT AUTO_INCREMENT PRIMARY KEY,
 #     title	    VARCHAR(50) NOT NULL,
@@ -71,7 +68,7 @@ def conn_mysql():
 #💙 qna 테이블 생성
 
 #sql = '''
-# CREATE TABLE STUDY
+# CREATE TABLE QNA
 # (
 #     QNAID	INT AUTO_INCREMENT PRIMARY KEY,
 #     title	    VARCHAR(50) NOT NULL,
