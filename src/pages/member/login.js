@@ -38,8 +38,6 @@ function Login(){
             }
             if(response.data.code===401){
               dispatch(loginUser(response.data));
-              localStorage.setItem("id", response.data.id);
-              localStorage.setItem("name", response.data.name);
               navigate("/");
             }
           })

@@ -72,18 +72,6 @@ function App() {
       });
   };
 
-
-
-
-  if (localStorage.getItem("id") !== null) {
-    dispatch(
-      loginUser({
-        id: localStorage.getItem("id"),
-        name: localStorage.getItem("name"),
-      })
-    );
-  }
-
   function logout() {
     axios({
       method: "GET",
@@ -94,8 +82,6 @@ function App() {
     })
       .then(function (response) {
         console.log(response);
-        localStorage.removeItem("id");
-        localStorage.removeItem("name");
         dispatch(clearUser());
         navigate("/");
       })
@@ -104,6 +90,26 @@ function App() {
       });
   }
 
+  useEffect(() => {
+    axios({
+      method: "POST",
+      url: "/",
+      data: {
+        chkSession: 1
+      },
+    })
+      .then(function (response) {
+        dispatch(
+          loginUser({
+            id: response.data.id,
+            name: response.data.name
+          })
+        );
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
 
   return (
     <>
