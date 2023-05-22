@@ -18,9 +18,9 @@ def changePw() :
     # else :
         # print('post비번변경')
         # memId = current_user.getId()
-        memId = 'a'
-        oldPw = 'a' # 프론트에서 받아오기
-        newPw = 'TT' # 프론트에서 받아오기
+        memId = data['memId']
+        oldPw = data['oldPw'] # 프론트에서 받아오기
+        newPw = data['newPw'] # 프론트에서 받아오기
 
         Member.changePw(memId, oldPw, newPw)
 
