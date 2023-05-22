@@ -13,7 +13,7 @@ function StudyMain(props) {
   return (
     <div className="StudyMain">
       <div class="row">
-        <div class="col-md-3" style={{'margin-bottom':'500px'}}>
+        <div class="col-md-3">
           {Category()}
         </div>
 

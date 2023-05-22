@@ -84,8 +84,7 @@
 }
 
 .mypage-wrap{
-    height: 100%;
-    margin-bottom: 900px;
+    min-height: 800px;
 }
 
 .mypageList{
@@ -154,6 +153,40 @@
     font-size:medium;
     font-family: 'Noto Sans KR';
     float: left;
+}
+
+.pwc-box-wrap{
+    width:200px;
+    height: 50px;
+    margin: 0 0;
+    margin-right: 10px;
+    padding: 2px 0;
+    float: left;
+}
+
+.pwc-box{
+    width: 200px;
+    height: 30px;
+    border-radius: 5px;
+    border: solid 1px;
+    border-color: #98AFCA;
+}
+
+.pwBtn{
+    margin: 20px 47%;
+    border: solid 1px;
+    border-color: #98AFCA;
+}
+
+.err-msg{
+    width: 300px;
+    height: 50px;
+    float: left;
+    font-size: 12px;
+    color:red;
+    line-height: 50px;
+    text-align: left;
+    padding: 0 10px;
 }
 
 /* 채팅 */
@@ -246,3 +279,42 @@
     background-color: aliceblue;
     float: left;
 }
+
+.chatting-content{
+    width: 550px;
+    height: 78%;
+    margin: 10px 4%;
+    border : solid 1px;
+    border-color: #98AFCA;
+}
+
+.chat-input{
+    width: 80%;
+    height: 100px;
+    vertical-align: top;
+    padding: 10px 10px;
+    margin: 0 10px;
+    float:left;
+}
+
+.chat-transmit-btn{
+    width: 80px;
+    height: 100px;
+    text-align: center;
+    background-color: white;
+    border-radius: 5px;
+    border: solid 1px;
+    border-color: #98AFCA;
+    float:left;
+    margin: 0 5px;
+}
+
+.scroll-area{
+    -ms-overflow-style: none; /* for Internet Explorer, Edge */
+    scrollbar-width: none; /* for Firefox */
+    overflow-y: scroll; 
+}
+
+.scroll-area::-webkit-scrollbar {
+    display: none; /* for Chrome, Safari, and Opera */
+  }

@@ -11,8 +11,7 @@ function Mypage(){
                 <ul className="mypageList">
                     <li className="mypageList-btn" onClick={()=>navigate('./account')}>회원정보 관리</li>
                     <li className="mypageList-btn" onClick={()=>navigate('./writinglist')}>내 글 목록</li>
-                    <li className="mypageList-btn" onClick={()=>navigate('./chat')}>채팅</li>
-                    <li className="mypageList-btn" onClick={()=>navigate('./mentor')}>멘토 신청</li>
+                    <li className="mypageList-btn" onClick={()=>navigate('./chat')}>쪽지함</li>
                 </ul>
                 <div className="mypage-area"> 
                     <Outlet></Outlet>

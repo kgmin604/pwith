@@ -36,7 +36,7 @@ CREATE TABLE boot
     views INT,
     likes INT,
     PRIMARY KEY(bootId),
-    FOREIGN KEY(writer) REFERENCE member(memId)
+    FOREIGN KEY(writer) REFERENCES member(memId)
 )
 
 CREATE TABLE QNA
@@ -51,5 +51,5 @@ CREATE TABLE QNA
     likes INT,
     reply VARCHAR(200),
     PRIMARY KEY(QNAId),
-    FOREIGN KEY(writer) REFERENCE member(memId)
+    FOREIGN KEY(writer) REFERENCES member(memId)
 )
