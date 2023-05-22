@@ -43,7 +43,7 @@ function CommunityBoard(){
                             <tr>
                                 <th colSpan={3} className="posting-header">
                                     <div className="tableHead">
-                                        <div>부트캠프 후기</div>
+                                        <div>컨텐츠</div>
                                         <span onClick={() => navigate("../bootcamp")}>(+)</span>
                                     </div>
                                 </th>
