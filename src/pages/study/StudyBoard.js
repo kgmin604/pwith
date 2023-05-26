@@ -50,6 +50,7 @@ function StudyBoard(props) {
                     <th>조회수</th>
                     <th>날짜</th>
                     <th>인원</th>
+                    <th>글쓴이</th>
                 </tr>
             </thead>
             <tbody>
@@ -62,6 +63,7 @@ function StudyBoard(props) {
                             <td>{row[6]}</td>
                             <td>{row[3]}</td>
                             <td>{row[8]}</td>
+                            <td>{row[2]}</td>
                         </tr>
                     );
                 }

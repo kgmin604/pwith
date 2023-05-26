@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux"
 import { loginUser, clearUser } from "./../../store.js"
 
-function Login(props){
+function Login(){
     
     let navigate = useNavigate();
     const dispatch = useDispatch();
@@ -38,8 +38,6 @@ function Login(props){
             }
             if(response.data.code===401){
               dispatch(loginUser(response.data));
-              localStorage.setItem("id", response.data.id);
-              localStorage.setItem("name", response.data.name);
               navigate("/");
             }
           })
