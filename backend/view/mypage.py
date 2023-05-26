@@ -4,8 +4,6 @@ from controller.member_mgmt import Member
 
 mypage_bp = Blueprint('mypage', __name__, url_prefix='/mypage')
 
-# 프론트 구현 전이라 일단 더미값으로 입력.
-# postman 테스트 완.
 @login_required
 @mypage_bp.route('/account/changepw', methods = ['GET', 'POST'])
 def changePw() :
@@ -14,19 +12,36 @@ def changePw() :
         return jsonify(
             {'status': 'success'}
         )   
+    else :
+        data = request.get_json()
+        
+        memId = current_user.getId()
+        oldPw = data['oldPw']
+        newPw = data['newPw']
 
-    # else :
-        # print('post비번변경')
-        # memId = current_user.getId()
-        memId = data['memId']
-        oldPw = data['oldPw'] # 프론트에서 받아오기
-        newPw = data['newPw'] # 프론트에서 받아오기
+        result = Member.changePw(memId, oldPw, newPw)
 
-        Member.changePw(memId, oldPw, newPw)
+        return result
 
+
+@login_required
+@mypage_bp.route('/account/email', methods = ['GET', 'POST'])
+def changeEmail() :
+    if request.method == 'POST' : # '완료' 버튼 클릭 시
+        #newEmail = request.get_json()
+
+        # 현재 이메일 입력 안하는 방식
+        # result = Member.changeEmail(current_user.getId(), newEmail)
+        Member.changeEmail('test', 'emailtest')
+
+        # return result
+        return ''
+        
+    else :
         return jsonify(
-            {'status': 'success'}
+            {'status' : 'success'}
         )
+
 
 @login_required
 @mypage_bp.route('/writinglist', methods = ['GET', 'POST'])

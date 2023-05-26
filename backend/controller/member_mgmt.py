@@ -68,6 +68,18 @@ class Member(UserMixin):
         return done
 
     @staticmethod
+    def changeEmail(memId, newEmail):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"UPDATE member SET memEmail = '{newEmail}' WHERE memId = '{memId}'"
+        print(sql)
+        done = cursor_db.execute(sql)
+        print(done)
+
+        return done
+
+    @staticmethod
     def delete(memId):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
