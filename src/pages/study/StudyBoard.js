@@ -16,16 +16,6 @@ function StudyBoard(props) {
     let studyPostList = useSelector((state) => state.studyPostList);
     
 
-
-    if (localStorage.getItem("authentication") !== null) {//id 값을 가져옴
-        dispatch(
-            loginUser({
-                id: localStorage.getItem("id"),
-                name: localStorage.getItem("name"),
-            })
-        );
-    }
-
     return (<div className="Board">
         <Stack direction="horizontal" gap={3} style={{ padding: "5px" }}>
             <Form.Control className="me-auto" placeholder="원하는 스터디를 찾아보세요!" />
