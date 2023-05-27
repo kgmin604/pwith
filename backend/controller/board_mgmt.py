@@ -4,46 +4,26 @@ from flask import Flask, jsonify
 
 class studyPost() :
     
-    def __init__(self, title, writer, curDate, content, category, views, joiningP, totalP):
+    def __init__(self, type, title, writer, curDate, content, category, likes, views):
+        self.type = type
         self.title = title
         self.writer = writer
         self.curDate = curDate
         self.content = content
         self.category = category
+        self.likes = likes
         self.views = views
-        self.joningP = joiningP
-        self.totalP = totalP
     
     
     @staticmethod
-    def insertStudy( title, writer, curDate, content, category, views, joiningP, totalP):   # insert data
+    def insertStudy( type, title, writer, curDate, content, category, likes, views):   # insert data
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"INSERT INTO study ( title, writer, curDate, content, category, views, joiningP, totalP )VALUES ('{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(category)}', '{int(views)}', '{int(joiningP)}', '{int(totalP)}')"
+        sql = f"INSERT INTO post ( type, title, writer, curDate, content, category, likes, views )VALUES ('{int(type)}', '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(category)}', '{int(likes)}', '{int(views)}')"
         done = cursor_db.execute(sql)
         mysql_db.commit() 
         return done
-        
-    '''    
-    @staticmethod
-    def deleteStudy(studyID):
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
-        
-        sql = f"DELETE FROM study WHERE studyID = " + studyID
-        cursor_db.execute(sql)
-        mysql_db.commit() 
-        
-    @staticmethod
-    def updateStudy(studyID, title, curDate, content, views, category, joiningP, totalP):
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
-        
-        sql = f"UPDATE study set title = " +title + "curDate = " + curDate + "content = " + content+ "views =" + views +"category = "+category+"joiningP = "+joiningP +"totalP = "+ totalP +  "WHERE studyID = " + studyID
-        cursor_db.execute(sql)
-        mysql_db.commit() 
-        '''
      
     
     @staticmethod
@@ -51,7 +31,7 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"select views from study, member where studyID = member.memId and member.memId = ( %s );"
+        sql = f"select views from post, member where postId.writer = member.memId and member.memId = ( %s );"
         cursor_db.execute(sql, writer)
         row = cursor_db.fetchone()
         if row is None:  # better: if not row
@@ -61,11 +41,11 @@ class studyPost() :
         return views+1
     
     @staticmethod
-    def incJoningP(writer):        #가입자 1씩 증가하는 함수
+    def incLikes(writer):        #가입자 1씩 증가하는 함수
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"select joiningP from study, member where studyID = member.memId and member.memId = (%s);"
+        sql = f"select likes from post, member where postId.writer = member.memId and member.memId = (%s);"
         cursor_db.execute(sql, writer)
         row = cursor_db.fetchone()
         if row is None:  # better: if not row
@@ -84,7 +64,7 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = "select * from study"
+        sql = "select * from post"
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
         # print(rows)
@@ -98,7 +78,7 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT * FROM study WHERE studyId = {id}"
+        sql = f"SELECT * FROM post WHERE postId = {id}"
         cursor_db.execute(sql)
         res = cursor_db.fetchone() # tuple
         print(res)
@@ -114,7 +94,7 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"SELECT * FROM study WHERE writer = '{writer}'"
+        sql = f"SELECT * FROM post WHERE writer = '{writer}'"
 
         cursor_db.execute(sql)
         posts = cursor_db.fetchall() # tuple의 tuple
@@ -129,7 +109,7 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT * FROM study WHERE title = '{title}'"
+        sql = f"SELECT * FROM post WHERE title = '{title}'"
 
         cursor_db.execute(sql)
         posts = cursor_db.fetchall() # page 만들 시 fetchmany() 사용
@@ -152,3 +132,24 @@ class studyPost() :
 
     def getTotalP(self) :
         return int(self.totalP)
+    
+    
+        '''    
+    @staticmethod
+    def deleteStudy(studyID):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = f"DELETE FROM post WHERE postID = " + studyID
+        cursor_db.execute(sql)
+        mysql_db.commit() 
+        
+    @staticmethod
+    def updateStudy(studyID, title, curDate, content, views, category, joiningP, totalP):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = f"UPDATE study set title = " +title + "curDate = " + curDate + "content = " + content+ "views =" + views +"category = "+category+"joiningP = "+joiningP +"totalP = "+ totalP +  "WHERE studyID = " + studyID
+        cursor_db.execute(sql)
+        mysql_db.commit() 
+    '''

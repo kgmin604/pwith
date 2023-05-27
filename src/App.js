@@ -17,7 +17,14 @@ import Login from "./pages/member/login.js";
 import Join from "./pages/member/join.js";
 import Help from "./pages/member/help.js";
 import Mypage from "./pages/member/mypage.js";
-import { Account, WritingList, Chat, Mentor, PwChange, Email } from "./pages/member/mypageComp.js";
+import {
+  Account,
+  WritingList,
+  Chat,
+  Mentor,
+  PwChange,
+  Email,
+} from "./pages/member/mypageComp.js";
 import { loginUser, clearUser } from "./store.js";
 import StudyCreate from "./pages/study/StudyCreate.js";
 import StudyPost from "./pages/study/StudyPost.js";
@@ -32,6 +39,15 @@ function App() {
   let user = useSelector((state) => state.user);
   let dispatch = useDispatch();
   // const cookies = new Cookies();
+
+  if (localStorage.getItem("id") !== null) {
+    dispatch(
+      loginUser({
+        id: localStorage.getItem("id"),
+        name: localStorage.getItem("name"),
+      })
+    );
+  }
 
   function logout() {
     axios({
@@ -56,14 +72,14 @@ function App() {
       method: "POST",
       url: "/",
       data: {
-        chkSession: 1
+        chkSession: 1,
       },
     })
       .then(function (response) {
         dispatch(
           loginUser({
             id: response.data.id,
-            name: response.data.name
+            name: response.data.name,
           })
         );
       })
@@ -88,15 +104,28 @@ function App() {
             </div>
           )}
           <nav className="navbar" style={{}}>
-            <div className="btn pwith-logo" onClick={() => { navigate("/"); }}></div>
+            <div
+              className="btn pwith-logo"
+              onClick={() => {
+                navigate("/");
+              }}
+            ></div>
             <ul className="navbar-menu" style={{ "margin-right": "40px" }}>
-              <li className="navbar-btn" onClick={() => { navigate("/study/main"); }}>
+              <li
+                className="navbar-btn"
+                onClick={() => {
+                  navigate("/study/main");
+                }}
+              >
                 스터디
               </li>
               <li className="navbar-btn" onClick={() => navigate("/studyroom")}>
                 스터디룸
               </li>
-              <li className="navbar-btn" onClick={() => navigate("/community/main")}>
+              <li
+                className="navbar-btn"
+                onClick={() => navigate("/community/main")}
+              >
                 커뮤니티
               </li>
               <li className="navbar-btn" onClick={() => navigate("/mentoring")}>
@@ -104,7 +133,10 @@ function App() {
               </li>
             </ul>
 
-            <Form className="d-flex" style={{ 'width': "280px", 'height': "40px", 'margin-left': '80px' }}>
+            <Form
+              className="d-flex"
+              style={{ width: "280px", height: "40px", "margin-left": "80px" }}
+            >
               <Form.Control
                 type="search"
                 placeholder="검색"
@@ -118,7 +150,8 @@ function App() {
                   "border-color": "#98AFCA",
                   "background-color": "white",
                   height: "40px",
-                }}>
+                }}
+              >
                 🔍{" "}
               </div>
             </Form>
@@ -175,10 +208,10 @@ function App() {
           </Route>
           <Route path="/study/create" element={<StudyCreate />} />
           <Route path="/studyroom" element={<RoomMain />} />
-          <Route path="/community" element={<CommunityMain />} >
-          <Route path="main" element={<CommunityBoard />} />
-          <Route path="it" element={<CommunityIT />} />
-          <Route path="content" element={<CommunityContent/>} />
+          <Route path="/community" element={<CommunityMain />}>
+            <Route path="main" element={<CommunityBoard />} />
+            <Route path="it" element={<CommunityIT />} />
+            <Route path="content" element={<CommunityContent />} />
           </Route>
           <Route path="/community/qna" element={<CommunityQna />} />
           <Route path="/mentoring" element={<MentoringMain />} />
@@ -195,7 +228,14 @@ function App() {
         </Routes>
       </div>
       <div className="bottom-area">
-        <div style={{ 'width': '1200px', 'margin': '0 auto', 'line-height': '80px', 'font-size': 'small' }}>
+        <div
+          style={{
+            width: "1200px",
+            margin: "0 auto",
+            "line-height": "80px",
+            "font-size": "small",
+          }}
+        >
           @Pwith team
         </div>
       </div>

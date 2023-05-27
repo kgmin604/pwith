@@ -7,10 +7,6 @@ bp = Blueprint('login', __name__, url_prefix='')
 @bp.route('/', methods=['GET', 'POST']) # 테스트 전
 def chkSession() :
     if request.method == 'GET' :
-        return jsonify({
-            'status': 'success'
-        })
-    else :
         memInfo = {
             'id': '',
             'name': ''
@@ -26,6 +22,22 @@ def chkSession() :
                 print('전달 완료')
 
         return memInfo
+    # else :
+    #     memInfo = {
+    #         'id': '',
+    #         'name': ''
+    #     }
+    #     data = request.get_json(silent=True)
+
+    #     if data['chkSession'] == 1:
+    #         if current_user.is_anonymous :
+    #             print('익명')
+    #         else :
+    #             memInfo['id'] = current_user.getId()
+    #             memInfo['name'] = current_user.getName()
+    #             print('전달 완료')
+
+    #     return memInfo
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login() :
