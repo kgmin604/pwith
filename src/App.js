@@ -33,6 +33,7 @@ import CommunityIT from "./pages/community/CommunityIT";
 import CommunityQna from "./pages/community/CommunityQna";
 import CommunityBoard from "./pages/community/CommunityBoard";
 import CommunityContent from "./pages/community/CommunityContent";
+import QnaCreate from "./pages/community/QnaCreate";
 
 function App() {
   let navigate = useNavigate();
@@ -214,6 +215,7 @@ function App() {
             <Route path="content" element={<CommunityContent />} />
           </Route>
           <Route path="/community/qna" element={<CommunityQna />} />
+          <Route path="/community/qnacreate" element={<QnaCreate/>} /> 
           <Route path="/mentoring" element={<MentoringMain />} />
           <Route path="/login" element={<Login />} />
           <Route path="/join" element={<Join />} />
