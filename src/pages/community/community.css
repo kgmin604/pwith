@@ -8,6 +8,11 @@
     text-align: center;
 }
 
+.CommunityQna{
+    font-family: "TmoneyRoundWind";
+    text-align: center;
+}
+
 .tableHead{
     display: flex;
     justify-content: space-between;
