@@ -1,4 +1,6 @@
-from mentor_mgmt import Portfolio
+from controller.mentor_mgmt import Portfolio
+from flask import Blueprint
+from flask_login import current_user
 
 mento_bp = Blueprint('mento', __name__, url_prefix='/mentoring')
 
@@ -8,7 +10,7 @@ def showAll() :
         allP = Portfolio.loadAll()
         print('allP : ')
         print(allP)
-        return allP
+        return allP # jsonify ?
     # else :
 
 @mento_bp.route('/create', methods = ['GET', 'POST'])

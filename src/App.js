@@ -67,27 +67,27 @@ function App() {
         console.log(error);
       });
   }
-
-  useEffect(() => {
-    axios({
-      method: "POST",
-      url: "/",
-      data: {
-        chkSession: 1,
-      },
-    })
-      .then(function (response) {
-        dispatch(
-          loginUser({
-            id: response.data.id,
-            name: response.data.name,
-          })
-        );
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, []);
+  // 이거 잠깐 주석 처리했어..! - ㅊㅇ
+  // useEffect(() => {
+  //   axios({
+  //     method: "POST",
+  //     url: "/",
+  //     data: {
+  //       chkSession: 1,
+  //     },
+  //   })
+  //     .then(function (response) {
+  //       dispatch(
+  //         loginUser({
+  //           id: response.data.id,
+  //           name: response.data.name,
+  //         })
+  //       );
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // }, []);
 
   return (
     <>

@@ -3,23 +3,27 @@ from model.db_mysql import conn_mysql
 class Portfolio() :
     
     def __init__(self, writer, subject, image, content):
-        self.writer = writer
-        self.subject = subject
-        self.image = image
-        self.content = content
+        self.__writer = writer # 더던
+        self.__subject = subject
+        self.__image = image
+        self.__content = content
         # 끌어올리기 구현 시 ON/OFF or date 추가 - DB에도
     
-    def getWriter(self) :
-        return str(self.writer)
-        
-    def getSubject(self) :
-        return str(self.subject)
+    @property # 은닉
+    def writer(self) :
+        return str(self.__writer)
 
-    def getImage(self) :
-        return str(self.image) # link ?
+    @property
+    def subject(self) :
+        return str(self.__subject)
 
-    def getContent(self) :
-        return str(self.content)
+    @property
+    def image(self) :
+        return str(self.__image) # link ?
+
+    @property
+    def content(self) :
+        return str(self.__content)
 
     @staticmethod
     def create(writer, subject, image, content) :
