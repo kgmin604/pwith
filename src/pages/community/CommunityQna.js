@@ -36,7 +36,7 @@ function CommunityQna(props) {
                     <div className="vr" />
                     {user.id === "" ? null :
                         (<div>
-                            <Nav.Link onClick={() => { navigate("../community/qnacreate"); }}>
+                            <Nav.Link onClick={() => { navigate("../community/qna/create"); }}>
                                 <Button variant="blue"
                                 >New</Button>
                             </Nav.Link>
