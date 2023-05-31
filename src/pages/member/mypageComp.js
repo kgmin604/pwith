@@ -146,7 +146,7 @@ function PwChange(){
             method: "POST",
             url: "/account/changepw",
             data: {
-              memId: `${user.id}`,
+              //memId: `${user.id}`,
               oldPw: `${userinput['curPw']}`,
               newPw: `${userinput['newPw']}`,
             },

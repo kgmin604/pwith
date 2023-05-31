@@ -56,20 +56,20 @@ def write():
     else :
         data = request.get_json(silent=True) # silent: parsing fail 에러 방지
         
+        type = 0
         title = data['title']
         # writer = session.get("id")      # 현재 사용자 id
         writer = current_user.getId()
         curDate = studyPost.curdate()      # 현재 시간
         content = data['content']
         category = data['category']
-        views = studyPost.incViews(writer)
-        joiningP = studyPost.incJoningP(writer)
-        totalP = data['totalP']
+        likes = 0
+        views = 0
+        #joiningP = 0
+        #totalP = data['totalP']
         
-        print(title, writer, curDate, content, category, views, joiningP, totalP)
-        studyPost.insertStudy( title, writer, curDate, content, category, views, joiningP, totalP)
-        print(title,  curDate, content, views, totalP)
-        
+        print(type, title, writer, curDate, content, category, likes, views)
+        studyPost.insertStudy( type, title, writer, curDate, content, category, likes, views)
         
         
         return jsonify(

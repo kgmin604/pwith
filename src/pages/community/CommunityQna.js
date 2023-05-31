@@ -5,11 +5,21 @@ import React, { useState } from 'react';
 import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { loginUser, clearUser } from "../../store";
 
 function CommunityQna(props) {
     let navigate = useNavigate();
     let user = useSelector((state) => state.user);
     let dispatch = useDispatch();
+
+    if (localStorage.getItem("id") !== null) {
+        dispatch(
+          loginUser({
+            id: localStorage.getItem("id"),
+            name: localStorage.getItem("name"),
+          })
+        );
+      }
 
     // let postList=props.postList;
     let postList = [];
@@ -26,8 +36,7 @@ function CommunityQna(props) {
                     <div className="vr" />
                     {user.id === "" ? null :
                         (<div>
-
-                            <Nav.Link onClick={() => { navigate("../qnacreate"); }}>
+                            <Nav.Link onClick={() => { navigate("../community/qnacreate"); }}>
                                 <Button variant="blue"
                                 >New</Button>
                             </Nav.Link>
