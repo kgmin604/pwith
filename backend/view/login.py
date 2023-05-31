@@ -10,8 +10,7 @@ def chkSession() :
         return jsonify({
             'status': 'success'
         })
-    # else :
-    if request.method == 'GET' :
+    else if request.method == 'GET' :
         memInfo = {
             'id': '',
             'name': ''

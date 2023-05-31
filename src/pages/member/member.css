@@ -247,74 +247,129 @@
     float: left;
 }
 
-.chat-list{
-    width: 40%;
+.chat-boxes{
+    width: 30%;
     height: 100%;
     margin: 0 0;
     border-right: solid #98AFCA 2px;
     float: left;
 }
 
-.chat-list-content{
-    width: 100%;
-    height: 70px;
-    border-bottom : solid 1px gray;
-}
-
-.chat-list-name{
-    font-family: 'TmoneyRoundWind';
-    margin-top:5px;
-    font-size: medium;
-}
-
-.chat-list-name-cont{
-    font-family: 'Noto Sans KR';
-    font-size: small;
-}
-
-.chatting{
-    width: 60%;
+.chat-box{
+    width: 70%;
     height: 100%;
     margin: 0 0;
     background-color: aliceblue;
     float: left;
 }
 
-.chatting-content{
-    width: 550px;
-    height: 78%;
-    margin: 10px 4%;
-    border : solid 1px;
-    border-color: #98AFCA;
+a{
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.05);
+    color: #666;
+    text-decoration: none;
+}
+a:hover { text-decoration : none;}
+
+div.chat-bottom div.chat-boxes
+.item{
+    display: block;
+    height: 80px;
+    padding: 12px 24px;
+    cursor: pointer;
 }
 
-.chat-input{
-    width: 80%;
-    height: 100px;
-    vertical-align: top;
-    padding: 10px 10px;
-    margin: 0 10px;
-    float:left;
+div.chat-bottom div.chat-boxes
+.selected{
+    background-color:#98AFCA;
+    color:white;
 }
 
-.chat-transmit-btn{
-    width: 80px;
-    height: 100px;
-    text-align: center;
-    background-color: white;
-    border-radius: 5px;
-    border: solid 1px;
-    border-color: #98AFCA;
-    float:left;
-    margin: 0 5px;
+div.chat-bottom div.chat-boxes a.item
+h3{
+    font-size: 14px;
+    font-weight: bold;
 }
 
-.scroll-area{
-    -ms-overflow-style: none; /* for Internet Explorer, Edge */
-    scrollbar-width: none; /* for Firefox */
-    overflow-y: scroll; 
+div.chat-bottom div.chat-boxes a.item
+time{
+    float: right;
+    margin-left: 8px;
+    line-height: 20px;
+    font-size: 12px;
 }
 
+div.chat-bottom div.chat-box
+.title{
+    left: 0;
+    top: 0;
+    padding: 12px 0 0 16px;
+    height: 80px;
+    border-bottom: 1px solid #98AFCA;
+    background-color:white;
+}
+
+div.chat-bottom div.chat-box div.title
+h2{
+    flex: auto;
+    line-height: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+div.chat-bottom div.chat-box
+.content{
+    margin: 0 8px;
+    padding: 12px 16px;
+}
+
+div.chat-bottom div.chat-box div.content
+.item{
+    margin: 10px 0;
+    border-bottom: 1px solid #98AFCA;
+}
+
+div.chat-bottom div.chat-box div.content div.item
+time{
+    float: right;
+    font-size: 12px;
+    border:solid;
+}
+
+div.chat-bottom div.chat-box div.content div.item
+.type{
+    line-height: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+div.chat-bottom div.chat-box div.content div.item
+.text{
+    margin-top: 4px;
+    line-height: 20px;
+    color: #292929;
+    font-size: 14px;
+    word-wrap: break-word;
+}
+
+.scroll-area {
+  overflow-y: scroll;
+  scrollbar-width: thin; /* for Firefox */
+  -ms-overflow-style: scrollbar; /* for Internet Explorer, Edge */
+}
+
+/* Chrome, Safari, and Opera */
 .scroll-area::-webkit-scrollbar {
-    display: none; /* for Chrome, Safari, and Opera */
-  }
+  width: 6px;
+}
+
+.scroll-area::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 3px;
+}
+
+.scroll-area::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
