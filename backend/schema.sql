@@ -52,3 +52,13 @@ CREATE TABLE reply (
     postNum INT NOT NULL,
     FOREIGN KEY(type, postNum) REFERENCES post(type, postId) on delete cascade
 )
+
+CREATE TABLE mento (
+    mentoId INT,
+    mentiList JSON,
+    subject JSON NOT NULL,
+    mentoPic image, -- NOT NULL
+    content VARCHAR(500) NOT NULL,
+    PRIMARY KEY(mentoId),
+    FOREIGN KEY(mentoId, mentiId) REFERENCES member(memId, memId) on delete cascade
+);
