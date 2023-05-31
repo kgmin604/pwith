@@ -164,9 +164,9 @@ function App() {
                 <div
                   className="mem-btn"
                   style={{ width: "70px" }}
-                  onClick={() => navigate("/")}
+                  onClick={() => navigate("/mypage/chat")}
                 >
-                  알림함
+                  쪽지함
                 </div>
                 <div
                   className="mem-btn"
