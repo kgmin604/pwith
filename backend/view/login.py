@@ -6,7 +6,7 @@ bp = Blueprint('login', __name__, url_prefix='')
 
 @bp.route('/', methods=['GET', 'POST']) # 테스트 전
 def chkSession() :
-    if request.method == 'GET' :
+    if request.method == 'POST' :
         return jsonify({
             'status': 'success'
         })

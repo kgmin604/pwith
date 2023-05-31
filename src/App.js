@@ -33,57 +33,6 @@ function App() {
   let dispatch = useDispatch();
   // const cookies = new Cookies();
 
-<<<<<<< HEAD
-  /*
-  스터디 모집글 관련 코드임-주연
-  */
-  const [postList, setPostList] = useState([])//글정보가 담길 배열들
-  useEffect(() => {
-    // DB에서 게시글을 가져와서 postList 상태를 업데이트합니다.
-    const updateStudy = () => {
-      axios({
-        method: "GET",
-        url: "/study",
-      })
-        .then(function (response) {
-          setPostList(response.data);
-          console.log(response.data);
-        })
-        .catch(function (error) {
-          console.log(error);
-          alert("글을 불러오지 못했습니다.");
-        });
-    };
-
-    updateStudy();
-  }, []);
-
-  const updateStudy = () => {
-    axios({
-      method: "GET",
-      url: "/study",
-    })
-      .then(function (response) {
-        setPostList(response.data);
-        console.log(response.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-        alert("글을 불러오지 못했습니다.");
-      });
-  };
-=======
-
-  if (localStorage.getItem("id") !== null) {
-    dispatch(
-      loginUser({
-        id: localStorage.getItem("id"),
-        name: localStorage.getItem("name"),
-      })
-    );
-  }
->>>>>>> 12284fa1301aac91b68f261908790236c40ad63b
-
   function logout() {
     axios({
       method: "GET",
@@ -104,10 +53,10 @@ function App() {
 
   useEffect(() => {
     axios({
-      method: "POST",
+      method: "GET",
       url: "/",
       data: {
-        chkSession: 1
+        'chkSession' : 1
       },
     })
       .then(function (response) {
@@ -117,8 +66,16 @@ function App() {
             name: response.data.name
           })
         );
+        alert('불러옴');
       })
       .catch(function (error) {
+        dispatch(
+          loginUser({
+            id: "",
+            name: ""
+          })
+        );
+        alert('못불러옴');
         console.log(error);
       });
   }, []);
