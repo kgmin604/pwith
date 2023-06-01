@@ -34,6 +34,8 @@ function StudyBoard(props) {
         })
           .then(function (response) {
             console.log(response);
+            console.log(searchType);
+            console.log(inputValue);
           })
           .catch(function (error) {
             console.log(error);
@@ -64,7 +66,7 @@ return (<div className="Board">
     <Stack direction="horizontal" gap={3} style={{ padding: "5px" }}>
         <div>
             {
-                searchType === '제목' ?
+                searchType === 0 ?
                     <DropdownButton
                         id="dropdown-button-dark-example2"
                         variant="blue"
@@ -93,9 +95,9 @@ return (<div className="Board">
                 value={inputValue}
                 onChange={handleInputChange}
                 style={{width:'400px'}}
-            />
-            <Button variant="blue" onClick={() => { searchStudy(); }}>🔍</Button>
+            />    
         </Form>
+        <Button variant="blue" onClick={() => { searchStudy(); }}>🔍</Button>
         
         
         <div className="vr" />
