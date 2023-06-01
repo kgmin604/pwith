@@ -73,6 +73,7 @@ def login() :
         res['code'] = 401
         res['id'] = mem.getId()
         res['name'] = mem.getName()
+        res['email'] = mem.getEmail()
         # print('login 성공')
 
         print(current_user.getName() + '님 환영해요.')

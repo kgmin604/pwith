@@ -46,6 +46,7 @@ function App() {
       loginUser({
         id: localStorage.getItem("id"),
         name: localStorage.getItem("name"),
+        email: localStorage.getItem("email")
       })
     );
   }
@@ -64,6 +65,7 @@ function App() {
 
         localStorage.removeItem("id");
         localStorage.removeItem("name");
+        localStorage.removeItem("email");
         navigate("/");
       })
       .catch(function (error) {

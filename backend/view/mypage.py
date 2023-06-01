@@ -21,7 +21,9 @@ def changePw() :
 
         result = Member.changePw(memId, oldPw, newPw)
 
-        return result
+        return jsonify(
+            {'result' : result}
+        )
 
 
 @login_required

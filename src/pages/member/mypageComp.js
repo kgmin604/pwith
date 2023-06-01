@@ -23,8 +23,10 @@ function Account(){
                     <Button variant="secondary" size="sm" onClick={()=>navigate('./changepw')}>비밀번호 변경 </Button>
                 </div>
                 <div className="acc-box"> <div className="acc-header">이름</div>{user.name}</div>
-                <div className="acc-box"> <div className="acc-header">이메일</div> test@naver.com {user.email}
-                    <Button variant="secondary" size="sm" onClick={()=>navigate('./email')}> 이메일 인증 </Button>
+                <div className="acc-box"> <div className="acc-header">이메일</div> {user.email}
+                    <Button variant="secondary" size="sm" onClick={()=>navigate('./email')} style={{'margin' : '0 10px'}}> 
+                        이메일 인증 
+                    </Button>
                 </div>
             </div>
         </>
@@ -152,9 +154,8 @@ function Chat(){
     );
 }
 
-function PwChange(){
+function PwChange(){ // 컴포넌트
     let navigate = useNavigate();
-    let user = useSelector((state) => state.user);
 
     let [userinput, setUserinput] = useState({
         'curPw': '',
@@ -162,7 +163,6 @@ function PwChange(){
         'newPwChk': ''
     });
     let [is,setIs] = useState({
-        'curPw': true, // ***********************************************수정해야함
         'newPw': false,
         'newPwChk': false
     });
@@ -171,12 +171,6 @@ function PwChange(){
         'newPw': '',
         'newPwChk': ''
     })
-    
-    function checkPw(){ // ***********************************************수정해야함
-        let copyIs = {...is};
-        copyIs['joinPw'] = false;
-        setIs(copyIs);
-    }
 
     function inputChange(e){
         let copyUserinput = {...userinput};
@@ -212,19 +206,29 @@ function PwChange(){
     }
 
     function changePassword() { // axios 요청
+        let copyMsg ={
+            'curPw': '',
+            'newPw': '',
+            'newPwChk': ''
+        }
         axios({
             method: "POST",
-            url: "/account/changepw",
+            url: "/mypage/account/changepw",
             data: {
-              //memId: `${user.id}`,
               oldPw: `${userinput['curPw']}`,
               newPw: `${userinput['newPw']}`,
             },
           })
             .then(function (response) {
-              console.log(response);
-              alert('비밀번호가 변경되었습니다.');
-              navigate("/");
+                if(response.data.result===1){ // 성공
+                    console.log(response);
+                    alert('비밀번호가 변경되었습니다.');
+                    navigate("/");
+                }
+                else if(response.data.result===0){ // 실패
+                    copyMsg['curPw']='비밀번호를 잘못 입력했습니다.';
+                    setMsg(copyMsg);
+                }
             })
             .catch(function (error) {
               console.log(error);
@@ -237,12 +241,7 @@ function PwChange(){
             'newPw': '',
             'newPwChk': ''
         }
-        //checkPw();
-        if(!is['curPw']){
-            copyMsg['curPw']='현재 비밀번호가 일치하지 않습니다.';
-            setMsg(copyMsg);
-        }
-        else if(!is['newPw']){
+        if(!is['newPw']){
             copyMsg['newPw']='조건에 맞는 비밀번호를 입력해주세요.';
             setMsg(copyMsg);
         }
@@ -293,8 +292,10 @@ function PwChange(){
 
 function Email(){
 
+    let user = useSelector((state) => state.user);
+    
     let [modify, setModify] = useState(false);
-    let [email, setEmail] = useState('test@gmail.com');
+    let [email, setEmail] = useState(user.email);
 
     function emailChange(){ // **************************** axios 요청 추가
 

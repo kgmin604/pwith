@@ -15,6 +15,9 @@ class Member(UserMixin):
     def getName(self):
         return str(self.name)
 
+    def getEmail(self):
+        return str(self.email)
+
     @staticmethod
     def findById(memId):
         mysql_db = conn_mysql()
