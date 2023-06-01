@@ -127,13 +127,13 @@ return (<div className="Board">
 
             {studyPostList.map(function (row, index) {
                 return (
-                    <tr className="postCol" key={row[0]} onClick={() => navigate(`../${index + 1}`)}>
+                    <tr className="postCol" key={row[0]} onClick={() => navigate(`../${row[0]}`)}>
                         <td>{row[0]}</td>
-                        <td colSpan={2}>{row[1]}</td>
+                        <td colSpan={2}>{row[2]}</td>
+                        <td>{row[7]}</td>
+                        <td>{row[5]}</td>
                         <td>{row[6]}</td>
                         <td>{row[3]}</td>
-                        <td>{row[8]}</td>
-                        <td>{row[2]}</td>
                     </tr>
                 );
             }
