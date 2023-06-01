@@ -15,9 +15,10 @@ def show():
         searchValue = request.args.get('value')
         print(searchValue)
 
+        result = []
+        
         if (searchType is None) or (searchValue is None) :
-            posts = studyPost.getStudy()
-
+            result = studyPost.getStudy()
         else :
             posts = []
 
@@ -26,7 +27,6 @@ def show():
             else:
                 posts = studyPost.findByWriter(searchValue)
 
-        result = []
 
         for i in range(len(posts)) :
             post = {
