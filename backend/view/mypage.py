@@ -1,6 +1,7 @@
 from flask import Flask, Blueprint, request, jsonify, redirect, url_for, session
 from flask_login import login_user, current_user, logout_user, login_required
 from controller.member_mgmt import Member
+from controller.board_mgmt import studyPost
 
 mypage_bp = Blueprint('mypage', __name__, url_prefix='/mypage')
 
@@ -53,4 +54,6 @@ def myPost() : # DB에 writer 저장 전.
     
     myPost = studyPost.findByWriter(writer)
 
-    return myPost
+    return jsonify({
+        'myPost' : myPost
+    })

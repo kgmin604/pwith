@@ -5,7 +5,7 @@ import "./member.css";
 import "./modal.css";
 import { useSelector } from "react-redux"
 import { Button } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ToggleButton from 'react-bootstrap/ToggleButton';
@@ -34,19 +34,71 @@ function Account(){
 }
 
 function WritingList(){
-    let [sel, setSel] = useState(1);
+    let [sel, setSel] = useState(0); // 0: 스터디 글 목록 1: 커뮤니티 글 목록
+    let [mypost, setMypost] = useState([]);
+
+    function loadWritingList(){
+        axios({
+          method: "GET",
+          url: "/mypage/writinglist",
+          data: {
+             type : 0
+          },
+        })
+        .then(function (response) {
+            setMypost(response.data.myPost);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    function getWritingList(type){
+        axios({
+          method: "POST",
+          url: "/mypage/writinglist",
+          data: {
+             type : `${type}`
+          },
+        })
+        .then(function (response) {
+            setMypost(response.data.myPost);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    useEffect(() => {
+        loadWritingList();
+    }, []); 
 
     return(
         <>
-            <div style={{'padding':'0 0', 'margin':'0 0'}}>
+            <div style={{'padding':'0 0', 'margin':'0 0'}} >
                 <h3 className="my-header">내가 쓴 글 목록</h3>
                 <div className="chat-select">
-                    <ul style={{'padding':'0 0'}}>
-                        <li className={sel===1? "chat-btn-click" : "chat-btn"} onClick={()=>setSel(1)}>스터디</li>
-                        <li className={sel===2? "chat-btn-click" : "chat-btn"} onClick={()=>setSel(2)}>커뮤니티</li>
-                    </ul>
+                <ul style={{ padding: '0 0' }}>
+                    <li 
+                        className={sel === 0 ? "chat-btn-click" : "chat-btn"} 
+                        onClick={(event) => { event.stopPropagation(); setSel(0); getWritingList(0); }}
+                    >스터디</li>
+                    <li 
+                        className={sel === 1 ? "chat-btn-click" : "chat-btn"} 
+                        onClick={(event) => { event.stopPropagation(); setSel(1); getWritingList(1);}}
+                    >커뮤니티</li>
+                </ul>
                 </div>
                 <div className="chat-bottom">
+                {
+                    mypost === [] ? null : 
+                    mypost.map((post, index) => (
+                        <div className="item" key={index}>
+                            <h3>{post[2]}</h3> {/* 인덱스 대신 문자열로 변경 필요 */}
+                            <p>{post[4]}</p>    {/* 인덱스 대신 문자열로 변경 필요 */}
+                        </div>
+                    ))
+                }
                 </div>
             </div>
         </>
@@ -293,19 +345,34 @@ function PwChange(){ // 컴포넌트
 function Email(){
 
     let user = useSelector((state) => state.user);
-    
+
     let [modify, setModify] = useState(false);
     let [email, setEmail] = useState(user.email);
 
     function emailChange(){ // **************************** axios 요청 추가
-
+        axios({
+            method: "POST",
+            url: "/mypage/account/email",
+            data: {
+              newEmail: `${email}`
+            },
+        })
+        .then(function (response) {
+            if(response.data.done===1){ // 성공
+                console.log(response.data);
+                alert('이메일 변경 완료');
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     }
 
     function emailChangeRequest(){
         const emailRE = /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
         if(emailRE.test(email)){
-            emailChange();
             setModify(false);
+            emailChange();
         }
         else{
             alert('잘못된 이메일 형식입니다.');
@@ -314,6 +381,7 @@ function Email(){
 
     return(
         <>
+        <form method="POST">
             <h3 className="my-header">이메일 인증</h3>
             <div className="acc-wrap" style={{'height':'80px'}}>
                 <div className="acc-box" style={{'width':'100%'}}> 
@@ -334,6 +402,7 @@ function Email(){
             <div style={{'width':'100%'}}>
                 <Button variant="light" onClick={ null } className="pwBtn">인증</Button>
             </div>
+        </form>
         </>
     );
 }

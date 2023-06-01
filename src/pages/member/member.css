@@ -189,6 +189,19 @@
     padding: 0 10px;
 }
 
+/* 내가 쓴 글 목록 */
+.chat-bottom
+.item{
+    padding: 10px 15px;
+
+}
+
+div.chat-bottom div.item
+h3{
+    
+}
+
+
 /* 채팅 */
 
 .chat-select{
