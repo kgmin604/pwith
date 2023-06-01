@@ -16,56 +16,34 @@ def show():
         print(searchValue)
 
         if (searchType is None) or (searchValue is None) :
-            data = jsonify(studyPost.getStudy())
-
-            return data
+            posts = studyPost.getStudy()
 
         else :
-            
-            searchedPost = []
+            posts = []
 
             if int(searchType) == 0:
-                searchedPost = studyPost.findByTitle(searchValue)
+                posts = studyPost.findByTitle(searchValue)
             else:
-                searchedPost = studyPost.findByWriter(searchValue)
+                posts = studyPost.findByWriter(searchValue)
 
-            return jsonify(searchedPost)
+        result = []
 
-    # else:
+        for i in range(len(posts)) :
+            post = {
+                'id' : posts[i][0],
+                'type' : posts[i][1],
+                'title' : posts[i][2],
+                'writer' : posts[i][3],
+                'content' : posts[i][4],
+                'curDate' : posts[i][5],
+                'category' : posts[i][6],
+                'likes' : posts[i][7],
+                'views' : posts[i][8]
+            }
+            result.append(post)
 
-    #     data = request.get_json(silent=True)
+        return jsonify(result)
 
-    #     searchType = data['searchType']
-
-    #     if searchType == 0:
-    #         # title = '안녕'
-    #         title = data['searchWord']
-    #         searchedPost = studyPost.findByTitle(title)
-    #     else :
-    #         # writer = 'a'
-    #         writer = data['searchWord']
-    #         searchedPost = studyPost().findByWriter(writer)
-        
-    #     return jsonify(searchedPost)
-
-# @study_bp.route('/main/search', methods=['GET']) # 일단 search 라우터 추가했음
-# def search() :
-#     if request.method == 'GET':
-
-#         searchType = request.args.get('type')
-#         print(searchType)
-#         searchValue = request.args.get('value')
-#         print(searchValue)
-#         searchedPost = []
-
-#         if int(searchType) == 0:
-#             searchedPost = studyPost.findByTitle(searchValue)
-#         else:
-#             searchedPost = studyPost.findByWriter(searchValue)
-
-#         return jsonify(searchedPost)
-
-# postman 테스트 완. - 채영
 @study_bp.route('/<int:id>', methods=['GET']) # 글 조회
 def showDetail(id) :
     if request.method == 'GET' :
