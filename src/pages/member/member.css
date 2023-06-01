@@ -247,74 +247,222 @@
     float: left;
 }
 
-.chat-list{
-    width: 40%;
+.chat-boxes{
+    width: 30%;
     height: 100%;
     margin: 0 0;
     border-right: solid #98AFCA 2px;
     float: left;
 }
 
-.chat-list-content{
-    width: 100%;
-    height: 70px;
-    border-bottom : solid 1px gray;
-}
-
-.chat-list-name{
-    font-family: 'TmoneyRoundWind';
-    margin-top:5px;
-    font-size: medium;
-}
-
-.chat-list-name-cont{
-    font-family: 'Noto Sans KR';
-    font-size: small;
-}
-
-.chatting{
-    width: 60%;
+.chat-box{
+    width: 70%;
     height: 100%;
     margin: 0 0;
     background-color: aliceblue;
     float: left;
 }
 
-.chatting-content{
-    width: 550px;
-    height: 78%;
-    margin: 10px 4%;
-    border : solid 1px;
-    border-color: #98AFCA;
+a{
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.05);
+    color: #666;
+    text-decoration: none;
 }
 
-.chat-input{
-    width: 80%;
-    height: 100px;
-    vertical-align: top;
-    padding: 10px 10px;
-    margin: 0 10px;
-    float:left;
+div.chat-bottom div.chat-boxes
+a:hover { 
+    text-decoration : none;
+    color : #98AFCA;
 }
 
-.chat-transmit-btn{
-    width: 80px;
-    height: 100px;
-    text-align: center;
-    background-color: white;
-    border-radius: 5px;
-    border: solid 1px;
-    border-color: #98AFCA;
-    float:left;
+div.chat-bottom div.chat-boxes
+.item{
+    display: block;
+    height: 80px;
+    padding: 12px 24px;
+    cursor: pointer;
+}
+
+div.chat-bottom div.chat-boxes
+.selected{
+    background-color:#98AFCA;
+    color:white;
+}
+
+div.chat-bottom div.chat-boxes
+.selected:hover{
+    text-decoration : none;
+    color:white;
+}
+
+div.chat-bottom div.chat-boxes a.item
+h3{
+    font-size: 14px;
+    font-weight: bold;
+}
+
+div.chat-bottom div.chat-boxes a.item
+time{
+    float: right;
+    margin-left: 8px;
+    line-height: 20px;
+    font-size: 12px;
+}
+
+div.chat-bottom div.chat-boxes a.item
+p{
+    line-height: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+div.chat-bottom div.chat-box
+.title{
+    left: 0;
+    top: 0;
+    padding: 12px 0 0 16px;
+    height: 80px;
+    border-bottom: 1px solid #98AFCA;
+    background-color:white;
+}
+
+div.chat-bottom div.chat-box div.title
+h2{
+    flex: auto;
+    line-height: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    float : left;
+    height: 60px;
     margin: 0 5px;
 }
 
-.scroll-area{
-    -ms-overflow-style: none; /* for Internet Explorer, Edge */
-    scrollbar-width: none; /* for Firefox */
-    overflow-y: scroll; 
+div.chat-bottom div.chat-box div.title
+a.send{
+    float : left;
+    cursor: pointer;
+    line-height: 50px;
+    height: 60px;
 }
 
+div.chat-bottom div.chat-box
+.content{
+    margin: 0 8px;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+div.chat-bottom div.chat-box div.content
+.item{
+    margin: 10px 0;
+    border-bottom: 1px solid #98AFCA;
+    padding: 12px 15px;
+}
+
+div.chat-bottom div.chat-box div.content div.item
+time{
+    float: right;
+    line-height: 20px;
+    color: #a6a6a6;
+    font-size: 12px;
+}
+
+div.chat-bottom div.chat-box div.content div.item
+.type{
+    line-height: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    width: 500px;
+}
+
+div.chat-bottom div.chat-box div.content div.item
+.text{
+    margin-top: 4px;
+    line-height: 20px;
+    color: #292929;
+    font-size: 14px;
+    word-wrap: break-word;
+}
+
+div.mypage-chat
+.modal{
+    margin-left: -200px;
+    margin-top: -106.5px;
+    display: block;
+    padding: 25px;
+    width: 400px;
+    height: 250px;
+    box-sizing: border-box;
+}
+
+div.mypage-chat div.modal
+.close{
+    display: block;
+    float: right;
+    width: 20px;
+    height: 20px;
+    /*background: transparent url(/images/new/container.modal.close.png) no-repeat center center;*/
+    background-size: 15px 15px;
+    cursor: pointer;
+}
+
+div.mypage-chat div.modal
+h3{
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: normal;
+}
+
+div.mypage-chat div.modal p
+textarea{
+    padding: 5px;
+    width: 100%;
+    height: 100px;
+    line-height: 20px;
+    border: 1px solid #e3e3e3;
+    box-sizing: border-box;
+    resize: none;
+    color: #292929;
+    font-size: 14px;
+}
+
+div.mypage-chat div.modal
+.button{
+    width: 150px;
+    height: 40px;
+    line-height: 40px;
+    top: 50%;
+    font-family: "TmoneyRoundWind";
+    text-align: center;
+    color: white;
+    background-color : #98afca;
+    border-radius: 5px;
+    margin: 0 28%;
+    cursor: pointer;
+}
+
+.scroll-area {
+  overflow-y: scroll;
+  scrollbar-width: thin; /* for Firefox */
+  -ms-overflow-style: scrollbar; /* for Internet Explorer, Edge */
+}
+
+/* Chrome, Safari, and Opera */
 .scroll-area::-webkit-scrollbar {
-    display: none; /* for Chrome, Safari, and Opera */
-  }
+  width: 6px;
+}
+
+.scroll-area::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 3px;
+}
+
+.scroll-area::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}

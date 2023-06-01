@@ -61,33 +61,15 @@ function App() {
       .then(function (response) {
         console.log(response);
         dispatch(clearUser());
+
+        localStorage.removeItem("id");
+        localStorage.removeItem("name");
         navigate("/");
       })
       .catch(function (error) {
         console.log(error);
       });
   }
-
-  useEffect(() => {
-    axios({
-      method: "POST",
-      url: "/",
-      data: {
-        chkSession: 1,
-      },
-    })
-      .then(function (response) {
-        dispatch(
-          loginUser({
-            id: response.data.id,
-            name: response.data.name,
-          })
-        );
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, []);
 
   return (
     <>
@@ -182,9 +164,9 @@ function App() {
                 <div
                   className="mem-btn"
                   style={{ width: "70px" }}
-                  onClick={() => navigate("/")}
+                  onClick={() => navigate("/mypage/chat")}
                 >
-                  알림함
+                  쪽지함
                 </div>
                 <div
                   className="mem-btn"
@@ -221,7 +203,7 @@ function App() {
           <Route path="/join" element={<Join />} />
           <Route path="/help" element={<Help />} />
           <Route path="/mypage" element={<Mypage />}>
-            <Route path="account/change" element={<PwChange />} />
+            <Route path="account/changepw" element={<PwChange />} />
             <Route path="account/email" element={<Email />} />
             <Route path="account" element={<Account />} />
             <Route path="writinglist" element={<WritingList />} />

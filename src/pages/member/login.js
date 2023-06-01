@@ -37,7 +37,14 @@ function Login(){
               alert("아이디 또는 비밀번호를 잘못 입력했습니다.");
             }
             if(response.data.code===401){
-              dispatch(loginUser(response.data));
+              dispatch(
+                loginUser({
+                  id: response.data.id,
+                  name: response.data.name,
+                })
+              );
+              localStorage.setItem("id", response.data.id);
+              localStorage.setItem("name", response.data.name);
               navigate("/");
             }
           })
@@ -68,7 +75,7 @@ function Login(){
                         onClick = {()=>navigate('../help')}
                         style={{'float':'right','margin':'5px','fontSize':'7px' }}
                         
-                    >비밀번호 찾기</div>
+                    >아이디 · 비밀번호 찾기</div>
                     <div style={{'float':'right','margin':'5px','fontSize':'8px'}}>|</div>
                     <div 
                         className='mybtn' 

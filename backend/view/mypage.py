@@ -32,7 +32,7 @@ def changeEmail() :
 
         # 현재 이메일 입력 안하는 방식
         # result = Member.changeEmail(current_user.getId(), newEmail)
-        Member.changeEmail('test', 'emailtest')
+        Member.changeEmail('test', 'today@test.com')
 
         # return result
         return ''

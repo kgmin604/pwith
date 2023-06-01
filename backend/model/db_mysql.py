@@ -19,15 +19,3 @@ def conn_mysql():
     if not mysql_conn.open:
         mysql_conn.ping(reconnect=True)
     return mysql_conn
-
-
-
-#pwith_db = mysql_conn.cursor()
-#pwith_db.execute(sql)
-#mysql_conn.commit()
-
-
-
-# DB는 mysql 터미널에서 CREATE DATABASE pwith_db; 명령어로 만들었고, 위 주석 실행해서 member 테이블 만들었음
-
-
