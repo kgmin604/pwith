@@ -26,16 +26,17 @@ function StudyBoard(props) {
     const searchStudy = () => {
         axios({
           method: "GET",
-          url: "/study/main",
+          url: `/study/main`,
           params: {
-            searchType: searchType,
-            searchWord: inputValue
+            type: searchType,
+            value: inputValue
           }
         })
           .then(function (response) {
             console.log(response);
             console.log(searchType);
             console.log(inputValue);
+            navigate(`/study/main?type=${searchType}&value=${inputValue}`);
           })
           .catch(function (error) {
             console.log(error);
@@ -58,6 +59,7 @@ function StudyBoard(props) {
         console.log(inputValue);
         // 여기서 입력된 값으로 원하는 작업을 수행할 수 있습니다.
         setSearchWord(inputValue);
+        searchStudy();
     };
 
 
@@ -88,7 +90,7 @@ return (<div className="Board">
             }
 
         </div>
-        <Form >
+        <Form onSubmit={handleSubmit}>
             <Form.Control
                 className="me-auto"
                 placeholder="원하는 스터디를 찾아보세요!"
@@ -97,7 +99,7 @@ return (<div className="Board">
                 style={{width:'400px'}}
             />    
         </Form>
-        <Button variant="blue" onClick={() => { searchStudy(); }}>🔍</Button>
+        <Button variant="blue" type="submit" onClick={()=>searchStudy()}>🔍</Button>
         
         
         <div className="vr" />
