@@ -203,7 +203,7 @@ function App() {
           <Route path="/join" element={<Join />} />
           <Route path="/help" element={<Help />} />
           <Route path="/mypage" element={<Mypage />}>
-            <Route path="account/change" element={<PwChange />} />
+            <Route path="account/changepw" element={<PwChange />} />
             <Route path="account/email" element={<Email />} />
             <Route path="account" element={<Account />} />
             <Route path="writinglist" element={<WritingList />} />
