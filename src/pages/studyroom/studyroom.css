@@ -1,0 +1,31 @@
+.room-part{
+    border:solid;
+}
+
+div.room-part div.row
+.col-md-6
+{
+    border:solid;
+}
+
+div.room-part div.row div.col-md-6
+h2{
+    flex: auto;
+    line-height: 50px;
+    font-size: 20px;
+    font-weight: bold;
+    float : left;
+    width: 100%;
+}
+
+div.room-part div.row div.col-md-6 div.items a.item
+h3{
+    flex: auto;
+    line-height: 16px;
+    font-size: 16px;
+    float : left;
+    cursor: pointer;
+    padding-left: 20px;
+    width: 100%;
+    margin: 15px 0;
+}

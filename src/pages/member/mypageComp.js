@@ -2,6 +2,7 @@ import React from 'react';
 import axios from "axios";
 
 import "./member.css";
+import "./modal.css";
 import { useSelector } from "react-redux"
 import { Button } from "react-bootstrap";
 import { useState } from "react";
@@ -19,7 +20,7 @@ function Account(){
             <div className="acc-wrap">
                 <div className="acc-box"> <div className="acc-header">아이디</div>{user.id}</div>
                 <div className="acc-box"> <div className="acc-header">비밀번호</div>
-                    <Button variant="secondary" size="sm" onClick={()=>navigate('./change')}>비밀번호 변경 </Button>
+                    <Button variant="secondary" size="sm" onClick={()=>navigate('./changepw')}>비밀번호 변경 </Button>
                 </div>
                 <div className="acc-box"> <div className="acc-header">이름</div>{user.name}</div>
                 <div className="acc-box"> <div className="acc-header">이메일</div> test@naver.com {user.email}
@@ -51,32 +52,101 @@ function WritingList(){
 }
 
 function Chat(){
-    const [sel, setSel] = useState(1);
+    let tmpData = {
+        'id' : 'kgminee',
+        'date' : '05/31 9:13',
+        'content' : '개발중입니다.다암런아러미ㅏㄴㅇ멀;ㅣ나ㅓㅇ리마넝리ㅏㅁ넝;리ㅓㅁㄴ이라ㅓㅑㅓㅈ디ㅏㄴㅇ러ㅣㅏㅓㄹㅇ니ㅏㅓ'
+    };
+    let [chatList, setChatList] = useState(tmpData);
 
+    let tmpMsg = {
+        'type' : 1,
+        'date' : '05/31 9:13',
+        'content' : '개발중입니다.'
+    };
+    let tmpMsg2 = {
+        'type' : 2,
+        'date' : '05/31 9:14',
+        'content' : '노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.'
+    };
+
+    let [selectedItem, setSelectedItem] = useState(null);
+    let handleItemClick = (event, index) => {
+        event.stopPropagation(); // 이벤트 버블링 중단
+        setSelectedItem(index);
+    };
+    
+    let [open, setOpen] = useState(false);
+    let handleModal = (event) => {
+        event.stopPropagation();
+        setOpen(!open);
+    }
     return(
         <>
-            <div style={{'padding':'0 0', 'margin':'0 0'}}>
+            <div className ="mypage-chat" style={{'padding':'0 0', 'margin':'0 0'}}>
                 <h3 className="my-header">쪽지함</h3>
                 <div className="chat-bottom">
-                    <div className="chat-list scroll-area"> {/* 왼쪽구역: 채팅한 계정들*/}
-                        <div className="chat-list-content">
-                            <div style={{'width':'60px','height':'60px','float':'left','borderRadius':'40px', 'backgroundColor':'white','border':'solid 1px gray','margin':'5px'}}></div>
-                            <div style={{'float':'left', 'width':'70px', 'padding':'5px 10px'}}>
-                                <h5 className="chat-list-name">이름</h5>
-                                <span className="chat-list-name-cont">내용</span>
-                            </div>
-                        </div>
+                    <div className="chat-boxes scroll-area"> {/* 왼쪽구역: 채팅한 계정들*/}
+                        {
+                            // 테스트 코드
+                            Array.from({ length: 10 }, (_, i) => (
+                            <a 
+                                className={`item ${selectedItem === i ? 'selected' : ''}`}
+                                key={i}
+                                onClick={(event) => handleItemClick(event, i)}
+                            >
+                                <time>{chatList['date']}</time>
+                                <h3>{chatList['id']}</h3>
+                                <p>{chatList['content']}</p>
+                            </a>
+                            ))
+                        }
                     </div>
-                    <div className="chatting"> {/* 오른쪽 구역: 채팅 내용 */}
-                        <div className="chatting-content scroll-area">
-                            음
+                    <div className="chat-box scroll-area"> {/* 오른쪽 구역: 채팅 내용 */}
+                        <div className="title">
+                        {
+                            selectedItem === null ? <></> :
+                            <>
+                                <h2>{chatList['id']}</h2>
+                                <a className="send" title ="쪽지 보내기" onClick={ (event) => handleModal(event) }>💌</a>
+                            </>
+                        }
                         </div>
-                        <div style={{'margin':'0 0', 'padding':'0 0'}}>
-                            <textarea className="chat-input"></textarea>
-                            <button className="chat-transmit-btn">전송</button>
-                        </div>
+                        {
+                            selectedItem === null ? <></> :
+                            <div className="content">
+                            {
+                                Array.from({ length: 10 }, (_, i) => {
+                                    const type = tmpMsg2['type'] === 1 ? "받은 쪽지" : "보낸 쪽지";
+                                    return (
+                                    <div className="item" key={i}>
+                                        <time>{tmpMsg2['date']}</time>
+                                        <p className="type">{type}</p>
+                                        <p className="text">{tmpMsg2['content']}</p>
+                                    </div>
+                                    );
+                                })
+                            }
+                            </div>
+                        }
                     </div>
                 </div>
+                {
+                    open === true?
+                    <>
+                        <div className="modal-wrap"></div>
+                        <div className="modal">
+                            <a title="닫기" className="close" onClick={(event)=>handleModal(event)}>X</a>
+                            <h3>쪽지 보내기</h3>
+                            <p>
+                                <textarea name="message" class="text" placeholder="내용 입력"></textarea>
+                            </p>
+                            <input type="submit" value="전송" class="button"></input>
+                        </div>
+                    </>
+                    :
+                    null
+                }
             </div>
         </>
     );
