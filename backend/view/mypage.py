@@ -1,6 +1,7 @@
 from flask import Flask, Blueprint, request, jsonify, redirect, url_for, session
 from flask_login import login_user, current_user, logout_user, login_required
 from controller.member_mgmt import Member
+from controller.board_mgmt import studyPost
 
 mypage_bp = Blueprint('mypage', __name__, url_prefix='/mypage')
 
@@ -21,7 +22,9 @@ def changePw() :
 
         result = Member.changePw(memId, oldPw, newPw)
 
-        return result
+        return jsonify(
+            {'result' : result}
+            )
 
 
 @login_required
@@ -30,12 +33,10 @@ def changeEmail() :
     if request.method == 'POST' : # '완료' 버튼 클릭 시
         #newEmail = request.get_json()
 
-        # 현재 이메일 입력 안하는 방식
         # result = Member.changeEmail(current_user.getId(), newEmail)
-        Member.changeEmail('test', 'today@test.com')
-
-        # return result
-        return ''
+        done = Member.changeEmail('test', 'test@test.com') # dummy
+        
+        return jsonify(done) # 성공 여부
         
     else :
         return jsonify(
@@ -45,10 +46,39 @@ def changeEmail() :
 
 @login_required
 @mypage_bp.route('/writinglist', methods = ['GET', 'POST'])
-def myPost() : # DB에 writer 저장 전.
+def myPost() :
+    if request.method == 'GET' :
+        # writer = current_user.getId()
+        writer = 'test' # dummy
+        
+        myPosts = studyPost.findByWriter(writer)
 
-    writer = current_user.getId()
-    
-    myPost = studyPost.findByWriter(writer)
+        result = []
+        # print(myPosts[0][2])
+        # print('길이 : ')
+        # print(len(myPosts))
+        for i in range(len(myPosts)) :
+            myPost = {
+                'id' : myPosts[i][0],
+                'type' : myPosts[i][1],
+                'title' : myPosts[i][2],
+                'writer' : myPosts[i][3],
+                'content' : myPosts[i][4],
+                'curDate' : myPosts[i][5],
+                'category' : myPosts[i][6],
+                'likes' : myPosts[i][7],
+                'views' : myPosts[i][8]
+            }
+            result.append(myPost)
+        return jsonify(result)
 
-    return myPost
+    else :
+        data = request.get_json()
+        listType = data['type']
+
+        if listType == 0 :
+            # study
+            pass
+        else :
+            # community
+            pass

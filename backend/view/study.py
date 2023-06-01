@@ -3,27 +3,67 @@ from flask_login import login_required, current_user
 from controller.board_mgmt import studyPost
 
 study_bp = Blueprint('study', __name__, url_prefix='/study')
-# blueprint의 url_prefix를 'study'로 설정함으로써 중복 제거 제안합니다! - 채영
 
 #페이지네이션, 스터디 메인 페이지, 마이페이지에서 멤버별로 글 보이게, 작성 페이지 프론트연결,
 
 @study_bp.route('/main', methods=['GET', 'POST'])
 def show():
-    if request.method =='GET':
-        data = request.get_json(silent=True)
+    if request.method == 'GET':
+
+        searchType = request.args.get('type')
+        print(searchType)
+        searchValue = request.args.get('value')
+        print(searchValue)
+
+        if (searchType is None) or (searchValue is None) :
+            data = jsonify(studyPost.getStudy())
+
+            return data
+
+        else :
+            
+            searchedPost = []
+
+            if int(searchType) == 0:
+                searchedPost = studyPost.findByTitle(searchValue)
+            else:
+                searchedPost = studyPost.findByWriter(searchValue)
+
+            return jsonify(searchedPost)
+
+    # else:
+
+    #     data = request.get_json(silent=True)
+
+    #     searchType = data['searchType']
+
+    #     if searchType == 0:
+    #         # title = '안녕'
+    #         title = data['searchWord']
+    #         searchedPost = studyPost.findByTitle(title)
+    #     else :
+    #         # writer = 'a'
+    #         writer = data['searchWord']
+    #         searchedPost = studyPost().findByWriter(writer)
         
-        data = jsonify(studyPost.getStudy()) 
-        return data
+    #     return jsonify(searchedPost)
 
-    else: # 글 검색 postman 테스트 완. - 채영
+# @study_bp.route('/main/search', methods=['GET']) # 일단 search 라우터 추가했음
+# def search() :
+#     if request.method == 'GET':
 
-        title = '안녕' # (제목) 검색어 전달될 예정
-        searchedPost = studyPost.findByTitle(title)
+#         searchType = request.args.get('type')
+#         print(searchType)
+#         searchValue = request.args.get('value')
+#         print(searchValue)
+#         searchedPost = []
 
-        # writer = 'a' # (글쓴이) 검색어 전달될 예정
-        # searchedPost = studyPost().findByWriter(writer)
-        
-        return list(searchedPost)
+#         if int(searchType) == 0:
+#             searchedPost = studyPost.findByTitle(searchValue)
+#         else:
+#             searchedPost = studyPost.findByWriter(searchValue)
+
+#         return jsonify(searchedPost)
 
 # postman 테스트 완. - 채영
 @study_bp.route('/<int:id>', methods=['GET']) # 글 조회

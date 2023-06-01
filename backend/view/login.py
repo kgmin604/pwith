@@ -49,11 +49,13 @@ def login() :
             return res
 
         login_user(mem)
+        
         res['code'] = 401
         res['id'] = mem.getId()
         res['name'] = mem.getName()
+        res['email'] = mem.getEmail()
 
-        print(current_user.getName() + '님 로그인 성공')
+        print('이름 ' + current_user.getName() + '님 로그인 성공')
         return res
 
 @login_required

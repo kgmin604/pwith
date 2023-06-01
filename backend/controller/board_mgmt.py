@@ -93,20 +93,21 @@ class studyPost() :
         return post
 
     @staticmethod
-    def findByWriter(writer) : # 글쓴이로 검색 & 내 글 목록에서 사용 - 채영
+    def findByWriter(writer) : # 글쓴이로 검색 & 내 글 목록에서 사용
 
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
         sql = f"SELECT * FROM post WHERE writer = '{writer}'"
-
+        print('writer로 검색')
         cursor_db.execute(sql)
         posts = cursor_db.fetchall() # tuple의 tuple
+        
         mysql_db.close()
 
         if not posts :
             return None
-            
+        
         return posts
 
     @staticmethod
@@ -118,14 +119,15 @@ class studyPost() :
 
         cursor_db.execute(sql)
         posts = cursor_db.fetchall() # page 만들 시 fetchmany() 사용
+        
         mysql_db.close()
+
         if not posts :
             return None
         
         return posts
 
 
-    # getter 함수 만듦 - 채영
     def getTitle(self) :
         return str(self.title)
 
