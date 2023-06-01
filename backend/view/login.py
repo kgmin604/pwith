@@ -4,44 +4,24 @@ from controller.member_mgmt import Member
 
 bp = Blueprint('login', __name__, url_prefix='')
 
-@bp.route('/', methods=['GET', 'POST']) # 테스트 전
-def chkSession() :
-    if request.method == 'POST' :
-        return jsonify({
-            'status': 'success'
-        })
-    elif request.method == 'GET' :
-        memInfo = {
-            'id': '',
-            'name': ''
-        }
-        data = request.get_json(silent=True)
+# @bp.route('/', methods=['GET', 'POST']) # 테스트 전
+# def chkSession() :
+#     if request.method == 'POST' :
+#         memInfo = {
+#             'id': '',
+#             'name': ''
+#         }
+#         data = request.get_json(silent=True)
 
-        if data['chkSession'] == 1:
-            if current_user.is_anonymous :
-                print('익명')
-            else :
-                memInfo['id'] = current_user.getId()
-                memInfo['name'] = current_user.getName()
-                print('전달 완료')
+#         if data['chkSession'] == 1:
+#             if current_user.is_anonymous :
+#                 print('익명')
+#             else :
+#                 memInfo['id'] = current_user.getId()
+#                 memInfo['name'] = current_user.getName()
+#                 print('전달 완료')
 
-        return memInfo
-    # else :
-    #     memInfo = {
-    #         'id': '',
-    #         'name': ''
-    #     }
-    #     data = request.get_json(silent=True)
-
-    #     if data['chkSession'] == 1:
-    #         if current_user.is_anonymous :
-    #             print('익명')
-    #         else :
-    #             memInfo['id'] = current_user.getId()
-    #             memInfo['name'] = current_user.getName()
-    #             print('전달 완료')
-
-    #     return memInfo
+#         return memInfo
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login() :
@@ -54,7 +34,6 @@ def login() :
 
         memId = data['memberId']
         memPw = data['memberPw']
-        print(memId, memPw)
         res = {
             'code': 0,
             'id':'',
@@ -70,13 +49,14 @@ def login() :
             return res
 
         login_user(mem)
+        
         res['code'] = 401
         res['id'] = mem.getId()
         res['name'] = mem.getName()
         res['email'] = mem.getEmail()
         # print('login 성공')
 
-        print(current_user.getName() + '님 환영해요.')
+        print('이름 ' + current_user.getName() + '님 로그인 성공')
         return res
 
 @login_required
@@ -84,6 +64,7 @@ def login() :
 def logout() :
     logout_user() # True 반환
     print('로그아웃 성공')
+    
     return jsonify(
         {'status':'success'}
     )

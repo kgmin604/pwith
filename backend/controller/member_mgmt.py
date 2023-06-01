@@ -29,6 +29,7 @@ class Member(UserMixin):
         if not mem:
             return None
         member = Member(mem[0], mem[1], mem[2], mem[3])
+        mysql_db.close()
         return member
 
     @staticmethod
@@ -42,6 +43,7 @@ class Member(UserMixin):
         if not mem:
             return None
         member = Member(mem[0], mem[1], mem[2], mem[3])
+        mysql_db.close()
         return member
     
     @staticmethod
@@ -54,6 +56,7 @@ class Member(UserMixin):
             sql = f"INSERT INTO member(memId, memPw, memName, memEmail) VALUES ('{str(memId)}', '{str(pw)}', '{str(name)}', '{str(email)}')"
             cursor_db.execute(sql)
             mysql_db.commit()
+            mysql_db.close()
             return Member.findById(memId)
         else :
             return mem
@@ -67,6 +70,7 @@ class Member(UserMixin):
         done = cursor_db.execute(sql)
         print(done)
         mysql_db.commit()
+        mysql_db.close()
 
         return done
 
@@ -79,6 +83,8 @@ class Member(UserMixin):
         print(sql)
         done = cursor_db.execute(sql)
         print(done)
+        mysql_db.commit()
+        mysql_db.close()
 
         return done
 
@@ -89,4 +95,5 @@ class Member(UserMixin):
         sql = f"DELETE FROM member WHERE memId = '{str(memId)}'"
         done = cursor_db.execute(sql)
         mysql_db.commit()
+        mysql_db.close()
         return done

@@ -3,29 +3,47 @@ from flask_login import login_required, current_user
 from controller.board_mgmt import studyPost
 
 study_bp = Blueprint('study', __name__, url_prefix='/study')
-# blueprint의 url_prefix를 'study'로 설정함으로써 중복 제거 제안합니다! - 채영
 
 #페이지네이션, 스터디 메인 페이지, 마이페이지에서 멤버별로 글 보이게, 작성 페이지 프론트연결,
 
 @study_bp.route('/main', methods=['GET', 'POST'])
 def show():
-    if request.method =='GET':
-        data = request.get_json(silent=True)
-        
-        data = jsonify(studyPost.getStudy()) 
-        return data
+    if request.method == 'GET':
 
-    else: # 글 검색 postman 테스트 완. - 채영
+        searchType = request.args.get('type')
+        print(searchType)
+        searchValue = request.args.get('value')
+        print(searchValue)
 
-        title = '안녕' # (제목) 검색어 전달될 예정
-        searchedPost = studyPost.findByTitle(title)
+        if (searchType is None) or (searchValue is None) :
+            posts = studyPost.getStudy()
 
-        # writer = 'a' # (글쓴이) 검색어 전달될 예정
-        # searchedPost = studyPost().findByWriter(writer)
-        
-        return list(searchedPost)
+        else :
+            posts = []
 
-# postman 테스트 완. - 채영
+            if int(searchType) == 0:
+                posts = studyPost.findByTitle(searchValue)
+            else:
+                posts = studyPost.findByWriter(searchValue)
+
+        result = []
+
+        for i in range(len(posts)) :
+            post = {
+                'id' : posts[i][0],
+                'type' : posts[i][1],
+                'title' : posts[i][2],
+                'writer' : posts[i][3],
+                'content' : posts[i][4],
+                'curDate' : posts[i][5],
+                'category' : posts[i][6],
+                'likes' : posts[i][7],
+                'views' : posts[i][8]
+            }
+            result.append(post)
+
+        return jsonify(result)
+
 @study_bp.route('/<int:id>', methods=['GET']) # 글 조회
 def showDetail(id) :
     if request.method == 'GET' :
@@ -46,17 +64,15 @@ def showDetail(id) :
 
 
 #글 작성 페이지
-@study_bp.route('/create', methods=['GET', 'POST'])
+@study_bp.route("/create", methods=['POST'])
 @login_required
 def write():
-    if request.method == 'GET' :
-        return jsonify(
-            {'status': 'success'}
-        )
-    else :
+    if request.method == 'POST':
+        print("post\n")
         data = request.get_json(silent=True) # silent: parsing fail 에러 방지
-        
-        type = 0
+        print(data)
+        print("axios error\n")
+        postType = 0
         title = data['title']
         # writer = session.get("id")      # 현재 사용자 id
         writer = current_user.getId()
@@ -66,15 +82,13 @@ def write():
         likes = 0
         views = 0
         #joiningP = 0
-        #totalP = data['totalP']
+        totalP = data['totalP']
         
-        print(type, title, writer, curDate, content, category, likes, views)
-        studyPost.insertStudy( type, title, writer, curDate, content, category, likes, views)
+        print(postType, title, writer, curDate, content, category, likes, views)
+        studyPost.insertStudy( postType, title, writer, curDate, content, category, likes, views)
         
         
-        return jsonify(
-            {'status': 'success'}
-        )
+        return 'Response', 200
 """
 # update 
 @study_bp.route('/update')

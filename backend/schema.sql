@@ -9,19 +9,9 @@ CREATE TABLE member
     PRIMARY KEY(memId)
 );
 
-CREATE TABLE study
+CREATE TABLE post
 (
-    studyId INT,
-    title VARCHAR(50),
-    writer VARCHAR(10),
-    curDate DATE,
-    content VARCHAR(500),
-    category VARCHAR(10),
-    views INT DEFAULT 0,
-    joiningP INT,
-    totalP INT DEFAULT 50,
-    PRIMARY KEY(studyId),
-    FOREIGN KEY(writer) REFERENCES member(memId)
+    --
 )
 
 CREATE TABLE QNA
@@ -52,3 +42,22 @@ CREATE TABLE reply (
     postNum INT NOT NULL,
     FOREIGN KEY(type, postNum) REFERENCES post(type, postId) on delete cascade
 )
+
+CREATE TABLE mento (
+    mentoId VARCHAR(10),
+    mentiList JSON,
+    subject JSON NOT NULL,
+    mentoPic LONGBLOB, -- NOT NULL
+    content VARCHAR(500) NOT NULL,
+    PRIMARY KEY(mentoId),
+    FOREIGN KEY(mentoId, mentiList) REFERENCES member(memId, memId) on delete cascade -- json도 가능?
+);
+
+CREATE TABLE review (
+    reviewId INT,
+    writer VARCHAR(10) NOT NULL,
+    content VARCHAR(300) NOT NULL,
+    mentoId VARCHAR(10) NOT NULL,
+    PRIMARY KEY(reviewId),
+    FOREIGN KEY(mentoId) REFERENCES mento(mentoId) on delete cascade
+);
