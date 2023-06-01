@@ -197,7 +197,7 @@ function App() {
             <Route path="content" element={<CommunityContent />} />
           </Route>
           <Route path="/community/qna" element={<CommunityQna />} />
-          <Route path="/community/qnacreate" element={<QnaCreate/>} /> 
+          <Route path="/community/qna/create" element={<QnaCreate/>} /> 
           <Route path="/mentoring" element={<MentoringMain />} />
           <Route path="/login" element={<Login />} />
           <Route path="/join" element={<Join />} />
