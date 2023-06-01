@@ -2,6 +2,7 @@ import React from 'react';
 import axios from "axios";
 
 import "./member.css";
+import "./modal.css";
 import { useSelector } from "react-redux"
 import { Button } from "react-bootstrap";
 import { useState } from "react";
@@ -119,7 +120,7 @@ function Chat(){
                                     const type = tmpMsg2['type'] === 1 ? "받은 쪽지" : "보낸 쪽지";
                                     return (
                                     <div className="item" key={i}>
-                                        <time>{tmpMsg2['time']}</time>
+                                        <time>{tmpMsg2['date']}</time>
                                         <p className="type">{type}</p>
                                         <p className="text">{tmpMsg2['content']}</p>
                                     </div>

@@ -289,6 +289,12 @@ div.chat-bottom div.chat-boxes
     color:white;
 }
 
+div.chat-bottom div.chat-boxes
+.selected:hover{
+    text-decoration : none;
+    color:white;
+}
+
 div.chat-bottom div.chat-boxes a.item
 h3{
     font-size: 14px;
@@ -346,22 +352,25 @@ a.send{
 div.chat-bottom div.chat-box
 .content{
     margin: 0 8px;
-    padding: 12px 16px;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 div.chat-bottom div.chat-box div.content
 .item{
     margin: 10px 0;
     border-bottom: 1px solid #98AFCA;
+    padding: 12px 15px;
 }
 
 div.chat-bottom div.chat-box div.content div.item
 time{
     float: right;
-    margin-left: 8px;
     line-height: 20px;
+    color: #a6a6a6;
     font-size: 12px;
-    border : solid;
 }
 
 div.chat-bottom div.chat-box div.content div.item
@@ -369,6 +378,7 @@ div.chat-bottom div.chat-box div.content div.item
     line-height: 20px;
     font-size: 14px;
     font-weight: bold;
+    width: 500px;
 }
 
 div.chat-bottom div.chat-box div.content div.item
@@ -378,27 +388,6 @@ div.chat-bottom div.chat-box div.content div.item
     color: #292929;
     font-size: 14px;
     word-wrap: break-word;
-}
-
-.modal-wrap{
-    position: fixed;
-    z-index: 999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #000;
-    opacity: .5;
-    filter: alpha(opacity=50);
-}
-
-.modal{
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 50%;
-    top: 50%;
-    background-color: #fff;
 }
 
 div.mypage-chat

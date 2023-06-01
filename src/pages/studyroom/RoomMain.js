@@ -42,19 +42,35 @@ function RoomMain(){
                         구성1
                     </div>
                     <div class="col-md-6">
-                        <h2>참여중인 스터디</h2>
-                        
-                        <div className="items">
-                        {
-                            rooms.map((room, index) => (
-                                <a className="item" key={room.roomId} onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigate(`/studyroom/${room.roomId}`);
-                                }}>
-                                  <h3>{room.roomName}</h3>
-                                </a>
-                            ))
-                        }
+                        <div>
+                            <h2>참여중인 스터디</h2>
+                            <div className="items">
+                            {
+                                rooms.map((room, index) => (
+                                    <a className="item" key={room.roomId} onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/studyroom/${room.roomId}`);
+                                    }}>
+                                    <h3>{room.roomName}</h3>
+                                    </a>
+                                ))
+                            }
+                            </div>
+                        </div>
+                        <div>
+                            <h2>참여중인 멘토링</h2>
+                            <div className="items">
+                            {
+                                rooms.map((room, index) => (
+                                    <a className="item" key={room.roomId} onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/studyroom/${room.roomId}`);
+                                    }}>
+                                    <h3>{room.roomName}</h3>
+                                    </a>
+                                ))
+                            }
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3">
