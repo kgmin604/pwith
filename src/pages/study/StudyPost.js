@@ -30,7 +30,7 @@ function StudyPost(props) {
     }
 
     const { title, content, views, totalP } = post;
-    content=parse(content);
+    const parsedContent = parse(content);
 
     // let post = studyPostList[index];
     // let studyId, title, writer, date, content, category, views, joiningP, totalP;
@@ -73,7 +73,7 @@ function StudyPost(props) {
 
             <div className="studyContent">
                 <p cols="50" rows="10">
-                    {content}
+                    {parsedContent}
                 </p>
             </div>
 

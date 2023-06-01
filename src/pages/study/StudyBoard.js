@@ -20,77 +20,129 @@ function StudyBoard(props) {
     let dispatch = useDispatch();
     let studyPostList = useSelector((state) => state.studyPostList);
 
-    const [view, setView] = useState("글제목");
+    const [searchType, setSearchType] = useState(0);
+    const [searchWord, setSearchWord] = useState("");
 
-    return (<div className="Board">
-        <Stack direction="horizontal" gap={3} style={{ padding: "5px" }}>
-            <div>
-                {
-                    view==='제목'?
+    const searchStudy = () => {
+        axios({
+          method: "GET",
+          url: `/study/main`,
+          params: {
+            type: searchType,
+            value: inputValue
+          }
+        })
+          .then(function (response) {
+            console.log(response);
+            console.log(searchType);
+            console.log(inputValue);
+            navigate(`/study/main?type=${searchType}&value=${inputValue}`);
+          })
+          .catch(function (error) {
+            console.log(error);
+            alert("글을 불러오지 못했습니다.");
+          });
+      };
+      
+      
+
+
+    const [inputValue, setInputValue] = useState('');
+
+    const handleInputChange = (event) => {
+        setInputValue(event.target.value);
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        // 입력된 값 사용 예시
+        console.log(inputValue);
+        // 여기서 입력된 값으로 원하는 작업을 수행할 수 있습니다.
+        setSearchWord(inputValue);
+        searchStudy();
+    };
+
+
+
+return (<div className="Board">
+    <Stack direction="horizontal" gap={3} style={{ padding: "5px" }}>
+        <div>
+            {
+                searchType === 0 ?
                     <DropdownButton
-                    id="dropdown-button-dark-example2"
-                    variant="blue"
-                    title="글제목"
-                    className="mt-2"
+                        id="dropdown-button-dark-example2"
+                        variant="blue"
+                        title="글제목"
+                        className="mt-2"
                     >
-                    <Dropdown.Item href="#/action-1">글제목</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2" onClick={()=>{setView("글쓴이")}}>글쓴이</Dropdown.Item>
-                </DropdownButton>:
-                <DropdownButton
-                id="dropdown-button-dark-example2"
-                variant="blue"
-                title="글쓴이"
-                className="mt-2"
-                >
-                <Dropdown.Item href="#/action-1" onClick={()=>{setView("글제목")}}>글제목</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2" >글쓴이</Dropdown.Item>
-                </DropdownButton>
-                }
-                
-            </div>
-            <Form.Control className="me-auto" placeholder="원하는 스터디를 찾아보세요!" />
-            <Button variant="blue">🔍</Button>
-            <div className="vr" />
-            {user.id === "" ? null :
-                (<div>
+                        <Dropdown.Item>글제목</Dropdown.Item>
+                        <Dropdown.Item onClick={() => { setSearchType(1) }}>글쓴이</Dropdown.Item>
+                    </DropdownButton> :
+                    <DropdownButton
+                        id="dropdown-button-dark-example2"
+                        variant="blue"
+                        title="글쓴이"
+                        className="mt-2"
+                    >
+                        <Dropdown.Item onClick={() => { setSearchType(0) }}>글제목</Dropdown.Item>
+                        <Dropdown.Item >글쓴이</Dropdown.Item>
+                    </DropdownButton>
+            }
 
-                    <Nav.Link onClick={() => { navigate("../create"); }}>
-                        <Button variant="blue"
-                        >New</Button>
-                    </Nav.Link>
-                </div>)}
+        </div>
+        <Form onSubmit={handleSubmit}>
+            <Form.Control
+                className="me-auto"
+                placeholder="원하는 스터디를 찾아보세요!"
+                value={inputValue}
+                onChange={handleInputChange}
+                style={{width:'400px'}}
+            />    
+        </Form>
+        <Button variant="blue" type="submit" onClick={()=>searchStudy()}>🔍</Button>
+        
+        
+        <div className="vr" />
+        {user.id === "" ? null :
+            (<div>
 
-        </Stack>
+                <Nav.Link onClick={() => { navigate("../create"); }}>
+                    <Button variant="blue"
+                    >New</Button>
+                </Nav.Link>
+            </div>)}
 
-        <Table bordered hover>
-            <thead>
-                <tr>
-                    <th>no.</th>
-                    <th colSpan={2}>글제목</th>
-                    <th>조회수</th>
-                    <th>날짜</th>
-                    <th>인원</th>
-                    <th>글쓴이</th>
-                </tr>
-            </thead>
-            <tbody>
+    </Stack>
 
-                {studyPostList.map(function (row, index) {
-                    return (
-                        <tr className="postCol" key={row[0]} onClick={() => navigate(`../${index + 1}`)}>
-                            <td>{row[0]}</td>
-                            <td colSpan={2}>{row[1]}</td>
-                            <td>{row[6]}</td>
-                            <td>{row[3]}</td>
-                            <td>{row[8]}</td>
-                            <td>{row[2]}</td>
-                        </tr>
-                    );
-                }
-                )}
-            </tbody>
-        </Table>
-    </div>);
+    <Table bordered hover>
+        <thead>
+            <tr>
+                <th>no.</th>
+                <th colSpan={2}>글제목</th>
+                <th>조회수</th>
+                <th>날짜</th>
+                <th>인원</th>
+                <th>글쓴이</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {studyPostList.map(function (row, index) {
+                return (
+                    <tr className="postCol" key={row[0]} onClick={() => navigate(`../${row[0]}`)}>
+                        <td>{row[0]}</td>
+                        <td colSpan={2}>{row[2]}</td>
+                        <td>{row[7]}</td>
+                        <td>{row[5]}</td>
+                        <td>{row[6]}</td>
+                        <td>{row[3]}</td>
+                    </tr>
+                );
+            }
+            )}
+        </tbody>
+    </Table>
+</div>);
 }
 
 export default StudyBoard;

@@ -86,17 +86,15 @@ def showDetail(id) :
 
 
 #글 작성 페이지
-@study_bp.route('/create', methods=['GET', 'POST'])
+@study_bp.route("/create", methods=['POST'])
 @login_required
 def write():
-    if request.method == 'GET' :
-        return jsonify(
-            {'status': 'success'}
-        )
-    else :
+    if request.method == 'POST':
+        print("post\n")
         data = request.get_json(silent=True) # silent: parsing fail 에러 방지
-        
-        type = 0
+        print(data)
+        print("axios error\n")
+        postType = 0
         title = data['title']
         # writer = session.get("id")      # 현재 사용자 id
         writer = current_user.getId()
@@ -106,15 +104,13 @@ def write():
         likes = 0
         views = 0
         #joiningP = 0
-        #totalP = data['totalP']
+        totalP = data['totalP']
         
-        print(type, title, writer, curDate, content, category, likes, views)
-        studyPost.insertStudy( type, title, writer, curDate, content, category, likes, views)
+        print(postType, title, writer, curDate, content, category, likes, views)
+        studyPost.insertStudy( postType, title, writer, curDate, content, category, likes, views)
         
         
-        return jsonify(
-            {'status': 'success'}
-        )
+        return 'Response', 200
 """
 # update 
 @study_bp.route('/update')
