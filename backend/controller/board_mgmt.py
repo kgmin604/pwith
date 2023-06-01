@@ -19,7 +19,7 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"INSERT INTO post ( type, title, writer, curDate, content, category, likes, views )VALUES ('{int(type)}', '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(category)}', '{int(likes)}', '{int(views)}')"
+        sql = f"INSERT INTO post ( postType, title, writer, curDate, content, category, likes, views )VALUES ('{int(type)}', '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(category)}', '{int(likes)}', '{int(views)}')"
         done = cursor_db.execute(sql)
         mysql_db.commit() 
         mysql_db.close()
