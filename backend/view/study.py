@@ -11,14 +11,15 @@ def show():
     if request.method == 'GET':
 
         searchType = request.args.get('type')
-        print(searchType)
         searchValue = request.args.get('value')
+        print("서치타입")
+        print(searchType)
+        print("서치값")
         print(searchValue)
-
 
         if (searchType is None) or (searchValue is None) : # 전체 글 출력
             result = studyPost.getStudy()
-            return result
+            return jsonify(result)
 
         else : # 글 검색
             posts = []
