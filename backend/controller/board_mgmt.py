@@ -121,7 +121,7 @@ class studyPost() :
         posts = cursor_db.fetchall() # page 만들 시 fetchmany() 사용
         
         mysql_db.close()
-
+        print(posts)
         if not posts :
             return None
         

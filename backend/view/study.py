@@ -15,34 +15,39 @@ def show():
         searchValue = request.args.get('value')
         print(searchValue)
 
-        if (searchType is None) or (searchValue is None) :
-            posts = studyPost.getStudy()
 
-        else :
+        if (searchType is None) or (searchValue is None) : # 전체 글 출력
+            result = studyPost.getStudy()
+            return result
+
+        else : # 글 검색
             posts = []
 
-            if int(searchType) == 0:
+            if int(searchType) == 0: # 제목으로 검색
                 posts = studyPost.findByTitle(searchValue)
-            else:
+            else: # 글쓴이로 검색
                 posts = studyPost.findByWriter(searchValue)
 
-        result = []
+            result = []
 
-        for i in range(len(posts)) :
-            post = {
-                'id' : posts[i][0],
-                'type' : posts[i][1],
-                'title' : posts[i][2],
-                'writer' : posts[i][3],
-                'content' : posts[i][4],
-                'curDate' : posts[i][5],
-                'category' : posts[i][6],
-                'likes' : posts[i][7],
-                'views' : posts[i][8]
-            }
-            result.append(post)
+            if posts is None :
+                pass # 결과 없을 시 empty list
+            else :
+                for i in range(len(posts)) :
+                    post = {
+                        'id' : posts[i][0],
+                        'type' : posts[i][1],
+                        'title' : posts[i][2],
+                        'writer' : posts[i][3],
+                        'content' : posts[i][4],
+                        'curDate' : posts[i][5],
+                        'category' : posts[i][6],
+                        'likes' : posts[i][7],
+                        'views' : posts[i][8]
+                    }
+                    result.append(post)
 
-        return jsonify(result)
+            return jsonify(result)
 
 @study_bp.route('/<int:id>', methods=['GET']) # 글 조회
 def showDetail(id) :
