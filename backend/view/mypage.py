@@ -29,7 +29,7 @@ def changePw() :
 
 
 @login_required
-@mypage_bp.route('/account/email', methods = ['GET', 'POST'])
+@mypage_bp.route('/mypage/account/email', methods = ['GET', 'POST'])
 def changeEmail() :
     if request.method == 'POST' : # '완료' 버튼 클릭 시
         #newEmail = request.get_json()
@@ -38,7 +38,7 @@ def changeEmail() :
         done = Member.changeEmail('test', 'test@test.com') # dummy
         
         return jsonify({
-            'done':done;
+            'done':1
         }) # 성공 여부
         
     else :
