@@ -64,8 +64,22 @@ function Login(){
                 <div className="top-message">로그인</div>
 
                 <form method='POST'>
-                    <input style={{'margin-top':'20px'}} className="box-design1" placeholder=" 아이디" id="memId" onChange={e=>inputChange(e)}></input>
-                    <input style={{'margin-top':'20px'}} className="box-design1" placeholder=" 비밀번호" type='password' id="memPw" onChange={e=>inputChange(e)}></input>
+                    <input 
+                      style={{'margin-top':'20px'}} 
+                      className="box-design1" 
+                      placeholder=" 아이디" 
+                      id="memId" 
+                      onChange={e=>inputChange(e)}>
+                    </input>
+                    <input 
+                      style={{'margin-top':'20px'}} 
+                      className="box-design1" 
+                      placeholder=" 비밀번호" 
+                      type='password' 
+                      id="memPw" 
+                      onChange={e=>inputChange(e)}
+                      onKeyDown={(e) => { if (e.key === "Enter") checkLogin(); }}
+                    ></input>
                     <div className="box-design2 mybtn" onClick={checkLogin}>로그인</div>
                 </form>
                 
