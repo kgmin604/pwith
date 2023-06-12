@@ -9,7 +9,7 @@ class Portfolio() :
         self.__content = content
         # 끌어올리기 구현 시 ON/OFF or date 추가 - DB에도
     
-    @property # 은닉
+    @property # getter 함수를 다음과 같이 정의 for 은닉
     def writer(self) :
         return str(self.__writer)
 
@@ -29,10 +29,12 @@ class Portfolio() :
     def create(writer, subject, image, content) :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
-        sql = f"INSERT INTO mento(mentoId, mentiList, subject, mentoPic, content) VALUES ('{writer}', '{subject}', '{image}', '{content}')" ## str
-        done = cursor_db.execute(sql) ### print
-        mysql_db.commit() ### print
-        return done ## or, commit result (?)
+
+        sql = f"INSERT INTO mento(mentoId, mentiList, subject, mentoPic, content) VALUES ('{writer}', null, '{subject}', '{image}', '{content}')"
+        done = cursor_db.execute(sql)
+
+        mysql_db.commit() ### print None
+        return done
 
     @staticmethod
     def loadAll() :
@@ -42,8 +44,8 @@ class Portfolio() :
         sql = "SELECT * FROM mento"
         cursor_db.execute(sql)
 
-        allP = cursor_db.fetchall()
-        print(type(allP)) ###
+        allP = cursor_db.fetchall() # tuple of tuple
+        # print(allP)
         return allP
 
     @staticmethod
@@ -51,10 +53,16 @@ class Portfolio() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT * FROM mento WHERE mentoId = {mentoId}"
+        sql = f"SELECT * FROM mento WHERE mentoId = '{mentoId}'"
         cursor_db.execute(sql)
 
-        pf = cursor_db.fetchone()
-        return pf
+        port = cursor_db.fetchone()
+        
+        if not port :
+            return None
+
+        result = Portfolio(port[0], port[2], port[3], port[4]) # mentiList 제외
+        return result
 
     ## update 구현
+    ## menti list에 추가 구현

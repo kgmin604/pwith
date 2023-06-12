@@ -50,7 +50,8 @@ CREATE TABLE mento (
     mentoPic LONGBLOB, -- NOT NULL
     content VARCHAR(500) NOT NULL,
     PRIMARY KEY(mentoId),
-    FOREIGN KEY(mentoId, mentiList) REFERENCES member(memId, memId) on delete cascade -- json도 가능?
+    FOREIGN KEY(mentoId) REFERENCES member(memId) on delete cascade
+    -- FOREIGN KEY(mentoId, mentiList) REFERENCES member(memId, memId) on delete cascade -- json 안 됨. 일단 빼고 생성함.
 );
 
 CREATE TABLE review (

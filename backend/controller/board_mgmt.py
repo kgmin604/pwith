@@ -71,7 +71,6 @@ class studyPost() :
         rows = cursor_db.fetchall()
         mysql_db.close()
         # print(rows)
-        # mysql_db.commit() # table에 변경 사항 없으면 commit() 없어도 되는 것으로 알고 있습니다! - 채영
         
         return rows
 
@@ -121,7 +120,7 @@ class studyPost() :
         posts = cursor_db.fetchall() # page 만들 시 fetchmany() 사용
         
         mysql_db.close()
-
+        print(posts)
         if not posts :
             return None
         
