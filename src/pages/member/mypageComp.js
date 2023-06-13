@@ -156,7 +156,7 @@ function Chat(){
                             ))
                         }
                     </div>
-                    <div className="chat-box scroll-area"> {/* 오른쪽 구역: 채팅 내용 */}
+                    <div className="chat-box scroll-area scroll-area-hidden"> {/* 오른쪽 구역: 채팅 내용 */}
                         <div className="title">
                         {
                             selectedItem === null ? <></> :
