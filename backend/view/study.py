@@ -6,7 +6,7 @@ study_bp = Blueprint('study', __name__, url_prefix='/study')
 
 #페이지네이션, 스터디 메인 페이지, 마이페이지에서 멤버별로 글 보이게, 작성 페이지 프론트연결,
 
-@study_bp.route('/main', methods=['GET', 'POST'])
+@study_bp.route('/main', methods=['GET'])
 def show():
     if request.method == 'GET':
 
@@ -19,7 +19,7 @@ def show():
 
         if (searchType is None) or (searchValue is None) : # 전체 글 출력
             result = studyPost.getStudy()
-            return jsonify(result)
+            return jsonify(result) # column 값 명시하기!!
 
         else : # 글 검색
             posts = []
