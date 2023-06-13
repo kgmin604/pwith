@@ -1,28 +1,120 @@
-.room-part{
-    border:solid;
+div.room-part div.row
+.col-md-3
+{
+    width: 20%;
+    margin: 0 0;
+    padding: 0 0;
 }
 
 div.room-part div.row
-.col-md-6
+.col-md-9
 {
-    border:solid;
+    width: 80%;
+    margin: 0 0;
 }
 
-div.room-part div.row div.col-md-6
+div.room-part div.row div.col-md-3
+.profile{
+    border-radius: 10px;
+    background-color: rgb(241, 241, 241) ;
+    width: 200px;
+    height: 310px;
+    margin: 0 auto;
+    display: flex; /* 플렉스 컨테이너로 설정 */
+    flex-direction: column;
+}
+
+div.room-part div.row div.col-md-3 div.profile
+img{
+    margin: 0 auto;
+    margin-top: 40px;
+    width: 100px;
+    height: 100px;
+    display: block;
+}
+
+div.room-part div.row div.col-md-3 div.profile 
+.info{
+    display: flex;
+    justify-content: center;
+    margin: 5px 0;
+}
+
+div.room-part div.row div.col-md-3 div.profile div.info
+.area{
+    width: 48%;
+}
+
+div.room-part div.row div.col-md-3 div.profile div.info div.area
+p{
+    font-size: 12px;
+    text-align: center;
+    margin: 10px 0;
+}
+
+div.room-part div.row div.col-md-3 div.profile div.info div.area
+h2{
+    text-align: center;
+    font-size: 18px;
+    color: rgb(61, 105, 144);
+    font-weight: bold;
+}
+
+div.room-part div.row div.col-md-3 div.profile
+.name{
+    margin: 5px auto;
+    line-height: 50px;
+    font-size: 16px;
+    float : left;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-align: center;
+    width: 80%;
+    border-bottom: 1px solid lightgray;
+}
+
+div.room-part div.row div.col-md-3 div.profile
+span{ /* 사용자 이름 부분*/
+    font-size: 18px;
+    color: rgb(61, 105, 144);
+}
+
+div.room-part div.row div.col-md-9
+.list-area{
+    margin-bottom: 20px;
+}
+
+div.room-part div.row div.col-md-9 div.list-area
 h2{
     flex: auto;
     line-height: 50px;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 18px;
+    font-weight: 600; 
     float : left;
     width: 100%;
+    margin: 0 10px;
 }
 
-div.room-part div.row div.col-md-6 div.items a.item
+div.room-part div.row div.col-md-9 div.list-area div.items 
+.item
+{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.0625rem 0.1875rem 0 rgba(0,0,0,.2);
+    width: 96%;
+    margin: 10px 10px;
+}
+
+div.room-part div.row div.col-md-9 div.list-area div.items a.item
 h3{
     flex: auto;
-    line-height: 16px;
-    font-size: 16px;
+    line-height: 14px;
+    font-size: 14px;
     float : left;
     cursor: pointer;
     padding-left: 20px;

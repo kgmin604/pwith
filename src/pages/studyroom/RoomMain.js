@@ -2,8 +2,10 @@ import React from 'react';
 import "./studyroom.css";
 import { useState } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 function RoomMain(){
+    let user = useSelector((state) => state.user);
     let navigate = useNavigate();
 
     let tmpData1 = {
@@ -37,13 +39,26 @@ function RoomMain(){
     return(
         <>
             <div className="room-part">
-                <div class="row">
-                    <div class="col-md-3"> 
-                        구성1
+                <div className="row">
+                    <div className="col-md-3">
+                        <div className="profile">
+                            <img src="/user.png" alt="User" />
+                            <h2 className="name"><span>{user.name}</span>님</h2>
+                            <div className="info">
+                                <div className="area" style={{'border-right':'solid 1px lightgray'}}>
+                                    <p>참여중인<br></br>스터디</p>
+                                    <h2>3개</h2> {/* 서버 연결 후 수정!!! */}
+                                </div>
+                                <div className="area">
+                                    <p>참여중인<br></br>멘토링</p>
+                                    <h2>3개</h2> {/* 서버 연결 후 수정!!! */}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <div>
-                            <h2>참여중인 스터디</h2>
+                    <div class="col-md-9">
+                        <div className="list-area">
+                            <h2><span style={{'color':'#98afca'}}>▶</span>스터디</h2>
                             <div className="items">
                             {
                                 rooms.map((room, index) => (
@@ -57,8 +72,8 @@ function RoomMain(){
                             }
                             </div>
                         </div>
-                        <div>
-                            <h2>참여중인 멘토링</h2>
+                        <div className="list-area">
+                            <h2><span style={{'color':'#98afca'}}>▶</span>멘토링</h2>
                             <div className="items">
                             {
                                 rooms.map((room, index) => (
@@ -72,9 +87,6 @@ function RoomMain(){
                             }
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        구성2
                     </div>
                 </div>
                 </div>
