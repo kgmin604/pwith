@@ -26,8 +26,8 @@ def showAll() :
                 'content' : allP[i][4]
             })
 
-        print('==변환 후==')
-        print(result)
+        # print('==변환 후==')
+        # print(result)
 
         return jsonify(result)
 
@@ -51,7 +51,7 @@ def writePortfolio() :
         try :
             result = Portfolio.create(writer, subject, image, content)
         except Exception as ex: # sql error
-            print(ex)
+            # print(ex)
             result = 0
 
         return jsonify(result) # 0 fail, 1 success
