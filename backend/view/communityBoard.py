@@ -2,51 +2,71 @@ from flask import Flask, session, Blueprint, render_template, redirect, request,
 from flask_login import login_required, current_user
 # from controller.community_mgmt import bootPost, QNAPost
 from model.db_mongo import conn_mongodb
+from model.db_mysql import conn_mysql
 # from view.community import conn_mongodb
 from controller.community_mgmt import QNAPost
 
 community_bp = Blueprint('community', __name__, url_prefix='/community')
 
-# postman 테스트 완료
-@community_bp.route('/it', methods=['GET', 'POST']) # /it?page=1 방식 제안하기
+@community_bp.route('/it', methods=['GET', 'POST']) # /it?page=1?date=20230512 방식 제안
 def listNews() :
-    if request.method == 'GET' :
+    if request.method == 'GET' : # postman 테스트 완.
 
         ten_news = []
 
-        print(conn_mongodb().ITnews_crawling.find()[0])
         news_list = conn_mongodb().ITnews_crawling.find()
-        # for news in news_list :
-        #     news['title']
-        #     news['content']
-        #     news['img']
-        #     news['url']
 
         for i in range(10) :
             news = news_list[i]
             ten_news.append({
+                'newsId': news['newsId'],
                 'title' : news['title'],
                 'content' : news['content'],
                 'img' : news['img'],
                 'url' : news['url']
             })
-            # ten_news.append(news)
             
-        return ten_news # 일단 10개만 넘김 (pagination 결정 후 보완)
+        return ten_news # 일단 10개만 넘김 (pagination&date 표현 방식 결정 후 보완)
         
     # 추후 검색 구현할 때 POST 방식 추가
 
+@community_bp.route('/it/<int:newsId>', methods=['GET', 'POST'])
+def readNews(newsId) :
+    if request.method == 'GET' : # postman 테스트 완.
 
+        news = conn_mongodb().ITnews_crawling.find_one({'newsId': newsId})
+        
+        if not news : # 없을 시
+            return jsonify({
+                'status' : 'fail'
+            })
 
-# @community_bp.route('/it/<num>', methods=['GET', 'POST'])
-# def readNews() : # 구현 전
-#     if request.method == 'GET' :
-#         # 내용 띄우기
-#         return jsonify(
-#             {'status': 'success'}
-#         )
-#     else :
-#         # 좋아요, 댓글 등
+        return jsonify({
+            'date': news['date'],
+            'title': news['title'],
+            'content': news['content'],
+            'img': news['img'],
+            'url': news['url']
+        })
+    else : # 좋아요
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql_update = f'UPDATE it_news SET likes = likes + 1 WHERE newsId = {newsId}'
+
+        cursor_db.execute(sql_update)
+        mysql_db.commit()
+
+        sql_select = f"SELECT likes FROM it_news WHERE newsId = {newsId}"
+        cursor_db.execute(sql_select)
+
+        likes = cursor_db.fetchone()[0]
+
+        mysql_db.close()
+        
+        return jsonify({
+            'likes' : likes
+        })
 
 
 #QNA main 페이지
