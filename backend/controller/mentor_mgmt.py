@@ -64,5 +64,19 @@ class Portfolio() :
         result = Portfolio(port[0], port[2], port[3], port[4]) # mentiList 제외
         return result
 
-    ## update 구현
+    @staticmethod
+    def update(mentoId, newSub, newImg, newCnt) :
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"UPDATE mento SET subject = '{newSub}', mentoPic = '{newImg}', content = '{newCnt}' WHERE mentoId = '{mentoId}'"
+        done = cursor_db.execute(sql)
+
+        mysql_db.commit()
+
+        return done
+
+
+
+
     ## menti list에 추가 구현
