@@ -12,10 +12,10 @@ def show():
 
         searchType = request.args.get('type')
         searchValue = request.args.get('value')
-        print("서치타입")
-        print(searchType)
-        print("서치값")
-        print(searchValue)
+        # print("서치타입")
+        # print(searchType)
+        # print("서치값")
+        # print(searchValue)
 
         if (searchType is None) or (searchValue is None) : # 전체 글 출력
             result = studyPost.getStudy()
@@ -60,9 +60,14 @@ def showDetail(id) :
 
         toFront = {
             'title': post.getTitle(),
+            'writer' : post.getWriter(),
             'content': post.getContent(),
+            'curDate' : post.getCurDate(),
+            'category' : post.getCategory(),
             'views': post.getViews(),
-            'totalP': post.getTotalP()
+            'likes' : post.getLikes()
+            #'totalP': post.getTotalP(),
+            
         }
 
         return toFront

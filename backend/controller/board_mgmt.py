@@ -88,7 +88,7 @@ class studyPost() :
         if not res :
             return None
 
-        post = studyPost(res[0], res[1], res[4], res[6], res[8])
+        post = studyPost(res[1], res[2], res[3], res[4], res[5], res[6], res[7])
         return post
 
     @staticmethod
@@ -136,10 +136,24 @@ class studyPost() :
     def getViews(self) :
         return int(self.views)
 
-    def getTotalP(self) :
-        return int(self.totalP)
+    #def getTotalP(self) :
+    #    return int(self.totalP)
     
+    def getCurDate(self) :
+        return datetime(self.curDate)
     
+    def getWriter(self):
+        return str(self.writer)
+    
+    def getCategory(self):
+        return int(self.category)
+    
+    def getLikes(self):
+        return int(self.likes)
+    
+    def getViews(self):
+        return int(self.views)
+        
         '''    
     @staticmethod
     def deleteStudy(studyID):

@@ -73,3 +73,40 @@ def showDetail(mentoId) :
         }
         
         return jsonify(detail)
+    else : # 1:1 쪽지 버튼
+        pass
+
+@mento_bp.route('/update/<mentoId>', methods = ['GET', 'PUT']) # URI 확정 ㄴㄴ
+def modifyPortfolio(mentoId) :
+
+    loginUser = current_user.getId()
+    # loginUser = 'park' # dummmmmmmmmy
+    
+    if loginUser != mentoId : # 본인의 글에 접근한 게 아닐 때
+        return jsonify({
+            'status' : 'fail'
+        })
+
+    if request.method == 'GET' : # 작성 정보 띄우기
+
+        detail = {}
+
+        portfolio = Portfolio.findById(mentoId)
+
+        detail = {
+            'subject' : json.loads(portfolio.subject),
+            'image' : portfolio.image,
+            'content' : portfolio.content
+        }
+        
+        return jsonify(detail)
+
+    else : # request.method == 'PUT'
+
+        newPort = request.get_json()
+        
+        done = Portfolio.update(mentoId, newPort['subject'], newPort['image'], newPort['content'])
+
+        return jsonify({
+            'done' : done # 성공 시 1, 실패 또는 변경 사항 없을 시 0
+        })
