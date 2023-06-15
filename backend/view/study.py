@@ -60,9 +60,14 @@ def showDetail(id) :
 
         toFront = {
             'title': post.getTitle(),
+            'writer' : post.getWriter(),
             'content': post.getContent(),
+            'curDate' : post.getCurDate(),
+            'category' : post.getCategory(),
             'views': post.getViews(),
-            'totalP': post.getTotalP()
+            'likes' : post.getLikes()
+            #'totalP': post.getTotalP(),
+            
         }
 
         return toFront
