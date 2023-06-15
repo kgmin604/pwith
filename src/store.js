@@ -31,24 +31,12 @@ let studyPostList = createSlice({
   }
 }) ;
 
-let iTNewsList = createSlice({
-  name : 'iTNewsList',
-  initialState : [],
-  reducers : {
-    updateITNewsList: (state,action)=>{
-      return action.payload;
-    }
-  }
-}) ;
-
 export let { loginUser, clearUser } = user.actions;
 export let {updateStudyPostList} = studyPostList.actions;
-export let {updateITNewsList} = iTNewsList.actions;
 
 export default configureStore({
   reducer: { 
     user : user.reducer, // 앞의 user는 작명, user.reducer의 user는 slice
-    studyPostList : studyPostList.reducer,
-    iTNewsList : iTNewsList.reducer
+    studyPostList : studyPostList.reducer
   }
 })

@@ -40,7 +40,7 @@ function StudyBoard(props) {
           })
           .catch(function (error) {
             console.log(error);
-            alert("글을 불러오지 못했습니다.");
+            //alert("글을 불러오지 못했습니다.");
           });
           
       };
@@ -56,9 +56,7 @@ function StudyBoard(props) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        // 입력된 값 사용 예시
         console.log(inputValue);
-        // 여기서 입력된 값으로 원하는 작업을 수행할 수 있습니다.
         searchStudy();
     };
 
