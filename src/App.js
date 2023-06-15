@@ -113,7 +113,7 @@ function App() {
               >
                 커뮤니티
               </li>
-              <li className="navbar-btn" onClick={() => navigate("/mentoring")}>
+              <li className="navbar-btn" onClick={() => navigate("/mentoring/main")}>
                 멘토링
               </li>
             </ul>
@@ -200,7 +200,7 @@ function App() {
           </Route>
           <Route path="/community/qna" element={<CommunityQna />} />
           <Route path="/community/qna/create" element={<QnaCreate/>} /> 
-          <Route path="/mentoring" element={<MentoringMain />} />
+          <Route path="/mentoring/main" element={<MentoringMain />} />
           <Route path="/login" element={<Login />} />
           <Route path="/join" element={<Join />} />
           <Route path="/help" element={<Help />} />
