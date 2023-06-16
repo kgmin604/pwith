@@ -25,74 +25,39 @@ function MentoringCreate() {
         'content': ''
     })//글쓴이,제목, 분야, 내용
 
-    // function postPortfolio() {
-    //     const updatedSubject = JSON.stringify(selectedWords);
-      
-    //     setportfolio({
-    //       ...portfolio,
-    //       subject: updatedSubject
-    //     });
-      
-    //     axios({
-    //       method: "POST",
-    //       url: "/mentoring/create",
-    //       data: {
-    //         writer: `${portfolio['writer']}`,
-    //         title: `${portfolio['title']}`,
-    //         subject: updatedSubject,
-    //         content: `${portfolio['content']}`
-    //       }
-    //     })
-    //       .then(function (response) {
-    //         console.log(portfolio);
-    //         alert("새 글이 등록되었습니다.");
-    //         navigate("../mentoring/main");
-    //       })
-    //       .catch(function (error) {
-    //         console.log(error);
-    //         alert("요청을 처리하지 못했습니다.");
-    //       });
-    //   } 
-
-    useEffect(() => {
-        console.log(portfolio);
-      }, [portfolio]);
-
-    async function postPortfolio() {
+    function postPortfolio() {
         const updatedSubject = JSON.stringify(selectedWords);
-        
+      
         setportfolio({
           ...portfolio,
           subject: updatedSubject
         });
       
-        try {
-          await axios({
-            method: "POST",
-            url: "/mentoring/create",
-            data: {
-              writer: `${portfolio['writer']}`,
-              title: `${portfolio['title']}`,
-              subject: updatedSubject,
-              content: `${portfolio['content']}`
-            }
+        axios({
+          method: "POST",
+          url: "/mentoring/create",
+          data: {
+            writer: `${portfolio['writer']}`,
+            title: `${portfolio['title']}`,
+            subject: updatedSubject,
+            content: `${portfolio['content']}`
+          }
+        })
+          .then(function (response) {
+            console.log(portfolio);
+            alert("새 글이 등록되었습니다.");
+            navigate("../mentoring/main");
+          })
+          .catch(function (error) {
+            console.log(error);
+            alert("요청을 처리하지 못했습니다.");
           });
+      } 
+
+    useEffect(() => {
+        console.log(portfolio);
+      }, [portfolio]);
       
-          console.log(portfolio);
-          alert("새 글이 등록되었습니다.");
-          navigate("../mentoring/main");
-        } catch (error) {
-          console.log(error);
-          alert("요청을 처리하지 못했습니다.");
-        }
-      }
-      
-
-
-      
-
-
-
     const handleWordClick = (word) => {
         if (selectedWords.includes(word)) {
             setSelectedWords(prevWords => prevWords.filter(w => w !== word));
