@@ -4,8 +4,8 @@ from flask import Flask, jsonify
 
 class studyPost() :
     
-    def __init__(self, type, title, writer, curDate, content, category, likes, views):
-        self.type = type
+    def __init__(self, postType, title, writer, content, curDate, category, likes, views):
+        self.postType = postType
         self.title = title
         self.writer = writer
         self.curDate = curDate
@@ -15,11 +15,11 @@ class studyPost() :
         self.views = views
 
     @staticmethod
-    def insertStudy( type, title, writer, curDate, content, category, likes, views):   # insert data
+    def insertStudy( postType, title, writer, curDate, content, category, likes, views):   # insert data
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"INSERT INTO post ( postType, title, writer, curDate, content, category, likes, views )VALUES ('{int(type)}', '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(category)}', '{int(likes)}', '{int(views)}')"
+        sql = f"INSERT INTO post ( postType, title, writer, curDate, content, category, likes, views )VALUES ('{int(postType)}', '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(category)}', '{int(likes)}', '{int(views)}')"
         done = cursor_db.execute(sql)
         mysql_db.commit() 
         mysql_db.close()
@@ -59,7 +59,7 @@ class studyPost() :
     @staticmethod
     def curdate():  # date 구하는 함수
         now = datetime.now()
-        return now.date()
+        return str(now.date())
     
     @staticmethod
     def getStudy():
@@ -69,13 +69,13 @@ class studyPost() :
         sql = "select * from post"
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
-        mysql_db.close()
+        # mysql_db.close()
         # print(rows)
         
         return rows
 
     @staticmethod
-    def findById(id) : # 정윤이 테스트 방식에 맞추어 네 개의 값만 전달함 - 채영
+    def findById(id) : # 게시글 ID로 검색
 
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
@@ -88,7 +88,7 @@ class studyPost() :
         if not res :
             return None
 
-        post = studyPost(res[1], res[2], res[3], res[4], res[5], res[6], res[7])
+        post = studyPost(res[0], res[2], res[3], res[4], res[5], res[6], res[7], res[8])
         return post
 
     @staticmethod
@@ -140,7 +140,7 @@ class studyPost() :
     #    return int(self.totalP)
     
     def getCurDate(self) :
-        return datetime(self.curDate)
+        return str(self.curDate)
     
     def getWriter(self):
         return str(self.writer)
@@ -153,6 +153,18 @@ class studyPost() :
     
     def getViews(self):
         return int(self.views)
+    
+    def getNStudy(self):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = "select postId, title from post LIMIT 5"
+        cursor_db.execute(sql)
+        rows = cursor_db.fetchall()
+        # mysql_db.close()
+        # print(rows)
+        
+        return rows
         
         '''    
     @staticmethod
