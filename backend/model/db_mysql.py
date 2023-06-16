@@ -22,3 +22,9 @@ def conn_mysql():
     elif not mysql_conn.open:  # mysql_conn이 열려있지 않은 경우에는 재연결 시도
         mysql_conn.ping(reconnect=True)
     return mysql_conn
+
+
+# def conn_mysql():
+#     if not mysql_conn.open:
+#         mysql_conn.ping(reconnect=True)
+#     return mysql_conn

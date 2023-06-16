@@ -31,6 +31,7 @@ class Portfolio() :
         cursor_db = mysql_db.cursor()
 
         sql = f"INSERT INTO mento(mentoId, mentiList, subject, mentoPic, content) VALUES ('{writer}', null, '{subject}', '{image}', '{content}')"
+        print(sql)
         done = cursor_db.execute(sql)
 
         mysql_db.commit() ### print None

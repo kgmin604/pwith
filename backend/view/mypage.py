@@ -75,7 +75,7 @@ def myPost() :
             }
             result.append(myPost)
         return jsonify(result)
-
-    return jsonify({
-        'myPost' : myPost
-    })
+    else :
+        return jsonify({
+            'status' : 'success'
+        })
