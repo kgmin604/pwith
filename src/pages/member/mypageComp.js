@@ -2,6 +2,7 @@ import React from 'react';
 import axios from "axios";
 
 import "./member.css";
+import "./writinglist.css";
 import "./modal.css";
 import { useSelector } from "react-redux"
 import { Button } from "react-bootstrap";
@@ -34,15 +35,41 @@ function Account(){
 }
 
 function WritingList(){
+    let navigate = useNavigate();
     let [sel, setSel] = useState(0); // 0: 스터디 글 목록 1: 커뮤니티 글 목록
-    let [mypost, setMypost] = useState([]);
+    // let [mypost, setMypost] = useState(null); -- axios 완성 후 코드
+    let tmp = {
+        'id' : 1, 
+       'type' : 0,
+       'title' : '종강맞이 AI 공부하실분', 
+       'write' : 'kgminee', 
+       'content' : '재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요', 
+       'curDate' : '2023/06/16', 
+       'category' : 8, 
+       'likes' : 4, 
+       'views' : 10
+    }
+    let tmp2 = {
+        'id' : 2, 
+       'type' : 1,
+       'title' : '방학때 뭐할까요?', 
+       'write' : 'test', 
+       'content' : '어떤 공부할까요?', 
+       'curDate' : '2023/06/16', 
+       'category' : 10,
+       'likes' : 1, 
+       'views' : 2
+    }
+
+    let [mypost, setMypost] = useState([tmp, tmp2,tmp, tmp2,tmp, tmp2,tmp, tmp2,tmp, tmp2,tmp, tmp2,])
+
 
     function loadWritingList(){
         axios({
           method: "GET",
           url: "/mypage/writinglist",
           data: {
-             type : 0
+            type : 0
           },
         })
         .then(function (response) {
@@ -58,7 +85,7 @@ function WritingList(){
           method: "POST",
           url: "/mypage/writinglist",
           data: {
-             type : `${type}`
+            type : `${type}`
           },
         })
         .then(function (response) {
@@ -69,35 +96,53 @@ function WritingList(){
         });
     }
 
+    /* backend 완성 후 풀기
     useEffect(() => {
         loadWritingList();
     }, []); 
+    */
+
+    function movePage(event, id){
+        event.stopPropagation();
+        if(sel===0){ // 스터디 글
+            navigate(`/study/${id}`);
+        }
+        else if(sel===1){ // 커뮤니티 글
+            navigate(`/community/qna/${id}`);
+        }
+    }
 
     return(
         <>
-            <div style={{'padding':'0 0', 'margin':'0 0'}} >
+            <div className="writinglist">
                 <h3 className="my-header">내가 쓴 글 목록</h3>
-                <div className="chat-select">
+                <div className="type-select">
                 <ul style={{ padding: '0 0' }}>
                     <li 
-                        className={sel === 0 ? "chat-btn-click" : "chat-btn"} 
+                        className={sel === 0 ? "type-btn-click" : "type-btn"} 
                         onClick={(event) => { event.stopPropagation(); setSel(0); getWritingList(0); }}
                     >스터디</li>
                     <li 
-                        className={sel === 1 ? "chat-btn-click" : "chat-btn"} 
+                        className={sel === 1 ? "type-btn-click" : "type-btn"} 
                         onClick={(event) => { event.stopPropagation(); setSel(1); getWritingList(1);}}
                     >커뮤니티</li>
                 </ul>
                 </div>
-                <div className="chat-bottom">
+                <div className="writinglist-bottom scroll-area">
                 {
                     mypost === [] ? null : 
-                    mypost.map((post, index) => (
-                        <div className="item" key={index}>
-                            <h3>{post[2]}</h3> {/* 인덱스 대신 문자열로 변경 필요 */}
-                            <p>{post[4]}</p>    {/* 인덱스 대신 문자열로 변경 필요 */}
+                    mypost.map((post, index) => {
+                    return (
+                        <div 
+                            className="item" 
+                            key={index}
+                            onClick = { e => movePage(e, post.id) }
+                        >
+                            <time>{post.curDate}</time>
+                            <h3 className="header">{post.title}</h3>
+                            <p className="content">{post.content}</p>
                         </div>
-                    ))
+                    );})
                 }
                 </div>
             </div>
@@ -106,28 +151,31 @@ function WritingList(){
 }
 
 function Chat(){
-    let tmpData = {
-        'id' : 'kgminee',
-        'date' : '05/31 9:13',
-        'content' : '개발중입니다.다암런아러미ㅏㄴㅇ멀;ㅣ나ㅓㅇ리마넝리ㅏㅁ넝;리ㅓㅁㄴ이라ㅓㅑㅓㅈ디ㅏㄴㅇ러ㅣㅏㅓㄹㅇ니ㅏㅓ'
-    };
-    let [chatList, setChatList] = useState(tmpData);
+    let user = useSelector((state) => state.user);
 
-    let tmpMsg = {
-        'type' : 1,
-        'date' : '05/31 9:13',
-        'content' : '개발중입니다.'
-    };
-    let tmpMsg2 = {
-        'type' : 2,
-        'date' : '05/31 9:14',
-        'content' : '노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.노는중입니다.'
-    };
+    let [chatList, setChatList] = useState(null);
+    let [msgList, setMsgList] = useState(null);
 
     let [selectedItem, setSelectedItem] = useState(null);
-    let handleItemClick = (event, index) => {
+    let handleItemClick = (event, index) => { // 특정 userid 선택
         event.stopPropagation(); // 이벤트 버블링 중단
         setSelectedItem(index);
+        
+        axios({
+            method: "POST",
+            url: "/mypage/chat",
+            data: {
+                type: 0,
+                memId : `${user.id}`,
+                oppID : `${chatList[selectedItem]['oppId']}`,
+            },
+          })
+          .then(function (response) {
+              setMsgList(response.data.msgList); // msgList는 딕셔너리 리스트
+          })
+          .catch(function (error) {
+              console.log(error);
+          });
     };
     
     let [open, setOpen] = useState(false);
@@ -135,33 +183,78 @@ function Chat(){
         event.stopPropagation();
         setOpen(!open);
     }
+
+    let [content, setContent] = useState('');
+    let changeContent = (event) =>{
+        event.stopPropagation();
+        setContent(event.target.value);
+    }
+
+    useEffect(() => { // 맨 처음 한번만 실행
+        axios({
+            method: "GET",
+            url: "/mypage/chat",
+            data: {
+                memId : `${user.id}`
+            },
+          })
+          .then(function (response) {
+              setChatList(response.data.chatList); // chatList는 딕셔너리 리스트
+          })
+          .catch(function (error) {
+              console.log(error);
+          });
+      }, []);
+
+
+    function sendRequest(event){
+        event.stopPropagation();
+        if(content==='') return;
+        axios({
+            method: "POST",
+            url: "/mypage/chat",
+            data: {
+                type: 1,
+                memId : `${user.id}`,
+                oppID : `${chatList[selectedItem]['oppId']}`,
+                content : `${content}`
+            },
+          })
+          .then(function (response) {
+              alert("쪽지 전송 완료");
+          })
+          .catch(function (error) {
+              console.log(error);
+        });
+    }
+
     return(
         <>
             <div className ="mypage-chat" style={{'padding':'0 0', 'margin':'0 0'}}>
                 <h3 className="my-header">쪽지함</h3>
                 <div className="chat-bottom">
                     <div className="chat-boxes scroll-area"> {/* 왼쪽구역: 채팅한 계정들*/}
-                        {
-                            // 테스트 코드
-                            Array.from({ length: 10 }, (_, i) => (
-                            <a 
+                    {
+                        chatList === null ? null :
+                        chatList.map((item, i) => (
+                            <a
                                 className={`item ${selectedItem === i ? 'selected' : ''}`}
                                 key={i}
                                 onClick={(event) => handleItemClick(event, i)}
                             >
-                                <time>{chatList['date']}</time>
-                                <h3>{chatList['id']}</h3>
-                                <p>{chatList['content']}</p>
+                                <time>{item.curDate}</time>
+                                <h3>{item.oppId}</h3>
+                                <p>{item.content}</p>
                             </a>
-                            ))
-                        }
+                        ))
+                    }
                     </div>
                     <div className="chat-box scroll-area scroll-area-hidden"> {/* 오른쪽 구역: 채팅 내용 */}
                         <div className="title">
                         {
                             selectedItem === null ? <></> :
                             <>
-                                <h2>{chatList['id']}</h2>
+                                <h2>{chatList[selectedItem]['oppId']}</h2>
                                 <a className="send" title ="쪽지 보내기" onClick={ (event) => handleModal(event) }>💌</a>
                             </>
                         }
@@ -170,14 +263,14 @@ function Chat(){
                             selectedItem === null ? <></> :
                             <div className="content">
                             {
-                                Array.from({ length: 10 }, (_, i) => {
-                                    const type = tmpMsg2['type'] === 1 ? "받은 쪽지" : "보낸 쪽지";
-                                    return (
+                                msgList.map((msg,i)=>{
+                                    const type = msg['sender'] === user.id ? "보낸 쪽지" : "받은 쪽지";
+                                    return(
                                     <div className="item" key={i}>
-                                        <time>{tmpMsg2['date']}</time>
+                                        <time>{msg.date}</time>
                                         <p className="type">{type}</p>
-                                        <p className="text">{tmpMsg2['content']}</p>
-                                    </div>
+                                        <p className="text">{msg.content}</p>
+                                    </div>  
                                     );
                                 })
                             }
@@ -189,14 +282,26 @@ function Chat(){
                     open === true?
                     <>
                         <div className="modal-wrap"></div>
-                        <div className="modal">
-                            <a title="닫기" className="close" onClick={(event)=>handleModal(event)}>X</a>
-                            <h3>쪽지 보내기</h3>
-                            <p>
-                                <textarea name="message" class="text" placeholder="내용 입력"></textarea>
-                            </p>
-                            <input type="submit" value="전송" class="button"></input>
-                        </div>
+                        <form method='POST'>
+                            <div className="modal">
+                                <a title="닫기" className="close" onClick={(event)=>handleModal(event)}>X</a>
+                                <h3>쪽지 보내기</h3>
+                                <p>
+                                    <textarea 
+                                        name="message" 
+                                        className="text" 
+                                        placeholder="내용 입력"
+                                        onChange={e=>changeContent(e)}>
+                                    </textarea>
+                                </p>
+                                <input 
+                                    type="submit" 
+                                    value="전송" 
+                                    className="button"
+                                    onClick={e=>sendRequest(e)}
+                                ></input>
+                            </div>
+                        </form>
                     </>
                     :
                     null
