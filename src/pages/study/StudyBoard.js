@@ -32,24 +32,24 @@ function StudyBoard(props) {
                 value: inputValue
             }
         })
-          .then(function (response) {
-            console.log(response);
-            console.log(searchType);
-            console.log(inputValue);
-            navigate(`/study/main?type=${searchType}&value=${inputValue}`);
-          })
-          .catch(function (error) {
-            console.log(error);
-            //alert("글을 불러오지 못했습니다.");
-          });
-          
-      };
+            .then(function (response) {
+                console.log(response);
+                console.log(searchType);
+                console.log(inputValue);
+                navigate(`/study/main?type=${searchType}&value=${inputValue}`);
+            })
+            .catch(function (error) {
+                console.log(error);
+                //alert("글을 불러오지 못했습니다.");
+            });
 
-    useEffect(()=>{
+    };
+
+    useEffect(() => {
         console.log(studyPostList)
-    },[studyPostList])
-      
-      
+    }, [studyPostList])
+
+
 
 
     const [inputValue, setInputValue] = useState('');
@@ -128,20 +128,18 @@ function StudyBoard(props) {
                 </tr>
             </thead>
             <tbody>
-
-                {studyPostList.map(function (row, index) {
+                {studyPostList.map(function (post, index) {
                     return (
-                        <tr className="postCol" key={row[0]} onClick={() => navigate(`../${row[0]}`)}>
-                            <td>{row[0]}</td>
-                            <td colSpan={2}>{row[2]}</td>
-                            <td>{row[3]}</td>
-                            <td>{row[7]}</td>
-                            <td>{row[5]}</td>
-                            <td>{row[8]}</td>
+                        <tr className="postCol" key={post.id} onClick={() => navigate(`../${post.id}`)}>
+                            <td>{post.id}</td>
+                            <td colSpan={2}>{post.title}</td>
+                            <td>{post.writer}</td>
+                            <td>{post.like}</td>
+                            <td>{post.date}</td>
+                            <td>{post.views}</td>
                         </tr>
                     );
-                }
-                )}
+                })}
             </tbody>
         </Table>
         ) : (<Table bordered hover>
