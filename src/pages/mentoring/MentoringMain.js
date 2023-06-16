@@ -57,7 +57,7 @@ function Category() {//카테고리
         <hr style={{ width: '60%', margin: '0 auto' }} />
         <Nav defaultActiveKey="#" className="flex-column">
             <Nav.Link href="#"><div style={{ color: '#282c34' }}>멘토링</div></Nav.Link>
-            <Nav.Link href="#"><div style={{ color: '#282c34' }}>포트폴리오 업로드</div></Nav.Link>
+            <Nav.Link href="./create"><div style={{ color: '#282c34' }}>포트폴리오 업로드</div></Nav.Link>
         </Nav>
     </>
 

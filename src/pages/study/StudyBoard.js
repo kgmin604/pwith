@@ -40,7 +40,7 @@ function StudyBoard(props) {
           })
           .catch(function (error) {
             console.log(error);
-            alert("글을 불러오지 못했습니다.");
+            //alert("글을 불러오지 못했습니다.");
           });
           
       };
@@ -56,9 +56,7 @@ function StudyBoard(props) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        // 입력된 값 사용 예시
         console.log(inputValue);
-        // 여기서 입력된 값으로 원하는 작업을 수행할 수 있습니다.
         searchStudy();
     };
 
@@ -119,10 +117,10 @@ function StudyBoard(props) {
                 <tr>
                     <th>no.</th>
                     <th colSpan={2}>글제목</th>
-                    <th>조회수</th>
-                    <th>날짜</th>
-                    <th>좋아요</th>
                     <th>글쓴이</th>
+                    <th>좋아요</th>
+                    <th>날짜</th>
+                    <th>조회수</th>
                 </tr>
             </thead>
             <tbody>
@@ -132,10 +130,10 @@ function StudyBoard(props) {
                         <tr className="postCol" key={row[0]} onClick={() => navigate(`../${row[0]}`)}>
                             <td>{row[0]}</td>
                             <td colSpan={2}>{row[2]}</td>
+                            <td>{row[3]}</td>
                             <td>{row[7]}</td>
                             <td>{row[5]}</td>
-                            <td>{row[6]}</td>
-                            <td>{row[3]}</td>
+                            <td>{row[8]}</td>
                         </tr>
                     );
                 }

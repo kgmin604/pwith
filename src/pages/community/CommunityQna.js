@@ -12,16 +12,6 @@ function CommunityQna(props) {
     let user = useSelector((state) => state.user);
     let dispatch = useDispatch();
 
-    if (localStorage.getItem("id") !== null) {
-        dispatch(
-          loginUser({
-            id: localStorage.getItem("id"),
-            name: localStorage.getItem("name"),
-          })
-        );
-      }
-
-    // let postList=props.postList;
     let postList = [];
     return (
         <div className="CommunityQna">

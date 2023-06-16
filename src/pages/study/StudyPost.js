@@ -12,8 +12,7 @@ import parse from 'html-react-parser';
 
 
 function StudyPost(props) {
-    // let studyPostList = useSelector((state) => state.studyPostList);
-    // let dispatch = useDispatch();
+    let user = useSelector((state) => state.user);
     let { id } = useParams();//글번호(주소창)
     let index = parseInt(id) - 1;//찐글번호
 
@@ -29,29 +28,29 @@ function StudyPost(props) {
         return <div>Loading...</div>;
     }
 
-    const { title, content, views, totalP } = post;
+    const { title, writer, content, views, totalP } = post;
     const parsedContent = parse(content);
-
-    // let post = studyPostList[index];
-    // let studyId, title, writer, date, content, category, views, joiningP, totalP;
-
+    
     const parse = require('html-react-parser');
 
-    // console.log(post);
-    // if (Array.isArray(post)) {
-    //     console.log(post[0]);
-    //     studyId = post[0];
-    //     title = post[1];
-    //     writer = post[2];
-    //     date = post[3];
-    //     content = parse(post[4]);
-    //     category = post[5];
-    //     views = post[6];
-    //     joiningP = post[7];
-    //     totalP = post[8];
-    // } else {
-    //     console.log('post is not an array');
-    // }
+    const sendLikeSignal = () => {
+        axios.post(`/study/${id}/like`, {
+            postId: post.id, // 좋아요를 누른 게시물의 ID 등 필요한 데이터
+            userId: user.id, // 좋아요를 누른 사용자의 ID 등 필요한 데이터
+        })
+            // .then(function (response) {
+            //     axios.get(`/study/${id}/like`)
+            //         .then(function (response) {
+            //             // GET 요청 응답 처리
+            //         })
+            //         .catch(function (error) {
+            //             // GET 요청 실패 처리
+            //         });
+            // })
+            .catch(function (error) {
+                // 요청 실패 시 처리할 로직
+            });
+    };
 
 
 
@@ -65,11 +64,13 @@ function StudyPost(props) {
             </div>
             <hr style={{ width: '50%', margin: '0 auto' }} />
 
-            {/* 글작성자만 보이도록 구현해야함 */}
-            <Stack direction="horizontal" className="rewrite-delete-Btn align-right" gap={3}>
-                <Button variant='blue'>수정</Button>
-                <Button variant='blue'>삭제</Button>
-            </Stack>
+            {user.id === writer ? null
+                : <Stack direction="horizontal" className="rewrite-delete-Btn align-right" gap={3}>
+                    <Button variant='blue'>수정</Button>
+                    <Button variant='blue'>삭제</Button>
+                </Stack>
+            }
+
 
             <div className="studyContent">
                 <p cols="50" rows="10">
@@ -81,6 +82,7 @@ function StudyPost(props) {
                 <p>인원수:{totalP}</p>
             </div>
             <Button variant='blue'>스터디 참여하기</Button>
+            <Button variant='red' onClick={sendLikeSignal}>좋아요</Button>
         </div>
     );
 
