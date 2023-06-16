@@ -4,16 +4,21 @@ from bs4 import BeautifulSoup
 
 import pymongo
 
-MONGO_HOST = 'localhost'
+# MONGO_HOST = '110.12.38.80'
+# MONGO_HOST = 'localhost'
+# MONGO_PORT = '27017'
 
-mongo_conn = pymongo.MongoClient('mongodb://%s' % MONGO_HOST)
+MONGO_SERVER = 'mongodb+srv://pwith:pwith1234@cluster0.ezfau5x.mongodb.net/'
+
+# mongo_conn = pymongo.MongoClient(f'mongodb://{MONGO_HOST}:{MONGO_PORT}')
+mongo_conn = pymongo.MongoClient(MONGO_SERVER)
 
 def conn_mongodb() :
     try:
         mongo_conn.admin.command('ismaster')
         pwith_db = mongo_conn.pwith_db
     except:
-        mongo_conn = pymongo.MongoClient('mongodb://%s' % MONGO_HOST)
+        mongo_conn = pymongo.MongoClient(MONGO_SERVER)
         pwith_db = mongo_conn.pwith_db
     return pwith_db
 
@@ -22,7 +27,7 @@ header = {'User-Agent':'Mozilla/5.0'}
 news_date = ''
 news = {}
 
-daum_url = 'https://news.daum.net/breakingnews/digital?page={}&regDate=20230613' # regDate 없애기
+daum_url = 'https://news.daum.net/breakingnews/digital?page={}&regDate=20230615' # regDate 없애기
 
 def connectUrl(url, page=1) :
     response = requests.get(url.format(page), headers=header)
