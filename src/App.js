@@ -109,7 +109,6 @@ function App() {
               className="btn pwith-logo"
               onClick={() => {
                 navigate("/");
-                alert(user.id);
               }}
             ></div>
             <ul className="navbar-menu" style={{ "margin-right": "40px" }}>

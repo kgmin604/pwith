@@ -17,8 +17,12 @@ def showStudy():
                 'title' : posts[i][1],
             }
             studyList.append(post)
-        return studyList
+        print(studyList)
+        return jsonify({
+            'studyList' : studyList
+        })
 
+"""
 def showQNA():
      if request.method == 'GET':
         posts = QNAPost.getNQNA()
@@ -36,3 +40,4 @@ def showQNA():
 def showIT():
     if request.method == 'GET' :
         post = []
+        """
