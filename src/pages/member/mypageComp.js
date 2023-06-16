@@ -2,6 +2,7 @@ import React from 'react';
 import axios from "axios";
 
 import "./member.css";
+import "./writinglist.css";
 import "./modal.css";
 import { useSelector } from "react-redux"
 import { Button } from "react-bootstrap";
@@ -34,15 +35,41 @@ function Account(){
 }
 
 function WritingList(){
+    let navigate = useNavigate();
     let [sel, setSel] = useState(0); // 0: 스터디 글 목록 1: 커뮤니티 글 목록
-    let [mypost, setMypost] = useState([]);
+    // let [mypost, setMypost] = useState(null); -- axios 완성 후 코드
+    let tmp = {
+        'id' : 1, 
+       'type' : 0,
+       'title' : '종강맞이 AI 공부하실분', 
+       'write' : 'kgminee', 
+       'content' : '재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요', 
+       'curDate' : '2023/06/16', 
+       'category' : 8, 
+       'likes' : 4, 
+       'views' : 10
+    }
+    let tmp2 = {
+        'id' : 2, 
+       'type' : 1,
+       'title' : '방학때 뭐할까요?', 
+       'write' : 'test', 
+       'content' : '어떤 공부할까요?', 
+       'curDate' : '2023/06/16', 
+       'category' : 10,
+       'likes' : 1, 
+       'views' : 2
+    }
+
+    let [mypost, setMypost] = useState([tmp, tmp2,tmp, tmp2,tmp, tmp2,tmp, tmp2,tmp, tmp2,tmp, tmp2,])
+
 
     function loadWritingList(){
         axios({
           method: "GET",
           url: "/mypage/writinglist",
           data: {
-             type : 0
+            type : 0
           },
         })
         .then(function (response) {
@@ -69,35 +96,53 @@ function WritingList(){
         });
     }
 
+    /* backend 완성 후 풀기
     useEffect(() => {
         loadWritingList();
     }, []); 
+    */
+
+    function movePage(event, id){
+        event.stopPropagation();
+        if(sel===0){ // 스터디 글
+            navigate(`/study/${id}`);
+        }
+        else if(sel===1){ // 커뮤니티 글
+            navigate(`/community/qna/${id}`);
+        }
+    }
 
     return(
         <>
-            <div style={{'padding':'0 0', 'margin':'0 0'}} >
+            <div className="writinglist">
                 <h3 className="my-header">내가 쓴 글 목록</h3>
-                <div className="chat-select">
+                <div className="type-select">
                 <ul style={{ padding: '0 0' }}>
                     <li 
-                        className={sel === 0 ? "chat-btn-click" : "chat-btn"} 
+                        className={sel === 0 ? "type-btn-click" : "type-btn"} 
                         onClick={(event) => { event.stopPropagation(); setSel(0); getWritingList(0); }}
                     >스터디</li>
                     <li 
-                        className={sel === 1 ? "chat-btn-click" : "chat-btn"} 
+                        className={sel === 1 ? "type-btn-click" : "type-btn"} 
                         onClick={(event) => { event.stopPropagation(); setSel(1); getWritingList(1);}}
                     >커뮤니티</li>
                 </ul>
                 </div>
-                <div className="chat-bottom">
+                <div className="writinglist-bottom scroll-area">
                 {
                     mypost === [] ? null : 
-                    mypost.map((post, index) => (
-                        <div className="item" key={index}>
-                            <h3>{post[2]}</h3> {/* 인덱스 대신 문자열로 변경 필요 */}
-                            <p>{post[4]}</p>    {/* 인덱스 대신 문자열로 변경 필요 */}
+                    mypost.map((post, index) => {
+                    return (
+                        <div 
+                            className="item" 
+                            key={index}
+                            onClick = { e => movePage(e, post.id) }
+                        >
+                            <time>{post.curDate}</time>
+                            <h3 className="header">{post.title}</h3>
+                            <p className="content">{post.content}</p>
                         </div>
-                    ))
+                    );})
                 }
                 </div>
             </div>

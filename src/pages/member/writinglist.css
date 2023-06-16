@@ -1,0 +1,99 @@
+/* 내가 쓴 글 목록 */
+
+.writinglist{
+    margin: 0 0;
+    padding: 0 0;
+}
+
+
+div.writinglist
+.type-select{
+    width: 100%;
+    height: 35px;
+    padding: 0 0;
+    margin: 0px 0px;
+}
+
+div.writinglist div.type-select
+.type-btn-click{
+    width: 80px;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+    font-family: 'TmoneyRoundWind';
+    font-size: small;
+    border-top: solid #98AFCA 2px;
+    border-right: solid #98AFCA 2px;
+    border-left: solid #98AFCA 2px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    text-align: center;
+    margin: 0 0px;
+    margin-right: 5px;
+    color:white;
+    background-color:#98AFCA;
+    float: left;
+}
+
+div.writinglist div.type-select
+.type-btn{
+    width: 80px;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+    font-family: 'TmoneyRoundWind';
+    font-size: small;
+    border-top: solid #98AFCA 2px;
+    border-right: solid #98AFCA 2px;
+    border-left: solid #98AFCA 2px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    text-align: center;
+    margin: 0 0px;
+    margin-right: 5px;
+    color:grey;
+    background-color: white;
+    float: left;
+}
+
+div.writinglist
+.writinglist-bottom{
+    width: 1000px;
+    height: 600px;
+    margin: 0 0;
+    padding: 0 0;
+    border: solid #98AFCA 2px;
+    float: left;
+}
+
+div.writinglist div.writinglist-bottom
+.item{
+    margin: 10px 0;
+    border-bottom: 1px solid #98AFCA;
+    padding: 10px 25px;
+    cursor: pointer;
+}
+
+div.writinglist div.writinglist-bottom div.item
+.header{
+    font-size: 16px;
+    font-weight: 600;
+}
+
+div.writinglist div.writinglist-bottom div.item
+.content{
+    font-size: 14px;
+    line-height: 20px;
+    width: 880px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+div.writinglist div.writinglist-bottom div.item
+time{
+    float: right;
+    line-height: 20px;
+    color: #a6a6a6;
+    font-size: 12px;
+}

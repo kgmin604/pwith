@@ -189,67 +189,7 @@
     padding: 0 10px;
 }
 
-/* 내가 쓴 글 목록 */
-.chat-bottom
-.item{
-    padding: 10px 15px;
-
-}
-
-div.chat-bottom div.item
-h3{
-    
-}
-
-
 /* 채팅 */
-
-.chat-select{
-    width: 100%;
-    height: 35px;
-    padding: 0 0;
-    margin: 0px 0px;
-}
-
-.chat-btn-click{
-    width: 80px;
-    height: 40px;
-    line-height: 40px;
-    cursor: pointer;
-    font-family: 'TmoneyRoundWind';
-    font-size: small;
-    border-top: solid #98AFCA 2px;
-    border-right: solid #98AFCA 2px;
-    border-left: solid #98AFCA 2px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    text-align: center;
-    margin: 0 0px;
-    margin-right: 5px;
-    color:white;
-    background-color:#98AFCA;
-    float: left;
-}
-
-.chat-btn{
-    width: 80px;
-    height: 40px;
-    line-height: 40px;
-    cursor: pointer;
-    font-family: 'TmoneyRoundWind';
-    font-size: small;
-    border-top: solid #98AFCA 2px;
-    border-right: solid #98AFCA 2px;
-    border-left: solid #98AFCA 2px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    text-align: center;
-    margin: 0 0px;
-    margin-right: 5px;
-    color:grey;
-    background-color: white;
-    float: left;
-}
 
 .chat-bottom{
     width: 1000px;
