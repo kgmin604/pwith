@@ -8,27 +8,31 @@ chat_bp = Blueprint('chat', __name__, url_prefix='/chat')
 @login_required
 def send():
     data = request.get_json(silent=True) # silent: parsing fail 에러 방지
-    sender = current_user.getId()
-    receiver = data['receiver']
-    content = data['content']
-    curDate = chat.getCurDate()
-    #chat.insertChat(sender, content, curDate)
+    
+    postType = data['type']
+    memId = current_user.getId()
+    oppId = data['oppId']
+    
+    if postType ==1 :       # 쪽지 보내기
+        content = data['content']
+        curDate = chat.getCurDate()
+        chat.insertChat(memId, oppId, content, curDate)
+        
+    elif postType ==0 :     # 상대방과의 채팅목록 가져오기
+        chat.getMyChat()
         
         
 @chat_bp.route('', method = ['GET'])
 @login_required
 def show():
-    if request.method == 'GET' :
+    if request.method == 'GET' :        # 전체 쪽지 목록 가져오기
 
         toFront = {}
 
-       # post = chat.findById(id)
-
         toFront = {
-            'sender': chat.getSender(),
-            'receiver': chat.getReceiver(),
+            'oppId': chat.getReceiver(),
             'content': chat.getContent(),
-            'curdate': chat.getCurDate()
+            'date': chat.getCurDate()
         }
 
         return toFront
