@@ -21,9 +21,13 @@ class chat():
     def getMyChat(memId, oppId):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
+        
         sql = f"select * from chat where sender = '{str(memId)}' and receiver = '{str(oppId)}'"
         cursor_db.execute(sql)
+        
         rows = cursor_db.fetchall()
+        
+        return rows
         
     def getAllChat(memId):
         mysql_db = conn_mysql()
