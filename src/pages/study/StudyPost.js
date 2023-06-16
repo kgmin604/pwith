@@ -62,11 +62,11 @@ function StudyPost(props) {
             </div>
             <hr style={{ width: '50%', margin: '0 auto' }} />
 
-            {user.id === writer ? null
-                : <Stack direction="horizontal" className="rewrite-delete-Btn align-right" gap={3}>
+            {user.id === writer ? <Stack direction="horizontal" className="rewrite-delete-Btn align-right" gap={3}>
                     <Button variant='blue'>수정</Button>
                     <Button variant='blue'>삭제</Button>
                 </Stack>
+                : null
             }
 
 
