@@ -54,8 +54,8 @@ function App() {
       dispatch(
         loginUser({
           id: response.data.id,
-          name: response.data.name//,
-          //email: response.data.email
+          name: response.data.name,
+          email: response.data.email
         })
       );
       console.log("로그인 요청");
