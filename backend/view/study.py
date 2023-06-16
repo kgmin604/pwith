@@ -20,8 +20,9 @@ def show():
         # print(searchValue)
 
         if (searchType is None) or (searchValue is None) : # 전체 글 출력
-            result = studyPost.getStudy()
-            for i in range(len(result)):
+            result = []
+            posts = studyPost.getStudy()
+            for i in range(len(posts)):
                 post = {
                         'id' : posts[i][0],
                         'type' : posts[i][1],
@@ -33,7 +34,7 @@ def show():
                         'likes' : posts[i][7],
                         'views' : posts[i][8]
                     }
-                result.append(post)
+                result.append(posts)
             return jsonify(result) # column 값 명시하기!!
 
         else : # 글 검색
