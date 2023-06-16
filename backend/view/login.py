@@ -4,24 +4,26 @@ from controller.member_mgmt import Member
 
 bp = Blueprint('login', __name__, url_prefix='')
 
-# @bp.route('/', methods=['GET', 'POST']) # 테스트 전
-# def chkSession() :
-#     if request.method == 'POST' :
-#         memInfo = {
-#             'id': '',
-#             'name': ''
-#         }
-#         data = request.get_json(silent=True)
+@bp.route('/', methods=['POST']) # 테스트 전
+def chkSession() :
+    if request.method == 'POST' :
+        memInfo = {
+            'id': None,
+            'name': None,
+            'email': None
+        }
+        chk = request.get_json()['chkSession']
 
-#         if data['chkSession'] == 1:
-#             if current_user.is_anonymous :
-#                 print('익명')
-#             else :
-#                 memInfo['id'] = current_user.getId()
-#                 memInfo['name'] = current_user.getName()
-#                 print('전달 완료')
+        if chk == 1:
+            if current_user.is_anonymous :
+                print('익명')
+            else :
+                memInfo['id'] = current_user.getId()
+                memInfo['name'] = current_user.getName()
+                memInfo['email'] = current_user.getEmail()
+                print('전달 완료')
 
-#         return memInfo
+        return jsonify(memInfo)
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login() :

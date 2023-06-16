@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify, make_response, redirect
 from flask_login import LoginManager
-from view import join, login, study, mypage, communityBoard, mentoring
+from view import join, login, study, mypage, communityBoard, mentoring, pwithmain
 from controller.member_mgmt import Member
 
 # from flask_cors import CORS
@@ -15,6 +15,7 @@ app.register_blueprint(study.study_bp)
 app.register_blueprint(mypage.mypage_bp)
 app.register_blueprint(communityBoard.community_bp)
 app.register_blueprint(mentoring.mento_bp)
+app.register_blueprint(pwithmain.main_bp) ###
 
 login_manager = LoginManager()
 login_manager.init_app(app)

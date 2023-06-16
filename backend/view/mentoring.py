@@ -42,6 +42,7 @@ def writePortfolio() :
         # subject = portfolioInfo['subject'] # list를 string으로 받기
         # image = portfolioInfo['image']
         # content = portfolioInfo['content']
+        title = portfolioInfo['title'] # 한줄소개 ##########테스트하기
 
         writer = 'park'
         subject = '["subject"]'
