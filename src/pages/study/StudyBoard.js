@@ -117,10 +117,10 @@ function StudyBoard(props) {
                 <tr>
                     <th>no.</th>
                     <th colSpan={2}>글제목</th>
-                    <th>조회수</th>
-                    <th>날짜</th>
-                    <th>좋아요</th>
                     <th>글쓴이</th>
+                    <th>좋아요</th>
+                    <th>날짜</th>
+                    <th>조회수</th>
                 </tr>
             </thead>
             <tbody>
@@ -130,10 +130,10 @@ function StudyBoard(props) {
                         <tr className="postCol" key={row[0]} onClick={() => navigate(`../${row[0]}`)}>
                             <td>{row[0]}</td>
                             <td colSpan={2}>{row[2]}</td>
+                            <td>{row[3]}</td>
                             <td>{row[7]}</td>
                             <td>{row[5]}</td>
-                            <td>{row[6]}</td>
-                            <td>{row[3]}</td>
+                            <td>{row[8]}</td>
                         </tr>
                     );
                 }
