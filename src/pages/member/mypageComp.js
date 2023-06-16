@@ -4,12 +4,13 @@ import axios from "axios";
 import "./member.css";
 import "./writinglist.css";
 import "./modal.css";
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ToggleButton from 'react-bootstrap/ToggleButton';
+import { loginUser, clearUser } from '../../store.js'
 
 function Account(){
     let user = useSelector((state) => state.user);
@@ -68,12 +69,9 @@ function WritingList(){
         axios({
           method: "GET",
           url: "/mypage/writinglist",
-          data: {
-            type : 0
-          },
         })
         .then(function (response) {
-            setMypost(response.data.myPost);
+            setMypost(response.data);
         })
         .catch(function (error) {
             console.log(error);
@@ -96,11 +94,9 @@ function WritingList(){
         });
     }
 
-    /* backend 완성 후 풀기
     useEffect(() => {
         loadWritingList();
     }, []); 
-    */
 
     function movePage(event, id){
         event.stopPropagation();
@@ -460,6 +456,7 @@ function PwChange(){ // 컴포넌트
 function Email(){
 
     let user = useSelector((state) => state.user);
+    let dispatch = useDispatch();
 
     let [modify, setModify] = useState(false);
     let [email, setEmail] = useState(user.email);
@@ -475,6 +472,13 @@ function Email(){
         .then(function (response) {
             if(response.data.done===1){ // 성공
                 console.log(response.data);
+                dispatch(
+                    loginUser({
+                      id: user.id,
+                      name: user.name,
+                      email: email
+                    })
+                );
                 alert('이메일 변경 완료');
             }
         })

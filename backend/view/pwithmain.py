@@ -17,7 +17,6 @@ def showStudy():
                 'title' : posts[i][2],
             }
             studyList.append(post)
-
         return jsonify(studyList)
 
 def showQNA():

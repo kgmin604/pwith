@@ -44,7 +44,7 @@ function App() {
   
   useEffect(()=>{
     axios({
-      method: "GET",
+      method: "POST",
       url: "/",
       data: {
         chkSession: 1

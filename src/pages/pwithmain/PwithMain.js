@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./main.css";
 import SimpleSlider from "./mainSlider.js";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +21,26 @@ function PwithMain(){
         {'id':1,'title':'제목1'}, {'id':2,'title':'제목2'}, {'id':3,'title':'제목3'}, {'id':4,'title':'제목4'}
     ])
 
+    
+    useEffect(()=>{
+        axios({
+          method: "GET",
+          url: "/",
+        })
+        .then(function (response) {
+            if(response.data.studyList === undefined){ // 수정해야 함!!
+                setStudyList([
+                    {'id':1,'title':'제목1'}, {'id':2,'title':'제목2'}, {'id':3,'title':'제목3'}, {'id':4,'title':'제목4'}, {'id':5,'title':'제목5'}
+                ]);
+            }
+            else setStudyList(response.data.studyList);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    },[])
+    
+
     return(
         <>
             <SimpleSlider/>
@@ -32,7 +52,7 @@ function PwithMain(){
                     {
                         studyList.map((a,i)=>{
                             return(
-                                <li className="posting" key={i}>{a['title']}</li> // onClick 속성 추가 -> 눌렀을 때 해당 글로
+                                <li className="posting" key={i}> {a['title']}</li> // onClick 속성 추가 -> 눌렀을 때 해당 글로
                             )
                         })
                     }  
