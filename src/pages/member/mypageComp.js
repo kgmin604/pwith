@@ -190,6 +190,12 @@ function Chat(){
         setContent(event.target.value);
     }
 
+    let [oppId, setOppId] = useState('');
+    let changeOppId = (event) =>{
+        event.stopPropagation();
+        setOppId(event.target.value);
+    }
+
     useEffect(() => { // 맨 처음 한번만 실행
         axios({
             method: "GET",
@@ -210,13 +216,14 @@ function Chat(){
     function sendRequest(event){
         event.stopPropagation();
         if(content==='') return;
+        if(oppId==='') return; // 없는 회원일 경우 예외처리 추가해야함
         axios({
             method: "POST",
             url: "/mypage/chat",
             data: {
                 type: 1,
                 memId : `${user.id}`,
-                oppID : `${chatList[selectedItem]['oppId']}`,
+                oppID : `${oppId}`,
                 content : `${content}`
             },
           })
@@ -232,6 +239,7 @@ function Chat(){
         <>
             <div className ="mypage-chat" style={{'padding':'0 0', 'margin':'0 0'}}>
                 <h3 className="my-header">쪽지함</h3>
+                <a className="send" title ="쪽지 보내기" onClick={ (event) => handleModal(event) }>💌</a>
                 <div className="chat-bottom">
                     <div className="chat-boxes scroll-area"> {/* 왼쪽구역: 채팅한 계정들*/}
                     {
@@ -286,6 +294,8 @@ function Chat(){
                             <div className="modal">
                                 <a title="닫기" className="close" onClick={(event)=>handleModal(event)}>X</a>
                                 <h3>쪽지 보내기</h3>
+                                <span>받는이</span>
+                                <input type="text" onChange={e=>changeOppId(e)}></input>
                                 <p>
                                     <textarea 
                                         name="message" 

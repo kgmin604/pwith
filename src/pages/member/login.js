@@ -44,9 +44,9 @@ function Login(){
                   email: response.data.email
                 })
               );
-              localStorage.setItem("id", response.data.id);
-              localStorage.setItem("name", response.data.name);
-              localStorage.setItem("email", response.data.email);
+              //localStorage.setItem("id", response.data.id);
+              //localStorage.setItem("name", response.data.name);
+              //localStorage.setItem("email", response.data.email);
               navigate("/");
             }
           })
