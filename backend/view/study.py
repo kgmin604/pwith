@@ -34,8 +34,8 @@ def show():
                         'likes' : posts[i][7],
                         'views' : posts[i][8]
                     }
-                result.append(posts)
-            return jsonify(result) # column 값 명시하기!!
+                result.append(post)
+            return result # column 값 명시하기!!
 
         else : # 글 검색
             posts = []
