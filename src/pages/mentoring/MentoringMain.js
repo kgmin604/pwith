@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../../App.css";
 import "./mentoring.css";
 import { Form, Nav, Stack, Button, Card, Row, Col } from "react-bootstrap";
-
+import { Link } from "react-router-dom";
 
 function MentoringMain() {
     const data = [1, 2, 3, 4, 5, 6];
@@ -56,8 +56,8 @@ function Category() {//카테고리
         <h5>Mentoring</h5>
         <hr style={{ width: '60%', margin: '0 auto' }} />
         <Nav defaultActiveKey="#" className="flex-column">
-            <Nav.Link href="#"><div style={{ color: '#282c34' }}>멘토링</div></Nav.Link>
-            <Nav.Link href="./create"><div style={{ color: '#282c34' }}>포트폴리오 업로드</div></Nav.Link>
+            <Link to="#"><div style={{ color: '#282c34' }}>멘토링</div></Link>
+            <Link to="../mentoring/create"><div style={{ color: '#282c34' }}>포트폴리오 업로드</div></Link>
         </Nav>
     </>
 

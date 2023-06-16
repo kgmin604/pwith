@@ -44,6 +44,10 @@ function StudyBoard(props) {
           });
           
       };
+
+    useEffect(()=>{
+        console.log(studyPostList)
+    },[studyPostList])
       
       
 
