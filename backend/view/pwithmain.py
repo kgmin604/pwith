@@ -14,10 +14,10 @@ def showStudy():
         for i in range(len(posts)) :
             post = {
                 'id' : posts[i][0],
-                'title' : posts[i][2],
+                'title' : posts[i][1],
             }
             studyList.append(post)
-        return jsonify(studyList)
+        return studyList
 
 def showQNA():
      if request.method == 'GET':
