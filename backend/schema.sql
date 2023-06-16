@@ -34,13 +34,12 @@ CREATE TABLE reply (
     replyId INT AUTO_INCREMENT,
     writer VARCHAR(10) NOT NULL,
     content VARCHAR(300) NOT NULL,
-    curDate DATE NOT NULL,
-
-    -- 1. post 테이블로 합치고 type 열 추가
-    -- like 추가하고, joinP와 totalP는 studyroom으로 보내면 null값 방지 가능(추후 study는 studyroom과의 join으로 접근)
+    curDate DATETIME NOT NULL,
     type INT NOT NULL,
     postNum INT NOT NULL,
-    FOREIGN KEY(type, postNum) REFERENCES post(type, postId) on delete cascade
+    PRIMARY KEY(replyId),
+    FOREIGN KEY(writer) REFERENCES member(memId), -- 삭제 시 (알 수 없음) 구현
+    FOREIGN KEY(postNum) REFERENCES post(postId) on delete cascade
 )
 
 CREATE TABLE mento (

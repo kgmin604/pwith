@@ -1,6 +1,8 @@
 from flask import Flask, session, Blueprint, render_template, redirect, request, jsonify, url_for
 from flask_login import login_required, current_user
 from controller.board_mgmt import studyPost
+from controller.reply_mgmt import Reply
+from datetime import datetime
 
 study_bp = Blueprint('study', __name__, url_prefix='/study')
 
@@ -50,7 +52,7 @@ def show():
 
             return jsonify(result)
 
-@study_bp.route('/<int:id>', methods=['GET']) # 글 조회
+@study_bp.route('/<int:id>', methods=['GET', 'POST']) # 글 조회
 def showDetail(id) :
     if request.method == 'GET' :
 
@@ -71,7 +73,25 @@ def showDetail(id) :
         }
 
         return toFront
+    
+    else : # 댓글 작성 / 함수 새로 파는 게 나을 듯
 
+        cnt = request.get_json()['cnt']
+
+        # writer = current_user.getId()
+        writer = 'a' # dummy
+
+        date = datetime.now()
+
+        try :
+            done = Reply.writeReply(writer, cnt, date, 0, id)
+        except Exception as ex:
+            # print(ex)
+            done = 0
+
+        return jsonify({
+            'done' : done
+        })
 
 
 #글 작성 페이지
