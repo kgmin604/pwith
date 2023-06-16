@@ -19,7 +19,7 @@ function MentoringMain() {
                         <Form.Control className="me-auto" placeholder="원하는 멘토를 찾아보세요!" />
                         <Button variant="blue">🔍</Button>
                     </Stack>
-
+                    <hr/>
                     <Row className="row-cols-1 row-cols-md-4 g-2" style={{padding:'10px'}}>
                         {data.map((k, i) => (
                             <Col key={i} xs={12} sm={6} md={4} className="mb-2">
