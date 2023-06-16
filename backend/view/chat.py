@@ -2,7 +2,7 @@ from flask import Flask, Blueprint, request, jsonify, redirect, url_for, session
 from flask_login import login_user, current_user, login_required
 from controller.chat_mgmt import chat
 
-chat_bp = Blueprint('chat', __name__, url_prefix='/chat')
+chat_bp = Blueprint('chat', __name__, url_prefix='mypage/chat')
 
 @chat_bp.route('', method=['POST'])
 @login_required

@@ -62,3 +62,13 @@ CREATE TABLE review (
     PRIMARY KEY(reviewId),
     FOREIGN KEY(mentoId) REFERENCES mento(mentoId) on delete cascade
 );
+
+CREATE TABLE chat (
+    chatId INT AUTO_INCREMENT,
+    sender VARCHAR(10),
+    receiver VARCHAR(10),
+    content VARCHAR(500),
+    curDate DATE,
+    PRIMARY KEY(chatId),
+    FOREIGN KEY(sender, receiver) REFERENCES member(memId) on delete cascade
+);

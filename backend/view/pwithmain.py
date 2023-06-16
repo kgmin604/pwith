@@ -9,30 +9,30 @@ main_bp = Blueprint('', __name__, url_prefix='/')
 def showStudy():
     if request.method == 'GET':
         posts = studyPost.getNStudy()
-        result = []
+        studyList = []
         
         for i in range(len(posts)) :
             post = {
                 'id' : posts[i][0],
                 'title' : posts[i][2],
             }
-            result.append(post)
+            studyList.append(post)
 
-        return jsonify(result)
+        return jsonify(studyList)
 
 def showQNA():
      if request.method == 'GET':
         posts = QNAPost.getNQNA()
-        result = []
+        QNAList = []
         
         for i in range(len(posts)) :
             post = {
                 'id' : posts[i][0],
                 'title' : posts[i][2],
             }
-            result.append(post)
+            QNAList.append(post)
 
-        return jsonify(result)
+        return jsonify(QNAList)
         
 def showIT():
     if request.method == 'GET' :
