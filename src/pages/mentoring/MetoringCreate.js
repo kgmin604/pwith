@@ -19,11 +19,11 @@ function MentoringCreate() {
     const [selectedWords, setSelectedWords] = useState([]); // 클릭한 단어 배열
 
     let [portfolio, setportfolio] = useState({
-        'writer': `${user.id}`,
+        'img':'',
         'title': '',
         'subject': '',
         'content': ''
-    })//글쓴이,제목, 분야, 내용
+    })//제목, 분야, 내용
 
     function postPortfolio() {
         const updatedSubject = JSON.stringify(selectedWords);
@@ -57,7 +57,7 @@ function MentoringCreate() {
     useEffect(() => {
         console.log(portfolio);
       }, [portfolio]);
-      
+
     const handleWordClick = (word) => {
         if (selectedWords.includes(word)) {
             setSelectedWords(prevWords => prevWords.filter(w => w !== word));
