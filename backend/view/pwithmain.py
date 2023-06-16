@@ -3,9 +3,9 @@ from flask_login import login_required, current_user
 from controller.board_mgmt import studyPost
 from controller.community_mgmt import QNAPost
 
-main_bp = Blueprint('', __name__, url_prefix='/')
+main_bp = Blueprint('pwithmain', __name__, url_prefix='')
 
-@main_bp.route('/', method = ['GET'])
+@main_bp.route('/', methods = ['GET'])
 def showStudy():
     if request.method == 'GET':
         posts = studyPost.getNStudy()

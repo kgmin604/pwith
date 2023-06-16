@@ -4,13 +4,13 @@ from controller.member_mgmt import Member
 
 bp = Blueprint('login', __name__, url_prefix='')
 
-@bp.route('/', methods=['GET']) # 테스트 전
+@bp.route('/', methods=['POST']) # 테스트 전
 def chkSession() :
-    if request.method == 'GET' :
+    if request.method == 'POST' :
         memInfo = {
-            'id': '',
-            'name': '',
-            'email': ''
+            'id': None,
+            'name': None,
+            'email': None
         }
         chk = request.get_json()['chkSession']
 

@@ -7,7 +7,7 @@ from model.db_mysql import conn_mysql
 from controller.community_mgmt import QNAPost
 
 community_bp = Blueprint('community', __name__, url_prefix='/community')
-
+ 
 @community_bp.route('/it', methods=['GET', 'POST']) # /it?page=1?date=20230512 방식 제안
 def listNews() :
     if request.method == 'GET' : # postman 테스트 완.
