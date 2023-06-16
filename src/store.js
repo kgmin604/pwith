@@ -3,9 +3,9 @@ import { configureStore, createSlice } from '@reduxjs/toolkit'
 let user = createSlice({
     name : 'user',
     initialState : {
-      id: "",
-      name: "",
-      email: ""
+      id: null,
+      name: null,
+      email: null
     },
     reducers :{
       loginUser: (state, action) => {
@@ -14,9 +14,9 @@ let user = createSlice({
         state.email = action.payload.email;
       },
       clearUser: (state) => {
-        state.id = "";
-        state.name = "";
-        state.email = "";
+        state.id = null;
+        state.name = null;
+        state.email = null;
       }
     }
 });

@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css"; // bootstrap css 파일 사용
 import { Form } from "react-bootstrap"; // bootstrap의 component 사용
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+//import Cookies from 'js-cookie';
 // import { useCookies, Cookies } from 'react-cookie';
 
 import PwithMain from "./pages/pwithmain/PwithMain.js";
@@ -39,17 +40,31 @@ function App() {
   let navigate = useNavigate();
   let user = useSelector((state) => state.user);
   let dispatch = useDispatch();
-  // const cookies = new Cookies();
-
-  if (localStorage.getItem("id") !== null) {
-    dispatch(
-      loginUser({
-        id: localStorage.getItem("id"),
-        name: localStorage.getItem("name"),
-        email: localStorage.getItem("email")
+  
+  useEffect(()=>{
+    axios({
+      method: "GET",
+      url: "/",
+      data: {
+        chkSession: 1
+      },
+    })
+    .then(function (response) {
+      dispatch(
+        loginUser({
+          id: response.data.id,
+          name: response.data.name//,
+          //email: response.data.email
+        })
+      );
+      console.log("로그인 요청");
+      console.log(response);
+      navigate("/");
       })
-    );
-  }
+      .catch(function (error) {
+        console.log(error);
+      });
+  },[])
 
   function logout() {
     axios({
@@ -63,9 +78,9 @@ function App() {
         console.log(response);
         dispatch(clearUser());
 
-        localStorage.removeItem("id");
-        localStorage.removeItem("name");
-        localStorage.removeItem("email");
+        //localStorage.removeItem("id");
+        //localStorage.removeItem("name");
+        //localStorage.removeItem("email");
         navigate("/");
       })
       .catch(function (error) {
@@ -77,7 +92,7 @@ function App() {
     <>
       <div className="wrap">
         <div className="top-area">
-          {user.id === "" ? (
+          {user.id === null ? (
             <div className="top-msg"></div>
           ) : (
             <div className="top-msg">
@@ -93,6 +108,7 @@ function App() {
               className="btn pwith-logo"
               onClick={() => {
                 navigate("/");
+                alert(user.id);
               }}
             ></div>
             <ul className="navbar-menu" style={{ "margin-right": "40px" }}>
@@ -140,7 +156,7 @@ function App() {
                 🔍{" "}
               </div>
             </Form>
-            {user.id === "" ? (
+            {user.id === null ? (
               <div className="mem-area">
                 <div
                   className="mem-btn"
