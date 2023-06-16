@@ -29,14 +29,12 @@ function StudyPost(props) {
     }
 
     const { title, writer, content, views, totalP } = post;
-    const parsedContent = parse(content);
-
     const parse = require('html-react-parser');
+    const parsedContent = parse(content);
 
     const sendLikeSignal = () => {
         axios.post(`/study/${id}/like`, {
-            postId: post.id,
-            userId: user.id,
+            postId: post.id
         })
             // .then(function (response) {
             //     axios.get(`/study/${id}/like`)
