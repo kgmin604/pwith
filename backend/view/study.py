@@ -57,15 +57,14 @@ def showDetail(id) :
         toFront = {}
 
         post = studyPost.findById(id)
-
         toFront = {
             'title': post.getTitle(),
             'writer' : post.getWriter(),
             'content': post.getContent(),
             'curDate' : post.getCurDate(),
             'category' : post.getCategory(),
-            'views': post.getViews(),
-            'likes' : post.getLikes()
+            'likes' : post.getLikes(),
+            'views': post.getViews()
             #'totalP': post.getTotalP(),
             
         }
@@ -96,7 +95,7 @@ def write():
         totalP = data['totalP']
         
         print(postType, title, writer, curDate, content, category, likes, views)
-        studyPost.insertStudy( postType, title, writer, curDate, content, category, likes, views)
+        studyPost.insertStudy(postType, title, writer, curDate, content, category, likes, views)
         
         
         return 'Response', 200
