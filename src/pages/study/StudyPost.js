@@ -30,13 +30,13 @@ function StudyPost(props) {
 
     const { title, writer, content, views, totalP } = post;
     const parsedContent = parse(content);
-    
+
     const parse = require('html-react-parser');
 
     const sendLikeSignal = () => {
         axios.post(`/study/${id}/like`, {
-            postId: post.id, // 좋아요를 누른 게시물의 ID 등 필요한 데이터
-            userId: user.id, // 좋아요를 누른 사용자의 ID 등 필요한 데이터
+            postId: post.id,
+            userId: user.id,
         })
             // .then(function (response) {
             //     axios.get(`/study/${id}/like`)
