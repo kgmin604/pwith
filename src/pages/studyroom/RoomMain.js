@@ -36,6 +36,7 @@ function RoomMain(){
     };
     let [rooms, setRooms] = useState([tmpData1, tmpData2, tmpData3]);
     
+    
     return(
         <>
             <div className="room-part">
