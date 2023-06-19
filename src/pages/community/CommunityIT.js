@@ -12,55 +12,55 @@ function CommunityIT() {
     let navigate = useNavigate();
 
 
-    // const [itList, setItList] = useState([]);
-    // useEffect(() => {
-    //     const updateITNews = () => {
-    //         axios({
-    //             method: "GET",
-    //             url: "/community/it",
-    //         })
-    //             .then(function (response) {
-    //                 setItList(response.data);
-    //             })
-    //             .catch(function (error) {
-    //                 console.log(error);
-    //                 alert("글을 불러오지 못했습니다.");
-    //             });
-    //     };
+    const [itList, setItList] = useState([]);
+    useEffect(() => {
+        const updateITNews = () => {
+            axios({
+                method: "GET",
+                url: "/community/it",
+            })
+                .then(function (response) {
+                    setItList(response.data);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("글을 불러오지 못했습니다.");
+                });
+        };
 
-    //     updateITNews();
-    // }, []);
+        updateITNews();
+    }, []);
 
-    const itList = [
-        {
-            'newsId': 1,
-            'title': "대기업-스타트업 “한국형 기업규제 개선을” 한목소리 호소",
-            'content': "뉴스 내용",
-            'img': "https://dimg.donga.com/a/200/113/95/2/wps/NEWS/IMAGE/2023/06/15/119773870.1.jpg",
-            'url': "https://www.donga.com/news/Economy/article/all/20230615/119773873/1"
-        },
-        {
-            'newsId': 2,
-            'title': "5개종목 줄줄이 하한가 폭락… ‘제2 SG사태’ 우려",
-            'content': "뉴스 내용",
-            'img': "https://dimg.donga.com/a/200/113/95/2/wps/NEWS/IMAGE/2023/06/14/119768871.2.jpg",
-            'url': "https://www.donga.com/news/Economy/article/all/20230615/119773873/1"
-        },
-        {
-            'newsId': 3,
-            'title': "닥터헬기 비행-비보잉 ‘합동 퍼포먼스’… 저물녘엔 ‘불멍’ 휴식 [2023 서울헬스쇼] ",
-            'content': "뉴스 내용",
-            'img': "https://dimg.donga.com/a/200/113/95/2/wps/NEWS/IMAGE/2023/06/15/119768401.10.jpg",
-            'url': "https://www.donga.com/news/Economy/article/all/20230615/119773873/1"
-        },
-        {
-            'newsId': 4,
-            'title': "폐그물 재활용 내장재 적용 전기차 EV9 선보여 [2023 서울헬스쇼]",
-            'content': "뉴스 내용",
-            'img': "https://dimg.donga.com/a/200/113/95/2/wps/NEWS/IMAGE/2023/06/15/119768417.8.jpg",
-            'url': "https://www.donga.com/news/Economy/article/all/20230615/119773873/1"
-        },
-    ]
+    // const itList = [
+    //     {
+    //         'newsId': 1,
+    //         'title': "대기업-스타트업 “한국형 기업규제 개선을” 한목소리 호소",
+    //         'content': "뉴스 내용",
+    //         'img': "https://dimg.donga.com/a/200/113/95/2/wps/NEWS/IMAGE/2023/06/15/119773870.1.jpg",
+    //         'url': "https://www.donga.com/news/Economy/article/all/20230615/119773873/1"
+    //     },
+    //     {
+    //         'newsId': 2,
+    //         'title': "5개종목 줄줄이 하한가 폭락… ‘제2 SG사태’ 우려",
+    //         'content': "뉴스 내용",
+    //         'img': "https://dimg.donga.com/a/200/113/95/2/wps/NEWS/IMAGE/2023/06/14/119768871.2.jpg",
+    //         'url': "https://www.donga.com/news/Economy/article/all/20230615/119773873/1"
+    //     },
+    //     {
+    //         'newsId': 3,
+    //         'title': "닥터헬기 비행-비보잉 ‘합동 퍼포먼스’… 저물녘엔 ‘불멍’ 휴식 [2023 서울헬스쇼] ",
+    //         'content': "뉴스 내용",
+    //         'img': "https://dimg.donga.com/a/200/113/95/2/wps/NEWS/IMAGE/2023/06/15/119768401.10.jpg",
+    //         'url': "https://www.donga.com/news/Economy/article/all/20230615/119773873/1"
+    //     },
+    //     {
+    //         'newsId': 4,
+    //         'title': "폐그물 재활용 내장재 적용 전기차 EV9 선보여 [2023 서울헬스쇼]",
+    //         'content': "뉴스 내용",
+    //         'img': "https://dimg.donga.com/a/200/113/95/2/wps/NEWS/IMAGE/2023/06/15/119768417.8.jpg",
+    //         'url': "https://www.donga.com/news/Economy/article/all/20230615/119773873/1"
+    //     },
+    // ]
 
     return (
         <div className="CommunityIT">
