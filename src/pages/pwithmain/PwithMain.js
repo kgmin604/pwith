@@ -24,8 +24,9 @@ function PwithMain(){
     
     useEffect(()=>{
         axios({
-          method: "GET",
+          method: "POST",
           url: "/",
+          chkSession: 0
         })
         .then(function (response) {
             if(response.data.studyList === undefined){ // 수정해야 함!!

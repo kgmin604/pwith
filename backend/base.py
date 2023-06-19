@@ -24,7 +24,7 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def loadUser(memId) :
     print(memId)
-    print(Member.findById(memId))
+    # print(Member.findById(memId))
     return Member.findById(memId)
 
 # login_required로 요청된 기능에서 로그인되어 있지 않은 경우
