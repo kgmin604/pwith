@@ -51,3 +51,23 @@
     margin:10px;
 }
 
+.heart{
+    width: 30px;
+    height: 30px;
+}
+
+.comment{
+    width: 30px;
+    height: 30px;
+}
+
+.align-row{
+    display: flex;
+}
+
+.align-side{
+    width:100%;
+    display: flex;
+    justify-content: space-between;
+}
+
