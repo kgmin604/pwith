@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import "./main.css";
 import SimpleSlider from "./mainSlider.js";
 import { useNavigate } from "react-router-dom";
+import userEvent from "@testing-library/user-event";
 
 function PwithMain(){
 
@@ -21,26 +22,25 @@ function PwithMain(){
         {'id':1,'title':'제목1'}, {'id':2,'title':'제목2'}, {'id':3,'title':'제목3'}, {'id':4,'title':'제목4'}
     ])
 
-    
     useEffect(()=>{
         axios({
-          method: "POST",
-          url: "/",
-          chkSession: 0
-        })
-        .then(function (response) {
+            method: "GET",
+            url: "/",
+          })
+          .then(function (response) {
+            console.log("main화면 글 불러오기 요청 감");
+            console.log(response.data.studyList);
             if(response.data.studyList === undefined){ // 수정해야 함!!
                 setStudyList([
                     {'id':1,'title':'제목1'}, {'id':2,'title':'제목2'}, {'id':3,'title':'제목3'}, {'id':4,'title':'제목4'}, {'id':5,'title':'제목5'}
                 ]);
             }
             else setStudyList(response.data.studyList);
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+          })
+          .catch(function (error) {
+              console.log(error);
+          });
     },[])
-    
 
     return(
         <>
