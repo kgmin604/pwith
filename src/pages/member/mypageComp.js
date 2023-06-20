@@ -69,6 +69,9 @@ function WritingList(){
         axios({
           method: "GET",
           url: "/mypage/writinglist",
+          params: {
+            type: "study"
+          }
         })
         .then(function (response) {
             setMypost(response.data);
@@ -79,15 +82,16 @@ function WritingList(){
     }
 
     function getWritingList(type){
+        let type_text = (type === 0 ? 'study' : 'community');
         axios({
-          method: "POST",
-          url: "/mypage/writinglist",
-          data: {
-            type : `${type}`
-          },
+            method: "GET",
+            url: "/mypage/writinglist",
+            params: {
+              type: `${type_text}`
+            }
         })
         .then(function (response) {
-            setMypost(response.data.myPost);
+            setMypost(response.data);
         })
         .catch(function (error) {
             console.log(error);
@@ -195,10 +199,7 @@ function Chat(){
     useEffect(() => { // 맨 처음 한번만 실행
         axios({
             method: "GET",
-            url: "/mypage/chat",
-            data: {
-                memId : `${user.id}`
-            },
+            url: "/mypage/chat"
           })
           .then(function (response) {
               setChatList(response.data.chatList); // chatList는 딕셔너리 리스트
@@ -219,7 +220,6 @@ function Chat(){
             url: "/mypage/chat",
             data: {
                 type: 1,
-                memId : `${user.id}`,
                 oppId : `${oppId}`,
                 content : `${content}`
             },
