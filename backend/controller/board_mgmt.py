@@ -154,7 +154,7 @@ class studyPost() :
     def getViews(self):
         return int(self.views)
     
-    def getNStudy(self):
+    def getNStudy():
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 

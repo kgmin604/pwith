@@ -5,39 +5,21 @@ from controller.community_mgmt import QNAPost
 
 main_bp = Blueprint('pwithmain', __name__, url_prefix='')
 
-@main_bp.route('/', methods = ['GET'])
+@main_bp.route('/', methods = ['POST'])
 def showStudy():
-    if request.method == 'GET':
-        posts = studyPost.getNStudy()
-        studyList = []
-        
-        for i in range(len(posts)) :
-            post = {
-                'id' : posts[i][0],
-                'title' : posts[i][1],
-            }
-            studyList.append(post)
-        print(studyList)
-        return jsonify({
-            'studyList' : studyList
-        })
-
-"""
-def showQNA():
-     if request.method == 'GET':
-        posts = QNAPost.getNQNA()
-        QNAList = []
-        
-        for i in range(len(posts)) :
-            post = {
-                'id' : posts[i][0],
-                'title' : posts[i][2],
-            }
-            QNAList.append(post)
-
-        return jsonify(QNAList)
-        
-def showIT():
-    if request.method == 'GET' :
-        post = []
-        """
+    if request.method == 'POST':
+        print("post")
+        chk = request.json.get('chkSession')
+        if chk is False : 
+            posts = studyPost.getNStudy()
+            studyList = []
+            print("chk==0")
+            for i in range(len(posts)) :
+                post = {
+                    'id' : posts[i][0],
+                    'title' : posts[i][1],
+                }
+                studyList.append(post)
+            print(studyList)
+            return studyList
+        return 'Error'
