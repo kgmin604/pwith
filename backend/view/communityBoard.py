@@ -8,28 +8,29 @@ from controller.community_mgmt import QNAPost
 
 community_bp = Blueprint('community', __name__, url_prefix='/community')
  
-@community_bp.route('/it', methods=['GET', 'POST']) # /it?page=1?date=20230512 방식 제안
+@community_bp.route('/it', methods=['GET', 'POST'])
 def listNews() :
-    if request.method == 'GET' : # postman 테스트 완.
+    if request.method == 'GET' :
 
-        ten_news = []
+        result = []
 
         news_list = conn_mongodb().ITnews_crawling.find()
 
-        for i in range(10) :
+        for i in range(15) :
             news = news_list[i]
-            ten_news.append({
-                'newsId': news['newsId'],
+            result.append({
+                'date': news['date'],
                 'title' : news['title'],
-                'content' : news['content'],
+                'brief' : news['brief'],
                 'img' : news['img'],
                 'url' : news['url']
             })
             
-        return ten_news # 일단 10개만 넘김 (pagination&date 표현 방식 결정 후 보완)
+        return jsonify(result) # 일단 15개만 넘김 (pagination&date 표현 방식 결정 후 보완)
         
     # 추후 검색 구현할 때 POST 방식 추가
 
+'''
 @community_bp.route('/it/<int:newsId>', methods=['GET', 'POST'])
 def readNews(newsId) :
     if request.method == 'GET' : # postman 테스트 완.
@@ -67,7 +68,7 @@ def readNews(newsId) :
         return jsonify({
             'likes' : likes
         })
-
+'''
 
 #QNA main 페이지
 
