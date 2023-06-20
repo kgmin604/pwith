@@ -12,7 +12,7 @@ def send():
         data = request.get_json(silent=True)  # silent: parsing fail 에러 방지
         
         postType = data.get('type')
-        memId = data.get('memId')
+        memId = current_user.getId()
         oppId = data.get('oppId')
         
         print(postType)
@@ -34,8 +34,8 @@ def send():
         
     if request.method == 'GET':
         print("Get request")
-        data = request.get_json(silent=True)  # silent: parsing fail 에러 방지
-        postMemId = data.get('memId')
+        
+        postMemId = current_user.getId()
         toFront = []
         chattings = chat.getAllChat(postMemId)
         print("memid = " + postMemId)
