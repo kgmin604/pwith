@@ -43,7 +43,7 @@ def show():
             if int(searchType) == 0: # 제목으로 검색
                 posts = studyPost.findByTitle(searchValue)
             else: # 글쓴이로 검색
-                posts = studyPost.findByWriter(searchValue)
+                posts = studyPost.findByWriter(searchValue, 0)
 
             result = []
 
