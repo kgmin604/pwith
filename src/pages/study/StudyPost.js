@@ -24,17 +24,14 @@ function StudyPost(props) {
         return <div>Loading...</div>;
     }
 
-    const { title, writer, content, views, totalP } = post;
+    const { title, writer, content, views, totalP,commentNum,likes,commentList } = post;
     const parse = require('html-react-parser');
     const parsedContent = parse(content);
-
-    
-
 
 
     return (
         <div className="StudyPost">
-            <h4 style={{ textAlign: 'left', fontFamily: 'TmoneyRoundWind' }}>스터디 모집</h4>
+            <h4 style={{ textAlign: 'left'}}>스터디 모집</h4>
             <hr style={{ width: '100%', margin: '0 auto' }} />
 
             <div className="studyTitle">
@@ -60,7 +57,7 @@ function StudyPost(props) {
                 <p>인원수:{totalP}</p>
             </div>
             <Button variant='blue'>스터디 참여하기</Button>
-            <LikeAndComment id={post.id} like={post.likes} commentNum={post.commentNum}/>
+            <LikeAndComment id={id} like={post.likes} commentNum={post.commentNum} commentList={post.commentList}/>
         </div>
     );
 

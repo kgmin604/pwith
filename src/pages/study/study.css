@@ -61,6 +61,11 @@
     height: 30px;
 }
 
+.more{
+    width: 30px;
+    height: 30px;
+}
+
 .align-row{
     display: flex;
 }
@@ -70,4 +75,3 @@
     display: flex;
     justify-content: space-between;
 }
-
