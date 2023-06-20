@@ -1,6 +1,6 @@
 import React, { useEffect, useState, createRef } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./study.css";
+import "./mentoring.css";
 import "../../App.css";
 import axios from "axios";
 import { Form, Nav, Stack, Button, Table } from "react-bootstrap";

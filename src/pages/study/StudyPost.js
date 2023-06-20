@@ -60,7 +60,7 @@ function StudyPost(props) {
                 <p>인원수:{totalP}</p>
             </div>
             <Button variant='blue'>스터디 참여하기</Button>
-            <LikeAndComment id={post.id} like={post.like}/>
+            <LikeAndComment id={post.id} like={post.likes} commentNum={post.commentNum}/>
         </div>
     );
 

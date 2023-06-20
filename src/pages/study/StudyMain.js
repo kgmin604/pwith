@@ -13,7 +13,6 @@ function StudyMain() {
   let dispatch = useDispatch();
 
   useEffect(() => {
-    // DB에서 게시글을 가져와서 postList 상태를 업데이트합니다.
     const updateStudy = () => {
       axios({
         method: "GET",
