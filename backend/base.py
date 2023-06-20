@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify, make_response, redirect
 from flask_login import LoginManager
-from view import join, login, study, mypage, communityBoard, mentoring, pwithmain
+from view import join, login, study, mypage, communityBoard, mentoring, pwithmain, chat
 from controller.member_mgmt import Member
 
 # from flask_cors import CORS
@@ -16,6 +16,7 @@ app.register_blueprint(mypage.mypage_bp)
 app.register_blueprint(communityBoard.community_bp)
 app.register_blueprint(mentoring.mento_bp)
 app.register_blueprint(pwithmain.main_bp) ###
+app.register_blueprint(chat.chat_bp)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -24,7 +25,7 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def loadUser(memId) :
     print(memId)
-    print(Member.findById(memId))
+    # print(Member.findById(memId))
     return Member.findById(memId)
 
 # login_required로 요청된 기능에서 로그인되어 있지 않은 경우

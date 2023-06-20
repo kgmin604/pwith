@@ -6,15 +6,11 @@ import axios from "axios";
 import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { updateStudyPostList } from "../../store.js";
-import parse from 'html-react-parser';
-
-
+import LikeAndComment from './likeAndComment.js';
 
 function StudyPost(props) {
     let user = useSelector((state) => state.user);
-    let { id } = useParams();//글번호(주소창)
-    let index = parseInt(id) - 1;//찐글번호
+    let { id } = useParams();
 
     const [post, setPost] = useState(null);
 
@@ -22,7 +18,7 @@ function StudyPost(props) {
         axios.get(`/study/${id}`)
             .then(response => setPost(response.data))
             .catch(error => console.error(error));
-    }, [id]);
+    }, []);
 
     if (!post) {
         return <div>Loading...</div>;
@@ -32,23 +28,7 @@ function StudyPost(props) {
     const parse = require('html-react-parser');
     const parsedContent = parse(content);
 
-    const sendLikeSignal = () => {
-        axios.post(`/study/${id}/like`, {
-            postId: post.id
-        })
-            // .then(function (response) {
-            //     axios.get(`/study/${id}/like`)
-            //         .then(function (response) {
-            //             // GET 요청 응답 처리
-            //         })
-            //         .catch(function (error) {
-            //             // GET 요청 실패 처리
-            //         });
-            // })
-            .catch(function (error) {
-                // 요청 실패 시 처리할 로직
-            });
-    };
+    
 
 
 
@@ -80,7 +60,7 @@ function StudyPost(props) {
                 <p>인원수:{totalP}</p>
             </div>
             <Button variant='blue'>스터디 참여하기</Button>
-            <Button variant='red' onClick={sendLikeSignal}>좋아요</Button>
+            <LikeAndComment id={post.id} like={post.likes} commentNum={post.commentNum}/>
         </div>
     );
 

@@ -134,8 +134,8 @@ function StudyBoard(props) {
                             <td>{post.id}</td>
                             <td colSpan={2}>{post.title}</td>
                             <td>{post.writer}</td>
-                            <td>{post.like}</td>
-                            <td>{post.date}</td>
+                            <td>{post.likes}</td>
+                            <td>{post.curDate}</td>
                             <td>{post.views}</td>
                         </tr>
                     );
@@ -147,10 +147,10 @@ function StudyBoard(props) {
                 <tr>
                     <th>no.</th>
                     <th colSpan={2}>글제목</th>
-                    <th>조회수</th>
-                    <th>날짜</th>
-                    <th>좋아요</th>
                     <th>글쓴이</th>
+                    <th>좋아요</th>
+                    <th>날짜</th>
+                    <th>조회수</th>
                 </tr>
             </thead>
             <tbody>
@@ -158,10 +158,10 @@ function StudyBoard(props) {
                     <tr className="postCol" key={item.id} onClick={() => navigate(`../${item.id}`)}>
                         <td>{item.id}</td>
                         <td colSpan={2}>{item.title}</td>
-                        <td>{item.views}</td>
-                        <td>{item.date}</td>
-                        <td>{item.likes}</td>
                         <td>{item.writer}</td>
+                        <td>{item.likes}</td>
+                        <td>{item.curDate}</td>
+                        <td>{item.views}</td>
                     </tr>
                 ))}
             </tbody>

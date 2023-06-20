@@ -19,7 +19,7 @@ function MentoringCreate() {
     const [selectedWords, setSelectedWords] = useState([]); // 클릭한 단어 배열
 
     let [portfolio, setportfolio] = useState({
-        'img':'',
+        'image':'',
         'title': '',
         'subject': '',
         'content': ''
@@ -37,14 +37,14 @@ function MentoringCreate() {
           method: "POST",
           url: "/mentoring/create",
           data: {
-            writer: `${portfolio['writer']}`,
-            title: `${portfolio['title']}`,
+            // title: `${portfolio['title']}`,
             subject: updatedSubject,
-            content: `${portfolio['content']}`
+            content: `${portfolio['content']}`,
+            image: `${portfolio['image']}`
           }
         })
           .then(function (response) {
-            console.log(portfolio);
+            console.log(response);
             alert("새 글이 등록되었습니다.");
             navigate("../mentoring/main");
           })
