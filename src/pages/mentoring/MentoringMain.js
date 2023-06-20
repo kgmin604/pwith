@@ -1,11 +1,34 @@
+import React, { useEffect, useState, createRef } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../App.css";
 import "./mentoring.css";
 import { Form, Nav, Stack, Button, Card, Row, Col } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import axios from 'axios';
 import { Link } from "react-router-dom";
 
 function MentoringMain() {
-    const data = [1, 2, 3, 4, 5, 6];
+    const [mentoList, setMentoList] = useState([]);
+
+    useEffect(() => {
+        axios({
+            method: "GET",
+            url: "/mentoring/main",
+        })
+            .then(function (response) {
+                setMentoList(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+                alert("글을 불러오지 못했습니다.");
+            });
+
+    }, []);
+
+    useEffect(()=>{
+        console.log(mentoList);
+    },[mentoList])
+
 
     return (
         <div className="MentoringMain">
@@ -19,15 +42,15 @@ function MentoringMain() {
                         <Form.Control className="me-auto" placeholder="원하는 멘토를 찾아보세요!" />
                         <Button variant="blue">🔍</Button>
                     </Stack>
-                    <hr/>
-                    <Row className="row-cols-1 row-cols-md-4 g-2" style={{padding:'10px'}}>
-                        {data.map((k, i) => (
+                    <hr />
+                    <Row className="row-cols-1 row-cols-md-4 g-2" style={{ padding: '10px' }}>
+                        {mentoList.map((k, i) => (
                             <Col key={i} xs={12} sm={6} md={4} className="mb-2">
-                                <Card style={{ width: '15rem', height:'20rem' }}>
-                                    <Card.Img variant="top" src="https://cdn.inflearn.com/public/courses/325630/cover/56f635a3-3a44-4096-a16b-453ea1696b1a/325630-eng.png" />
+                                <Card style={{ width: '15rem', height: '20rem' }}>
+                                    <Card.Img variant="top" src="https://velog.velcdn.com/images/parkheroine/post/00699864-77b5-46bf-8f79-1afe12868918/image.jpeg" style={{ width: '100%', height: '50%', objectFit: 'cover' }}/>
                                     <Card.Body>
-                                        <Card.Title>멘토</Card.Title>
-                                        <Card.Text>전문가임</Card.Text>
+                                        <Card.Title>{k.writer}</Card.Title>
+                                        <Card.Text>{k.content}</Card.Text>
                                         <Button variant="blue">상세정보</Button>
                                     </Card.Body>
                                 </Card>

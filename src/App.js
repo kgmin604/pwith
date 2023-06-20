@@ -15,6 +15,7 @@ import RoomMain from "./pages/studyroom/RoomMain.js";
 import CommunityMain from "./pages/community/CommunityMain.js";
 import MentoringMain from "./pages/mentoring/MentoringMain.js";
 import MentoringCreate from "./pages/mentoring/MetoringCreate";
+import MentoringPost from "./pages/mentoring/MentoringPost";
 import Login from "./pages/member/login.js";
 import Join from "./pages/member/join.js";
 import Help from "./pages/member/help.js";
@@ -217,7 +218,8 @@ function App() {
           <Route path="/community/qna" element={<CommunityQna />} />
           <Route path="/community/qna/create" element={<QnaCreate/>} /> 
           <Route path="/mentoring/main" element={<MentoringMain />} />
-          <Route path="/mentoring/create" element={<MentoringCreate/>}></Route>
+          <Route path="/mentoring/create" element={<MentoringCreate/>}/>
+          <Route path="/mentoring/:id" element={<MentoringPost/>}/>
           <Route path="/login" element={<Login />} />
           <Route path="/join" element={<Join />} />
           <Route path="/help" element={<Help />} />
