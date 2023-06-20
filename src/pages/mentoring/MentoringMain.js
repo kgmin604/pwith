@@ -49,22 +49,16 @@ function MentoringMain() {
                         {mentoList.map((k, i) => (
                             <Col key={i} xs={12} sm={6} md={4} className="mb-2">
                                 <Card style={{ width: '15rem', height: '20rem' }}>
-                                    <Card.Img variant="top" src="https://velog.velcdn.com/images/parkheroine/post/00699864-77b5-46bf-8f79-1afe12868918/image.jpeg" style={{ width: '100%', height: '50%', objectFit: 'cover' }}/>
+                                    <Card.Img variant="top" src={k.mentiPic} style={{ width: '100%', height: '50%', objectFit: 'cover' }}/>
                                     <Card.Body>
                                         <Card.Title>{k.writer}</Card.Title>
-                                        <Card.Text>k.title</Card.Text>
+                                        <Card.Text>{k.brief}</Card.Text>
                                         <Button variant="blue" onClick={() => navigate(`../mentoring/${k.writer}`)}>상세정보</Button>
                                     </Card.Body>
                                 </Card>
                             </Col>
                         ))}
                     </Row>
-
-
-
-
-
-
                 </div>
 
                 <div class="col-md-3"></div>
