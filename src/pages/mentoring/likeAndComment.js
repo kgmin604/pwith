@@ -74,27 +74,13 @@ function LikeAndComment(props) {
                 <div className='align-side'>
                     <div style={{textAlign:'start'}}>
                         <div>박주연</div>
-                        <div>스터디 추천 추천이용</div>
+                        <div>멘토님 추천 추천이용</div>
                     </div>
                     <div style={{textAlign:'end'}}>
                         <div>수정,삭제</div>
                         <div style={{color:'#888888'}}>13.05.60</div>
                     </div>
                 </div>
-            </div>
-
-            <div className='align-side'>{/* 댓글달기*/}
-            <Form onSubmit={handleSubmit} style={{ width: '90%' }}>
-                <Form.Control
-                    className="me-auto"
-                    placeholder="최고의 스터디, 추천합니다!"
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    
-                />
-            </Form>
-            <span style={{ width: '5px' }}></span>
-            <Button variant="blue" type="submit" style={{ width: '10%'}}>등록</Button>
             </div>
 
         </div>
