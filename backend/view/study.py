@@ -34,6 +34,7 @@ def show():
                         'likes' : posts[i][7],
                         'views' : posts[i][8]
                     }
+                post['curDate'] = studyPost.getFormattedDate(posts[i][5])
                 result.append(post)
             return result
 
@@ -62,6 +63,8 @@ def show():
                         'likes' : posts[i][7],
                         'views' : posts[i][8]
                     }
+                    post['curDate'] = studyPost.getFormattedDate(posts[i][5])
+                    
                     result.append(post)
 
             return jsonify(result)
@@ -84,7 +87,8 @@ def showDetail(id) :
             #'totalP': post.getTotalP(),
             
         }
-
+        toFront['curDate'] = studyPost.getFormattedDate(toFront['curDate'])
+        
         return toFront
 
 @study_bp.route('/<int:id>', methods = ['POST', 'PUT', 'DELETE'])

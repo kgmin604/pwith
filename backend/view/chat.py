@@ -27,12 +27,31 @@ def send():
             
         if postType == 0:  # 상대방과의 채팅목록 가져오기
             chatlist = chat.getMyChat(memId, oppId)
+            msgList =[]
+            for chats in chatlist:
+                chatting_data = {
+                    'sender' : chatting_data[1],
+                    'receiver': chatting_data[2],
+                    'content'  : chatting_data[3],
+                    'date' : chatting_data[4]
+                }
+                chatting_data['date'] = chat.getFormattedDate()
+                print(chatting_data['date'])
+                msgList.append(chatting_data)
             print(chatlist)
             return jsonify(chatlist)
+        
+        if postType == 2:
+            oppChk = chat.chkOppId(oppId)
+            if oppChk == True:  #oppId가 유효한 경우 result = 1
+                result = 1
+            else :
+                result = 0
+            return result
     
         return 'Response', 200
         
-    if request.method == 'GET':
+    if request.method == 'GET':     #전체 채팅목록 가져오기 (current_user id와 관련있는 채팅 모두)
         print("Get request")
         
         postMemId = current_user.getId()
@@ -47,6 +66,7 @@ def send():
                 'date': chatting[4]
             }
             #print(chatting_data)
+            chatting_data['date'] = chat.getFormattedDate(chatting[4])  #date 출력 형식 변경
             toFront.append(chatting_data)
         print(toFront)
         return jsonify(toFront)

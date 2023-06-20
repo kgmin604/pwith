@@ -154,11 +154,17 @@ class studyPost() :
     def getViews(self):
         return int(self.views)
     
-    def getNStudy(self):
+    def getFormattedDate(curDate):
+        if isinstance(curDate, str):
+            curDate = datetime.strptime(curDate, "%Y-%m-%d %H:%M:%S")
+        formatted_datetime = curDate.strftime("%Y-%m-%d %H:%M:%S")
+        return formatted_datetime
+    
+    def getNStudy():
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = "select postId, title from post LIMIT 5"
+        sql = "select postId, title from post ORDER BY curDate DESC LIMIT 5"
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
         # mysql_db.close()

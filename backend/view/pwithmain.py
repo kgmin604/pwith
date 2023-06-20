@@ -5,12 +5,14 @@ from controller.community_mgmt import QNAPost
 
 main_bp = Blueprint('pwithmain', __name__, url_prefix='')
 
-@main_bp.route('/', methods = ['GET'])
+@main_bp.route('/', methods = ['GET', 'POST'])
 def showStudy():
     if request.method == 'GET':
+        print("get 요청")
+        
         posts = studyPost.getNStudy()
         studyList = []
-        
+
         for i in range(len(posts)) :
             post = {
                 'id' : posts[i][0],
@@ -18,26 +20,5 @@ def showStudy():
             }
             studyList.append(post)
         print(studyList)
-        return jsonify({
-            'studyList' : studyList
-        })
-
-"""
-def showQNA():
-     if request.method == 'GET':
-        posts = QNAPost.getNQNA()
-        QNAList = []
+        return studyList
         
-        for i in range(len(posts)) :
-            post = {
-                'id' : posts[i][0],
-                'title' : posts[i][2],
-            }
-            QNAList.append(post)
-
-        return jsonify(QNAList)
-        
-def showIT():
-    if request.method == 'GET' :
-        post = []
-        """
