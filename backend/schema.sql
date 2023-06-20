@@ -53,13 +53,14 @@ CREATE TABLE mento (
     -- FOREIGN KEY(mentoId, mentiList) REFERENCES member(memId, memId) on delete cascade -- json 안 됨. 일단 빼고 생성함.
 );
 
-CREATE TABLE review (
-    reviewId INT,
-    writer VARCHAR(10) NOT NULL,
-    content VARCHAR(300) NOT NULL,
-    mentoId VARCHAR(10) NOT NULL,
-    PRIMARY KEY(reviewId),
-    FOREIGN KEY(mentoId) REFERENCES mento(mentoId) on delete cascade
+create table review (
+	reviewId int auto_increment,
+    writer varchar(10) not null,
+    content varchar(300) not null,
+    mentoId varchar(10) not null,
+    primary key(reviewId),
+    foreign key(writer) references member(memId),
+    foreign key(mentoId) references mento(mentoId)
 );
 
 CREATE TABLE chat (

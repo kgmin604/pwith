@@ -35,7 +35,7 @@ def show():
                         'views' : posts[i][8]
                     }
                 result.append(post)
-            return result # column 값 명시하기!!
+            return result
 
         else : # 글 검색
             posts = []
@@ -66,7 +66,7 @@ def show():
 
             return jsonify(result)
 
-@study_bp.route('/<int:id>', methods=['GET']) # 글 조회 + 댓글 조회
+@study_bp.route('/<int:id>', methods=['GET']) # 글 조회
 def showDetail(id) :
     if request.method == 'GET' :
 

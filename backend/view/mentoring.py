@@ -2,6 +2,7 @@ import json
 from flask import Flask, session, Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from controller.mentor_mgmt import Portfolio
+from controller.review_mgmt import Review
 
 mento_bp = Blueprint('mento', __name__, url_prefix='/mentoring')
 
@@ -32,7 +33,7 @@ def showAll() :
 
         return jsonify(result)
 
-@mento_bp.route('/<mentoId>', methods = ['GET', 'POST'])
+@mento_bp.route('/<mentoId>', methods = ['GET'])
 def showDetail(mentoId) :
     if request.method == 'GET' :
 
@@ -48,10 +49,55 @@ def showDetail(mentoId) :
             'content' : portfolio.content
         }
         
-        return jsonify(detail)
+        return jsonify(detail) # 쪽지 버튼 ???
 
-    else : # 1:1 쪽지 버튼 & 후기
-        pass
+@mento_bp.route('/<mentoId>', methods = ['POST', 'PUT', 'DELETE'])
+def review(mentoId) :
+    if request.method == 'POST' : # 후기 작성
+
+        cnt = request.get_json()['content']
+
+        writer = current_user.getId()
+        # writer = 'test' # dummy !!
+
+        try :
+            pk = Review.writeReview(writer, cnt, mentoId)
+        except Exception as ex:
+            print("에러 이유 : " + str(ex))
+            pk = 0
+
+        return jsonify({
+            'reviewId' : pk # 0 is fail
+        })
+
+    elif request.method == 'PUT' : # 후기 수정
+
+        reviewId = request.get_json()['reviewId']
+        newContent = request.get_json()['content']
+
+        try :
+            done = Review.modifyReview(reviewId, newContent)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return jsonify({
+            'done' : done
+        })
+
+    else : # 후기 삭제
+
+        reviewId = request.get_json()['reviewId']
+
+        try :
+            done = Review.removeReview(reviewId)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return jsonify({
+            'done' : done
+        })
 
 @mento_bp.route('/create', methods = ['GET', 'POST'])
 def writePortfolio() :

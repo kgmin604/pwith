@@ -1,5 +1,4 @@
 from model.db_mysql import conn_mysql
-import json
 
 class Portfolio() :
     
@@ -25,7 +24,7 @@ class Portfolio() :
 
     @property
     def image(self) :
-        return str(self.__image) # link ?
+        return str(self.__image)
 
     @property
     def content(self) :
@@ -96,3 +95,4 @@ class Portfolio() :
 
 
     ## menti list에 추가 구현
+
