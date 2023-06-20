@@ -92,13 +92,13 @@ class studyPost() :
         return post
 
     @staticmethod
-    def findByWriter(writer) : # 글쓴이로 검색 & 내 글 목록에서 사용
+    def findByWriter(writer, postType) : # 글쓴이로 검색 & 내 글 목록
 
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"SELECT * FROM post WHERE writer = '{writer}'"
-        print('writer로 검색')
+        sql = f"SELECT * FROM post WHERE writer = '{writer}' and postType = {postType}"
+        
         cursor_db.execute(sql)
         posts = cursor_db.fetchall() # tuple의 tuple
         
