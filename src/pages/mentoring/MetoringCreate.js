@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../App.css";
 import "./mentoring.css";
@@ -19,53 +19,53 @@ function MentoringCreate() {
     const [selectedWords, setSelectedWords] = useState([]); // 클릭한 단어 배열
 
     let [portfolio, setportfolio] = useState({
-        'image':'',
-        'title': '',
+        'image': '',
+        'brief': '',
         'subject': '',
         'content': ''
     })//제목, 분야, 내용
 
     function postPortfolio() {
         const updatedSubject = JSON.stringify(selectedWords);
-      
+
         setportfolio({
-          ...portfolio,
-          subject: updatedSubject
+            ...portfolio,
+            subject: updatedSubject
         });
-      
+
         axios({
-          method: "POST",
-          url: "/mentoring/create",
-          data: {
-            // title: `${portfolio['title']}`,
-            subject: updatedSubject,
-            content: `${portfolio['content']}`,
-            image: `${portfolio['image']}`
-          }
+            method: "POST",
+            url: "/mentoring/create",
+            data: {
+                brief: `${portfolio['brief']}`,
+                subject: updatedSubject,
+                content: `${portfolio['content']}`,
+                image: `${portfolio['image']}`
+            }
         })
-          .then(function (response) {
-            console.log(response);
-            alert("새 글이 등록되었습니다.");
-            navigate("../mentoring/main");
-          })
-          .catch(function (error) {
-            console.log(error);
-            alert("요청을 처리하지 못했습니다.");
-          });
-      } 
+            .then(function (response) {
+                console.log(response);
+                alert("새 글이 등록되었습니다.");
+                navigate("../mentoring/main");
+            })
+            .catch(function (error) {
+                console.log(error);
+                alert("요청을 처리하지 못했습니다.");
+            });
+    }
 
     useEffect(() => {
         console.log(portfolio);
-      }, [portfolio]);
+    }, [portfolio]);
 
     const handleWordClick = (word) => {
         if (selectedWords.includes(word)) {
             setSelectedWords(prevWords => prevWords.filter(w => w !== word));
             console.log(selectedWords);
-          } else {
+        } else {
             setSelectedWords(prevWords => [...prevWords, word]);
             console.log(selectedWords);
-          }
+        }
     };
 
 
@@ -85,11 +85,49 @@ function MentoringCreate() {
         })
     };
 
+    const [imageSrc, setImageSrc] = useState(null);
+
+    const onUpload = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+      
+        return new Promise((resolve) => {
+          reader.onload = () => {
+            setImageSrc(reader.result || null); // 파일의 컨텐츠
+            setportfolio({
+              ...portfolio,
+              image: reader.result || null // 포트폴리오의 이미지 업데이트
+            });
+            resolve();
+          };
+        });
+      };
+
     return (
         <div className="MentoringCreate">
             <h5 style={{ fontFamily: 'TmoneyRoundWind' }}>포트폴리오 작성하기</h5>
+
+            <div className='mentoPic' >
+                <div className='child'>
+                <label for="avatar">프로필 사진 등록하기(150x150 권장):</label>
+                </div>
+                <div className='child'>
+                <input type="file" id="mentoPic" name="mentoPic" accept='image/*' onChange={e => onUpload(e)} />
+                </div>
+                {
+                    imageSrc!=null?<img
+                    width={'150px'}
+                    height={'150px'}
+                    src={imageSrc}
+                    className='child'
+                />:null
+                }
+                
+            </div>
+
             <div className='form-wrapper'>
-                <input className="title-input" type='text' placeholder='제목' onChange={getValue} name='title' />
+                <input className="title-input" type='text' placeholder='한줄소개' onChange={getValue} name='brief' />
                 <CKEditor
                     editor={ClassicEditor}
                     data=" "
@@ -109,7 +147,7 @@ function MentoringCreate() {
                 />
 
                 <div className='selectSubject'>
-                    <hr/>
+                    <hr />
                     {words.map((word, index) => (
                         <span
                             key={index}
