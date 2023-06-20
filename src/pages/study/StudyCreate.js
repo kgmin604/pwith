@@ -39,8 +39,7 @@ const customStyles = {
       width: '200px', // 원하는 크기로 설정
     }),
   };
-
-
+  
 function StudyCreate() {
     let navigate = useNavigate();
 

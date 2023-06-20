@@ -18,7 +18,7 @@ div.room-part div.row div.col-md-3
     border-radius: 10px;
     background-color: rgb(241, 241, 241) ;
     width: 200px;
-    height: 310px;
+    height: 350px;
     margin: 0 auto;
     display: flex; /* 플렉스 컨테이너로 설정 */
     flex-direction: column;
@@ -79,6 +79,22 @@ span{ /* 사용자 이름 부분*/
     color: rgb(61, 105, 144);
 }
 
+div.room-part div.row div.col-md-3 div.profile
+.create-btn{
+    cursor: pointer;
+    text-align: center;
+    line-height: 30px;
+    height: 30px;
+    width: 80%;
+    margin: 5px auto;
+    font-size: 14px;
+    font-weight: 400;
+    color:white;
+    border:solid 1px rgb(61, 105, 144);
+    border-radius: 5px;
+    background-color: rgb(61, 105, 144);
+}
+
 div.room-part div.row div.col-md-9
 .list-area{
     margin-bottom: 20px;
@@ -120,4 +136,84 @@ h3{
     padding-left: 20px;
     width: 100%;
     margin: 15px 0;
+}
+
+
+/* 스터디룸 create */
+
+.create-wrap{
+    border-radius: 20px;
+    width: 500px;
+    height: 500px;
+    margin: 100px auto;
+    padding: 20px 0;
+    border: solid 1px;
+    border-color: lightgray;
+}
+
+div.create-wrap
+.title{
+    width: 400px;
+    height: 70px;
+    margin : 10px auto;
+    margin-bottom: 30px;
+    text-align: center;
+    line-height: 70px;
+    font-family: 'TmoneyRoundWind';
+    font-size: 25px;
+    color:#98AFCA;
+    border-bottom: solid 2px;
+    border-color: #98AFCA;
+}
+
+div.create-wrap 
+.item{
+    width: 400px;
+    margin: 15px auto;
+}
+
+div.create-wrap div.item
+.name{
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0;
+    margin-bottom: 5px;
+}
+
+div.create-wrap div.item
+.input-area{
+    border-radius: 5px;
+    width: 400px;
+    height: 40px;
+    margin: 0 auto;
+    border: solid 1px;
+    border-color: #98AFCA;
+    background-color: white;
+    padding-left: 5px;
+}
+
+div.create-wrap
+.create-btn{
+    border-radius: 5px;
+    width: 400px;
+    height: 40px;
+    margin: 0 auto;
+    margin-top: 30px;
+    border: solid 1px;
+    font-family: 'TmoneyRoundWind';
+    line-height: 40px;
+    color:white;
+    border-color: white;
+    background-color: #98AFCA;
+    text-align: center;
+}
+
+div.create-wrap
+.message{
+    margin: 5px auto;
+    width: 400px;
+    height: 15px;
+    font-size: 12px;
+    color:red;
+    text-align: left;
 }

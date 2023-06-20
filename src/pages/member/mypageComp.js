@@ -3,7 +3,7 @@ import axios from "axios";
 
 import "./member.css";
 import "./writinglist.css";
-import "./modal.css";
+import "../../assets/modal.css";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
 import { useState, useEffect } from "react";

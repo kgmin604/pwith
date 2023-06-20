@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import PwithMain from "./pages/pwithmain/PwithMain.js";
 import StudyMain from "./pages/study/StudyMain.js";
 import RoomMain from "./pages/studyroom/RoomMain.js";
+import RoomCreate from "./pages/studyroom/RoomCreate.js";
 import CommunityMain from "./pages/community/CommunityMain.js";
 import MentoringMain from "./pages/mentoring/MentoringMain.js";
 import MentoringCreate from "./pages/mentoring/MetoringCreate";
@@ -210,6 +211,7 @@ function App() {
           </Route>
           <Route path="/study/create" element={<StudyCreate />} />
           <Route path="/studyroom" element={<RoomMain />} />
+          <Route path="/studyroom/create" element={<RoomCreate />} />
           <Route path="/community" element={<CommunityMain />}>
             <Route path="main" element={<CommunityBoard />} />
             <Route path="it" element={<CommunityIT />} />

@@ -48,7 +48,7 @@ function PwithMain(){
             <div className="main-area">
                 <div className="posting-part" style={{'margin-right':'40px'}}>
                     <h5 className="posting-header">모집중인 스터디
-                    <span className="posting-plus" onClick={()=>{navigate("/study")}}>(+)</span></h5>
+                    <span className="posting-plus" onClick={()=>{navigate("/study/main")}}>(+)</span></h5>
                     <ul className="posting-list">
                     {
                         studyList.map((a,i)=>{
