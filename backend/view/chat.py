@@ -13,7 +13,7 @@ def send():
         
         postType = data.get('type')
         memId = data.get('memId')
-        oppId = data.get('oppID')
+        oppId = data.get('oppId')
         
         print(postType)
         print(oppId)
@@ -26,9 +26,9 @@ def send():
             return 'Response', 200
             
         if postType == '0':  # 상대방과의 채팅목록 가져오기
-            chatlist = chat.getMyChat(memId, oppId)
-            print(chatlist)
-            return jsonify(chatlist)
+            chatList = chat.getMyChat(memId, oppId)
+            print(chatList)
+            return jsonify(chatList)
     
         return 'Response', 200
         
