@@ -110,11 +110,11 @@ class studyPost() :
         return posts
 
     @staticmethod
-    def findByTitle(title) : # 제목으로 검색
+    def findByTitle(title, postType) : # 제목으로 검색
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT * FROM post WHERE title = '{title}'"
+        sql = f"SELECT * FROM post WHERE title = '{title}' and postType = {postType}"
 
         cursor_db.execute(sql)
         posts = cursor_db.fetchall() # page 만들 시 fetchmany() 사용
