@@ -38,31 +38,7 @@ function Account(){
 function WritingList(){
     let navigate = useNavigate();
     let [sel, setSel] = useState(0); // 0: 스터디 글 목록 1: 커뮤니티 글 목록
-    // let [mypost, setMypost] = useState(null); -- axios 완성 후 코드
-    let tmp = {
-        'id' : 1, 
-       'type' : 0,
-       'title' : '종강맞이 AI 공부하실분', 
-       'write' : 'kgminee', 
-       'content' : '재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요재미있을거예요', 
-       'curDate' : '2023/06/16', 
-       'category' : 8, 
-       'likes' : 4, 
-       'views' : 10
-    }
-    let tmp2 = {
-        'id' : 2, 
-       'type' : 1,
-       'title' : '방학때 뭐할까요?', 
-       'write' : 'test', 
-       'content' : '어떤 공부할까요?', 
-       'curDate' : '2023/06/16', 
-       'category' : 10,
-       'likes' : 1, 
-       'views' : 2
-    }
-
-    let [mypost, setMypost] = useState([tmp, tmp2,tmp, tmp2,tmp, tmp2,tmp, tmp2,tmp, tmp2,tmp, tmp2,])
+    let [mypost, setMypost] = useState([]);
 
 
     function loadWritingList(){
@@ -202,8 +178,7 @@ function Chat(){
             url: "/mypage/chat"
           })
           .then(function (response) {
-              setChatList(response.data.chatList); // chatList는 딕셔너리 리스트
-              console.log(response.data.chatList);
+              setChatList(response.data); // chatList는 딕셔너리 리스트
           })
           .catch(function (error) {
               console.log(error);
@@ -247,7 +222,7 @@ function Chat(){
                                 key={i}
                                 onClick={(event) => handleItemClick(event, i)}
                             >
-                                <time>{item.curDate}</time>
+                                <time>{item.date}</time>
                                 <h3>{item.oppId}</h3>
                                 <p>{item.content}</p>
                             </a>
