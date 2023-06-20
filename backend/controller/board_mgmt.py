@@ -154,6 +154,12 @@ class studyPost() :
     def getViews(self):
         return int(self.views)
     
+    def getFormattedDate(curDate):
+        if isinstance(curDate, str):
+            curDate = datetime.strptime(curDate, "%Y-%m-%d %H:%M:%S")
+        formatted_datetime = curDate.strftime("%Y-%m-%d %H:%M:%S")
+        return formatted_datetime
+    
     def getNStudy():
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()

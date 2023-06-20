@@ -33,7 +33,7 @@ class chat():
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"select * from chat where sender = 'a' or receiver = 'a'"
+        sql = f"select * from chat where sender = '{str(memId)}' or receiver = '{str(memId)}'"
 
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
@@ -43,6 +43,21 @@ class chat():
         # print(rows)
         
         return rows
+    
+    def chkOppId(oppId):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = f"select memId from member"
+        cursor_db.execute(sql)
+        memIdList = cursor_db.fetchall()
+        
+        for i in range(len(memIdList)):
+            if oppId == memIdList[i]:      #oppId가 member db 에 있으면 true 리턴
+                return True
+                
+        return False
+            
     
     def curdate():  # date 구하는 함수
         now = datetime.now()
@@ -59,3 +74,7 @@ class chat():
     
     def getCurDate(self):
         return self.curDate
+    
+    def getFormattedDate(curDate):
+        formatted_datetime = curDate.strftime("%Y-%m-%d %H:%M:%S")
+        return formatted_datetime  # 출력 예: 2023-06-21 14:30:45
