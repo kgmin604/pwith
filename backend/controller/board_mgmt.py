@@ -59,7 +59,7 @@ class studyPost() :
     @staticmethod
     def curdate():  # date 구하는 함수
         now = datetime.now()
-        return str(now.date())
+        return str(now)
     
     @staticmethod
     def getStudy():
