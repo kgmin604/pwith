@@ -202,6 +202,7 @@ function Chat(){
           })
           .then(function (response) {
               setChatList(response.data.chatList); // chatList는 딕셔너리 리스트
+              console.log(response.data.chatList);
           })
           .catch(function (error) {
               console.log(error);
@@ -219,7 +220,7 @@ function Chat(){
             data: {
                 type: 1,
                 memId : `${user.id}`,
-                oppID : `${oppId}`,
+                oppId : `${oppId}`,
                 content : `${content}`
             },
           })

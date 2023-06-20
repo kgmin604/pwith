@@ -12,30 +12,30 @@ def send():
         data = request.get_json(silent=True)  # silent: parsing fail 에러 방지
         
         postType = data.get('type')
-        memId = data.get('memId')
+        memId = current_user.getId()
         oppId = data.get('oppId')
         
         print(postType)
         print(oppId)
         
-        if postType == '1':  # 쪽지 보내기
+        if postType == 1:  # 쪽지 보내기
             content = data['content']
             curDate = chat.curdate()
             chat.insertChat(memId, oppId, content, curDate)
             print("insert 완.")
             return 'Response', 200
             
-        if postType == '0':  # 상대방과의 채팅목록 가져오기
-            chatList = chat.getMyChat(memId, oppId)
-            print(chatList)
-            return jsonify(chatList)
+        if postType == 0:  # 상대방과의 채팅목록 가져오기
+            chatlist = chat.getMyChat(memId, oppId)
+            print(chatlist)
+            return jsonify(chatlist)
     
         return 'Response', 200
         
     if request.method == 'GET':
         print("Get request")
-        data = request.get_json(silent=True)  # silent: parsing fail 에러 방지
-        postMemId = data.get('memId')
+        
+        postMemId = current_user.getId()
         toFront = []
         chattings = chat.getAllChat(postMemId)
         print("memid = " + postMemId)
