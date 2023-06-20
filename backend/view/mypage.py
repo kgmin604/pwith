@@ -52,15 +52,19 @@ def changeEmail() :
 @mypage_bp.route('/writinglist', methods = ['GET', 'POST'])
 def myPost() :
     if request.method == 'GET' :
-        # writer = current_user.getId()
-        writer = 'test' # dummy
         
-        myPosts = studyPost.findByWriter(writer)
+        postType = request.args.get('type')
+
+        # writer = current_user.getId()
+        writer = 'a' # dummy
+
+        if postType == 'community' :
+            myPosts = studyPost.findByWriter(writer, 1)
+        else : # 모든 예외에서도 study로 설정
+            myPosts = studyPost.findByWriter(writer, 0)
 
         result = []
-        # print(myPosts[0][2])
-        # print('길이 : ')
-        # print(len(myPosts))
+
         for i in range(len(myPosts)) :
             myPost = {
                 'id' : myPosts[i][0],
@@ -75,7 +79,3 @@ def myPost() :
             }
             result.append(myPost)
         return jsonify(result)
-    else :
-        return jsonify({
-            'status' : 'success'
-        })

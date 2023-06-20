@@ -43,31 +43,31 @@ function App() {
   let navigate = useNavigate();
   let user = useSelector((state) => state.user);
   let dispatch = useDispatch();
-  
-  useEffect(()=>{
-    axios({
-      method: "POST",
-      url: "/",
-      data: {
-        chkSession: 1
-      },
-    })
-    .then(function (response) {
-      dispatch(
-        loginUser({
-          id: response.data.id,
-          name: response.data.name,
-          email: response.data.email
-        })
-      );
-      console.log("로그인 요청");
-      console.log(response);
-      navigate("/");
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  },[])
+
+  // useEffect(()=>{
+  //   axios({
+  //     method: "POST",
+  //     url: "/",
+  //     data: {
+  //       chkSession: 1
+  //     },
+  //   })
+  //   .then(function (response) {
+  //     dispatch(
+  //       loginUser({
+  //         id: response.data.id,
+  //         name: response.data.name,
+  //         email: response.data.email
+  //       })
+  //     );
+  //     console.log("로그인 요청");
+  //     console.log(response);
+  //     navigate("/");
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // },[])
 
   function logout() {
     axios({
@@ -131,7 +131,10 @@ function App() {
               >
                 커뮤니티
               </li>
-              <li className="navbar-btn" onClick={() => navigate("/mentoring/main")}>
+              <li
+                className="navbar-btn"
+                onClick={() => navigate("/mentoring/main")}
+              >
                 멘토링
               </li>
             </ul>
@@ -218,10 +221,10 @@ function App() {
             <Route path="content" element={<CommunityContent />} />
           </Route>
           <Route path="/community/qna" element={<CommunityQna />} />
-          <Route path="/community/qna/create" element={<QnaCreate/>} /> 
+          <Route path="/community/qna/create" element={<QnaCreate />} />
           <Route path="/mentoring/main" element={<MentoringMain />} />
-          <Route path="/mentoring/create" element={<MentoringCreate/>}/>
-          <Route path="/mentoring/:id" element={<MentoringPost/>}/>
+          <Route path="/mentoring/create" element={<MentoringCreate />} />
+          <Route path="/mentoring/:id" element={<MentoringPost />} />
           <Route path="/login" element={<Login />} />
           <Route path="/join" element={<Join />} />
           <Route path="/help" element={<Help />} />
