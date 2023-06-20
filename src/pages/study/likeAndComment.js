@@ -13,26 +13,38 @@ import comment from "./img/comment.png"
 
 function LikeAndComment(props) {
     const id = props.id;
-    const [like, setLike] = useState(props.like);
+    const [likes, setLikes] = useState(props.like);
+    // const [commentNum,setCommentNum]=useState(props.commentNum);
+    // const [liked,setLiked]=useState(props.liked);
 
-    useEffect(()=>{
-        
-    })
+    //더미데이터
+    const [liked,setLiked]=useState(false);
+
+    //liked가 1이면 꽉찬 하트, liked가 0이면 빈 하트 누르면 post 요청 보내고 프론트에서 토글
+
+    // useEffect(() => {
+    //     console.log(liked);
+    //     // 원하는 동작 수행
+    //   }, [liked]);
 
     const sendLikeSignal = () => {
-        axios.post(`/study/${id}/like`, {
-            postId: id
-        })
-            .then(function (response) {
-                axios.get(`/study/${id}/like`)
-                    .then(response => setLike(response.data))
-                    .catch(function (error) {
-                        // GET 요청 실패 처리
-                    });
-            })
-            .catch(function (error) {
-                // 요청 실패 시 처리할 로직
-            });
+        setLiked(!liked);
+        // axios.post(`/study/${id}/like`, {
+        //     postId: id
+        // })
+        //     .then(function (response) {
+        //         axios.get(`/study/${id}/like`)
+        //             .then((response) => {
+        //                 // setLikes(response.data.likes)
+        //                 // console.log(response.data)
+        //             })
+        //             .catch(function (error) {
+        //                 // GET 요청 실패 처리
+        //             });
+        //     })
+        //     .catch(function (error) {
+        //         // 요청 실패 시 처리할 로직
+        //     });
     };
 
     const [inputValue, setInputValue] = useState('');
@@ -52,17 +64,17 @@ function LikeAndComment(props) {
         <div className='likeAndComment'>
             <div className='align-row'>
                 <div className='align-row'>{/* 하트 */}
-                    <img src={heartOutline} className="heart" />
+                    {liked===false?<img src={heartOutline} className="heart" onClick={()=>sendLikeSignal()}/>
+                    :<img src={heartFull} className="heart" onClick={()=>sendLikeSignal()}/>
+                    }
                     <span style={{ width: '5px' }}></span>
-                    11
-                    {like}
+                    {likes}
                 </div>
                 <span style={{ width: '10px' }}></span>
                 <div className='align-row'>
                     <img src={comment} className='comment' />
                     <span style={{ width: '5px' }}></span>
-                    10
-                    {/* 댓글수 */}
+                    {/* {commentNum} */}
                 </div>
             </div>
 
