@@ -5,7 +5,7 @@ from controller.mentor_mgmt import Portfolio
 
 mento_bp = Blueprint('mento', __name__, url_prefix='/mentoring')
 
-@mento_bp.route('/main', methods = ['GET', 'POST']) # postman test 완.
+@mento_bp.route('/main', methods = ['GET', 'POST'])
 def showAll() :
     if request.method == 'GET' :
         allP = Portfolio.loadAll()
@@ -20,10 +20,11 @@ def showAll() :
             # allP[i][2] = json.loads(allP[i][2]) # subject string to json
 
             result.append({
-                'writer' : allP[i][0], # @property instead getter
+                'writer' : allP[i][0],
                 'subject' : json.loads(allP[i][2]),
                 'image' : allP[i][3],
-                'content' : allP[i][4]
+                'brief' : allP[i][4],
+                'content' : allP[i][5]
             })
 
         # print('==변환 후==')
@@ -31,34 +32,7 @@ def showAll() :
 
         return jsonify(result)
 
-@mento_bp.route('/create', methods = ['GET', 'POST']) # postman test 완 with dummy
-def writePortfolio() :
-    if request.method == 'POST' :
-        portfolioInfo = request.get_json(silent=True)
-
-        # <from front>
-
-        # writer = current_user.getId()
-        writer = 'pwith'
-        subject = portfolioInfo['subject'] # list를 string으로 받기
-        image = portfolioInfo['image']
-        content = portfolioInfo['content']
-        # title = portfolioInfo['title'] # 한줄소개 ##########테스트하기
-
-        # writer = 'park'
-        # subject = '["subject"]'
-        # image = 'urlurl2'
-        # content = 'content2'
-
-        try :
-            result = Portfolio.create(writer, subject, image, content)
-        except Exception as ex: # sql error
-            print(ex)
-            result = 0
-
-        return jsonify(result) # 0 fail, 1 success
-
-@mento_bp.route('/<mentoId>', methods = ['GET', 'POST']) # postman test 완.
+@mento_bp.route('/<mentoId>', methods = ['GET', 'POST'])
 def showDetail(mentoId) :
     if request.method == 'GET' :
 
@@ -66,23 +40,45 @@ def showDetail(mentoId) :
 
         portfolio = Portfolio.findById(mentoId)
 
-        # to front
         detail = {
             'writer' : portfolio.writer, # @property instead getter
             'subject' : json.loads(portfolio.subject),
             'image' : portfolio.image,
+            'brief' : portfolio.brief,
             'content' : portfolio.content
         }
         
         return jsonify(detail)
-    else : # 1:1 쪽지 버튼
+
+    else : # 1:1 쪽지 버튼 & 후기
         pass
 
-@mento_bp.route('/update/<mentoId>', methods = ['GET', 'PUT']) # URI 확정 ㄴㄴ
+@mento_bp.route('/create', methods = ['GET', 'POST'])
+def writePortfolio() :
+    if request.method == 'POST' :
+        portfolioInfo = request.get_json(silent=True)
+
+        writer = current_user.getId()
+        subject = portfolioInfo['subject']
+        image = portfolioInfo['image']
+        brief = portfolioInfo['brief']
+        content = portfolioInfo['content']
+
+        try :
+            result = Portfolio.create(writer, subject, image, brief, content)
+        except Exception as ex:
+            print("예외 발생 : " + str(ex))
+            result = 0
+
+        return jsonify({
+            'done' : result
+            })
+
+@mento_bp.route('/update/<mentoId>', methods = ['GET', 'PUT'])
 def modifyPortfolio(mentoId) :
 
     loginUser = current_user.getId()
-    # loginUser = 'park' # dummmmmmmmmy
+    # loginUser = 'q' # dummmmmmmmmy
     
     if loginUser != mentoId : # 본인의 글에 접근한 게 아닐 때
         return jsonify({
@@ -98,6 +94,7 @@ def modifyPortfolio(mentoId) :
         detail = {
             'subject' : json.loads(portfolio.subject),
             'image' : portfolio.image,
+            'brief' : portfolio.brief,
             'content' : portfolio.content
         }
         
@@ -107,7 +104,7 @@ def modifyPortfolio(mentoId) :
 
         newPort = request.get_json()
         
-        done = Portfolio.update(mentoId, newPort['subject'], newPort['image'], newPort['content'])
+        done = Portfolio.update(mentoId, newPort['subject'], newPort['image'], newPort['brief'], newPort['content'])
 
         return jsonify({
             'done' : done # 성공 시 1, 실패 또는 변경 사항 없을 시 0
