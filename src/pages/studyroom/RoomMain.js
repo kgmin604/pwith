@@ -40,7 +40,13 @@ function RoomMain(){
     
     
     return(
-        <>
+        <>{
+            user.id === null ?
+            <div className="img-error">
+                <img src='/error_login.png'></img>
+                <div><span onClick={()=>navigate('../login')}>로그인</span> 후 사용해주세요!</div>
+            </div>
+            :
             <div className="room-part">
                 <div className="row">
                     <div className="col-md-3">
@@ -94,7 +100,7 @@ function RoomMain(){
                     </div>
                 </div>
             </div>
-        </>
+        }</>
     );
 }
 

@@ -13,19 +13,19 @@ def send():
         
         postType = data.get('type')
         memId = data.get('memId')
-        oppId = data.get('oppID')
+        oppId = data.get('oppId')
         
         print(postType)
         print(oppId)
         
-        if postType == '1':  # 쪽지 보내기
+        if postType == 1:  # 쪽지 보내기
             content = data['content']
             curDate = chat.curdate()
             chat.insertChat(memId, oppId, content, curDate)
             print("insert 완.")
             return 'Response', 200
             
-        if postType == '0':  # 상대방과의 채팅목록 가져오기
+        if postType == 0:  # 상대방과의 채팅목록 가져오기
             chatlist = chat.getMyChat(memId, oppId)
             print(chatlist)
             return jsonify(chatlist)

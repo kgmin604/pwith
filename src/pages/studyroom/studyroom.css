@@ -206,6 +206,7 @@ div.create-wrap
     border-color: white;
     background-color: #98AFCA;
     text-align: center;
+    cursor: pointer;
 }
 
 div.create-wrap
@@ -216,4 +217,31 @@ div.create-wrap
     font-size: 12px;
     color:red;
     text-align: left;
+}
+
+/*미로그인시 로그인 안내*/
+
+.img-error{
+    margin: 130px 0;
+}
+
+div.img-error
+img{
+    width: 200px;
+    height: 200px;
+    margin: 20px auto;
+}
+
+div.img-error
+div{
+    font-family: 'TmoneyRoundWind';
+    margin: 0 auto;
+    text-align: center;
+}
+
+div.img-error
+span{
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: gray;
 }
