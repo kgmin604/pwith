@@ -1,8 +1,10 @@
 import React from 'react';
 import "./studyroom.css";
+import "../../assets/modal.css"
 import { useState } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
 
 function RoomMain(){
     let user = useSelector((state) => state.user);
@@ -55,6 +57,7 @@ function RoomMain(){
                                     <h2>3개</h2> {/* 서버 연결 후 수정!!! */}
                                 </div>
                             </div>
+                            <div className="create-btn" onClick={ ()=>navigate('./create')}>스터디 만들기</div>
                         </div>
                     </div>
                     <div class="col-md-9">
@@ -63,7 +66,7 @@ function RoomMain(){
                             <div className="items">
                             {
                                 rooms.map((room, index) => (
-                                    <a className="item" key={room.roomId} onClick={(e) => {
+                                    <a className="item" key={index} onClick={(e) => {
                                         e.stopPropagation();
                                         navigate(`/studyroom/${room.roomId}`);
                                     }}>
@@ -78,7 +81,7 @@ function RoomMain(){
                             <div className="items">
                             {
                                 rooms.map((room, index) => (
-                                    <a className="item" key={room.roomId} onClick={(e) => {
+                                    <a className="item" key={index} onClick={(e) => {
                                         e.stopPropagation();
                                         navigate(`/studyroom/${room.roomId}`);
                                     }}>
@@ -90,8 +93,7 @@ function RoomMain(){
                         </div>
                     </div>
                 </div>
-                </div>
-            <div></div>
+            </div>
         </>
     );
 }
