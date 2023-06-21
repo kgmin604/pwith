@@ -20,5 +20,5 @@ def showStudy():
             }
             studyList.append(post)
         print(studyList)
-        return studyList
+        return jsonify(studyList)
         

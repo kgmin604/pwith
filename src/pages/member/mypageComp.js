@@ -167,10 +167,13 @@ function Chat(){
     }
 
     let [oppId, setOppId] = useState('');
+    let [valid, setValid] = useState(false);
     let changeOppId = (event) =>{
         event.stopPropagation();
         setOppId(event.target.value);
     }
+
+    let [msg,setMsg] = useState('');
 
     useEffect(() => { // 맨 처음 한번만 실행
         axios({
@@ -186,10 +189,7 @@ function Chat(){
       }, []);
 
 
-    function sendRequest(event){
-        event.stopPropagation();
-        if(content==='') return;
-        if(oppId==='') return; // 없는 회원일 경우 예외처리 추가해야함
+    function sendRequest(){
         axios({
             method: "POST",
             url: "/mypage/chat",
@@ -207,11 +207,50 @@ function Chat(){
         });
     }
 
+    function checkOppId(){
+        axios({
+            method: "POST",
+            url: "/mypage/chat",
+            data: {
+                type: 2,
+                oppId : `${oppId}`
+            },
+          })
+          .then(function (response) {
+              if(response.data.result===1){
+                setValid(true);
+              }
+              else{
+                setValid(false);
+              }
+          })
+          .catch(function (error) {
+              console.log(error);
+        });
+    }
+
+    function checkRequest(event){
+        event.stopPropagation();
+        if(oppId==='')
+            setMsg('수신자 아이디를 입력해주세요.');
+        else if(content==='')
+            setMsg('내용을 입력해주세요.');
+        else {
+            checkOppId();
+            if(valid){
+                sendRequest();
+            }
+            else{
+                setMsg('없는 수신자 아이디입니다.')
+            }
+        }
+    }
+
     return(
         <>
             <div className ="mypage-chat" style={{'padding':'0 0', 'margin':'0 0'}}>
                 <h3 className="my-header">쪽지함</h3>
-                <a className="send" title ="쪽지 보내기" onClick={ (event) => handleModal(event) }>💌</a>
+                <a className="send" title ="쪽지 보내기" onClick={ (event) => {handleModal(event); setOppId('');} }>💌</a>
                 <div className="chat-bottom">
                     <div className="chat-boxes scroll-area"> {/* 왼쪽구역: 채팅한 계정들*/}
                     {
@@ -235,7 +274,12 @@ function Chat(){
                             selectedItem === null ? <></> :
                             <>
                                 <h2>{chatList[selectedItem]['oppId']}</h2>
-                                <a className="send" title ="쪽지 보내기" onClick={ (event) => handleModal(event) }>💌</a>
+                                <a 
+                                    className="send" 
+                                    title ="쪽지 보내기" 
+                                    onClick={ (event) => {handleModal(event); setOppId(chatList[selectedItem]['oppId']);} }
+                                > 💌
+                                </a>
                             </>
                         }
                         </div>
@@ -266,8 +310,14 @@ function Chat(){
                             <div className="modal">
                                 <a title="닫기" className="close" onClick={(event)=>handleModal(event)}>X</a>
                                 <h3>쪽지 보내기</h3>
-                                <span>받는이</span>
-                                <input type="text" onChange={e=>changeOppId(e)}></input>
+                                <p className="receiver">
+                                    <input 
+                                        type="text"
+                                        onChange={e=>{changeOppId(e); setValid(false);}}
+                                        placeholder="수신자 아이디 입력"
+                                        defaultValue= {oppId}
+                                    ></input>
+                                </p>
                                 <p>
                                     <textarea 
                                         name="message" 
@@ -277,11 +327,11 @@ function Chat(){
                                     </textarea>
                                 </p>
                                 <input 
-                                    type="submit" 
                                     value="전송" 
                                     className="button"
-                                    onClick={e=>sendRequest(e)}
+                                    onClick={e=>checkRequest(e)}
                                 ></input>
+                                <div>{msg}</div>
                             </div>
                         </form>
                     </>

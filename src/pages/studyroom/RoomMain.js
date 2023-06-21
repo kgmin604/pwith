@@ -1,7 +1,9 @@
 import React from 'react';
+import axios from "axios";
+
 import "./studyroom.css";
 import "../../assets/modal.css"
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -10,34 +12,21 @@ function RoomMain(){
     let user = useSelector((state) => state.user);
     let navigate = useNavigate();
 
-    let tmpData1 = {
-        'roomId' : 1,
-        'roomName' : '웹개발 아자아자',
-        'leader' : 'Kim',
-        'studentsList' : ['Part', 'Choi', 'Son'],
-        'joinP' : 4,
-        'totalP' : 5
+    let [rooms, setRooms] = useState([]);
+    let [rooms2, setRooms2] = useState([]);
 
-    };
-    let tmpData2 = {
-        'roomId' : 2,
-        'roomName' : '플라스크 개발',
-        'leader' : 'Son',
-        'studentsList' : ['Choi'],
-        'joinP' : 2,
-        'totalP' : 4
-
-    };
-    let tmpData3 = {
-        'roomId' : 3,
-        'roomName' : 'react 기초',
-        'leader' : 'Part',
-        'studentsList' : ['Kim'],
-        'joinP' : 2,
-        'totalP' : 2
-    };
-    let [rooms, setRooms] = useState([tmpData1, tmpData2, tmpData3]);
-    
+    useEffect(()=>{
+        axios({
+            method: "GET",
+            url: "/studyroom"
+        })
+        .then(function (response) {
+            setRooms(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    },[])
     
     return(
         <>{
@@ -56,7 +45,7 @@ function RoomMain(){
                             <div className="info">
                                 <div className="area" style={{'border-right':'solid 1px lightgray'}}>
                                     <p>참여중인<br></br>스터디</p>
-                                    <h2>3개</h2> {/* 서버 연결 후 수정!!! */}
+                                    <h2>{rooms.length}개</h2> {/* 서버 연결 후 수정!!! */}
                                 </div>
                                 <div className="area">
                                     <p>참여중인<br></br>멘토링</p>
@@ -71,12 +60,13 @@ function RoomMain(){
                             <h2><span style={{'color':'#98afca'}}>▶</span>스터디</h2>
                             <div className="items">
                             {
+                                rooms === [] ? null :
                                 rooms.map((room, index) => (
                                     <a className="item" key={index} onClick={(e) => {
                                         e.stopPropagation();
-                                        navigate(`/studyroom/${room.roomId}`);
+                                        //navigate(`/studyroom/${room.roomId}`);
                                     }}>
-                                    <h3>{room.roomName}</h3>
+                                    <h3>{room.title}</h3>
                                     </a>
                                 ))
                             }
@@ -86,7 +76,8 @@ function RoomMain(){
                             <h2><span style={{'color':'#98afca'}}>▶</span>멘토링</h2>
                             <div className="items">
                             {
-                                rooms.map((room, index) => (
+                                rooms2 === [] ? null :
+                                rooms2.map((room, index) => (
                                     <a className="item" key={index} onClick={(e) => {
                                         e.stopPropagation();
                                         navigate(`/studyroom/${room.roomId}`);

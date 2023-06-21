@@ -35,7 +35,7 @@ function PwithMain(){
                     {'id':1,'title':'제목1'}, {'id':2,'title':'제목2'}, {'id':3,'title':'제목3'}, {'id':4,'title':'제목4'}, {'id':5,'title':'제목5'}
                 ]);
             }
-            else setStudyList(response.data.studyList);
+            else setStudyList(response.data);
           })
           .catch(function (error) {
               console.log(error);
