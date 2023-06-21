@@ -69,7 +69,7 @@ function LikeAndComment(props) {
 
     function createComment(content) {
         axios
-            .post(`/study/${id}`, {
+            .post(`/community/qna/${id}`, {
                 content: `${content}`
             })
             .then(function (response) {
