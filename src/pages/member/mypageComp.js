@@ -39,6 +39,7 @@ function WritingList(){
     let navigate = useNavigate();
     let [sel, setSel] = useState(0); // 0: 스터디 글 목록 1: 커뮤니티 글 목록
     let [mypost, setMypost] = useState([]);
+    const parse = require('html-react-parser');//html 파싱
 
 
     function loadWritingList(){
@@ -116,7 +117,7 @@ function WritingList(){
                         >
                             <time>{post.curDate}</time>
                             <h3 className="header">{post.title}</h3>
-                            <p className="content">{post.content}</p>
+                            <p className="content">{parse(post.content)}</p>
                         </div>
                     );})
                 }
