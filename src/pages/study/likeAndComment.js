@@ -14,24 +14,25 @@ import moreImg from "./img/more.png"
 
 function LikeAndComment(props) {
 
-    return(<div></div>)
-    // let user = useSelector((state) => state.user);
-    // const id = props.id;
-    // const [likes, setLikes] = useState(0);
+    let user = useSelector((state) => state.user);
+    const id = props.id;
+    const [likes, setLikes] = useState(0);
     // const [liked,setLiked]=useState(false);
-    // const [replyList,setReplyList]=useState([]);
+    const [reply,setReply]=useState([]);
+    const [replyNum, setReplyNum] = useState(0);
 
-    // useEffect(()=>{
-    //     if(props!=undefined){
-    //         setLikes(props.likes);
-    //         setLiked(props.liked);
-    //         setLiked(props.replyList);
-    //         console.log(props);
-    //     }
+    useEffect(()=>{
+        if(props!=undefined){
+            setLikes(props.likes);
+            // setLiked(props.liked);
+            setReply(props.reply);
+            setReplyNum(props.reply.length);
+            console.log(props);
+        }
         
-    // },[props])
+    },[props])
 
-    // const [more, setMore] = useState(false);
+    const [more, setMore] = useState(false);
 
     // const sendLikeSignal = () => {
     //     axios.post(`/study/${id}/like`, {
@@ -58,117 +59,134 @@ function LikeAndComment(props) {
     //         });
     // };
 
-    // function updateComment() {
+    function updateComment() {
 
-    // }
-    // function deleteComment() {
+    }
+    function deleteComment() {
 
-    // }
+    }
 
-    // const [inputValue, setInputValue] = useState('');
+    function createComment(content) {
+        axios
+            .post(`/study/${id}`, {
+                content: `${content}`
+            })
+            .then(function (response) {
+                const newReply = [
+                    ...reply,
+                    {
+                        "comment": `${content}`,
+                        "commentId": response.data,
+                        // "date": '2023-06-20',
+                        "writer":`${user.id}`
+                    }
+                ];
+                setReply(newReply);
+                setReplyNum(replyNum+1);
+                setInputValue('');
+            })
+            .catch(function (error) {
+                // 오류발생시 실행
+            });
+    }
 
-    // const handleInputChange = (event) => {
-    //     setInputValue(event.target.value);
-    // };
+    const [inputValue, setInputValue] = useState('');
 
-    // const handleSubmit = (event) => {
-    //     event.preventDefault();
-    //     console.log(inputValue);
-    // };
+    const handleInputChange = (event) => {
+        setInputValue(event.target.value);
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        if (user.id === null) {
+            alert("로그인이 필요합니다")
+        }
+        else {
+            createComment(inputValue);
+        }
+    };
 
 
 
-    // return (
-    //     <div className='likeAndComment'>
-    //         <div className='align-row'>
-    //             <div className='align-row'>{/* 하트 */}
-    //                 {liked === false ? <img src={heartOutline} className="heart" onClick={() => sendLikeSignal()} />
-    //                     : <img src={heartFull} className="heart" onClick={() => sendLikeSignal()} />
-    //                 }
-    //                 <span style={{ width: '5px' }}></span>
-    //                 {likes}
-    //             </div>
-    //             <span style={{ width: '10px' }}></span>
-    //             <div className='align-row'>
-    //                 <img src={comment} className='comment' />
-    //                 <span style={{ width: '5px' }}></span>
-    //                 {/* {commentNum} */}
-    //             </div>
-    //         </div>
+    return (
+        <div className='likeAndComment'>
+            <div className='align-row'>
+                <div className='align-row'>{/* 하트 */}
+                    {/* {liked === false ? <img src={heartOutline} className="heart" onClick={() => sendLikeSignal()} />
+                        : <img src={heartFull} className="heart" onClick={() => sendLikeSignal()} />
+                    } */}
+                    <img src={heartFull} className="heart"/>
+                    <span style={{ width: '5px' }}></span>
+                    {likes}
+                </div>
+                <span style={{ width: '10px' }}></span>
+                <div className='align-row'>
+                    <img src={comment} className='comment' />
+                    <span style={{ width: '5px' }}></span>
+                    {replyNum}
+                </div>
+            </div>
 
-    //         <hr />
+            <hr />
 
-    //         {reply.map((k, i) => {
-    //             return (
-    //                 <div  key={k.commentId}>{/* 댓글하나 */}
-    //                 <div className='align-row'>
-    //                     <img img src={comment} className='comment' />
-    //                     <span style={{ width: '5px' }}></span>
-    //                     <div className='align-side'>
-    //                         <div style={{ textAlign: 'start' }}>
-    //                             <div>{k.writer}</div>
-    //                             {updateInput ? <>
-    //                                 <Form onSubmit={handleUpdateSubmit(k.commentId)} style={{ width: '90%' }}>
-    //                                     <Form.Control
-    //                                         className="me-auto"
-    //                                         value={updateInput}
-    //                                         onChange={handleUpdateChange}
-    //                                     />
-    //                                     <Button variant="blue" type="submit" style={{ width: '10%' }}>수정</Button>
-    //                                 </Form>
-    //                             </> : k.comment}
-    //                         </div>
+            {reply.map((k, i) => {
+                const date=JSON.stringify(k.date).slice(3,11);
 
-    //                         <div style={{ textAlign: 'end' }}>
-    //                             {user.id === k.menti ? <img src={moreImg} className="more" onClick={() => setMore(!more)} />
-    //                                 : <div style={{width:'30px',height:'30px'}}></div>}
-    //                             <div>
-    //                                 {more === true ? <ListGroup>
-    //                                     <ListGroup.Item action onClick={() =>{}}>수정</ListGroup.Item>
-    //                                     <ListGroup.Item action onClick={() => {}}>삭제</ListGroup.Item>
-    //                                 </ListGroup> : null}
-    //                             </div>
-    //                         </div>
-    //                     </div>
-    //                 </div>
-    //                 <hr/>
-    //                 </div>
+                return (
+                    <div  key={k.commentId}>{/* 댓글하나 */}
+                    <div className='align-row'>
+                        <img img src={comment} className='comment' />
+                        <span style={{ width: '5px' }}></span>
+                        <div className='align-side'>
+                            <div style={{ textAlign: 'start' }}>
+                                <div style={{fontSize:'13px'}}>{k.writer}</div>
+                                {/* {updateInput ? <>
+                                    <Form onSubmit={handleUpdateSubmit(k.commentId)} style={{ width: '90%' }}>
+                                        <Form.Control
+                                            className="me-auto"
+                                            value={updateInput}
+                                            onChange={handleUpdateChange}
+                                        />
+                                        <Button variant="blue" type="submit" style={{ width: '10%' }}>수정</Button>
+                                    </Form>
+                                </> : k.comment} */}
+                                {k.comment}
+                            </div>
 
-    //             )
-    //         })}
+                            <div style={{ textAlign: 'end' }}>
+                                {user.id === k.menti ? <img src={moreImg} className="more" onClick={() => setMore(!more)} />
+                                    : <div style={{width:'30px',height:'30px'}}></div>}
+                                <div>
+                                    {more === true ? <ListGroup>
+                                        <ListGroup.Item action onClick={() =>{}}>수정</ListGroup.Item>
+                                        <ListGroup.Item action onClick={() => {}}>삭제</ListGroup.Item>
+                                    </ListGroup> : null}
+                                </div>
+                                <div style={{ color: '#888888',fontSize:'12px' }}>{date}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    </div>
 
-    //                 <div style={{ textAlign: 'start' }}>
-    //                     <div>박주연</div>
-    //                     <div>스터디 추천 추천이용</div>
-    //                 </div>
-    //                 <div style={{ textAlign: 'end' }}>
-    //                     <div className='align-row'>
-    //                         <div>
-    //                             {more === true ? <ListGroup>
-    //                                 <ListGroup.Item action onClick={() => updateComment()}>수정</ListGroup.Item>
-    //                                 <ListGroup.Item action onClick={() => deleteComment()}>삭제</ListGroup.Item>
-    //                             </ListGroup> : null}
-    //                         </div>
-    //                         <img src={moreImg} className="more" onClick={() => setMore(!more)} />
-    //                     </div>
-    //                     <div style={{ color: '#888888' }}>23.01.20</div>
-    //                 </div>
+                )
+            })}
 
-    //         <div className='align-side'>{/* 댓글달기*/}
-    //             <Form onSubmit={handleSubmit} style={{ width: '100%' }} className='align-side'>
-    //                 <Form.Control style={{ width: '90%' }}
-    //                     className="me-auto"
-    //                     placeholder="최고의 스터디, 추천합니다!"
-    //                     value={inputValue}
-    //                     onChange={handleInputChange}
-    //                 />
-    //                 <span style={{ width: '5px' }}></span>
-    //                 <Button variant="blue" type="submit" style={{ width: '10%' }}>등록</Button>
-    //             </Form>
-    //         </div>
+            <div className='align-side' style={{margin:'10px'}}>{/* 댓글달기*/}
+                <Form onSubmit={handleSubmit}  className='align-side'>
+                    <Form.Control style={{ width: '90%' }}
+                        className="me-auto"
+                        placeholder="최고의 스터디, 추천합니다!"
+                        value={inputValue}
+                        onChange={handleInputChange}
+                    />
+                    <span style={{ width: '5px' }}></span>
+                    <Button variant="blue" type="submit" style={{ width: '10%' }}>등록</Button>
+                </Form>
+            </div>
 
-    //     </div>
-    // )
+        </div>
+    )
 
 }
 
