@@ -71,7 +71,8 @@ def showDetail(mentoId) :
         detail = {
             'mento' : portfolio.writer, # @property instead getter
             'subject' : json.loads(portfolio.subject),
-            'image' : portfolio.image,
+            # 'image' : portfolio.image,
+            'image' : base64.b64encode(portfolio.image).decode('utf-8'),
             'brief' : portfolio.brief,
             'content' : portfolio.content,
             'review' : review
