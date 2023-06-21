@@ -5,6 +5,8 @@ from flask_login import login_required, current_user
 from controller.mentor_mgmt import Portfolio
 from controller.review_mgmt import Review
 from controller.mentoringroom_mgmt import MentoringRoom
+from controller.chat_mgmt import chat
+from datetime import datetime
 
 mento_bp = Blueprint('mento', __name__, url_prefix='/mentoring')
 
@@ -49,7 +51,11 @@ def showDetail(mentoId) :
             url = "http://localhost:3000/mentoringroom/" + str(roomId)
 
             # 3. 쪽지 전송
-            # with 정윤
+            menticontent = url + '\n' + "다음 스터디룸으로 입장해주세요"
+            mentocontent = '"' + mentiId + '님이 멘토링을 신청하셨습니다.' + '\n' + ' 수락하시겠습니까?'
+            
+            done = chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
+            done = chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
 
 
         detail = {}

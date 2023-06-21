@@ -17,6 +17,7 @@ class chat():
         done = cursor_db.execute(sql)
         mysql_db.commit() 
         mysql_db.close()
+        print("insert 완")
         return done
     
     def getMyChat(memId, oppId):
