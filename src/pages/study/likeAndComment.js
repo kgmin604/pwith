@@ -73,18 +73,18 @@ function LikeAndComment(props) {
             })
             .then(function (response) {
                 console.log(response.data);
-                // const newReply = [
-                //     ...reply,
-                //     {
-                //         "comment": `${content}`,
-                //         "commentId": response.data,
-                //         // "date": '2023-06-20',
-                //         "writer":`${user.id}`
-                //     }
-                // ];
-                // setReply(newReply);
-                // setReplyNum(replyNum+1);
-                // setInputValue('');
+                const newReply = [
+                    ...reply,
+                    {
+                        "comment": `${content}`,
+                        "commentId": response.data.replyId,
+                        "date": response.data.date,
+                        "writer":`${user.id}`
+                    }
+                ];
+                setReply(newReply);
+                setReplyNum(replyNum+1);
+                setInputValue('');
             })
             .catch(function (error) {
                 // 오류발생시 실행
