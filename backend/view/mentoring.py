@@ -1,4 +1,5 @@
 import json
+import base64
 from flask import Flask, session, Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from controller.mentor_mgmt import Portfolio
@@ -17,20 +18,16 @@ def showAll() :
         for i in range(len(allP)) :
             allP[i] = list(allP[i])
 
-            # allP[i][1] = json.loads(allP[i][1]) # mentiList
-            # allP[i][2] = json.loads(allP[i][2]) # subject string to json
-
             result.append({
                 'writer' : allP[i][0],
                 'subject' : json.loads(allP[i][2]),
-                'image' : allP[i][3],
+                # 'image' : allP[i][3],
+                'image' : base64.b64encode(allP[i][3]).decode('utf-8'),
                 'brief' : allP[i][4],
                 'content' : allP[i][5]
             })
 
-        # print('==변환 후==')
-        # print(result)
-        print(result)
+            print(base64.b64encode(allP[i][3]).decode('utf-8'))
 
         return jsonify(result)
 
