@@ -11,31 +11,34 @@ def send():
         print("Post request")
         data = request.get_json(silent=True)  # silent: parsing fail 에러 방지
         
+        print(data)
         postType = data.get('type')
         memId = current_user.getId()
         oppId = data.get('oppId')
         
-        print('postType = ' + postType)
-        print('oppId = ' + oppId)
+        #print('postType = ' + str(postType)) # 형변환 추가-kgm
+        #print('oppId = ' + oppId)
         
-        if postType == 0:  # 상대방과의 채팅목록 가져오기
+        if postType == '0':  # 상대방과의 채팅목록 가져오기
+            #print("post msglist")
             chatlist = chat.getMyChat(memId, oppId)
             msgList =[]
+            
             for chats in chatlist:
                 chatting_data = {
-                    'sender' : chatting_data[1],
-                    'receiver': chatting_data[2],
-                    'content'  : chatting_data[3],
-                    'date' : chatting_data[4]
+                    'sender' : chats[1],
+                    'receiver': chats[2],
+                    'content'  : chats[3],
+                    'date' : chats[4]
                 }
-                chatting_data['date'] = chat.getFormattedDate()
+                chatting_data['date'] = chat.getFormattedDate(chats[4])
                 
                 msgList.append(chatting_data)
-                print('msgList  = ' + msgList)
             #print(chatlist)
             return jsonify(chatlist)
         
-        if postType == 1:  # 쪽지 보내기
+        if postType == '1':  # 쪽지 보내기
+            print("type = 1")
             content = data['content']
             curDate = chat.curdate()
             chat.insertChat(memId, oppId, content, curDate)
@@ -43,15 +46,16 @@ def send():
             return 'Response', 200
             
         
-        if postType == 2:
+        if postType == '2':
+            print("type = 2")
             oppChk = chat.chkOppId(oppId)
             if oppChk == True:  #oppId가 유효한 경우 result = 1
                 result = 1
             else :
                 result = 0
-            return result
-    
-        return 'Response', 200
+            print(result)
+            return jsonify({'result' : result})
+        return 'error', 200
         
     if request.method == 'GET':     #전체 채팅목록 가져오기 (current_user id와 관련있는 채팅 모두)
         print("Get request")

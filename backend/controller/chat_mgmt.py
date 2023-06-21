@@ -21,11 +21,13 @@ class chat():
     def getMyChat(memId, oppId):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
+        print(memId , oppId)
         
         sql = f"select * from chat where sender = '{str(memId)}' and receiver = '{str(oppId)}'"
         cursor_db.execute(sql)
         
         rows = cursor_db.fetchall()
+        print(rows)
         
         return rows
         
@@ -51,9 +53,14 @@ class chat():
         sql = f"select memId from member"
         cursor_db.execute(sql)
         memIdList = cursor_db.fetchall()
+        #print(memIdList)
         
-        for i in range(len(memIdList)):
-            if oppId == memIdList[i]:      #oppId가 member db 에 있으면 true 리턴
+        for memId in memIdList:
+            memId = memId[0]  # 튜플의 첫 번째 요소만 가져옴
+            print(memId)
+        
+            if oppId == memId:
+                #print("oppId =", oppId)
                 return True
                 
         return False

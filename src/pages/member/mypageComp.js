@@ -193,7 +193,9 @@ function Chat(){
       }, []);
 
 
-    function sendRequest(){
+    function sendRequest(e){
+        e.stopPropagation();
+        console.log("전송요청");
         axios({
             method: "POST",
             url: "/mypage/chat",
@@ -205,6 +207,9 @@ function Chat(){
           })
           .then(function (response) {
               alert("쪽지 전송 완료");
+              setOpen(!open);
+            setMsg('');
+            setContent('');
           })
           .catch(function (error) {
               console.log(error);
@@ -246,7 +251,6 @@ function Chat(){
         }
         else {
             //checkOppId();
-            setValid(true);
             if(valid){
                 setMsg('')
                 sendRequest();
@@ -341,7 +345,7 @@ function Chat(){
                                     type="button"
                                     value="전송" 
                                     className="button"
-                                    onClick={e=>checkRequest(e)}
+                                    onClick={e=>sendRequest(e)}
                                 ></input>
                                 <div className="message">{msg}</div>
                             </div>
