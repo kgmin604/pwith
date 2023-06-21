@@ -198,8 +198,6 @@ def write():
         
         return 'Response', 200
     
-    
-#  게시글 상세페이지 
 @community_bp.route('/qna/<int:id>', methods=['GET']) # 글 조회
 def showDetail(id) :
     if request.method == 'GET' :
@@ -207,6 +205,10 @@ def showDetail(id) :
         toFront = {}
 
         post = QNAPost.findById(id)
+
+        if not post :
+            return toFront
+
         toFront = {
             'title': post.getTitle(),
             'writer' : post.getWriter(),
@@ -214,11 +216,11 @@ def showDetail(id) :
             'curDate' : post.getCurDate(),
             'category' : post.getCategory(),
             'likes' : post.getLikes(),
-            'views': post.getViews(),
-            'liked': post.getLiked()
-            
+            'liked': post.getLiked(),
+            'views': post.getViews()
         }
-        toFront['curDate'] = QNAPost.getFormattedDate(toFront['curDate'])
+
+        # toFront['curDate'] = QNAPost.getFormattedDate(toFront['curDate'])
         
         return toFront
     

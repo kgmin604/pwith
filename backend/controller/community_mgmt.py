@@ -2,15 +2,16 @@ from model.db_mysql import conn_mysql
 from datetime import datetime
 
 class QNAPost() :
-    def __init__(self, postType, title, writer, curDate, content, category, likes, views):
-        self.postTyep = postType
+    def __init__(self, postType, title, writer, content, curDate, category, likes, liked, views):
+        self.postType = postType
         self.title = title
         self.writer = writer
-        self.curDate = curDate
         self.content = content
+        self.curDate = curDate
         self.category = category
-        self.views = views
         self.likes = likes
+        self.liked = liked
+        self.views = views
         
     @staticmethod
     def insertQNA(postType, title, writer, curDate, content, category, likes, views):    # insert data
@@ -122,9 +123,10 @@ class QNAPost() :
         if not res :
             return None
 
-        post = QNAPost(res[0], res[2], res[3], res[4], res[5], res[6], res[7], res[8], res[9])
+        post = QNAPost(1, res[2], res[3], res[4], res[5], res[6], res[7], res[8], res[9])
         return post
     
+    @staticmethod
     def get3QNA():
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
@@ -136,6 +138,7 @@ class QNAPost() :
         mysql_db.close()
         return rows
     
+    @staticmethod
     def getFormattedDate(curDate):
         formatted_datetime = curDate.strftime("%Y-%m-%d %H:%M:%S")
         return formatted_datetime  # 출력 예: 2023-06-21 14:30:45
