@@ -27,6 +27,7 @@ function PwithMain(){
           .then(function (response) {
             setStudyList(response.data.study);
             setNewsList(response.data.news);
+            setMentorList(response.data.mentoring);
           })
           .catch(function (error) {
               console.log(error);
@@ -81,7 +82,12 @@ function PwithMain(){
                     {
                         mentorList.map((a,i)=>{
                             return(
-                                <li className="posting" key={i}>{a['title']}</li> // onClick 속성 추가 -> 눌렀을 때 해당 글로
+                                <li 
+                                    className="posting" 
+                                    key={i}
+                                    onClick={(e)=>{e.stopPropagation(); navigate(`./mentoring/${a['id']}`)}}
+                                >{a['brief']}
+                                </li>
                             )
                         })
                     }  

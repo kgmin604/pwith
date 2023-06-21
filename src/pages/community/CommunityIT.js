@@ -1,5 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./community.css";
+import "./community-it.css";
 import "../../App.css";
 import React, { useState, useEffect } from 'react';
 import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
@@ -11,54 +12,82 @@ import { updateITNewsList, updateiTNewsList } from "../../store.js";
 function CommunityIT() {
     let navigate = useNavigate();
 
+    let [currentDate, setcurrentDate] = useState(new Date());
+    let [selectDate, setSelectDate] = useState(new Date());
+    let [stringDate, setStringDate] = useState(
+        `${selectDate.getFullYear()}.${String(selectDate.getMonth() + 1).padStart(2, '0')}.${String(selectDate.getDate()).padStart(2, '0')}`
+    );
+    let [totalPage, setTotalPage] = useState(1);
+    let [selectPage, setSelectPage] = useState(1);
+    let [inputPage, setInputPage] = useState(0);
 
     const [itList, setItList] = useState([]);
+        
     useEffect(() => {
+
+        /* Date 객체 -> 문자열 변환 */
+        const y = selectDate.getFullYear();
+        const m = String(selectDate.getMonth() + 1).padStart(2, '0');
+        const d = String(selectDate.getDate()).padStart(2, '0');
+
         const updateITNews = () => {
-            axios({
-                method: "GET",
-                url: "/community/it",
+          axios({
+            method: "GET",
+            url: "/community/it",
+            params: {
+              'page': `${selectPage}`,
+              'date': `${y}${m}${d}`
+            }
+          })
+            .then(function (response) {
+                console.log(response.data.page);
+                setTotalPage(response.data.page);
+                setItList(response.data.news);
             })
-                .then(function (response) {
-                    setItList(response.data);
-                })
-                .catch(function (error) {
-                });
-        };
-
+            .catch(function (error) {
+                console.log("IT 뉴스 요청 에러");
+                console.log(error);
+              });
+          };
+      
         updateITNews();
-    }, []);
+    }, [selectDate, selectPage]);
 
-    // const itList = [
-    //     {
-    //         'newsId': 1,
-    //         'title': "대기업-스타트업 “한국형 기업규제 개선을” 한목소리 호소",
-    //         'content': "뉴스 내용",
-    //         'img': "https://dimg.donga.com/a/200/113/95/2/wps/NEWS/IMAGE/2023/06/15/119773870.1.jpg",
-    //         'url': "https://www.donga.com/news/Economy/article/all/20230615/119773873/1"
-    //     },
-    //     {
-    //         'newsId': 2,
-    //         'title': "5개종목 줄줄이 하한가 폭락… ‘제2 SG사태’ 우려",
-    //         'content': "뉴스 내용",
-    //         'img': "https://dimg.donga.com/a/200/113/95/2/wps/NEWS/IMAGE/2023/06/14/119768871.2.jpg",
-    //         'url': "https://www.donga.com/news/Economy/article/all/20230615/119773873/1"
-    //     },
-    //     {
-    //         'newsId': 3,
-    //         'title': "닥터헬기 비행-비보잉 ‘합동 퍼포먼스’… 저물녘엔 ‘불멍’ 휴식 [2023 서울헬스쇼] ",
-    //         'content': "뉴스 내용",
-    //         'img': "https://dimg.donga.com/a/200/113/95/2/wps/NEWS/IMAGE/2023/06/15/119768401.10.jpg",
-    //         'url': "https://www.donga.com/news/Economy/article/all/20230615/119773873/1"
-    //     },
-    //     {
-    //         'newsId': 4,
-    //         'title': "폐그물 재활용 내장재 적용 전기차 EV9 선보여 [2023 서울헬스쇼]",
-    //         'content': "뉴스 내용",
-    //         'img': "https://dimg.donga.com/a/200/113/95/2/wps/NEWS/IMAGE/2023/06/15/119768417.8.jpg",
-    //         'url': "https://www.donga.com/news/Economy/article/all/20230615/119773873/1"
-    //     },
-    // ]
+    function controlDate(event,type){
+        event.stopPropagation();
+        if(type===-1){ // < 버튼
+            const previousDate = new Date(selectDate.getTime() - (24 * 60 * 60 * 1000));
+            setSelectDate(previousDate);
+            setItList([]);
+            setStringDate(
+                `${previousDate.getFullYear()}.${String(previousDate.getMonth() + 1).padStart(2, '0')}.${String(previousDate.getDate()).padStart(2, '0')}`
+            );
+            setSelectPage(1);
+        }
+        else if(type===1){ // > 버튼
+            const nextDate = new Date(selectDate.getTime() + (24 * 60 * 60 * 1000));
+            if(nextDate<=currentDate){
+                setSelectDate(nextDate);
+                setItList([]);
+                setStringDate(
+                    `${nextDate.getFullYear()}.${String(nextDate.getMonth() + 1).padStart(2, '0')}.${String(nextDate.getDate()).padStart(2, '0')}`
+                );
+                setSelectPage(1);
+            }
+        }
+    }
+
+    function changePage(event){
+        event.stopPropagation();
+        if(1<=inputPage&&inputPage<=totalPage){
+            setSelectPage(inputPage);
+        }
+    }
+
+    function inputChange(event){
+        event.stopPropagation();
+        setInputPage(event.target.value);
+    }
 
     return (
         <div className="CommunityIT">
@@ -67,23 +96,44 @@ function CommunityIT() {
                 <Button variant="blue">🔍</Button>
             </Stack>
             <hr/>
-            <Stack gap={3}>
-                {
-                    itList.map((item) => {
-                        return (
-                            <div key={item.newsId} className="align" onClick={() => window.open(item.url, '_blank')}>
-                            <img src={item.img}></img>
-                            <div>
-                            <div className="title">{item.title}</div>
-                            <div className="summit">{item.content}</div>
-                            {/* <div>{item.date}</div> 날짜 아직 안 받아옴 */}
+
+            <div className="selected-date">
+                <span onClick={(e)=>controlDate(e,-1)}>{'<'}</span>
+                    {stringDate}
+                <span onClick={(e)=>controlDate(e,1)}>{'>'}</span>
+            </div>
+
+            <div className="itnews-list">
+            {
+                itList.map((it,i) => {
+                    return (
+                        <div 
+                            className="item"
+                            key={i} 
+                            onClick={() => window.open(it.url, '_blank')}
+                        >
+                            <div className="it-textarea">
+                                <div className="it-title">{it.title}</div>
+                                <div className="it-brief">{it.brief}</div>
                             </div>
-                          </div>
-                        );
-                      })
-                }
-            </Stack>
-            <Button onClick={() => console.log(itList)}>불러온데이터 콘솔</Button>
+                            <img src={it.img}></img>
+                        </div>
+                    );
+                }) 
+            }
+
+            </div>
+            <div className="control-page">
+                <input 
+                    type='number' 
+                    className='page-num'
+                    onChange={ e=>inputChange(e) }
+                    onKeyDown={(e) => { if (e.key === "Enter") changePage(e); }}
+                    defaultValue={selectPage}
+                ></input>
+                /{totalPage +" "}page
+                <button onClick={(e)=>{changePage(e);}}>이동</button>
+            </div>
         </div>
     );
 }
