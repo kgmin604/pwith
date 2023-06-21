@@ -113,8 +113,7 @@ def reply(id) :
 
         cnt = request.get_json()['content']
 
-        # writer = current_user.getId()
-        writer='a'
+        writer = current_user.getId()
 
         date = datetime.now()
 
@@ -164,8 +163,8 @@ def write():
     if request.method == 'GET' :
         result = []
 
-        # roomList = studyPost.getMyStudyList(current_user.getId())
-        roomList = studyPost.getMyStudyList('a')
+        roomList = studyPost.getMyStudyList(current_user.getId())
+        # roomList = studyPost.getMyStudyList('a')
 
         for room in roomList :
             result.append({
