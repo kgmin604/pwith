@@ -137,8 +137,17 @@ class studyPost() :
     def getViews(self) :
         return int(self.views)
 
-    #def getTotalP(self) :
-    #    return int(self.totalP)
+    def getTotalP() :   # totalP studyRoom 에서 받아오기 (roomId 같은 걸로)
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT totalP from studyRoom, post where studyRoom.roomId = post.postId"
+
+        cursor_db.execute(sql)
+        totalP = cursor_db.fetchone() 
+        
+        mysql_db.close()
+        return int(totalP)
     
     def getCurDate(self) :
         return str(self.curDate)
