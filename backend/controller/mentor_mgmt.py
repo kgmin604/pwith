@@ -92,6 +92,21 @@ class Portfolio() :
         mysql_db.close()
 
         return done
+    
+    @staticmethod
+    def getNmentoring() :
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = "SELECT mentoId, brief FROM mento LIMIT 5"
+        cursor_db.execute(sql)
+
+        allP = cursor_db.fetchall() # tuple of tuple
+        # print(allP)
+
+        mysql_db.close()
+
+        return allP
 
 
     ## menti list에 추가 구현
