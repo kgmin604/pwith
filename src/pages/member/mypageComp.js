@@ -308,7 +308,7 @@ function Chat(){
                                     return(
                                     <div className="item" key={i}>
                                         <time>{msg.date}</time>
-                                        <p className="type">{type}</p>
+                                        <p className={`type ${msg['sender'] === user.id ? 'colortext2' : 'colortext'}`}>{type}</p>
                                         <p className="text">{msg.content}</p>
                                     </div>  
                                     );
