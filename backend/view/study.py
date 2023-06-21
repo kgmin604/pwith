@@ -125,7 +125,7 @@ def reply(id) :
 
         return jsonify({
             'replyId' : pk, # 0 is fail
-            'date' : date
+            'date' : studyPost.getFormattedDate(date)
         })
 
     elif request.method == 'PUT' : # 댓글 수정
@@ -163,8 +163,8 @@ def write():
     if request.method == 'GET' :
         result = []
 
-        # roomList = studyPost.getMyStudyList(current_user.getId())
-        roomList = studyPost.getMyStudyList('a')
+        roomList = studyPost.getMyStudyList(current_user.getId())
+        # roomList = studyPost.getMyStudyList('a')
 
         for room in roomList :
             result.append({
