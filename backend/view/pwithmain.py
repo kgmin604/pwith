@@ -8,15 +8,19 @@ main_bp = Blueprint('pwithmain', __name__, url_prefix='')
 @main_bp.route('/', methods = ['GET', 'POST'])
 def showStudy():
     if request.method == 'POST':
-        posts = studyPost.getNStudy()
-        studyList = []
+        
+        chk = request.get_json()['chkSession']
+        
+        if chk == 0:
+            posts = studyPost.getNStudy()
+            studyList = []
 
-        for i in range(len(posts)) :
-            post = {
-                'id' : posts[i][0],
-                'title' : posts[i][1],
-            }
-            studyList.append(post)
-        print(studyList)
-        return jsonify(studyList)
+            for i in range(len(posts)) :
+                post = {
+                    'id' : posts[i][0],
+                    'title' : posts[i][1],
+                }
+                studyList.append(post)
+            print(studyList)
+            return jsonify(studyList)
         

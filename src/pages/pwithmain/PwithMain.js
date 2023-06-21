@@ -27,14 +27,11 @@ function PwithMain(){
             method: "POST",
             url: "/",
             data: {
-                chkSession: 0
+                chkSession: 0,
             }
           })
           .then(function (response) {
-            if(response.data === undefined){ // 수정해야 함!!
-                setStudyList([]);
-            }
-            else setStudyList(response.data);
+            setStudyList(response.data);
           })
           .catch(function (error) {
               console.log(error);
