@@ -17,12 +17,12 @@ def communityMain() :
         conts = []
         qna = []
 
-        news_db = conn_mongodb().ITnews_crawling.find().limit(3)
-        for i in range(3) :
+        news_db = conn_mongodb().ITnews_crawling.find().sort('_id', -1).limit(3)
+        for n in news_db :
 
-            title = news_db[i]['title']
-            date = news_db[i]['date']
-            url = news_db[i]['url']
+            title = n['title']
+            date = n['date']
+            url = n['url']
 
             formatted_date = datetime.strptime(date, '%Y년 %m월 %d일').strftime('%Y-%m-%d')
 
@@ -33,12 +33,12 @@ def communityMain() :
             })
         
         qna_db = QNAPost.get3QNA()
-        for i in range(3) :
+        for q in qna_db :
 
-            postId = qna_db[i][0]
-            title = qna_db[i][2]
+            postId = q[0]
+            title = q[2]
 
-            date = qna_db[i][5]
+            date = q[5]
             formatted_date = date.strftime("%Y-%m-%d")
 
             qna.append({
