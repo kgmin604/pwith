@@ -4,6 +4,7 @@ from controller.member_mgmt import Member
 
 bp = Blueprint('login', __name__, url_prefix='')
 
+'''
 @bp.route('/', methods=['POST']) # 테스트 전
 def chkSession() :
     if request.method == 'POST' :
@@ -24,7 +25,7 @@ def chkSession() :
                 print('전달 완료')
 
         return jsonify(memInfo)
-
+'''
 @bp.route('/login', methods=['GET', 'POST'])
 def login() :
     if request.method == 'GET' :
