@@ -223,6 +223,13 @@ a{
 }
 
 div.chat-bottom div.chat-boxes
+.signMsg{
+    margin: 270px auto;
+    text-align: center;
+    font-size: 14px;
+}
+
+div.chat-bottom div.chat-boxes
 a:hover { 
     text-decoration : none;
     color : #98AFCA;
