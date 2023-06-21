@@ -24,8 +24,12 @@ def chkSession() :
                 print('전달 완료')
 
         return jsonify(memInfo)
+<<<<<<< HEAD
 """
 
+=======
+'''
+>>>>>>> eb4b1585deee12d7cc0a75c47fb6fa3f7e89631b
 @bp.route('/login', methods=['GET', 'POST'])
 def login() :
     if request.method == 'GET' :

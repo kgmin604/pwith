@@ -13,6 +13,7 @@ def showRoom() :
 
         for room in rooms :
             roomList.append({
+                'roomId' : room[0],
                 'title' : room[1],
                 'category' : room[2],
                 'leader' : room[3],
