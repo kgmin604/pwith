@@ -1,6 +1,6 @@
 .btn-blue {
-      background-color: #98AFCA;
-      color: white;
+    background-color: #98AFCA;
+    color: white;
 }
 
 .btn-red {
@@ -9,7 +9,7 @@
 }
 
 
-.form-wrapper{
+.form-wrapper {
     width: 60%;
     margin: 0 auto;
 }
@@ -28,50 +28,61 @@
 }
 
 
-.StudyMain{
+.StudyMain {
     /* font-family: "TmoneyRoundWind"; */
     text-align: center;
 }
 
-.StudyCreate{
+.StudyCreate {
     text-align: center;
 }
 
-.StudyPost{
+.StudyPost {
     text-align: center;
 }
 
 
-.studyContent{
-    margin:10px;
+.studyContent {
+    margin: 10px;
     padding: 10px;
 }
 
-.studyTitle{
-    margin:10px;
+.studyTitle {
+    margin: 10px;
 }
 
-.heart{
+.heart {
     width: 30px;
     height: 30px;
 }
 
-.comment{
+.comment {
     width: 30px;
     height: 30px;
 }
 
-.more{
+.more {
     width: 30px;
     height: 30px;
 }
 
-.align-row{
+.align-row {
     display: flex;
 }
 
-.align-side{
-    width:100%;
+.align-side {
+    width: 100%;
     display: flex;
     justify-content: space-between;
+}
+
+.text-container {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.table th,
+.table td {
+  width: 100px;
 }

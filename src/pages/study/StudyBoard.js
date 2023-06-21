@@ -115,15 +115,15 @@ function StudyBoard(props) {
                 </div>)}
 
         </Stack>
-        {searchData === null ? (<Table bordered hover>
+        {searchData === null ? (<Table bordered hover className="table">
             <thead>
                 <tr>
-                    <th>no.</th>
-                    <th colSpan={2}>글제목</th>
-                    <th>글쓴이</th>
-                    <th>날짜</th>
-                    <th>조회수</th>
-                    <th>좋아요</th>
+                    <th >no.</th>
+                    <th colSpan={2} className="text-container" >글제목</th>
+                    <th >글쓴이</th>
+                    <th >날짜</th>
+                    <th >조회수</th>
+                    <th >좋아요</th>
                 </tr>
             </thead>
             <tbody>
@@ -131,8 +131,8 @@ function StudyBoard(props) {
                     let date=post.curDate.slice(2,10);
                     return (
                         <tr className="postCol" key={post.id} onClick={() => navigate(`../${post.id}`)}>
-                            <td>{post.id}</td>
-                            <td colSpan={2}>{post.title}</td>
+                            <td >{post.id}</td>
+                            <td colSpan={2} className="text-container">{post.title}</td>
                             <td>{post.writer}</td>
                             <td>{date}</td>
                             <td>{post.views}</td>
@@ -142,11 +142,11 @@ function StudyBoard(props) {
                 })}
             </tbody>
         </Table>
-        ) : (<Table bordered hover>
+        ) : (<Table bordered hover className="table">
             <thead>
                 <tr>
                     <th>no.</th>
-                    <th colSpan={2}>글제목</th>
+                    <th colSpan={2} className="text-container">글제목</th>
                     <th>글쓴이</th>
                     <th>좋아요</th>
                     <th>날짜</th>
@@ -157,7 +157,7 @@ function StudyBoard(props) {
                 {searchData.map((item) => (
                     <tr className="postCol" key={item.id} onClick={() => navigate(`../${item.id}`)}>
                         <td>{item.id}</td>
-                        <td colSpan={2}>{item.title}</td>
+                        <td colSpan={2} className="text-container">{item.title}</td>
                         <td>{item.writer}</td>
                         <td>{item.likes}</td>
                         <td>{item.curDate}</td>
