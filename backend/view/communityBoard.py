@@ -169,14 +169,14 @@ def show():
 def showDetail(id) :
     if request.method == 'GET' :
 
-        toFront = {}
+        result = {}
 
         post = QNAPost.findById(id)
 
         if not post :
-            return toFront
+            return result
 
-        toFront = {
+        result = {
             'title': post.getTitle(),
             'writer' : post.getWriter(),
             'content': post.getContent(),
