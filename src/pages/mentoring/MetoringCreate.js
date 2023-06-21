@@ -57,6 +57,7 @@ function MentoringCreate() {
     useEffect(() => {
         console.log(portfolio);
     }, [portfolio]);
+    
 
     const handleWordClick = (word) => {
         if (selectedWords.includes(word)) {
@@ -86,6 +87,9 @@ function MentoringCreate() {
     };
 
     const [imageSrc, setImageSrc] = useState(null);
+    // useEffect(()=>{
+    //     console.log(imageSrc);
+    // },[imageSrc])
 
     const onUpload = (e) => {
         const file = e.target.files[0];
