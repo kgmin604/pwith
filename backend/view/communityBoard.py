@@ -75,6 +75,7 @@ def communityMain() :
 def listNews() :
     if request.method == 'GET' :
 
+        page = 0
         result = []
 
         page = request.args.get('page')
