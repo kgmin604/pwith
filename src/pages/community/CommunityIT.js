@@ -12,33 +12,35 @@ import { updateITNewsList, updateiTNewsList } from "../../store.js";
 function CommunityIT() {
     let navigate = useNavigate();
 
-    /* 현재 날짜 계산 */
-    const currentDate = new Date();
-    const y = currentDate.getFullYear();
-    const m = String(currentDate.getMonth() + 1).padStart(2, '0');
-    const d = String(currentDate.getDate()).padStart(2, '0');
-
-    let [todayDate, setTodayDate] = useState(currentDate);
-    let [selectDate, setSelectDate] = useState(`${y}${m}${d}`);
+    let [currentDate, setcurrentDate] = useState(new Date());
+    let [selectDate, setSelectDate] = useState(new Date());
+    let [stringDate, setStringDate] = useState(
+        `${selectDate.getFullYear()}.${String(selectDate.getMonth() + 1).padStart(2, '0')}.${String(selectDate.getDate()).padStart(2, '0')}`
+    );
     let [totalPage, setTotalPage] = useState(1);
     let [selectPage, setSelectPage] = useState(1);
 
     const [itList, setItList] = useState([]);
 
     useEffect(() => {
+
+        /* Date 객체 -> 문자열 변환 */
+        const y = selectDate.getFullYear();
+        const m = String(selectDate.getMonth() + 1).padStart(2, '0');
+        const d = String(selectDate.getDate()).padStart(2, '0');
+
         const updateITNews = () => {
           axios({
             method: "GET",
             url: "/community/it",
             params: {
               'page': `${selectPage}`,
-              'date': `${selectDate}`
+              'date': `${y}${m}${d}`
             }
           })
             .then(function (response) {
-                setItList(response.data.news);
-                console.log(response.data.news);
                 console.log(response.data.page);
+                setTotalPage(response.data.page);
                 setItList(response.data.news);
             })
             .catch(function (error) {
@@ -52,7 +54,7 @@ function CommunityIT() {
 
     function controlDate(type){
         if(type==-1){ // < 버튼
-
+            
         }
         else if(type==1){ // > 버튼
 
@@ -69,7 +71,7 @@ function CommunityIT() {
 
             <div className="selected-date">
                 <span>{'<'}</span>
-                {`${y}.${m}.${d}`}
+                {stringDate}
                 <span>{'>'}</span>
             </div>
 

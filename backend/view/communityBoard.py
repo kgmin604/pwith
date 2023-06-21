@@ -102,8 +102,6 @@ def listNews() :
                 'url' : news['url']
             })
         
-        print(requiredPage)
-        print(result)
         return jsonify({
             'page' : requiredPage,
             'news' : result
