@@ -155,8 +155,9 @@ function Comment(props) {
                                             value={updateInput}
                                             onChange={handleUpdateChange}
                                         />
+                                        <Button variant="blue" type="submit" style={{ width: '10%' }}>수정</Button>
                                     </Form>
-                                    <Button variant="blue" type="submit" style={{ width: '10%' }}>수정</Button>
+                                    
                                 </> : k.review}
                             </div>
                             <div style={{ textAlign: 'end' }}>
