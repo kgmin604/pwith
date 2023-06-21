@@ -24,7 +24,7 @@ class MentoringRoom() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"INSERT INTO MentoringRoom(roomName, mentoId, mentiId) VALUES('{roomName}', '{mentoId}', '{mentiId}')"
+        sql = f"INSERT INTO mentoringRoom(roomName, mentoId, mentiId) VALUES('{roomName}', '{mentoId}', '{mentiId}')"
 
         done = cursor_db.execute(sql)
 
