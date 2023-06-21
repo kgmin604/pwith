@@ -127,6 +127,19 @@ class QNAPost() :
         return post
     
     @staticmethod
+    def updateViews(postId):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"UPDATE  post  SET views = views+1  WHERE postId = '{str(postId)}'"
+
+        cursor_db.execute(sql)
+        mysql_db.commit()
+        
+        mysql_db.close()
+        return 'view inc'
+
+    @staticmethod
     def get3QNA():
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()

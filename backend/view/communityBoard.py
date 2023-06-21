@@ -162,8 +162,8 @@ def show():
                         'curDate' : posts[i][5],
                         'category' : posts[i][6],
                         'likes' : posts[i][7],
-                        'views' : posts[i][8],
-                        'liked' : posts[i][9]
+                        'views' : posts[i][9],
+                        'liked' : posts[i][8]
                     }
                     post['curDate'] = QNAPost.getFormattedDate(posts[i][5])
                     
@@ -219,7 +219,7 @@ def showDetail(id) :
             'liked': post.getLiked(),
             'views': post.getViews()
         }
-
+        viewresult = QNAPost.updateViews(id)
         # toFront['curDate'] = QNAPost.getFormattedDate(toFront['curDate'])
         
         return toFront
