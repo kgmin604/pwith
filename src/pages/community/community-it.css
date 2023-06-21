@@ -1,5 +1,5 @@
 .CommunityIT{
-    margin-bottom: 100px;
+    margin-bottom: 40px;
 }
 
 div.CommunityIT
@@ -74,4 +74,30 @@ div.CommunityIT div.itnews-list div.item
 .it-brief:hover{
     color:rgb(61, 105, 144);
     cursor: pointer;
+}
+
+div.CommunityIT 
+.control-page{
+    height: 30px;
+    margin: 20px 0;
+}
+
+div.CommunityIT div.control-page
+.page-num{
+    width: 40px;
+    height: 30px;
+    border: 1px solid lightgray;
+    margin-right: 5px;
+}
+
+div.CommunityIT div.control-page
+button{
+    width: 40px;
+    height: 30px;
+    margin: 0 5px;
+    border: solid;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    background-color: #98AFCA;
 }

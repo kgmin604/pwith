@@ -19,9 +19,10 @@ function CommunityIT() {
     );
     let [totalPage, setTotalPage] = useState(1);
     let [selectPage, setSelectPage] = useState(1);
+    let [inputPage, setInputPage] = useState(0);
 
     const [itList, setItList] = useState([]);
-
+        
     useEffect(() => {
 
         /* Date 객체 -> 문자열 변환 */
@@ -52,13 +53,40 @@ function CommunityIT() {
         updateITNews();
     }, [selectDate, selectPage]);
 
-    function controlDate(type){
-        if(type==-1){ // < 버튼
-            
+    function controlDate(event,type){
+        event.stopPropagation();
+        if(type===-1){ // < 버튼
+            const previousDate = new Date(selectDate.getTime() - (24 * 60 * 60 * 1000));
+            setSelectDate(previousDate);
+            setItList([]);
+            setStringDate(
+                `${previousDate.getFullYear()}.${String(previousDate.getMonth() + 1).padStart(2, '0')}.${String(previousDate.getDate()).padStart(2, '0')}`
+            );
+            setSelectPage(1);
         }
-        else if(type==1){ // > 버튼
+        else if(type===1){ // > 버튼
+            const nextDate = new Date(selectDate.getTime() + (24 * 60 * 60 * 1000));
+            if(nextDate<=currentDate){
+                setSelectDate(nextDate);
+                setItList([]);
+                setStringDate(
+                    `${nextDate.getFullYear()}.${String(nextDate.getMonth() + 1).padStart(2, '0')}.${String(nextDate.getDate()).padStart(2, '0')}`
+                );
+                setSelectPage(1);
+            }
+        }
+    }
 
+    function changePage(event){
+        event.stopPropagation();
+        if(1<=inputPage&&inputPage<=totalPage){
+            setSelectPage(inputPage);
         }
+    }
+
+    function inputChange(event){
+        event.stopPropagation();
+        setInputPage(event.target.value);
     }
 
     return (
@@ -70,9 +98,9 @@ function CommunityIT() {
             <hr/>
 
             <div className="selected-date">
-                <span>{'<'}</span>
-                {stringDate}
-                <span>{'>'}</span>
+                <span onClick={(e)=>controlDate(e,-1)}>{'<'}</span>
+                    {stringDate}
+                <span onClick={(e)=>controlDate(e,1)}>{'>'}</span>
             </div>
 
             <div className="itnews-list">
@@ -95,7 +123,17 @@ function CommunityIT() {
             }
 
             </div>
-            <Button onClick={() => console.log(itList)}>불러온데이터 콘솔</Button>
+            <div className="control-page">
+                <input 
+                    type='number' 
+                    className='page-num'
+                    onChange={ e=>inputChange(e) }
+                    onKeyDown={(e) => { if (e.key === "Enter") changePage(e); }}
+                    defaultValue={selectPage}
+                ></input>
+                /{totalPage +" "}page
+                <button>이동</button>
+            </div>
         </div>
     );
 }
