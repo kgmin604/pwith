@@ -96,9 +96,9 @@ function RoomMain(){
                                 rooms2.map((room, index) => (
                                     <a className="item" key={index} onClick={(e) => {
                                         e.stopPropagation();
-                                        navigate(`/studyroom/${room.roomId}`);
+                                        navigate(`/mentoring/${room.roomId}`);
                                     }}>
-                                    <h3>{room.roomName}</h3>
+                                    <h3>{room.title}</h3>
                                     </a>
                                 ))
                             }
