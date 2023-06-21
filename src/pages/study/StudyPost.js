@@ -17,7 +17,7 @@ function StudyPost(props) {
     useEffect(() => {
         axios.get(`/study/${id}`)
             .then(response => setPost(response.data))
-            .catch(error => console.error(error));
+            .catch();
     }, []);
 
     if (!post) {
