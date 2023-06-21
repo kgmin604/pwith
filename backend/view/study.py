@@ -145,13 +145,22 @@ def reply(id) :
 @study_bp.route("/create", methods=['GET', 'POST'])
 def write():
     if request.method == 'GET' :
-        roomList = studyPost.getMyStudyList(writer)
-        print(roomList)
-        return jsonify({
-            'roomList' : roomList
-        })
+        result = []
+
+        roomList = studyPost.getMyStudyList(current_user.getId())
+        # roomList = studyPost.getMyStudyList('a')
+
+        for room in roomList :
+            result.append({
+                'roomId' : room[0],
+                'roomName' : room[1]
+            })
+
+        # print(result)
+        return jsonify(result)
 
     else :
+
         data = request.get_json(silent=True)
 
         postType = 0
@@ -161,8 +170,9 @@ def write():
         content = data['content']
         likes = 0
         views = 0
+        roomId = data['roomId']
         
-        studyPost.insertStudy(postType, title, writer, curDate, content, likes, views)
+        done =studyPost.insertStudy(postType, title, writer, curDate, content, likes, views, roomId)
         
         return jsonify({
             'done' : done
