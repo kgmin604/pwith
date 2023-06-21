@@ -19,6 +19,10 @@ def showAll() :
         for i in range(len(allP)) :
             allP[i] = list(allP[i])
 
+            # print("=====================")
+            # print(type(allP[i][3]))
+            # print("=====================")
+
             result.append({
                 'writer' : allP[i][0],
                 'subject' : json.loads(allP[i][2]),
@@ -28,7 +32,7 @@ def showAll() :
                 'content' : allP[i][5]
             })
 
-            print(base64.b64encode(allP[i][3]).decode('utf-8'))
+            # print(base64.b64encode(allP[i][3]).decode('utf-8'))
 
         return jsonify(result)
 
@@ -67,7 +71,9 @@ def showDetail(mentoId) :
                 'menti' : rev[1],
                 'review' : rev[2]
             })
-
+        # print("=====================")
+        # print(type(portfolio.image))
+        # print("=====================")
         detail = {
             'mento' : portfolio.writer, # @property instead getter
             'subject' : json.loads(portfolio.subject),
@@ -78,8 +84,6 @@ def showDetail(mentoId) :
             'review' : review
         }
 
-        print(detail)
-        
         return jsonify(detail) # 쪽지 버튼 ???
 
 @mento_bp.route('/<mentoId>', methods = ['POST', 'PUT', 'DELETE'])
