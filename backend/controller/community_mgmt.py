@@ -125,6 +125,17 @@ class QNAPost() :
         post = QNAPost(res[0], res[2], res[3], res[4], res[5], res[6], res[7], res[8], res[9])
         return post
     
+    def get3QNA():
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = "select * from post where postType = 1 ORDER BY curDate LIMIT 3"
+        cursor_db.execute(sql)
+        rows = cursor_db.fetchall()
+        print(rows)
+        mysql_db.close()
+        return rows
+    
     def getFormattedDate(curDate):
         formatted_datetime = curDate.strftime("%Y-%m-%d %H:%M:%S")
         return formatted_datetime  # 출력 예: 2023-06-21 14:30:45

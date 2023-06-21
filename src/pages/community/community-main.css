@@ -1,0 +1,48 @@
+div.CommunityBoard 
+.category{
+    margin: 0 0;
+    padding: 0 0;
+}
+
+div.CommunityBoard div.category
+.header{
+    width: 630px;
+    height: 40px;
+    border: 1px solid #98AFCA;
+    margin: 0 0;
+    padding: 0 0;
+}
+
+div.CommunityBoard div.category div.header
+h2{
+    height: 40px;
+    line-height: 40px;
+    font-size: 16px;
+    float: left;
+    font-family: "TmoneyRoundWind";
+    font-weight: bold;
+    color: #98AFCA;
+    margin-left: 10px;
+}
+
+div.CommunityBoard div.category div.header
+span{
+    height: 40px;
+    line-height: 40px;
+    font-size: 16px;
+    float: right;
+    font-family: "TmoneyRoundWind";
+    font-weight: bold;
+    color: #98AFCA;
+    margin-right: 10px;
+    cursor:pointer;
+}
+
+div.CommunityBoard div.category div.body
+.item{
+    margin: 0 0;
+    padding: 0 0;
+    width: 630px;
+    height: 40px;
+    border: 1px solid lightgray;
+}

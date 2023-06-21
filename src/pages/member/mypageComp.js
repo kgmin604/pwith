@@ -137,7 +137,7 @@ function Chat(){
     let handleItemClick = (event, index) => { // 특정 userid 선택
         event.stopPropagation(); // 이벤트 버블링 중단
         setSelectedItem(index);
-        /*
+        
         axios({
             method: "POST",
             url: "/mypage/chat",
@@ -153,7 +153,7 @@ function Chat(){
           .catch(function (error) {
               console.log(error);
           });
-        */
+        
     };
 
     let [content, setContent] = useState('');

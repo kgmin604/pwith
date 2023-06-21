@@ -26,10 +26,8 @@ function CommunityMain() {
                     <Outlet></Outlet>
                 </div>
 
-
                 <div class="col-md-3">
                 </div>
-
 
             </div>
         </div>
