@@ -132,7 +132,7 @@ function CommunityIT() {
                     defaultValue={selectPage}
                 ></input>
                 /{totalPage +" "}page
-                <button>이동</button>
+                <button onClick={(e)=>{changePage(e);}}>이동</button>
             </div>
         </div>
     );
