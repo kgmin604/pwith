@@ -45,10 +45,10 @@ function CommunityIT() {
                 setItList(response.data.news);
             })
             .catch(function (error) {
-              console.log("IT 뉴스 요청 에러");
-              console.log(error);
-            });
-        };
+                console.log("IT 뉴스 요청 에러");
+                console.log(error);
+              });
+          };
       
         updateITNews();
     }, [selectDate, selectPage]);
