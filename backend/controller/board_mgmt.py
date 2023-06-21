@@ -15,14 +15,18 @@ class studyPost() :
         self.liked = liked
 
     @staticmethod
-    def insertStudy( postType, title, writer, curDate, content, likes, views):   # insert data
+    def insertStudy(postType, title, writer, curDate, content, likes, views, roomId):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"INSERT INTO post ( postType, title, writer, curDate, content, likes, views )VALUES ('{int(postType)}', '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(likes)}', '{int(views)}')"
+        sql = f"INSERT INTO post ( postType, title, writer, curDate, content, likes, views, roomId) VALUES ('{int(postType)}', '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(likes)}', '{int(views)}', '{int(roomId)}')"
+        
         done = cursor_db.execute(sql)
+
         mysql_db.commit() 
+
         mysql_db.close()
+
         return done
      
     @staticmethod
@@ -30,9 +34,12 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = "select roomId, roomName from studyRoom where leader = '{writer}'"
+        sql = f"select roomId, roomName from studyRoom where leader = '{writer}'"
+
         cursor_db.execute(sql)
+
         rows = cursor_db.fetchall()
+
         mysql_db.close()
         #print(rows)
         

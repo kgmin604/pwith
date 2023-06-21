@@ -31,6 +31,26 @@ function MentoringPost() {
             .catch(error => console.error(error));
     }, []);
 
+    function joinMentoring(){
+        if(user.id===null){
+            alert("로그인이 필요합니다")
+        }
+        else{
+            axios.get(`/mentoring/${id}`, {
+                params: {
+                  apply: 'go'
+                }
+              })
+              .then(function (response) {
+                   alert("신청이 완료되었습니다.")
+              }).catch(function (error) {
+                    console.log(error);
+              }).then(function() {
+                  // 항상 실행
+              });
+        }
+    }
+
     let parsedContent = null;
     if (post.content != null) {
         const parse = require('html-react-parser');
@@ -75,6 +95,8 @@ function MentoringPost() {
                             {parsedContent}
                         </p>
                     </div>
+
+                    <Button variant='blue' onClick={()=>joinMentoring()} style={{margin:'20px'}}>멘토링 신청하기</Button>
                     <Comment id={id} mento={post.mento} review={post.review} />
                 </div>
 
