@@ -67,3 +67,18 @@ class Reply :
         mysql_db.close()
 
         return done
+
+    @staticmethod
+    def showReply(type, postId) :
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT replyId, writer, content, curDate FROM reply WHERE type = {type} and postNum = {postId}"
+
+        done = cursor_db.execute(sql)
+
+        result = cursor_db.fetchall()
+
+        mysql_db.close()
+
+        return result

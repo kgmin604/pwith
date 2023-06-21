@@ -69,23 +69,42 @@ def show():
 def showDetail(id) :
     if request.method == 'GET' :
 
-        toFront = {}
+        result = {}
 
         post = studyPost.findById(id)
-        toFront = {
+
+        postDate = studyPost.getFormattedDate(post.getCurDate())
+
+        result = {
             'title': post.getTitle(),
             'writer' : post.getWriter(),
             'content': post.getContent(),
-            'curDate' : post.getCurDate(),
+            'curDate' : postDate,
             'likes' : studyPost.getLikes(id),
             'views': post.getViews()
         }
-        toFront['curDate'] = studyPost.getFormattedDate(toFront['curDate'])
         
         viewresult = studyPost.updateViews(id)
         # print(viewresult)
+
+        replyList = Reply.showReply(0, id)
+
+        replyResult = []
+
+        for reply in replyList :
+
+            date = studyPost.getFormattedDate(reply[3])
+
+            replyResult.append({
+                'commentId' : reply[0],
+                'writer' : reply[1],
+                'comment' : reply[2],
+                'date' : date
+            })
+
         return jsonify({
-            'post' : result
+            'post' : result,
+            'reply' : replyResult
         })
 
 @study_bp.route('/<int:id>', methods = ['POST', 'PUT', 'DELETE'])
@@ -144,8 +163,8 @@ def write():
     if request.method == 'GET' :
         result = []
 
-        roomList = studyPost.getMyStudyList(current_user.getId())
-        # roomList = studyPost.getMyStudyList('a')
+        # roomList = studyPost.getMyStudyList(current_user.getId())
+        roomList = studyPost.getMyStudyList('a')
 
         for room in roomList :
             result.append({
