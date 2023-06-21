@@ -67,7 +67,7 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = "select * from post"
+        sql = "select * from post where postType = 0"
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
         # mysql_db.close()
@@ -81,7 +81,7 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT * FROM post WHERE postId = {id}"
+        sql = f"SELECT * FROM post WHERE postType = 0 and postId = {id}"
         cursor_db.execute(sql)
         res = cursor_db.fetchone() # tuple
         mysql_db.close()
@@ -168,7 +168,7 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = "select postId, title from post ORDER BY curDate DESC LIMIT 5"
+        sql = "select postId, title from post where postType = 0 ORDER BY curDate DESC LIMIT 5 "
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
         # mysql_db.close()
