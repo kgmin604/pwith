@@ -16,7 +16,10 @@ function StudyPost(props) {
 
     useEffect(() => {
         axios.get(`/study/${id}`)
-            .then(response => setPost(response.data))
+            .then((response)=>{
+                setPost(response.data)
+                console.log(response.data)
+            })
             .catch();
     }, []);
 
