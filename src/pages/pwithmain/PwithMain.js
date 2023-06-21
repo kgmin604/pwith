@@ -6,17 +6,15 @@ import { useNavigate } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
 function PwithMain(){
-    const dummy = [
-        {'id':1,'title':'제목1'}, {'id':2,'title':'제목2'}, {'id':3,'title':'제목3'}, {'id':4,'title':'제목4'}, {'id':5,'title':'제목5'}
-    ];
-    const dummy2 = [
-        {'id':1,'title':'제목1'}, {'id':2,'title':'제목2'}, {'id':3,'title':'제목3'}, {'id':4,'title':'제목4'}
-    ];
+    const dummy = {'id':1,'title':'로딩중...'}
+    const dummylist = [dummy,dummy,dummy,dummy,dummy];
+    const dummylist2 = [dummy,dummy,dummy,dummy];
+
     let navigate = useNavigate();
-    let [studyList, setStudyList] = useState(dummy);
-    let [newsList, setNewsList] = useState(dummy);
-    let [mentorList, setMentorList] = useState(dummy);
-    let [contentList, setContentList] = useState(dummy2);
+    let [studyList, setStudyList] = useState(dummylist);
+    let [newsList, setNewsList] = useState(dummylist);
+    let [mentorList, setMentorList] = useState(dummylist);
+    let [contentList, setContentList] = useState(dummylist2);
 
     useEffect(()=>{
         axios({
@@ -27,7 +25,8 @@ function PwithMain(){
             }
           })
           .then(function (response) {
-            setStudyList(response.data);
+            setStudyList(response.data.study);
+            setNewsList(response.data.news);
           })
           .catch(function (error) {
               console.log(error);
@@ -65,7 +64,11 @@ function PwithMain(){
                     {
                         newsList.map((a,i)=>{
                             return(
-                                <li className="posting" key={i}>{a['title']}</li> // onClick 속성 추가 -> 눌렀을 때 해당 글로
+                                <li 
+                                    className="posting" 
+                                    key={i}
+                                    onClick={(e)=>{e.stopPropagation(); window.open(`${a['url']}`, '_blank');}}
+                                >{a['title']}</li>
                             )
                         })
                     }  
