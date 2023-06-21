@@ -24,7 +24,7 @@ class Portfolio() :
 
     @property
     def image(self) :
-        return str(self.__image)
+        return self.__image
 
     @property
     def content(self) :
