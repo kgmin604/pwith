@@ -76,11 +76,13 @@ def showDetail(mentoId) :
             'subject' : json.loads(portfolio.subject),
             'image' : base64.b64encode(portfolio.image).decode('utf-8'),
             'brief' : portfolio.brief,
-            'content' : portfolio.content,
-            'review' : review
+            'content' : portfolio.content
         }
 
-        return jsonify(detail)
+        return jsonify({
+            'portfolio' : detail,
+            'review' : review
+        })
 
 @mento_bp.route('/<mentoId>', methods = ['POST', 'PUT', 'DELETE'])
 def review(mentoId) :
