@@ -4,6 +4,7 @@ from flask import Flask, session, Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from controller.mentor_mgmt import Portfolio
 from controller.review_mgmt import Review
+from controller.mentoringroom_mgmt import MentoringRoom
 
 mento_bp = Blueprint('mento', __name__, url_prefix='/mentoring')
 
@@ -34,6 +35,24 @@ def showAll() :
 @mento_bp.route('/<mentoId>', methods = ['GET'])
 def showDetail(mentoId) :
     if request.method == 'GET' :
+
+        apply = request.args.get('apply')
+
+        if apply == 'go' : # 멘토링 신청
+
+            # 1. 룸 생성
+            roomName = ''
+            mentiId = current_user.getId()
+
+            roomId = MentoringRoom.create(roomName, mentoId, mentiId)
+
+            # 2. 멘토링룸 쪽지로 전송
+
+            url = "http://localhost:3000/mentoringroom/" + str(roomId)
+
+            # 3. 쪽지 전송
+            # with 정윤
+
 
         detail = {}
 
