@@ -2,6 +2,7 @@ from flask import Flask, session, Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime
 from controller.studyroom_mgmt import StudyRoom
+from controller.mentoringroom_mgmt import MentoringRoom
 
 studyroom_bp = Blueprint('studyRoom', __name__, url_prefix='/studyroom')
 
@@ -9,21 +10,29 @@ studyroom_bp = Blueprint('studyRoom', __name__, url_prefix='/studyroom')
 def showRoom() :
     if request.method == 'GET' :
 
-        logUser = current_user.getId()
+        # logUser = current_user.getId()
+        logUser = 'q'
 
-        rooms = StudyRoom.show(logUser)
+        study_rooms = StudyRoom.show(logUser)
+        mentoring_rooms = MentoringRoom.show(logUser)
 
         studyRoomList = []
         mentoringRoomList = []
 
-        for room in rooms :
+        for r1 in study_rooms :
             studyRoomList.append({
-                'roomId' : room[0],
-                'title' : room[1],
-                'category' : room[2],
-                'leader' : room[3],
-                'joinP' : room[5],
-                'totalP' : room[6]
+                'roomId' : r1[0],
+                'title' : r1[1],
+                'category' : r1[2],
+                'leader' : r1[3],
+                'joinP' : r1[5],
+                'totalP' : r1[6]
+            })
+
+        for r2 in mentoring_rooms :
+            mentoringRoomList.append({
+                'roomId' : r2[0],
+                'title' : r2[1]
             })
 
         return jsonify({
