@@ -84,10 +84,10 @@ def showDetail(id) :
             'content': post.getContent(),
             'curDate' : post.getCurDate(),
             'category' : post.getCategory(),
-            'likes' : post.getLikes(),
+            'likes' : studyPost.getLikes(id),
             'views': post.getViews(),
-            'liked': post.getLiked()
-            #'totalP': post.getTotalP(),
+            'liked': post.getLiked(),
+            #'totalP': post.getTotalP()
             
         }
         toFront['curDate'] = studyPost.getFormattedDate(toFront['curDate'])
@@ -171,6 +171,24 @@ def write():
         
         
         return 'Response', 200
+    
+@login_required
+@study_bp.route('/<int:id>/like', methods=['GET', 'POST'])
+def like(id):
+    if request.method=='POST':
+        postId = request.get_json()['postId']
+        post = studyPost.findById(id)
+        liked = studyPost.toggleLike(id)
+        return jsonify({
+            'liked' : liked
+        })
+        
+    if request.method == 'GET':
+        likes = studyPost.getLikes(id)
+        return jsonify({
+            'likes' : likes
+            })
+        
 """
 # update 
 @study_bp.route('/update')

@@ -158,8 +158,19 @@ class studyPost() :
     def getCategory(self):
         return int(self.category)
     
-    def getLikes(self):
-        return int(self.likes)
+    def getLikes(id):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT likes from post where post.postId = '{str(id)}'"
+
+        cursor_db.execute(sql)
+        row = cursor_db.fetchone() 
+        print(row)
+        likes = row[0]
+        
+        mysql_db.close()
+        return int(likes)
     
     def getViews(self):
         return int(self.views)
@@ -184,6 +195,35 @@ class studyPost() :
         # print(rows)
         
         return rows
+    
+    def toggleLike(postId):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = f"select liked from post where postId = '{str(postId)}'"  # 현재 liked 상태에 따라서 실행되는 update문 다름
+        cursor_db.execute(sql)
+        liked = cursor_db.fetchone()
+        
+        if liked == False:  # 현재 liked = false -> likes 증가
+            sql = f"UPDATE  post  SET liked = true  WHERE postId = '{str(postId)}'"
+            cursor_db.execute(sql)
+            mysql_db.commit()
+            
+            sql2 = f"UPDATE  post  SET likes = likes +1  WHERE postId = '{str(postId)}'"
+            
+        else:   # 현재 liked = true -> likes 감소
+            sql = f"UPDATE  post  SET liked = false  WHERE postId = '{str(postId)}'"
+            cursor_db.execute(sql)
+            mysql_db.commit()
+            
+            sql2 = f"UPDATE  post  SET likes = likes -1  WHERE postId = '{str(postId)}'"
+            
+        cursor_db.execute(sql2)
+        mysql_db.commit()
+        mysql_db.close()
+        
+        return liked
+        
         
         '''    
     @staticmethod

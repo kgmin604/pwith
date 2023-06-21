@@ -143,12 +143,11 @@ function Chat(){
             url: "/mypage/chat",
             data: {
                 type: 0,
-                memId : `${user.id}`,
-                oppID : `${chatList[selectedItem]['oppId']}`,
+                oppId : `${chatList[index]['oppId']}`,
             },
           })
           .then(function (response) {
-              setMsgList(response.data.msgList); // msgList는 딕셔너리 리스트
+              setMsgList(response.data); // msgList는 딕셔너리 리스트
           })
           .catch(function (error) {
               console.log(error);
