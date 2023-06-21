@@ -236,6 +236,12 @@ function App() {
             <Route path="writinglist" element={<WritingList />} />
             <Route path="chat" element={<Chat />} />
           </Route>
+          <Route path="*" element={ 
+            <div className="img-error">
+              <img src='/error_404.png'></img>
+              <div>잘못된 주소입니다.</div>
+            </div>
+          } />
         </Routes>
       </div>
       <div className="bottom-area">
