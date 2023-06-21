@@ -22,7 +22,7 @@ function RoomMain(){
         })
         .then(function (response) {
             setRooms(response.data.studyRoom);
-            setRooms2(reponse.data.mentoringRoom);
+            setRooms2(response.data.mentoringRoom);
         })
         .catch(function (error) {
             console.log(error);
