@@ -16,29 +16,37 @@ function Comment(props) {
     const id = props.id;
 
     const [more, setMore] = useState(false);
-    const [review, setReview] = useState(props.review || []);
-    const [reviewNum, setReviewNum] = useState(review.length);
+    const [review, setReview] = useState([]);
+    const [reviewNum, setReviewNum] = useState(0);
 
-    useEffect(()=>{
-        console.log(review);
-    },[review])
+    useEffect(() => {
+        if (props.review != undefined) {
+            setReview(props.review);
+            setReviewNum(props.review.length);
+            console.log(reviewNum);
+        }
+    }, [props.review])
 
     function createComment(content) {
-        axios.post(`/mentoring/${id}`, {
-            content: `${content}`
-        })
+        axios
+            .post(`/mentoring/${id}`, {
+                content: `${content}`
+            })
             .then(function (response) {
-                const newReview = [...review, {
-                    "reviewId": response.data.reviewId,
-                    "review": `${content}`
-                }];
-                console.log(response.data);
+                const newReview = [
+                    ...review,
+                    {
+                        "menti": `${user.id}`,
+                        "review": `${content}`,
+                        "reviewId": response.data.reviewId
+                    }
+                ];
                 setReview(newReview);
                 setInputValue('');
             })
             .catch(function (error) {
                 // 오류발생시 실행
-            })
+            });
     }
 
     function updateComment(reviewId, content) {
@@ -91,14 +99,17 @@ function Comment(props) {
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
-        console.log(inputValue)
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log(review);
-        console.log(inputValue);
-        createComment(inputValue);
+        if(user.id===null){
+            alert("로그인이 필요합니다")
+        }
+        else{
+            createComment(inputValue);
+            console.log(review);
+        }
     };
 
 
@@ -127,13 +138,14 @@ function Comment(props) {
 
             <hr />
 
-            <div className='align-row '>{/* 댓글하나 */}
-                <img img src={comment} className='comment' />
-                <span style={{ width: '5px' }}></span>
-                <div className='align-side'>
-                    {review.map((k, i) => {
-                        return(
-                        <div key={k.reviewId}>
+
+            {review.map((k, i) => {
+                return (
+                    <div  key={k.reviewId}>{/* 댓글하나 */}
+                    <div className='align-row'>
+                        <img img src={comment} className='comment' />
+                        <span style={{ width: '5px' }}></span>
+                        <div className='align-side'>
                             <div style={{ textAlign: 'start' }}>
                                 <div>{k.menti}</div>
                                 {updateInput ? <>
@@ -148,7 +160,7 @@ function Comment(props) {
                                 </> : k.review}
                             </div>
                             <div style={{ textAlign: 'end' }}>
-                                {user === k.menti ? <img src={moreImg} className="more" onClick={() => setMore(!more)} />
+                                {user.id === k.menti ? <img src={moreImg} className="more" onClick={() => setMore(!more)} />
                                     : null}
                                 <div>
                                     {more === true ? <ListGroup>
@@ -157,10 +169,13 @@ function Comment(props) {
                                     </ListGroup> : null}
                                 </div>
                             </div>
-                        </div>)
-                    })}
-                </div>
-            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    </div>
+
+                )
+            })}
 
             <div className='align-side'>{/* 댓글달기*/}
                 <Form onSubmit={handleSubmit} style={{ width: '90%' }} className='align-side'>
@@ -171,11 +186,11 @@ function Comment(props) {
                         onChange={handleInputChange}
                     />
                     <span style={{ width: '5px' }}></span>
-                <Button variant="blue" type="submit" style={{ width: '10%' }}>등록</Button>
+                    <Button variant="blue" type="submit" style={{ width: '10%' }}>등록</Button>
                 </Form>
             </div>
 
-        </div>
+        </div >
     )
 
 }
