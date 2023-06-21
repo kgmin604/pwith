@@ -41,8 +41,9 @@ def showDetail(mentoId) :
         if apply == 'go' : # 멘토링 신청
 
             # 1. 룸 생성
-            roomName = ''
-            mentiId = current_user.getId()
+            # mentiId = current_user.getId()
+            mentiId = 'pwith'
+            roomName = str(mentoId) + "와 " + str(mentiId) + "의 공부방"
 
             roomId = MentoringRoom.create(roomName, mentoId, mentiId)
 
