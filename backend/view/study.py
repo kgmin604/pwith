@@ -6,8 +6,6 @@ from datetime import datetime
 
 study_bp = Blueprint('study', __name__, url_prefix='/study')
 
-#페이지네이션, 스터디 메인 페이지, 마이페이지에서 멤버별로 글 보이게, 작성 페이지 프론트연결,
-
 @study_bp.route('/main', methods=['GET'])
 def show():
     if request.method == 'GET':
@@ -83,17 +81,14 @@ def showDetail(id) :
             'writer' : post.getWriter(),
             'content': post.getContent(),
             'curDate' : post.getCurDate(),
-            'category' : post.getCategory(),
             'likes' : studyPost.getLikes(id),
             'views': post.getViews(),
             'liked': post.getLiked(),
-            #'totalP': post.getTotalP()
-            
         }
         toFront['curDate'] = studyPost.getFormattedDate(toFront['curDate'])
         
         viewresult = studyPost.updateViews(id)
-        print(viewresult)
+        # print(viewresult)
         return toFront
 
 @study_bp.route('/<int:id>', methods = ['POST', 'PUT', 'DELETE'])
@@ -146,33 +141,32 @@ def reply(id) :
             'done' : done
         })
 
-
-#글 작성 페이지
-@study_bp.route("/create", methods=['POST'])
 @login_required
+@study_bp.route("/create", methods=['GET', 'POST'])
 def write():
-    if request.method == 'POST':
-        print("post\n")
-        data = request.get_json(silent=True) # silent: parsing fail 에러 방지
-        print(data)
-        print("axios error\n")
+    if request.method == 'GET' :
+        roomList = studyPost.getMyStudyList(writer)
+        print(roomList)
+        return jsonify({
+            'roomList' : roomList
+        })
+
+    else :
+        data = request.get_json(silent=True)
+
         postType = 0
         title = data['title']
-        # writer = session.get("id")      # 현재 사용자 id
         writer = current_user.getId()
-        curDate = studyPost.curdate()      # 현재 시간
+        curDate = studyPost.curdate()
         content = data['content']
-        category = data['category']
         likes = 0
         views = 0
-        #joiningP = 0
-        totalP = data['totalP']
         
-        print(postType, title, writer, curDate, content, category, likes, views)
-        studyPost.insertStudy(postType, title, writer, curDate, content, category, likes, views)
+        studyPost.insertStudy(postType, title, writer, curDate, content, likes, views)
         
-        
-        return 'Response', 200
+        return jsonify({
+            'done' : done
+        })
     
 @login_required
 @study_bp.route('/<int:id>/like', methods=['GET', 'POST'])
