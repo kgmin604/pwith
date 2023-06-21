@@ -27,33 +27,33 @@ function MentoringCreate() {
 
     function postPortfolio() {
         const updatedSubject = JSON.stringify(selectedWords);
-
-        setportfolio({
-            ...portfolio,
-            subject: updatedSubject
-        });
-
+      
+        // FormData 객체 생성
+        const formData = new FormData();
+        formData.append("brief", portfolio.brief);
+        formData.append("subject", updatedSubject);
+        formData.append("content", portfolio.content);
+        formData.append("image", portfolio.image); // Blob 객체 추가
+      
         axios({
-            method: "POST",
-            url: "/mentoring/create",
-            data: {
-                brief: `${portfolio['brief']}`,
-                subject: updatedSubject,
-                content: `${portfolio['content']}`,
-                image: `${portfolio['image']}`
-            }
+          method: "POST",
+          url: "/mentoring/create",
+          data: formData, // FormData 객체를 전송 데이터로 사용
+          headers: {
+            "Content-Type": "multipart/form-data", // 멀티파트(form-data) 컨텐츠 타입 설정
+          },
         })
-            .then(function (response) {
-                console.log(response);
-                alert("새 글이 등록되었습니다.");
-                navigate("../mentoring/main");
-            })
-            .catch(function (error) {
-                console.log(error);
-                alert("요청을 처리하지 못했습니다.");
-            });
-    }
-
+          .then(function (response) {
+            console.log(response);
+            alert("새 글이 등록되었습니다.");
+            navigate("../mentoring/main");
+          })
+          .catch(function (error) {
+            console.log(error);
+            alert("요청을 처리하지 못했습니다.");
+          });
+      }
+      
     useEffect(() => {
         console.log(portfolio);
     }, [portfolio]);
@@ -93,18 +93,25 @@ function MentoringCreate() {
 
     const onUpload = (e) => {
         const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
       
         return new Promise((resolve) => {
+          const reader = new FileReader();
           reader.onload = () => {
-            setImageSrc(reader.result || null); // 파일의 컨텐츠
-            setportfolio({
-              ...portfolio,
-              image: reader.result || null // 포트폴리오의 이미지 업데이트
-            });
-            resolve();
+            const imageDataURL = reader.result || null;
+      
+            // 이미지를 Blob 객체로 변환
+            fetch(imageDataURL)
+              .then((res) => res.blob())
+              .then((blob) => {
+                setImageSrc(imageDataURL); // 데이터 URL로 이미지 표시
+                setportfolio({
+                  ...portfolio,
+                  image: blob, // Blob 객체로 포트폴리오의 이미지 업데이트
+                });
+                resolve();
+              });
           };
+          reader.readAsDataURL(file);
         });
       };
 
