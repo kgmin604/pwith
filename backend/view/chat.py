@@ -35,7 +35,7 @@ def send():
                 
                 msgList.append(chatting_data)
             #print(chatlist)
-            return jsonify(chatlist)
+            return jsonify(msgList)
         
         if postType == 1:  # 쪽지 보내기
             print("type = 1")
