@@ -126,6 +126,19 @@ class studyPost() :
             return None
         
         return posts
+    
+    @staticmethod
+    def updateViews(postId):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"UPDATE  post  SET views = views+1  WHERE postId = '{str(postId)}'"
+
+        cursor_db.execute(sql)
+        mysql_db.commit()
+        
+        mysql_db.close()
+        return 'view inc'
 
 
     def getTitle(self) :

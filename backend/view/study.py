@@ -32,7 +32,7 @@ def show():
                         'curDate' : posts[i][5],
                         'category' : posts[i][6],
                         'likes' : posts[i][7],
-                        'views' : posts[i][8],
+                        'views' : posts[i][9],
                         'liked' : posts[i][9]
                     }
                 post['curDate'] = studyPost.getFormattedDate(posts[i][5])
@@ -62,7 +62,7 @@ def show():
                         'curDate' : posts[i][5],
                         'category' : posts[i][6],
                         'likes' : posts[i][7],
-                        'views' : posts[i][8],
+                        'views' : posts[i][9],
                         'liked' : posts[i][9]
                     }
                     post['curDate'] = studyPost.getFormattedDate(posts[i][5])
@@ -92,6 +92,8 @@ def showDetail(id) :
         }
         toFront['curDate'] = studyPost.getFormattedDate(toFront['curDate'])
         
+        viewresult = studyPost.updateViews(id)
+        print(viewresult)
         return toFront
 
 @study_bp.route('/<int:id>', methods = ['POST', 'PUT', 'DELETE'])
