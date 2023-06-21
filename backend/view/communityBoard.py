@@ -12,11 +12,17 @@ community_bp = Blueprint('community', __name__, url_prefix='/community')
 def listNews() :
     if request.method == 'GET' :
 
+        # page = request.args.get('page')
+        # date = request.args.get('date')
+
+        # print(date)
+
         result = []
 
         news_list = conn_mongodb().ITnews_crawling.find()
+        # news_list = conn_mongodb().ITnews_crawling.find({'date': date})
 
-        for i in range(15) :
+        for i in range(10) :
             news = news_list[i]
             result.append({
                 'date': news['date'],
