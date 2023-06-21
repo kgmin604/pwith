@@ -71,7 +71,6 @@ function CommunityBoard(){
                                 <p 
                                     className="item"
                                     onClick={(e)=>{e.stopPropagation(); navigate(`../qna/${it['postId']}`)}}
-                                
                                 >
                                     <h3>{it['title']}</h3>
                                     <div>{it['date']}</div>
@@ -90,7 +89,10 @@ function CommunityBoard(){
                     {
                         contentList.map((it,i)=>{
                             return (
-                                <p className="item">
+                                <p 
+                                    className="item"
+                                    onClick={(e)=>{e.stopPropagation(); window.open(`${it['url']}`, '_blank');}}
+                                >
                                     <h3>{it['title']}</h3>
                                     <div>{it['date']}</div>
                                 </p>
