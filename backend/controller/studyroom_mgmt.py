@@ -45,11 +45,11 @@ class StudyRoom() :
         return done
 
     @staticmethod
-    def showAll() :
+    def show(logUser) :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = "SELECT * FROM studyRoom"
+        sql = f"SELECT * FROM studyRoom WHERE leader = '{logUser}'"
         cursor_db.execute(sql)
 
         result = cursor_db.fetchall()
