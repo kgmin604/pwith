@@ -19,7 +19,7 @@ def send():
         #print('postType = ' + str(postType)) # 형변환 추가-kgm
         #print('oppId = ' + oppId)
         
-        if postType == '0':  # 상대방과의 채팅목록 가져오기
+        if postType == 0:  # 상대방과의 채팅목록 가져오기
             #print("post msglist")
             chatlist = chat.getMyChat(memId, oppId)
             msgList =[]
@@ -37,7 +37,7 @@ def send():
             #print(chatlist)
             return jsonify(chatlist)
         
-        if postType == '1':  # 쪽지 보내기
+        if postType == 1:  # 쪽지 보내기
             print("type = 1")
             content = data['content']
             curDate = chat.curdate()
@@ -46,7 +46,7 @@ def send():
             return 'Response', 200
             
         
-        if postType == '2':
+        if postType == 2:
             print("type = 2")
             oppChk = chat.chkOppId(oppId)
             if oppChk == True:  #oppId가 유효한 경우 result = 1

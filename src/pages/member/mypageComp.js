@@ -130,14 +130,14 @@ function WritingList(){
 function Chat(){
     let user = useSelector((state) => state.user);
 
-    let [chatList, setChatList] = useState(null);
-    let [msgList, setMsgList] = useState(null);
+    let [chatList, setChatList] = useState([]);
+    let [msgList, setMsgList] = useState([]);
 
     let [selectedItem, setSelectedItem] = useState(null);
     let handleItemClick = (event, index) => { // 특정 userid 선택
         event.stopPropagation(); // 이벤트 버블링 중단
         setSelectedItem(index);
-        
+        /*
         axios({
             method: "POST",
             url: "/mypage/chat",
@@ -153,6 +153,7 @@ function Chat(){
           .catch(function (error) {
               console.log(error);
           });
+        */
     };
 
     let [content, setContent] = useState('');
@@ -162,7 +163,6 @@ function Chat(){
     }
 
     let [oppId, setOppId] = useState('');
-    let [valid, setValid] = useState(false);
     let changeOppId = (event) =>{
         event.stopPropagation();
         setOppId(event.target.value);
@@ -193,8 +193,7 @@ function Chat(){
       }, []);
 
 
-    function sendRequest(e){
-        e.stopPropagation();
+    function sendRequest(){
         console.log("전송요청");
         axios({
             method: "POST",
@@ -206,60 +205,60 @@ function Chat(){
             },
           })
           .then(function (response) {
-              alert("쪽지 전송 완료");
-              setOpen(!open);
-            setMsg('');
-            setContent('');
+                alert("쪽지 전송 완료");
+                setOpen(!open);
+                setMsg('');
+                setContent('');
           })
           .catch(function (error) {
-              console.log(error);
-        });
-    }
-
-    function checkOppId(){
-        axios({
-            method: "POST",
-            url: "/mypage/chat",
-            data: {
-                type: 2,
-                oppId : `${oppId}`
-            },
-          })
-          .then(function (response) {
-                if(response.data===1){
-                    setValid(true);
-                }
-                else{
-                    setValid(false);
-                }
-          })
-          .catch(function (error) {
-                console.log("쪽지 수신자 아이디 확인 에러");
                 console.log(error);
         });
     }
 
-    function checkRequest(event){
-        event.stopPropagation();
-        if(oppId===''){
-            setMsg('! 수신자 아이디를 입력해주세요.');
-            return;
-        }
-        else if(content===''){
-            setMsg('! 내용을 입력해주세요.');
-            return;
-        }
-        else {
-            //checkOppId();
-            if(valid){
-                setMsg('')
-                sendRequest();
+    function checkOppId(callback) {
+        axios({
+          method: "POST",
+          url: "/mypage/chat",
+          data: {
+            type: 2,
+            oppId: `${oppId}`
+          },
+        })
+          .then(function (response) {
+            console.log("쪽지 수신자 아이디 확인");
+            console.log(response.data.result);
+            if (response.data.result === 1) {
+              callback(true);
+            } else {
+              callback(false);
             }
-            else{
-                setMsg('! 없는 수신자 아이디입니다.')
-            }
-        }
+          })
+          .catch(function (error) {
+            console.log("쪽지 수신자 아이디 확인 에러");
+            console.log(error);
+            callback(false);
+          });
     }
+      
+      function checkRequest(event) {
+        event.stopPropagation();
+        if (oppId === "") {
+          setMsg("! 수신자 아이디를 입력해주세요.");
+          return;
+        } else if (content === "") {
+          setMsg("! 내용을 입력해주세요.");
+          return;
+        } else {
+          checkOppId(function (isValid) {
+            if (isValid) {
+              setMsg("");
+              sendRequest();
+            } else {
+              setMsg("! 없는 수신자 아이디입니다.");
+            }
+          });
+        }
+      }
 
     return(
         <>
@@ -269,7 +268,7 @@ function Chat(){
                 <div className="chat-bottom">
                     <div className="chat-boxes scroll-area"> {/* 왼쪽구역: 채팅한 계정들*/}
                     {
-                        chatList === null ? null :
+                        chatList === [] ? null :
                         chatList.map((item, i) => (
                             <a
                                 className={`item ${selectedItem === i ? 'selected' : ''}`}
@@ -299,9 +298,10 @@ function Chat(){
                         }
                         </div>
                         {
-                            selectedItem === null ? <></> :
+                            selectedItem === null ? null :
                             <div className="content">
                             {
+                                msgList === [] ? null :
                                 msgList.map((msg,i)=>{
                                     const type = msg['sender'] === user.id ? "보낸 쪽지" : "받은 쪽지";
                                     return(
@@ -328,7 +328,7 @@ function Chat(){
                                 <p className="receiver">
                                     <input 
                                         type="text"
-                                        onChange={e=>{changeOppId(e); setValid(false);}}
+                                        onChange={e=>{changeOppId(e);}}
                                         placeholder="수신자 아이디 입력"
                                         defaultValue= {oppId}
                                     ></input>
@@ -345,7 +345,7 @@ function Chat(){
                                     type="button"
                                     value="전송" 
                                     className="button"
-                                    onClick={e=>sendRequest(e)}
+                                    onClick={e=>checkRequest(e)}
                                 ></input>
                                 <div className="message">{msg}</div>
                             </div>
