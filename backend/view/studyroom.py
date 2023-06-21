@@ -8,11 +8,14 @@ studyroom_bp = Blueprint('studyRoom', __name__, url_prefix='/studyroom')
 @studyroom_bp.route('', methods=['GET', 'POST'])
 def showRoom() :
     if request.method == 'GET' :
+
         rooms = StudyRoom.showAll()
-        roomList = []
+
+        studyRoomList = []
+        mentoringRoomList = []
 
         for room in rooms :
-            roomList.append({
+            studyRoomList.append({
                 'roomId' : room[0],
                 'title' : room[1],
                 'category' : room[2],
@@ -21,7 +24,10 @@ def showRoom() :
                 'totalP' : room[6]
             })
 
-        return jsonify(roomList)
+        return jsonify({
+            'studyRoom' : studyRoomList,
+            'mentoringRoom' : mentoringRoomList
+            })
 
 @studyroom_bp.route('/create', methods=['GET', 'POST'])
 def createRoom() :
