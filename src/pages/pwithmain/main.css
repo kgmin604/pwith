@@ -32,7 +32,15 @@
 }
 .posting{
     margin: 10px 0px;
-    color: grey;
+    color: gray;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 380px;
+}
+
+.posting:hover{
+    color:black;
 }
 
 .study-content{

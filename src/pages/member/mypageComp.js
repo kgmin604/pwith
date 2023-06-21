@@ -268,7 +268,9 @@ function Chat(){
                 <div className="chat-bottom">
                     <div className="chat-boxes scroll-area"> {/* 왼쪽구역: 채팅한 계정들*/}
                     {
-                        chatList === [] ? null :
+                        chatList.length === 0 ?
+                        <div className='signMsg'>쪽지함이<br></br>비어있습니다.</div>
+                        :
                         chatList.map((item, i) => (
                             <a
                                 className={`item ${selectedItem === i ? 'selected' : ''}`}

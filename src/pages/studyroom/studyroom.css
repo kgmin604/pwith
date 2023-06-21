@@ -219,6 +219,34 @@ div.create-wrap
     text-align: center;
 }
 
+/* 스터디룸 0개 시 안내 */
+div.room-part div.list-area
+.img-notice{
+
+}
+
+div.room-part div.list-area div.img-notice
+img{
+    width: 200px;
+    height: 200px;
+    margin: 20px auto;
+}
+
+div.room-part div.list-area div.img-notice
+div{
+    font-family: 'TmoneyRoundWind';
+    margin: 0 auto;
+    text-align: center;
+    text: gray;
+}
+
+div.room-part div.list-area div.img-notice
+span{
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: gray;
+}
+
 /*미로그인시 로그인 안내*/
 
 .img-error{
