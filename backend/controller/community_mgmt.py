@@ -19,7 +19,8 @@ class QNAPost() :
         
         sql = f"INSERT INTO post ( postType, title, writer, curDate, content, category, views, likes )VALUES ('{int(postType)}', '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(category)}', '{int(views)}', '{int(likes)}')"
         done = cursor_db.execute(sql)
-        mysql_db.commit() 
+        mysql_db.commit()
+        mysql_db.close() 
         return done
     
     @staticmethod
@@ -30,6 +31,7 @@ class QNAPost() :
         sql = f"select views from post, member where QNAID = member.memId and member.memId = ( %s );"
         cursor_db.execute(sql, writer)
         row = cursor_db.fetchone()
+        mysql_db.close()
         if row is None:  # better: if not row
           views = 0
         else:
@@ -44,6 +46,7 @@ class QNAPost() :
         sql = f"select likes from post, member where QNAID = member.memId and member.memId = ( %s );"
         cursor_db.execute(sql, writer)
         row = cursor_db.fetchone()
+        mysql_db.close()
         if row is None:  # better: if not row
           likes = 0
         else:
@@ -64,5 +67,6 @@ class QNAPost() :
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
   
+        mysql_db.close()
         
         return rows

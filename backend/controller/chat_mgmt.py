@@ -16,6 +16,7 @@ class chat():
         sql = f"INSERT INTO chat ( sender, receiver, content, curDate ) VALUES ('{str(sender)}', '{str(receiver)}', '{str(content)}', '{str(curDate)}' )"
         done = cursor_db.execute(sql)
         mysql_db.commit() 
+        mysql_db.close()
         return done
     
     def getMyChat(memId, oppId):
@@ -27,6 +28,7 @@ class chat():
         cursor_db.execute(sql)
         
         rows = cursor_db.fetchall()
+        mysql_db.close()
         print(rows)
         
         return rows
@@ -41,8 +43,7 @@ class chat():
         rows = cursor_db.fetchall()
         print(rows)
         
-        # mysql_db.close()
-        # print(rows)
+        mysql_db.close()
         
         return rows
     
@@ -54,6 +55,7 @@ class chat():
         cursor_db.execute(sql)
         memIdList = cursor_db.fetchall()
         #print(memIdList)
+        mysql_db.close()
         
         for memId in memIdList:
             memId = memId[0]  # 튜플의 첫 번째 요소만 가져옴

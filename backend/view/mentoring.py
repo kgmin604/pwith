@@ -1,8 +1,10 @@
 import json
+import base64
 from flask import Flask, session, Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from controller.mentor_mgmt import Portfolio
 from controller.review_mgmt import Review
+from controller.mentoringroom_mgmt import MentoringRoom
 
 mento_bp = Blueprint('mento', __name__, url_prefix='/mentoring')
 
@@ -17,26 +19,41 @@ def showAll() :
         for i in range(len(allP)) :
             allP[i] = list(allP[i])
 
-            # allP[i][1] = json.loads(allP[i][1]) # mentiList
-            # allP[i][2] = json.loads(allP[i][2]) # subject string to json
-
             result.append({
                 'writer' : allP[i][0],
                 'subject' : json.loads(allP[i][2]),
-                'image' : allP[i][3],
+                # 'image' : allP[i][3],
+                'image' : base64.b64encode(allP[i][3]).decode('utf-8'),
                 'brief' : allP[i][4],
                 'content' : allP[i][5]
             })
 
-        # print('==변환 후==')
-        # print(result)
-        print(result)
+            print(base64.b64encode(allP[i][3]).decode('utf-8'))
 
         return jsonify(result)
 
 @mento_bp.route('/<mentoId>', methods = ['GET'])
 def showDetail(mentoId) :
     if request.method == 'GET' :
+
+        apply = request.args.get('apply')
+
+        if apply == 'go' : # 멘토링 신청
+
+            # 1. 룸 생성
+            # mentiId = current_user.getId()
+            mentiId = 'pwith'
+            roomName = str(mentoId) + "와 " + str(mentiId) + "의 공부방"
+
+            roomId = MentoringRoom.create(roomName, mentoId, mentiId)
+
+            # 2. 멘토링룸 쪽지로 전송
+
+            url = "http://localhost:3000/mentoringroom/" + str(roomId)
+
+            # 3. 쪽지 전송
+            # with 정윤
+
 
         detail = {}
 

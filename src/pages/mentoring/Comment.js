@@ -7,8 +7,6 @@ import { Form, Nav, Stack, Button, Table, ListGroup } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import heartOutline from "./img/heart-outline.png";
-import heartFull from "./img/heart-full.png"
 import comment from "./img/comment.png"
 import moreImg from "./img/more.png"
 
@@ -21,6 +19,22 @@ function Comment(props) {
     const [more, setMore] = useState(false);
     const [review, setReview] = useState(props.review);
     const [reviewNum, setReviewNum] = useState(Array.length(review));
+
+    function createComment(content) {
+        axios.post(`/mentoring/${id}`, {
+            content: `${content}`
+        })
+            .then(function (response) {
+                const newReview = [...review, {
+                    "reviewId": response.data,
+                    "review": `${content}`
+                }];
+                setReview(newReview);
+            })
+            .catch(function (error) {
+                // 오류발생시 실행
+            })
+    }
 
     function updateComment(reviewId, content) {
         axios.put(`/mentoring/${id}`, {
@@ -66,7 +80,6 @@ function Comment(props) {
             .then(function () {
                 // always executed
             });
-
     }
 
     const [inputValue, setInputValue] = useState('');
@@ -78,20 +91,21 @@ function Comment(props) {
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log(inputValue);
+        createComment(inputValue);
     };
 
 
     const [updateInput, setUpdateInput] = useState('');
-    const handleClick = (content, reviewId) => {
+    const handleClick = (content) => {
         setUpdateInput(content);
-        updateComment(reviewId, updateInput);
     }
     const handleUpdateChange = (event) => {
-        setInputValue(event.target.value);
+        setUpdateInput(event.target.value);
     };
-    const handleUpdateSubmit = (event) => {
+    const handleUpdateSubmit = (event, reviewId) => {
         event.preventDefault();
         console.log(updateInput);
+        updateComment(reviewId, updateInput);
     };
 
     return (
@@ -115,7 +129,7 @@ function Comment(props) {
                             <div style={{ textAlign: 'start' }}>
                                 <div>{k.menti}</div>
                                 {updateInput ? <>
-                                    <Form onSubmit={handleUpdateSubmit} style={{ width: '90%' }}>
+                                    <Form onSubmit={handleUpdateSubmit(k.reviewId)} style={{ width: '90%' }}>
                                         <Form.Control
                                             className="me-auto"
                                             value={updateInput}
