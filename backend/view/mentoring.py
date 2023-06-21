@@ -40,14 +40,25 @@ def showDetail(mentoId) :
         detail = {}
 
         portfolio = Portfolio.findById(mentoId)
+        review_list = Review.showReview(mentoId)
+        review = []
+
+        for rev in review_list :
+            review.append({
+                'menti' : rev[0],
+                'review' : rev[1]
+            })
 
         detail = {
-            'writer' : portfolio.writer, # @property instead getter
+            'mento' : portfolio.writer, # @property instead getter
             'subject' : json.loads(portfolio.subject),
             'image' : portfolio.image,
             'brief' : portfolio.brief,
-            'content' : portfolio.content
+            'content' : portfolio.content,
+            'review' : review
         }
+
+        print(detail)
         
         return jsonify(detail) # 쪽지 버튼 ???
 

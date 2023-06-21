@@ -19,6 +19,21 @@ class Review :
         return str(self.__mentoId)
 
     @staticmethod
+    def showReview(mentoId) :
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT * FROM review WHERE mentoId = '{mentoId}'"
+
+        cursor_db.execute(sql)
+
+        reviews = cursor_db.fetchall()
+
+        mysql_db.close()
+
+        return reviews
+
+    @staticmethod
     def writeReview(writer, content, mentoId) :
         
         mysql_db = conn_mysql()
