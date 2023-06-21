@@ -2,7 +2,8 @@ from model.db_mysql import conn_mysql
 from datetime import datetime
 
 class QNAPost() :
-    def __init__(self, title, writer, curDate, content, category, views, likes):
+    def __init__(self, postType, title, writer, curDate, content, category, likes, views):
+        self.postTyep = postType
         self.title = title
         self.writer = writer
         self.curDate = curDate
@@ -12,11 +13,11 @@ class QNAPost() :
         self.likes = likes
         
     @staticmethod
-    def insertQNA( title, writer, curDate, content, category, views, likes):    # insert data
+    def insertQNA(postType, title, writer, curDate, content, category, likes, views):    # insert data
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"INSERT INTO QNA ( title, writer, curDate, content, category, views, likes )VALUES ('{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(category)}', '{int(views)}', '{int(likes)}')"
+        sql = f"INSERT INTO post ( postType, title, writer, curDate, content, category, views, likes )VALUES ('{int(postType)}', '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(category)}', '{int(views)}', '{int(likes)}')"
         done = cursor_db.execute(sql)
         mysql_db.commit() 
         return done
@@ -26,7 +27,7 @@ class QNAPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"select views from QNA, member where QNAID = member.memId and member.memId = ( %s );"
+        sql = f"select views from post, member where QNAID = member.memId and member.memId = ( %s );"
         cursor_db.execute(sql, writer)
         row = cursor_db.fetchone()
         if row is None:  # better: if not row
@@ -40,7 +41,7 @@ class QNAPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"select likes from QNA, member where QNAID = member.memId and member.memId = ( %s );"
+        sql = f"select likes from post, member where QNAID = member.memId and member.memId = ( %s );"
         cursor_db.execute(sql, writer)
         row = cursor_db.fetchone()
         if row is None:  # better: if not row
@@ -50,17 +51,16 @@ class QNAPost() :
         return likes+1
         
 
-    @staticmethod
     def curdate():  # date 구하는 함수
         now = datetime.now()
-        return now.date()
+        return str(now)
     
     @staticmethod
     def getQNA():   # QNA 게시글 넘겨주는 함수
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = "select * from QNA"
+        sql = "select * from post where postType = 1"
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
   

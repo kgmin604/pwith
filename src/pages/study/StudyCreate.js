@@ -99,7 +99,7 @@ function StudyCreate() {
 
             <h5 style={{ fontFamily: 'TmoneyRoundWind' }}>스터디 모집글 작성하기</h5>
             <div className='form-wrapper'>
-                <input className="title-input" type='text' placeholder='제목' onChange={getValue} name='title' maxlength='20'/>
+                <input className="title-input" type='text' placeholder='제목' onChange={getValue} name='title' maxlength='50'/>
                 <CKEditor
                     editor={ClassicEditor}
                     data=" "

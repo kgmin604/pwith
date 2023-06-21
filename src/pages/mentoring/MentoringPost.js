@@ -6,7 +6,7 @@ import axios from "axios";
 import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import LikeAndComment from './likeAndComment.js';
+import Comment from './Comment.js';
 
 function MentoringPost() {
     let user = useSelector((state) => state.user);
@@ -56,7 +56,7 @@ function MentoringPost() {
                         <img src={post.image} style={{ borderRadius: '100%', width: '150px', height: '150px',margin:'5px' }} />
 
                     </div>
-                    <p>{post.writer}</p>
+                    <p>{post.mento}</p>
                     <hr style={{ width: '50%', margin: '0 auto' }} />
 
                     
@@ -67,9 +67,8 @@ function MentoringPost() {
                             {parsedContent}
                         </p>
                     </div>
-                    <LikeAndComment />
-                    {/* <LikeAndComment id={post.mento} commentNum={post.review}/> */}
-
+                    <Comment />
+                    {/* <Comment id={id} mento={post.mento} review={post.review}/> */}
                 </div>
 
 

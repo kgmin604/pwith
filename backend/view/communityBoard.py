@@ -92,27 +92,29 @@ def readNews(newsId) :
     
 # QNA 글 작성 페이지
 
-@community_bp.route("/QNA/create", methods=['GET', 'POST'])
+@community_bp.route("/qna/create", methods=['GET', 'POST'])
 @login_required
 def write():
-    if request.method == 'GET' :
-        return jsonify(
-            {'status': 'success'}
-        )
-    else :
+    if request.method == 'POST':
+        print("post\n")
         data = request.get_json(silent=True) # silent: parsing fail 에러 방지
-
+        print(data)
+        
+        postType = 1
         title = data['title']
         # writer = session.get("id")      # 현재 사용자 id
         writer = current_user.getId()
         curDate = QNAPost.curdate()      # 현재 시간
         content = data['content']
         category = data['category']
-        views = QNAPost.incViews(writer)
-        likes = QNAPost.incLikes(writer)
-
-        print(title, writer, curDate, content, category, views, likes)
-        QNAPost.insertQNA( title, writer, curDate, content, category, views, likes)
+        likes = 0
+        views = 0
+        
+        print(postType, title, writer, curDate, content, category, likes, views)
+        QNAPost.insertQNA(postType, title, writer, curDate, content, category, likes, views)
+        
+        
+        return 'Response', 200
     
     
 # # update 페이지 . 글 수정
