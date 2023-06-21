@@ -57,11 +57,6 @@ function MentoringPost() {
         parsedContent = parse(post.content);
     }
 
-
-
-
-
-
     return (
         <div className="MentoringPost">
 
@@ -70,7 +65,7 @@ function MentoringPost() {
 
 
                 <div class="col-md-6">
-                    <h4 >멘토링</h4>
+                    <h5>{post.brief}</h5>
                     <hr style={{ width: '100%', margin: '0 auto' }} />
                     {
                         user.id === post.mento ? <Stack direction="horizontal" className="rewrite-delete-Btn align-right" gap={3} style={{ margin: '5px' }}>
@@ -81,10 +76,10 @@ function MentoringPost() {
                     }
 
                     <div className="MentoringTitle" style={{ display: 'flex', justifyContent: 'center' }} >
-                        <img src={dataUrl} style={{ borderRadius: '100%', width: '150px', height: '150px', margin: '5px' }} />
+                        <img src={dataUrl} style={{ borderRadius: '100%', width: '150px', height: '150px', margin: '10px' }} />
 
                     </div>
-                    <p>{post.mento}</p>
+                    <h4>{post.mento}</h4>
                     <hr style={{ width: '50%', margin: '0 auto' }} />
 
 
