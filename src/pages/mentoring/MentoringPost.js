@@ -67,8 +67,7 @@ function MentoringPost() {
                             {parsedContent}
                         </p>
                     </div>
-                    <Comment />
-                    {/* <Comment id={id} mento={post.mento} review={post.review}/> */}
+                    <Comment id={id} mento={post.mento} review={post.review}/>
                 </div>
 
 
