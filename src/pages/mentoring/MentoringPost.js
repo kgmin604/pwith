@@ -13,11 +13,19 @@ function MentoringPost() {
     let { id } = useParams();
 
     const [post, setPost] = useState({});
+    const [dataUrl, setDataUrl] = useState('');
 
     useEffect(() => {
         axios.get(`/mentoring/${id}`)
             .then(response => {
                 setPost(response.data);
+                const image = response.data.image; // 이미지 데이터
+                if (typeof image === 'string' && image.length > 0) {
+                    const url = `data:image/jpeg;base64,${image}`;
+                    setDataUrl(url);
+                } else {
+                    console.error('Invalid image data:', image);
+                }
                 console.log(response.data); // post에 담긴 데이터 확인
             })
             .catch(error => console.error(error));
@@ -45,7 +53,7 @@ function MentoringPost() {
                     <h4 >멘토링</h4>
                     <hr style={{ width: '100%', margin: '0 auto' }} />
                     {
-                        user.id === post.mento ? <Stack direction="horizontal" className="rewrite-delete-Btn align-right" gap={3} style={{margin:'5px'}}>
+                        user.id === post.mento ? <Stack direction="horizontal" className="rewrite-delete-Btn align-right" gap={3} style={{ margin: '5px' }}>
                             <Button variant='blue'>수정</Button>
                             <Button variant='blue'>삭제</Button>
                         </Stack>
@@ -53,13 +61,13 @@ function MentoringPost() {
                     }
 
                     <div className="MentoringTitle" style={{ display: 'flex', justifyContent: 'center' }} >
-                        <img src={post.image} style={{ borderRadius: '100%', width: '150px', height: '150px',margin:'5px' }} />
+                        <img src={dataUrl} style={{ borderRadius: '100%', width: '150px', height: '150px', margin: '5px' }} />
 
                     </div>
                     <p>{post.mento}</p>
                     <hr style={{ width: '50%', margin: '0 auto' }} />
 
-                    
+
 
 
                     <div className="mentoringContent">
@@ -67,7 +75,7 @@ function MentoringPost() {
                             {parsedContent}
                         </p>
                     </div>
-                    <Comment id={id} mento={post.mento} review={post.review}/>
+                    <Comment id={id} mento={post.mento} review={post.review} />
                 </div>
 
 

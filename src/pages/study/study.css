@@ -86,3 +86,7 @@
 .table td {
   width: 100px;
 }
+
+.pointer-cursor {
+    cursor: pointer;
+  }

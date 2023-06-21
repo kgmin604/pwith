@@ -130,7 +130,7 @@ function StudyBoard(props) {
                 {studyPostList.map(function (post, index) {
                     let date=post.curDate.slice(2,10);
                     return (
-                        <tr className="postCol" key={post.id} onClick={() => navigate(`../${post.id}`)}>
+                        <tr className="postCol pointer-cursor" key={post.id} onClick={() => navigate(`../${post.id}`)}>
                             <td >{post.id}</td>
                             <td colSpan={2} className="text-container">{post.title}</td>
                             <td>{post.writer}</td>
@@ -155,7 +155,7 @@ function StudyBoard(props) {
             </thead>
             <tbody>
                 {searchData.map((item) => (
-                    <tr className="postCol" key={item.id} onClick={() => navigate(`../${item.id}`)}>
+                    <tr className="postCol pointer-cursor" key={item.id} onClick={() => navigate(`../${item.id}`)}>
                         <td>{item.id}</td>
                         <td colSpan={2} className="text-container">{item.title}</td>
                         <td>{item.writer}</td>
@@ -166,8 +166,6 @@ function StudyBoard(props) {
                 ))}
             </tbody>
         </Table>)}
-
-
 
     </div>);
 }
