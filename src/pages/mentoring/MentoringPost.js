@@ -13,20 +13,24 @@ function MentoringPost() {
     let { id } = useParams();
 
     const [post, setPost] = useState({});
+    const [review, setReview] = useState([]);
     const [dataUrl, setDataUrl] = useState('');
 
     useEffect(() => {
         axios.get(`/mentoring/${id}`)
             .then(response => {
-                setPost(response.data);
-                const image = response.data.image; // 이미지 데이터
+                console.log(response.data); // post에 담긴 데이터 확인
+
+                setPost(response.data.portfolio);
+                setReview(response.data.review);
+
+                const image = response.data.portfolio.image; // 이미지 데이터
                 if (typeof image === 'string' && image.length > 0) {
                     const url = `data:image/jpeg;base64,${image}`;
                     setDataUrl(url);
                 } else {
                     console.error('Invalid image data:', image);
                 }
-                console.log(response.data); // post에 담긴 데이터 확인
             })
             .catch(error => console.error(error));
     }, []);
@@ -89,7 +93,7 @@ function MentoringPost() {
                     </div>
 
                     <Button variant='blue' onClick={()=>joinMentoring()} style={{margin:'20px'}}>멘토링 신청하기</Button>
-                    <Comment id={id} mento={post.mento} review={post.review} />
+                    <Comment id={id} mento={post.mento} review={review} />
                 </div>
 
 
