@@ -1,5 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./community.css";
+import "./community-main.css";
 import "../../App.css";
 import "../pwithmain/main.css";
 import React, { useState } from 'react';
@@ -31,6 +32,19 @@ function CommunityBoard(){
 
     return(
         <div className="CommunityBoard">
+            <div className="category">
+                <div className="header">
+                    <h2>최신 IT 뉴스</h2>
+                    <span onClick={() => navigate("../it")}>(+)</span>
+                </div>
+                <div className="body">
+                    <p className="item">
+                        <h3>{it['title']}</h3>
+                        <div>{it['date']}</div>
+                    </p>
+                </div>
+            </div>
+
             <Table bordered hover >
                 <thead>
                     <tr>
