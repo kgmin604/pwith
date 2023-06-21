@@ -1,7 +1,7 @@
 from flask import Flask, session, Blueprint, render_template, redirect, request, jsonify, url_for
 from flask_login import login_required, current_user
 from controller.board_mgmt import studyPost
-from controller.community_mgmt import QNAPost
+from controller.mentor_mgmt import Portfolio
 from model.db_mongo import conn_mongodb
 
 main_bp = Blueprint('pwithmain', __name__, url_prefix='')
@@ -15,6 +15,7 @@ def showStudy():
         if chk == 0:
             studyList = []
             newsList = []
+            mentoringList = []
 
             posts = studyPost.getNStudy()
             for i in range(len(posts)) :
@@ -31,9 +32,18 @@ def showStudy():
                     'title' : news['title'],
                     'url' : news['url']
                 })
+                
+            mentorings = Portfolio.getNmentoring()
+            for i in range(len(mentorings)):
+                portfolio = {
+                    'id' : mentorings[i][0],
+                    'brief' : mentorings[i][1]
+                }
+                mentoringList.append(portfolio)
 
             return jsonify({
                 'study' : studyList,
-                'news' : newsList
+                'news' : newsList,
+                'mentoring' : mentoringList
             })
         
