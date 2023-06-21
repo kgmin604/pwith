@@ -45,7 +45,7 @@ function RoomMain(){
                             <div className="info">
                                 <div className="area" style={{'border-right':'solid 1px lightgray'}}>
                                     <p>참여중인<br></br>스터디</p>
-                                    <h2>{rooms.length}개</h2> {/* 서버 연결 후 수정!!! */}
+                                    <h2>{rooms.length}개</h2>
                                 </div>
                                 <div className="area">
                                     <p>참여중인<br></br>멘토링</p>

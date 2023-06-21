@@ -24,16 +24,15 @@ function PwithMain(){
 
     useEffect(()=>{
         axios({
-            method: "GET",
+            method: "POST",
             url: "/",
+            data: {
+                chkSession: 0
+            }
           })
           .then(function (response) {
-            console.log("main화면 글 불러오기 요청 감");
-            console.log(response.data.studyList);
-            if(response.data.studyList === undefined){ // 수정해야 함!!
-                setStudyList([
-                    {'id':1,'title':'제목1'}, {'id':2,'title':'제목2'}, {'id':3,'title':'제목3'}, {'id':4,'title':'제목4'}, {'id':5,'title':'제목5'}
-                ]);
+            if(response.data === undefined){ // 수정해야 함!!
+                setStudyList([]);
             }
             else setStudyList(response.data);
           })
@@ -51,9 +50,16 @@ function PwithMain(){
                     <span className="posting-plus" onClick={()=>{navigate("/study/main")}}>(+)</span></h5>
                     <ul className="posting-list">
                     {
+                        studyList === [] ? null :
                         studyList.map((a,i)=>{
                             return(
-                                <li className="posting" key={i}> {a['title']}</li> // onClick 속성 추가 -> 눌렀을 때 해당 글로
+                                <li 
+                                    className="posting" 
+                                    key={i}
+                                    onClick={(e)=>{e.stopPropagation(); navigate(`./study/${a['id']}`)}}
+                                > 
+                                    {a['title']}
+                                </li>
                             )
                         })
                     }  

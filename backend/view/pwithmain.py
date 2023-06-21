@@ -7,9 +7,7 @@ main_bp = Blueprint('pwithmain', __name__, url_prefix='')
 
 @main_bp.route('/', methods = ['GET', 'POST'])
 def showStudy():
-    if request.method == 'GET':
-        print("get 요청")
-        
+    if request.method == 'POST':
         posts = studyPost.getNStudy()
         studyList = []
 

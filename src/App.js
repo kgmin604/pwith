@@ -44,6 +44,7 @@ function App() {
   let user = useSelector((state) => state.user);
   let dispatch = useDispatch();
 
+  // 로그인 유지 목적
   // useEffect(()=>{
   //   axios({
   //     method: "POST",

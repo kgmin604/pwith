@@ -153,12 +153,6 @@ function Chat(){
               console.log(error);
           });
     };
-    
-    let [open, setOpen] = useState(false);
-    let handleModal = (event) => {
-        event.stopPropagation();
-        setOpen(!open);
-    }
 
     let [content, setContent] = useState('');
     let changeContent = (event) =>{
@@ -174,6 +168,15 @@ function Chat(){
     }
 
     let [msg,setMsg] = useState('');
+
+    /* 모달창 관리 */
+    let [open, setOpen] = useState(false);
+    let handleModal = (event) => {
+        event.stopPropagation();
+        setOpen(!open);
+        setMsg('');
+        setContent('');
+    }
 
     useEffect(() => { // 맨 처음 한번만 실행
         axios({
@@ -217,31 +220,38 @@ function Chat(){
             },
           })
           .then(function (response) {
-              if(response.data.result===1){
-                setValid(true);
-              }
-              else{
-                setValid(false);
-              }
+                if(response.data===1){
+                    setValid(true);
+                }
+                else{
+                    setValid(false);
+                }
           })
           .catch(function (error) {
-              console.log(error);
+                console.log("쪽지 수신자 아이디 확인 에러");
+                console.log(error);
         });
     }
 
     function checkRequest(event){
         event.stopPropagation();
-        if(oppId==='')
-            setMsg('수신자 아이디를 입력해주세요.');
-        else if(content==='')
-            setMsg('내용을 입력해주세요.');
+        if(oppId===''){
+            setMsg('! 수신자 아이디를 입력해주세요.');
+            return;
+        }
+        else if(content===''){
+            setMsg('! 내용을 입력해주세요.');
+            return;
+        }
         else {
-            checkOppId();
+            //checkOppId();
+            setValid(true);
             if(valid){
+                setMsg('')
                 sendRequest();
             }
             else{
-                setMsg('없는 수신자 아이디입니다.')
+                setMsg('! 없는 수신자 아이디입니다.')
             }
         }
     }
@@ -326,12 +336,13 @@ function Chat(){
                                         onChange={e=>changeContent(e)}>
                                     </textarea>
                                 </p>
-                                <input 
+                                <input
+                                    type="button"
                                     value="전송" 
                                     className="button"
                                     onClick={e=>checkRequest(e)}
                                 ></input>
-                                <div>{msg}</div>
+                                <div className="message">{msg}</div>
                             </div>
                         </form>
                     </>
