@@ -113,7 +113,8 @@ def reply(id) :
 
         cnt = request.get_json()['content']
 
-        writer = current_user.getId()
+        # writer = current_user.getId()
+        writer='a'
 
         date = datetime.now()
 
@@ -125,7 +126,7 @@ def reply(id) :
 
         return jsonify({
             'replyId' : pk, # 0 is fail
-            'date' : date
+            'date' : studyPost.getFormattedDate(date)
         })
 
     elif request.method == 'PUT' : # 댓글 수정
