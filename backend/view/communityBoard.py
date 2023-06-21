@@ -75,18 +75,20 @@ def communityMain() :
 def listNews() :
     if request.method == 'GET' :
 
-        # page = request.args.get('page')
-        # date = request.args.get('date')
-
-        # print(date)
-
         result = []
 
-        news_list = conn_mongodb().ITnews_crawling.find()
-        # news_list = conn_mongodb().ITnews_crawling.find({'date': date})
+        page = request.args.get('page')
+        date = request.args.get('date')
 
-        for i in range(10) :
-            news = news_list[i]
+        if not page or not date :
+            return jsonify(result)
+
+        page = int(page)
+        formatted_date = f'{date[:4]}년 {date[4:6]}월 {date[6:]}일'
+
+        news_list = conn_mongodb().ITnews_crawling.find({'date':formatted_date}).sort('_id', -1).skip((page-1)*10).limit(10)
+
+        for news in news_list :
             result.append({
                 'date': news['date'],
                 'title' : news['title'],
@@ -95,51 +97,9 @@ def listNews() :
                 'url' : news['url']
             })
             
-        return jsonify(result) # 일단 15개만 넘김 (pagination&date 표현 방식 결정 후 보완)
+        return jsonify(result)
         
     # 추후 검색 구현할 때 POST 방식 추가
-
-'''
-@community_bp.route('/it/<int:newsId>', methods=['GET', 'POST'])
-def readNews(newsId) :
-    if request.method == 'GET' : # postman 테스트 완.
-
-        news = conn_mongodb().ITnews_crawling.find_one({'newsId': newsId})
-        
-        if not news : # 없을 시
-            return jsonify({
-                'status' : 'fail'
-            })
-
-        return jsonify({
-            'date': news['date'],
-            'title': news['title'],
-            'content': news['content'],
-            'img': news['img'],
-            'url': news['url']
-        })
-    else : # 좋아요
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
-        
-        sql_update = f'UPDATE it_news SET likes = likes + 1 WHERE newsId = {newsId}'
-
-        cursor_db.execute(sql_update)
-        mysql_db.commit()
-
-        sql_select = f"SELECT likes FROM it_news WHERE newsId = {newsId}"
-        cursor_db.execute(sql_select)
-
-        likes = cursor_db.fetchone()[0]
-
-        mysql_db.close()
-        
-        return jsonify({
-            'likes' : likes
-        })
-'''
-
-#QNA main 페이지
 
 @community_bp.route('/qna/main', methods=['GET', 'POST'])
 def show():
