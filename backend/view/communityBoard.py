@@ -1,5 +1,6 @@
 from flask import Flask, session, Blueprint, render_template, redirect, request, jsonify, url_for
 from flask_login import login_required, current_user
+from datetime import datetime
 # from controller.community_mgmt import bootPost, QNAPost
 from model.db_mongo import conn_mongodb
 from model.db_mysql import conn_mysql
@@ -17,19 +18,33 @@ def communityMain() :
         qna = []
 
         news_db = conn_mongodb().ITnews_crawling.find().limit(3)
-
         for i in range(3) :
+
+            title = news_db[i]['title']
+            date = news_db[i]['date']
+            url = news_db[i]['url']
+
+            formatted_date = datetime.strptime(date, '%Y년 %m월 %d일').strftime('%Y-%m-%d')
+
             news.append({
-                'title' : news_db[i]['title'],
-                'date' : news_db[i]['date'],
-                'url' : news_db[i]['url']
+                'title' : title,
+                'date' : formatted_date,
+                'url' : url
             })
         
+        qna_db = QNAPost.get3QNA()
         for i in range(3) :
+
+            postId = qna_db[i][0]
+            title = qna_db[i][2]
+
+            date = qna_db[i][5]
+            formatted_date = date.strftime("%Y-%m-%d")
+
             qna.append({
-                'postId' : '',
-                'title' : news_db[i]['title'],
-                'date' : news_db[i]['date']
+                'postId' : postId,
+                'title' : title,
+                'date' : formatted_date
             })
 
         # dummmmmmmmmmmmmmmy
