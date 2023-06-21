@@ -6,7 +6,7 @@ import axios from "axios";
 import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import LikeAndComment from './likeAndComment.js';
+// import LikeAndComment from './likeAndComment.js';
 
 function StudyPost(props) {
     let user = useSelector((state) => state.user);
@@ -60,7 +60,7 @@ function StudyPost(props) {
                 <p>인원수:{totalP}</p>
             </div>
             <Button variant='blue'>스터디 참여하기</Button>
-            <LikeAndComment id={id} like={post.likes} commentNum={post.commentNum} commentList={post.commentList}/>
+            {/* <LikeAndComment id={id} likes={post.likes} liked={post.liked} replyList={post.replyList}/> */}
         </div>
     );
 

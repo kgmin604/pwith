@@ -17,6 +17,10 @@
     text-align: center;
 }
 
+.QnaPost{
+    text-align: center;
+}
+
 .tableHead{
     display: flex;
     justify-content: space-between;

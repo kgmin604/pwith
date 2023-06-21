@@ -4,28 +4,39 @@ from flask import Flask, jsonify
 
 class studyPost() :
     
-    def __init__(self, postType, title, writer, content, curDate, category, likes, views, liked):
+    def __init__(self, postType, title, writer, content, curDate, likes, views, liked):
         self.postType = postType
         self.title = title
         self.writer = writer
         self.curDate = curDate
         self.content = content
-        self.category = category
         self.likes = likes
         self.views = views
         self.liked = liked
 
     @staticmethod
-    def insertStudy( postType, title, writer, curDate, content, category, likes, views):   # insert data
+    def insertStudy( postType, title, writer, curDate, content, likes, views):   # insert data
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"INSERT INTO post ( postType, title, writer, curDate, content, category, likes, views )VALUES ('{int(postType)}', '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(category)}', '{int(likes)}', '{int(views)}')"
+        sql = f"INSERT INTO post ( postType, title, writer, curDate, content, likes, views )VALUES ('{int(postType)}', '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(likes)}', '{int(views)}')"
         done = cursor_db.execute(sql)
         mysql_db.commit() 
         mysql_db.close()
         return done
      
+    @staticmethod
+    def getMyStudyList(writer):     # 내가 만든 스터디룸 리스트 반환하는 함수
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = "select roomId, roomName from studyRoom where leader = '{writer}'"
+        cursor_db.execute(sql)
+        rows = cursor_db.fetchall()
+        mysql_db.close()
+        #print(rows)
+        
+        return rows
     
     @staticmethod
     def incViews(writer):     #조회수 1씩 증가하는 함수
@@ -89,7 +100,7 @@ class studyPost() :
         if not res :
             return None
 
-        post = studyPost(res[0], res[2], res[3], res[4], res[5], res[6], res[7], res[8], res[9])
+        post = studyPost(res[1], res[2], res[3], res[4], res[5], res[6], res[7], res[8])
         return post
 
     @staticmethod

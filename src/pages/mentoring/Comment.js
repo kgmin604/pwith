@@ -155,8 +155,9 @@ function Comment(props) {
                                             value={updateInput}
                                             onChange={handleUpdateChange}
                                         />
+                                        <Button variant="blue" type="submit" style={{ width: '10%' }}>수정</Button>
                                     </Form>
-                                    <Button variant="blue" type="submit" style={{ width: '10%' }}>수정</Button>
+                                    
                                 </> : k.review}
                             </div>
                             <div style={{ textAlign: 'end' }}>
@@ -178,8 +179,8 @@ function Comment(props) {
             })}
 
             <div className='align-side'>{/* 댓글달기*/}
-                <Form onSubmit={handleSubmit} style={{ width: '90%' }} className='align-side'>
-                    <Form.Control
+                <Form onSubmit={handleSubmit} style={{ width: '100%' }} className='align-side'>
+                    <Form.Control style={{ width: '90%' }}
                         className="me-auto"
                         placeholder="최고의 멘토, 추천합니다!"
                         value={inputValue}

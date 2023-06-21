@@ -17,7 +17,7 @@ function CommunityMain() {
                     <Nav defaultActiveKey="/community" className="flex-column">
                         <Link to="/community/it" style={{ color: '#282c34' }}>IT 뉴스</Link>
                         <Link to="/community/content" style={{ color: '#282c34' }}>학습 컨텐츠</Link>
-                        <Link to="/community/qna" style={{ color: '#282c34' }}>QnA</Link>
+                        <Link to="/community/qna/main" style={{ color: '#282c34' }}>QnA</Link>
                     </Nav>
                 </div>
 
