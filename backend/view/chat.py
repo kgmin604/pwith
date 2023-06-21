@@ -16,7 +16,7 @@ def send():
         memId = current_user.getId()
         oppId = data.get('oppId')
         
-        #print('postType = ' + str(postType))
+        #print('postType = ' + str(postType)) # 형변환 추가-kgm
         #print('oppId = ' + oppId)
         
         if postType == '0':  # 상대방과의 채팅목록 가져오기

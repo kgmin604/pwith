@@ -21,7 +21,8 @@ function RoomMain(){
             url: "/studyroom"
         })
         .then(function (response) {
-            setRooms(response.data);
+            setRooms(response.data.studyRoom);
+            setRooms2(response.data.mentoringRoom);
         })
         .catch(function (error) {
             console.log(error);
@@ -49,7 +50,7 @@ function RoomMain(){
                                 </div>
                                 <div className="area">
                                     <p>참여중인<br></br>멘토링</p>
-                                    <h2>3개</h2> {/* 서버 연결 후 수정!!! */}
+                                    <h2>{rooms2.length}개</h2>
                                 </div>
                             </div>
                             <div className="create-btn" onClick={ ()=>navigate('./create')}>스터디 만들기</div>
@@ -64,7 +65,7 @@ function RoomMain(){
                                 rooms.map((room, index) => (
                                     <a className="item" key={index} onClick={(e) => {
                                         e.stopPropagation();
-                                        //navigate(`/studyroom/${room.roomId}`);
+                                        navigate(`/studyroom/${room.roomId}`);
                                     }}>
                                     <h3>{room.title}</h3>
                                     </a>

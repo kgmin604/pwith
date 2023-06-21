@@ -384,7 +384,9 @@ h3{
     margin-bottom: 15px;
     font-size: 18px;
     font-weight: normal;
+    text-align: left;
     text-align: center;
+    padding-left: 10px;
 }
 
 div.mypage-chat div.modal
