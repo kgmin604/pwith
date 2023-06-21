@@ -15,6 +15,8 @@ function RoomMain(){
     let [rooms, setRooms] = useState([]);
     let [rooms2, setRooms2] = useState([]);
 
+    let [chkAxios, setChkAxios] = useState(false);
+
     useEffect(()=>{
         axios({
             method: "GET",
@@ -23,6 +25,7 @@ function RoomMain(){
         .then(function (response) {
             setRooms(response.data.studyRoom);
             setRooms2(response.data.mentoringRoom);
+            setChkAxios(true);
         })
         .catch(function (error) {
             console.log(error);
@@ -59,31 +62,43 @@ function RoomMain(){
                     <div class="col-md-9">
                         <div className="list-area">
                             <h2><span style={{'color':'#98afca'}}>▶</span>스터디</h2>
-                            <div className="items">
                             {
-                                rooms === [] ? null :
-                                rooms.map((room, index) => (
-                                    <a className="item" key={index} onClick={(e) => {
-                                        e.stopPropagation();
-                                        navigate(`/studyroom/${room.roomId}`);
-                                    }}>
-                                    <h3>{room.title}</h3>
-                                    </a>
-                                ))
+                                chkAxios && rooms.length === 0 ? 
+                                <>
+                                    <div className="img-notice">
+                                        <img src='/img_study.png'></img>
+                                        <div>참여한 스터디가 없네요! {" "}
+                                            <span onClick={(e)=>{e.stopPropagation(); navigate('../study/main'); }}>
+                                                스터디 둘러보기
+                                            </span>
+                                        </div>
+                                    </div>
+                                </>
+                                :
+                                <div className="items">
+                                {
+                                    rooms.map((room, index) => (
+                                        <a className="item" key={index} onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigate(`/studyroom/${room.roomId}`);
+                                        }}>
+                                        <h3>{room.title}</h3>
+                                        </a>
+                                    ))
+                                }
+                                </div>
                             }
-                            </div>
                         </div>
                         <div className="list-area">
                             <h2><span style={{'color':'#98afca'}}>▶</span>멘토링</h2>
                             <div className="items">
                             {
-                                rooms2 === [] ? null :
                                 rooms2.map((room, index) => (
                                     <a className="item" key={index} onClick={(e) => {
                                         e.stopPropagation();
-                                        navigate(`/studyroom/${room.roomId}`);
+                                        navigate(`/mentoring/${room.roomId}`);
                                     }}>
-                                    <h3>{room.roomName}</h3>
+                                    <h3>{room.title}</h3>
                                     </a>
                                 ))
                             }

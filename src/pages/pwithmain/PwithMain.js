@@ -6,21 +6,17 @@ import { useNavigate } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
 function PwithMain(){
-
-    let navigate = useNavigate();
-    // {'id':-1,'title':''}, {'id':-1,'title':''}, {'id':-1,'title':''}, {'id':-1,'title':''}, {'id':-1,'title':''} // 초기화용
-    let [studyList, setStudyList] = useState([
+    const dummy = [
         {'id':1,'title':'제목1'}, {'id':2,'title':'제목2'}, {'id':3,'title':'제목3'}, {'id':4,'title':'제목4'}, {'id':5,'title':'제목5'}
-    ])
-    let [newsList, setNewsList] = useState([
-        {'id':1,'title':'제목1'}, {'id':2,'title':'제목2'}, {'id':3,'title':'제목3'}, {'id':4,'title':'제목4'}, {'id':5,'title':'제목5'}
-    ])
-    let [mentorList, setMentorList] = useState([
-        {'id':1,'title':'제목1'}, {'id':2,'title':'제목2'}, {'id':3,'title':'제목3'}, {'id':4,'title':'제목4'}, {'id':5,'title':'제목5'}
-    ])
-    let [contentList, setContentList] = useState([
+    ];
+    const dummy2 = [
         {'id':1,'title':'제목1'}, {'id':2,'title':'제목2'}, {'id':3,'title':'제목3'}, {'id':4,'title':'제목4'}
-    ])
+    ];
+    let navigate = useNavigate();
+    let [studyList, setStudyList] = useState(dummy);
+    let [newsList, setNewsList] = useState(dummy);
+    let [mentorList, setMentorList] = useState(dummy);
+    let [contentList, setContentList] = useState(dummy2);
 
     useEffect(()=>{
         axios({

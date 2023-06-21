@@ -49,7 +49,7 @@ class MentoringRoom() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT * FROM studyRoom WHERE leader = '{logUser}'"
+        sql = f"SELECT * FROM mentoringRoom WHERE mentoId = '{logUser}' or mentiId = '{logUser}'"
         cursor_db.execute(sql)
 
         result = cursor_db.fetchall()
