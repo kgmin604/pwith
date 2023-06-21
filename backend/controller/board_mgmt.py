@@ -4,7 +4,7 @@ from flask import Flask, jsonify
 
 class studyPost() :
     
-    def __init__(self, postType, title, writer, content, curDate, category, likes, views):
+    def __init__(self, postType, title, writer, content, curDate, category, likes, views, liked):
         self.postType = postType
         self.title = title
         self.writer = writer
@@ -13,6 +13,7 @@ class studyPost() :
         self.category = category
         self.likes = likes
         self.views = views
+        self.liked = liked
 
     @staticmethod
     def insertStudy( postType, title, writer, curDate, content, category, likes, views):   # insert data
@@ -88,7 +89,7 @@ class studyPost() :
         if not res :
             return None
 
-        post = studyPost(res[0], res[2], res[3], res[4], res[5], res[6], res[7], res[8])
+        post = studyPost(res[0], res[2], res[3], res[4], res[5], res[6], res[7], res[8], res[9])
         return post
 
     @staticmethod
@@ -153,6 +154,9 @@ class studyPost() :
     
     def getViews(self):
         return int(self.views)
+    
+    def getLiked(self):
+        return bool(self.liked)
     
     def getFormattedDate(curDate):
         if isinstance(curDate, str):

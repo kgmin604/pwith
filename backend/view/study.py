@@ -32,7 +32,8 @@ def show():
                         'curDate' : posts[i][5],
                         'category' : posts[i][6],
                         'likes' : posts[i][7],
-                        'views' : posts[i][8]
+                        'views' : posts[i][8],
+                        'liked' : posts[i][9]
                     }
                 post['curDate'] = studyPost.getFormattedDate(posts[i][5])
                 result.append(post)
@@ -61,7 +62,8 @@ def show():
                         'curDate' : posts[i][5],
                         'category' : posts[i][6],
                         'likes' : posts[i][7],
-                        'views' : posts[i][8]
+                        'views' : posts[i][8],
+                        'liked' : posts[i][9]
                     }
                     post['curDate'] = studyPost.getFormattedDate(posts[i][5])
                     
@@ -83,7 +85,8 @@ def showDetail(id) :
             'curDate' : post.getCurDate(),
             'category' : post.getCategory(),
             'likes' : post.getLikes(),
-            'views': post.getViews()
+            'views': post.getViews(),
+            'liked': post.getLiked()
             #'totalP': post.getTotalP(),
             
         }
