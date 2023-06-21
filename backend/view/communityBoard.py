@@ -6,6 +6,8 @@ from model.db_mongo import conn_mongodb
 from model.db_mysql import conn_mysql
 # from view.community import conn_mongodb
 from controller.community_mgmt import QNAPost
+from controller.board_mgmt import studyPost
+from controller.reply_mgmt import Reply
 
 community_bp = Blueprint('community', __name__, url_prefix='/community')
 
@@ -106,19 +108,14 @@ def listNews() :
             'page' : requiredPage,
             'news' : result
         })
-        
     # 추후 검색 구현할 때 POST 방식 추가
 
 @community_bp.route('/qna/main', methods=['GET', 'POST'])
 def show():
-    if request.method =='GET':     # 글 가져와서 화면에 띄우기
+    if request.method =='GET':
         
         searchType = request.args.get('type')
         searchValue = request.args.get('value')
-        # print("서치타입")
-        # print(searchType)
-        # print("서치값")
-        # print(searchValue)
 
         if (searchType is None) or (searchValue is None) : # 전체 글 출력
             result = []
@@ -126,16 +123,13 @@ def show():
             for i in range(len(posts)):
                 post = {
                         'id' : posts[i][0],
-                        'type' : posts[i][1],
                         'title' : posts[i][2],
                         'writer' : posts[i][3],
-                        'content' : posts[i][4],
                         'curDate' : posts[i][5],
-                        'category' : posts[i][6],
+                        # 'category' : posts[i][6],
                         'likes' : posts[i][7],
-                        'views' : posts[i][8],
-                        'liked' : posts[i][9]
-                    }
+                        'views' : posts[i][9]
+                        }
                 post['curDate'] = QNAPost.getFormattedDate(posts[i][5])
                 result.append(post)
             return jsonify(result)
@@ -159,45 +153,17 @@ def show():
                         'type' : posts[i][1],
                         'title' : posts[i][2],
                         'writer' : posts[i][3],
-                        'content' : posts[i][4],
+                        # 'content' : posts[i][4],
                         'curDate' : posts[i][5],
-                        'category' : posts[i][6],
+                        # 'category' : posts[i][6],
                         'likes' : posts[i][7],
-                        'views' : posts[i][9],
-                        'liked' : posts[i][8]
+                        'views' : posts[i][9]
                     }
                     post['curDate'] = QNAPost.getFormattedDate(posts[i][5])
                     
                     result.append(post)
 
             return jsonify(result)
-
-    
-# QNA 글 작성 페이지
-
-@community_bp.route("/qna/create", methods=['GET', 'POST'])
-@login_required
-def write():
-    if request.method == 'POST':
-        print("post\n")
-        data = request.get_json(silent=True) # silent: parsing fail 에러 방지
-        print(data)
-        
-        postType = 1
-        title = data['title']
-        # writer = session.get("id")      # 현재 사용자 id
-        writer = current_user.getId()
-        curDate = QNAPost.curdate()      # 현재 시간
-        content = data['content']
-        category = data['category']
-        likes = 0
-        views = 0
-        
-        print(postType, title, writer, curDate, content, category, likes, views)
-        QNAPost.insertQNA(postType, title, writer, curDate, content, category, likes, views)
-        
-        
-        return 'Response', 200
     
 @community_bp.route('/qna/<int:id>', methods=['GET']) # 글 조회
 def showDetail(id) :
@@ -215,16 +181,109 @@ def showDetail(id) :
             'writer' : post.getWriter(),
             'content': post.getContent(),
             'curDate' : post.getCurDate(),
-            'category' : post.getCategory(),
             'likes' : post.getLikes(),
-            'liked': post.getLiked(),
             'views': post.getViews()
         }
         viewresult = QNAPost.updateViews(id)
         # toFront['curDate'] = QNAPost.getFormattedDate(toFront['curDate'])
+
+        replyList = Reply.showReply(1, id) # 댓글 조회
+
+        replyResult = []
+
+        for reply in replyList :
+
+            date = studyPost.getFormattedDate(reply[3])
+
+            replyResult.append({
+                'commentId' : reply[0],
+                'writer' : reply[1],
+                'comment' : reply[2],
+                'date' : date
+            })
         
-        return toFront
+        return jsonify({
+            'post' : result,
+            'reply' : replyResult
+        })
+
+@community_bp.route('/qna/<int:id>', methods = ['POST', 'PUT', 'DELETE'])
+def reply(id) :
+    if request.method == 'POST' : # 댓글 작성
+
+        cnt = request.get_json()['content']
+
+        writer = current_user.getId()
+        # writer = 'bb' # dummmmmmmmmmmmmmmmmmmmmmy
+
+        date = datetime.now()
+
+        try :
+            pk = Reply.writeReply(writer, cnt, date, 1, id)
+        except Exception as ex:
+            print("에러 이유 : " + str(ex))
+            pk = 0
+
+        return jsonify({
+            'replyId' : pk, # 0 is fail
+            'date' : studyPost.getFormattedDate(date)
+        })
+
+    elif request.method == 'PUT' : # 댓글 수정
+
+        replyId = request.get_json()['replyId']
+        newContent = request.get_json()['content']
+
+        try :
+            done = Reply.modifyReply(replyId, newContent)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return jsonify({
+            'done' : done
+        })
+
+    else : # 댓글 삭제
+
+        replyId = request.get_json()['replyId']
+
+        try :
+            done = Reply.removeReply(replyId)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return jsonify({
+            'done' : done
+        })
     
+
+@login_required
+@community_bp.route("/qna/create", methods=['GET', 'POST'])
+def write():
+    if request.method == 'POST':
+        # print("post\n")
+        data = request.get_json(silent=True)
+        # print(data)
+        
+        postType = 1
+        title = data['title']
+        writer = current_user.getId()
+        curDate = QNAPost.curdate()
+        content = data['content']
+        category = data['category']
+        likes = 0
+        views = 0
+        
+        # print(postType, title, writer, curDate, content, category, likes, views)
+        done = QNAPost.insertQNA(postType, title, writer, curDate, content, category, likes, views)
+        
+        return jsonify({
+            'done' : done
+        })
+
+
 # # update 페이지 . 글 수정
 # @community_bp.route('/QNA/update', methods=['GET', 'POST'])
 # @login_required
