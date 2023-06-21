@@ -15,10 +15,13 @@ function Comment(props) {
     const mento = props.mento;
     const id = props.id;
 
-    //더미데이터
     const [more, setMore] = useState(false);
-    const [review, setReview] = useState(props.review);
-    const [reviewNum, setReviewNum] = useState(Array.length(review));
+    const [review, setReview] = useState(props.review || []);
+    const [reviewNum, setReviewNum] = useState(review.length);
+
+    useEffect(()=>{
+        console.log(review);
+    },[review])
 
     function createComment(content) {
         axios.post(`/mentoring/${id}`, {
@@ -26,10 +29,12 @@ function Comment(props) {
         })
             .then(function (response) {
                 const newReview = [...review, {
-                    "reviewId": response.data,
+                    "reviewId": response.data.reviewId,
                     "review": `${content}`
                 }];
+                console.log(response.data);
                 setReview(newReview);
+                setInputValue('');
             })
             .catch(function (error) {
                 // 오류발생시 실행
@@ -86,10 +91,12 @@ function Comment(props) {
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
+        console.log(inputValue)
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        console.log(review);
         console.log(inputValue);
         createComment(inputValue);
     };
@@ -125,6 +132,7 @@ function Comment(props) {
                 <span style={{ width: '5px' }}></span>
                 <div className='align-side'>
                     {review.map((k, i) => {
+                        return(
                         <div key={k.reviewId}>
                             <div style={{ textAlign: 'start' }}>
                                 <div>{k.menti}</div>
@@ -149,22 +157,22 @@ function Comment(props) {
                                     </ListGroup> : null}
                                 </div>
                             </div>
-                        </div>
+                        </div>)
                     })}
                 </div>
             </div>
 
             <div className='align-side'>{/* 댓글달기*/}
-                <Form onSubmit={handleSubmit} style={{ width: '90%' }}>
+                <Form onSubmit={handleSubmit} style={{ width: '90%' }} className='align-side'>
                     <Form.Control
                         className="me-auto"
-                        placeholder="최고의 스터디, 추천합니다!"
+                        placeholder="최고의 멘토, 추천합니다!"
                         value={inputValue}
                         onChange={handleInputChange}
                     />
-                </Form>
-                <span style={{ width: '5px' }}></span>
+                    <span style={{ width: '5px' }}></span>
                 <Button variant="blue" type="submit" style={{ width: '10%' }}>등록</Button>
+                </Form>
             </div>
 
         </div>

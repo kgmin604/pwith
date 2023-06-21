@@ -126,22 +126,68 @@ def readNews(newsId) :
 
 #QNA main 페이지
 
-# @community_bp.route('/main', methods=['GET', 'POST'])
-# def show():
-#    if request.method =='GET':     # 글 가져와서 화면에 띄우기
-#        data = request.get_json(silent=True)
-#        
-#        data = jsonify(QNAPost.getQNA()) 
-#        return data
-#    else: # 글 검색 postman 테스트 완. - 채영
-
-#        title = '안녕' # (제목) 검색어 전달될 예정
-#        searchedPost = QNAPost.findByTitle(title)
-
-        # writer = 'a' # (글쓴이) 검색어 전달될 예정
-        # searchedPost = QNAPost().findByWriter(writer)
+@community_bp.route('/qna/main', methods=['GET', 'POST'])
+def show():
+    if request.method =='GET':     # 글 가져와서 화면에 띄우기
         
-#        return list(searchedPost)
+        searchType = request.args.get('type')
+        searchValue = request.args.get('value')
+        # print("서치타입")
+        # print(searchType)
+        # print("서치값")
+        # print(searchValue)
+
+        if (searchType is None) or (searchValue is None) : # 전체 글 출력
+            result = []
+            posts = QNAPost.getQNA()
+            for i in range(len(posts)):
+                post = {
+                        'id' : posts[i][0],
+                        'type' : posts[i][1],
+                        'title' : posts[i][2],
+                        'writer' : posts[i][3],
+                        'content' : posts[i][4],
+                        'curDate' : posts[i][5],
+                        'category' : posts[i][6],
+                        'likes' : posts[i][7],
+                        'views' : posts[i][8],
+                        'liked' : posts[i][9]
+                    }
+                post['curDate'] = QNAPost.getFormattedDate(posts[i][5])
+                result.append(post)
+            return jsonify(result)
+
+        else : # 글 검색
+            posts = []
+
+            if int(searchType) == 0: # 제목으로 검색
+                posts = QNAPost.findByTitle(searchValue, 1)
+            else: # 글쓴이로 검색
+                posts = QNAPost.findByWriter(searchValue, 1)
+
+            result = []
+
+            if posts is None :
+                pass # 결과 없을 시 empty list
+            else :
+                for i in range(len(posts)) :
+                    post = {
+                        'id' : posts[i][0],
+                        'type' : posts[i][1],
+                        'title' : posts[i][2],
+                        'writer' : posts[i][3],
+                        'content' : posts[i][4],
+                        'curDate' : posts[i][5],
+                        'category' : posts[i][6],
+                        'likes' : posts[i][7],
+                        'views' : posts[i][8],
+                        'liked' : posts[i][9]
+                    }
+                    post['curDate'] = QNAPost.getFormattedDate(posts[i][5])
+                    
+                    result.append(post)
+
+            return jsonify(result)
 
     
 # QNA 글 작성 페이지
@@ -170,6 +216,29 @@ def write():
         
         return 'Response', 200
     
+    
+#  게시글 상세페이지 
+@community_bp.route('/qna/<int:id>', methods=['GET']) # 글 조회
+def showDetail(id) :
+    if request.method == 'GET' :
+
+        toFront = {}
+
+        post = QNAPost.findById(id)
+        toFront = {
+            'title': post.getTitle(),
+            'writer' : post.getWriter(),
+            'content': post.getContent(),
+            'curDate' : post.getCurDate(),
+            'category' : post.getCategory(),
+            'likes' : post.getLikes(),
+            'views': post.getViews(),
+            'liked': post.getLiked()
+            
+        }
+        toFront['curDate'] = QNAPost.getFormattedDate(toFront['curDate'])
+        
+        return toFront
     
 # # update 페이지 . 글 수정
 # @community_bp.route('/QNA/update', methods=['GET', 'POST'])
