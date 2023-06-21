@@ -25,7 +25,7 @@ class chat():
         cursor_db = mysql_db.cursor()
         print(memId , oppId)
         
-        sql = f"select distinct * from chat where (sender = '{str(memId)}' and receiver = '{str(oppId)}') or (sender = '{str(oppId)}' and receiver = '{str(memId)}')"
+        sql = f"select distinct * from chat where (sender = '{str(memId)}' and receiver = '{str(oppId)}') or (sender = '{str(oppId)}' and receiver = '{str(memId)}') order by curDate desc"
         cursor_db.execute(sql)
         
         rows = cursor_db.fetchall()
@@ -38,7 +38,7 @@ class chat():
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"select  * from chat where sender = '{str(memId)}' or receiver = '{str(memId)}' group by receiver"
+        sql = f"select  * from chat where sender = '{str(memId)}' or receiver = '{str(memId)}' group by receiver order by curDate desc"
 
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
