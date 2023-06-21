@@ -7,6 +7,54 @@ from model.db_mysql import conn_mysql
 from controller.community_mgmt import QNAPost
 
 community_bp = Blueprint('community', __name__, url_prefix='/community')
+
+@community_bp.route('/main', methods = ['GET'])
+def communityMain() :
+    if request.method == 'GET' :
+
+        news = []
+        conts = []
+        qna = []
+
+        news_db = conn_mongodb().ITnews_crawling.find().limit(3)
+
+        for i in range(3) :
+            news.append({
+                'title' : news_db[i]['title'],
+                'date' : news_db[i]['date'],
+                'url' : news_db[i]['url']
+            })
+        
+        for i in range(3) :
+            qna.append({
+                'postId' : '',
+                'title' : news_db[i]['title'],
+                'date' : news_db[i]['date']
+            })
+
+        # dummmmmmmmmmmmmmmy
+        conts.append({
+            'title' : '자바 ORM 표준 JPA 프로그래밍 - 기본편',
+            'type' : 'lecture',
+            'url' : 'https://www.inflearn.com/course/ORM-JPA-Basic/dashboard'
+        })
+        conts.append({
+            'title' : '윤성우의 열혈 C++ 프로그래밍',
+            'type' : 'book',
+            'url' : 'https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=6960708'
+        })
+        conts.append({
+            'title' : '스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술',
+            'type' : 'lecture',
+            'url' : 'https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-1/dashboard'
+        })
+        # dummmmmmmmmmmmmmmy
+
+        return jsonify({
+            'news' : news,
+            'qna' : qna,
+            'contents' : conts
+        })
  
 @community_bp.route('/it', methods=['GET', 'POST'])
 def listNews() :
