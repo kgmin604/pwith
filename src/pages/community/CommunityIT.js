@@ -36,15 +36,16 @@ function CommunityIT() {
             }
           })
             .then(function (response) {
-                //console.log(response.date.page);
-                //setTotalPage(response.date.page);
+                setItList(response.data.news);
+                console.log(response.data.news);
+                console.log(response.data.page);
                 setItList(response.data.news);
             })
             .catch(function (error) {
-              console.log("IT 뉴스 요청 에러");
-              console.log(error);
-            });
-        };
+                console.log("IT 뉴스 요청 에러");
+                console.log(error);
+              });
+          };
       
         updateITNews();
     }, [selectDate, selectPage]);
