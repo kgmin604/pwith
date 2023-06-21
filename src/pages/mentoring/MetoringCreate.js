@@ -15,7 +15,7 @@ function MentoringCreate() {
     let user = useSelector((state) => state.user);
     let dispatch = useDispatch();
 
-    const words = ['웹', '프론트엔드', '백엔드', '인공지능', '자바', 'c언어'];
+    const words = ['웹개발', '모바일 앱 개발', '게임 개발', '프로그래밍 언어', '알고리즘 · 자료구조', '데이터베이스','자격증','개발 도구','데이터 사이언스','데스크톱 앱 개발','교양 · 기타'];
     const [selectedWords, setSelectedWords] = useState([]); // 클릭한 단어 배열
 
     let [portfolio, setportfolio] = useState({

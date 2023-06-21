@@ -102,7 +102,7 @@ function StudyBoard(props) {
                 />
             </Form>
             <Button variant="blue" type="submit" onClick={() => searchStudy()}>🔍</Button>
-
+             
 
             <div className="vr" />
             {user.id === "" ? null :
@@ -115,28 +115,28 @@ function StudyBoard(props) {
                 </div>)}
 
         </Stack>
-
         {searchData === null ? (<Table bordered hover>
             <thead>
                 <tr>
                     <th>no.</th>
                     <th colSpan={2}>글제목</th>
                     <th>글쓴이</th>
-                    <th>좋아요</th>
                     <th>날짜</th>
                     <th>조회수</th>
+                    <th>좋아요</th>
                 </tr>
             </thead>
             <tbody>
                 {studyPostList.map(function (post, index) {
+                    let date=post.curDate.slice(2,10);
                     return (
                         <tr className="postCol" key={post.id} onClick={() => navigate(`../${post.id}`)}>
                             <td>{post.id}</td>
                             <td colSpan={2}>{post.title}</td>
                             <td>{post.writer}</td>
-                            <td>{post.likes}</td>
-                            <td>{post.curDate}</td>
+                            <td>{date}</td>
                             <td>{post.views}</td>
+                            <td>{post.likes}</td>
                         </tr>
                     );
                 })}

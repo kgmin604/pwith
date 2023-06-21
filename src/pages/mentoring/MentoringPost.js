@@ -44,21 +44,22 @@ function MentoringPost() {
                 <div class="col-md-6">
                     <h4 >멘토링</h4>
                     <hr style={{ width: '100%', margin: '0 auto' }} />
-
-                    <div className="MentoringTitle" style={{ display: 'flex', justifyContent: 'center' }} >
-                        <img src="https://velog.velcdn.com/images/parkheroine/post/00699864-77b5-46bf-8f79-1afe12868918/image.jpeg" style={{ borderRadius: '50px', width: '150px', height: '150px' }} />
-
-                    </div>
-                    <p>{post.writer}</p>
-                    <hr style={{ width: '50%', margin: '0 auto' }} />
-
                     {
-                        user.id === post.writer ? <Stack direction="horizontal" className="rewrite-delete-Btn align-right" gap={3}>
+                        user.id === post.mento ? <Stack direction="horizontal" className="rewrite-delete-Btn align-right" gap={3} style={{margin:'5px'}}>
                             <Button variant='blue'>수정</Button>
                             <Button variant='blue'>삭제</Button>
                         </Stack>
                             : null
                     }
+
+                    <div className="MentoringTitle" style={{ display: 'flex', justifyContent: 'center' }} >
+                        <img src={post.image} style={{ borderRadius: '100%', width: '150px', height: '150px',margin:'5px' }} />
+
+                    </div>
+                    <p>{post.writer}</p>
+                    <hr style={{ width: '50%', margin: '0 auto' }} />
+
+                    
 
 
                     <div className="mentoringContent">
@@ -67,7 +68,7 @@ function MentoringPost() {
                         </p>
                     </div>
                     <LikeAndComment />
-                    {/* <LikeAndComment id={post.writer} commentNum={post.commentNum}/> */}
+                    {/* <LikeAndComment id={post.mento} commentNum={post.review}/> */}
 
                 </div>
 
