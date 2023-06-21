@@ -86,9 +86,13 @@ def listNews() :
         page = int(page)
         formatted_date = f'{date[:4]}년 {date[4:6]}월 {date[6:]}일'
 
-        news_list = conn_mongodb().ITnews_crawling.find({'date':formatted_date}).sort('_id', -1).skip((page-1)*10).limit(10)
 
-        for news in news_list :
+        all_newsList = conn_mongodb().ITnews_crawling.find({'date':formatted_date}).sort('_id', -1)
+        requiredPage = len(list(all_newsList)) // 10 + 1
+
+        newsList = conn_mongodb().ITnews_crawling.find({'date':formatted_date}).sort('_id', -1).skip((page-1)*10).limit(10)
+
+        for news in newsList :
             result.append({
                 'date': news['date'],
                 'title' : news['title'],
@@ -97,7 +101,10 @@ def listNews() :
                 'url' : news['url']
             })
             
-        return jsonify(result)
+        return jsonify({
+            'page' : requiredPage,
+            'news' : result
+        })
         
     # 추후 검색 구현할 때 POST 방식 추가
 
