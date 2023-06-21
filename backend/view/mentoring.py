@@ -30,6 +30,7 @@ def showAll() :
 
         # print('==변환 후==')
         # print(result)
+        print(result)
 
         return jsonify(result)
 
@@ -45,8 +46,9 @@ def showDetail(mentoId) :
 
         for rev in review_list :
             review.append({
-                'menti' : rev[0],
-                'review' : rev[1]
+                'reviewId' : rev[0],
+                'menti' : rev[1],
+                'review' : rev[2]
             })
 
         detail = {

@@ -9,7 +9,9 @@ studyroom_bp = Blueprint('studyRoom', __name__, url_prefix='/studyroom')
 def showRoom() :
     if request.method == 'GET' :
 
-        rooms = StudyRoom.showAll()
+        logUser = current_user.getId()
+
+        rooms = StudyRoom.show(logUser)
 
         studyRoomList = []
         mentoringRoomList = []
