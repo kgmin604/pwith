@@ -22,18 +22,16 @@
     border: 1px solid #d1d1d1;
     padding-left: 10px;
     text-align: left;
-    color:gray;
+    color: gray;
 }
 
-div.StudyCreate div.form-wrapper
-.study-bottom-area{
+div.StudyCreate div.form-wrapper .study-bottom-area {
     display: flex;
     justify-content: right;
     margin: 20px 0;
 }
 
-div.StudyCreate div.form-wrapper div.study-bottom-area
-.submit-button{
+div.StudyCreate div.form-wrapper div.study-bottom-area .submit-button {
     margin-left: 10px;
     padding: 0 0;
     width: 60px;
@@ -101,9 +99,15 @@ div.StudyCreate div.form-wrapper div.study-bottom-area
 
 .table th,
 .table td {
-  width: 100px;
+    width: 100px;
 }
 
 .pointer-cursor {
     cursor: pointer;
-  }
+}
+
+.font-sm {
+    font-size: 12px;
+    color: #888888;
+    margin: 5px;
+}

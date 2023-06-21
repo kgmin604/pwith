@@ -6,18 +6,20 @@ import axios from "axios";
 import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-// import LikeAndComment from './likeAndComment.js';
+import LikeAndComment from './likeAndComment.js';
 
 function StudyPost(props) {
     let user = useSelector((state) => state.user);
     let { id } = useParams();
 
     const [post, setPost] = useState(null);
+    const [reply,setReply] = useState(null);
 
     useEffect(() => {
         axios.get(`/study/${id}`)
             .then((response)=>{
-                setPost(response.data)
+                setPost(response.data.post);
+                setReply(response.data.reply);
                 console.log(response.data)
             })
             .catch();
@@ -27,9 +29,9 @@ function StudyPost(props) {
         return <div>Loading...</div>;
     }
 
-    const { title, writer, content, views, totalP,commentNum,likes,commentList } = post;
     const parse = require('html-react-parser');
-    const parsedContent = parse(content);
+    const parsedContent = parse(post.content);
+    const date=JSON.stringify(post.curDate).slice(3,11);
 
 
     return (
@@ -38,16 +40,18 @@ function StudyPost(props) {
             <hr style={{ width: '100%', margin: '0 auto' }} />
 
             <div className="studyTitle">
-                <p>{title}</p>
+                <h5>{post.title}</h5>
             </div>
             <hr style={{ width: '50%', margin: '0 auto' }} />
+          
+                <p className="align-right font-sm">조회수:{post.views}</p>
+                <p className="align-right font-sm">작성 날짜: {date}</p>
 
-            {user.id === writer ? <Stack direction="horizontal" className="rewrite-delete-Btn align-right" gap={3}>
+            {user.id === post.writer ? <Stack direction="horizontal" className="rewrite-delete-Btn align-right" gap={3}>
                     <Button variant='blue'>수정</Button>
                     <Button variant='blue'>삭제</Button>
                 </Stack>
-                : null
-            }
+                : null}
 
 
             <div className="studyContent">
@@ -56,11 +60,8 @@ function StudyPost(props) {
                 </p>
             </div>
 
-            <div>
-                <p>인원수:{totalP}</p>
-            </div>
             <Button variant='blue'>스터디 참여하기</Button>
-            {/* <LikeAndComment id={id} likes={post.likes} liked={post.liked} replyList={post.replyList}/> */}
+            <LikeAndComment id={id} likes={post.likes} reply={reply}/>
         </div>
     );
 
