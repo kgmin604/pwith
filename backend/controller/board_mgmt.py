@@ -70,7 +70,7 @@ class studyPost() :
         sql = "select * from post where postType = 0"
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
-        # mysql_db.close()
+        mysql_db.close()
         # print(rows)
         
         return rows
@@ -171,7 +171,7 @@ class studyPost() :
         sql = "select postId, title from post where postType = 0 ORDER BY curDate DESC LIMIT 5 "
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
-        # mysql_db.close()
+        mysql_db.close()
         # print(rows)
         
         return rows
