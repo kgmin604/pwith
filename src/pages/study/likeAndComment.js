@@ -15,34 +15,45 @@ import moreImg from "./img/more.png"
 function LikeAndComment(props) {
     let user = useSelector((state) => state.user);
     const id = props.id;
-    const [likes, setLikes] = useState(props.like);
-    // const [commentNum,setCommentNum]=useState(props.commentNum);
-    // const [commentList,setCommentList]=useState(props.commentList);
-    // const [liked,setLiked]=useState(props.liked);
+    const [likes, setLikes] = useState(0);
+    const [liked,setLiked]=useState(false);
+    const [replyList,setReplyList]=useState([]);
 
-    //더미데이터
-    const [liked, setLiked] = useState(false);
+    useEffect(()=>{
+        if(props!=undefined){
+            setLikes(props.likes);
+            setLiked(props.liked);
+            setLiked(props.replyList);
+            console.log(props);
+        }
+        
+    },[props])
 
     const [more, setMore] = useState(false);
 
     const sendLikeSignal = () => {
-        setLiked(!liked);
-        // axios.post(`/study/${id}/like`, {
-        //     postId: id
-        // })
-        //     .then(function (response) {
-        //         axios.get(`/study/${id}/like`)
-        //             .then((response) => {
-        //                 // setLikes(response.data)
-        //                 // console.log(response.data)
-        //             })
-        //             .catch(function (error) {
-        //                 // GET 요청 실패 처리
-        //             });
-        //     })
-        //     .catch(function (error) {
-        //         // 요청 실패 시 처리할 로직
-        //     });
+        axios.post(`/study/${id}/like`, {
+            postId: id
+        })
+            .then(function (response) {
+                axios.get(`/study/${id}/like`)
+                    .then((response) => {
+                        console.log(response.data)
+                        setLiked(!liked);
+                        if(liked){
+                            setLikes(likes-1);
+                        }
+                        else{
+                            setLikes(likes+1);
+                        }
+                    })
+                    .catch(function (error) {
+                        // GET 요청 실패 처리
+                    });
+            })
+            .catch(function (error) {
+                // 요청 실패 시 처리할 로직
+            });
     };
 
     function updateComment() {
@@ -85,29 +96,44 @@ function LikeAndComment(props) {
 
             <hr />
 
-            <div className='align-row '>{/* 댓글하나 */}
-                <img img src={comment} className='comment' />
-                <span style={{ width: '5px' }}></span>
-                <div className='align-side'>
-                    {/* {commentList.map(k, i => {
-                        <div key={k.id}>
+            {reply.map((k, i) => {
+                return (
+                    <div  key={k.commentId}>{/* 댓글하나 */}
+                    <div className='align-row'>
+                        <img img src={comment} className='comment' />
+                        <span style={{ width: '5px' }}></span>
+                        <div className='align-side'>
                             <div style={{ textAlign: 'start' }}>
                                 <div>{k.writer}</div>
-                                <div>{k.내용}</div>
+                                {updateInput ? <>
+                                    <Form onSubmit={handleUpdateSubmit(k.commentId)} style={{ width: '90%' }}>
+                                        <Form.Control
+                                            className="me-auto"
+                                            value={updateInput}
+                                            onChange={handleUpdateChange}
+                                        />
+                                        <Button variant="blue" type="submit" style={{ width: '10%' }}>수정</Button>
+                                    </Form>
+                                </> : k.comment}
                             </div>
+
                             <div style={{ textAlign: 'end' }}>
-                                {user===k.writer?<img src={moreImg} className="more" onClick={() => setMore(!more)} />
-                            :null}
-                            <div>
-                            {more === true ? <ListGroup>
-                                <ListGroup.Item action onClick={() => updateComment()}>수정</ListGroup.Item>
-                                <ListGroup.Item action onClick={() => deleteComment()}>삭제</ListGroup.Item>
-                            </ListGroup> : null}
-                            </div>
-                                <div style={{ color: '#888888' }}>{k.date}</div>
+                                {user.id === k.menti ? <img src={moreImg} className="more" onClick={() => setMore(!more)} />
+                                    : <div style={{width:'30px',height:'30px'}}></div>}
+                                <div>
+                                    {more === true ? <ListGroup>
+                                        <ListGroup.Item action onClick={() =>{}}>수정</ListGroup.Item>
+                                        <ListGroup.Item action onClick={() => {}}>삭제</ListGroup.Item>
+                                    </ListGroup> : null}
+                                </div>
                             </div>
                         </div>
-                    })} */}
+                    </div>
+                    <hr/>
+                    </div>
+
+                )
+            })}
 
                     <div style={{ textAlign: 'start' }}>
                         <div>박주연</div>
@@ -125,21 +151,18 @@ function LikeAndComment(props) {
                         </div>
                         <div style={{ color: '#888888' }}>23.01.20</div>
                     </div>
-                </div>
-            </div>
 
             <div className='align-side'>{/* 댓글달기*/}
-                <Form onSubmit={handleSubmit} style={{ width: '90%' }}>
-                    <Form.Control
+                <Form onSubmit={handleSubmit} style={{ width: '100%' }} className='align-side'>
+                    <Form.Control style={{ width: '90%' }}
                         className="me-auto"
                         placeholder="최고의 스터디, 추천합니다!"
                         value={inputValue}
                         onChange={handleInputChange}
-
                     />
+                    <span style={{ width: '5px' }}></span>
+                    <Button variant="blue" type="submit" style={{ width: '10%' }}>등록</Button>
                 </Form>
-                <span style={{ width: '5px' }}></span>
-                <Button variant="blue" type="submit" style={{ width: '10%' }}>등록</Button>
             </div>
 
         </div>
