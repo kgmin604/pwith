@@ -50,7 +50,7 @@ function RoomMain(){
                                 </div>
                                 <div className="area">
                                     <p>참여중인<br></br>멘토링</p>
-                                    <h2>{rooms.length}개</h2>
+                                    <h2>{rooms2.length}개</h2>
                                 </div>
                             </div>
                             <div className="create-btn" onClick={ ()=>navigate('./create')}>스터디 만들기</div>
