@@ -72,3 +72,13 @@ CREATE TABLE chat (
     PRIMARY KEY(chatId),
     FOREIGN KEY(sender, receiver) REFERENCES member(memId) on delete cascade
 );
+
+create table mentoringRoom (
+	roomId int auto_increment,
+    roomName varchar(20) not null,
+    mentoId varchar(10) not null,
+    mentiId varchar(10) not null,
+    primary key(roomId),
+    foreign key(mentoId) references mento(mentoId),
+    foreign key(mentiId) references member(memId)
+);
