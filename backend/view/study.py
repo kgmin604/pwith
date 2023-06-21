@@ -12,10 +12,6 @@ def show():
 
         searchType = request.args.get('type')
         searchValue = request.args.get('value')
-        # print("서치타입")
-        # print(searchType)
-        # print("서치값")
-        # print(searchValue)
 
         if (searchType is None) or (searchValue is None) : # 전체 글 출력
             result = []
@@ -82,14 +78,15 @@ def showDetail(id) :
             'content': post.getContent(),
             'curDate' : post.getCurDate(),
             'likes' : studyPost.getLikes(id),
-            'views': post.getViews(),
-            'liked': post.getLiked(),
+            'views': post.getViews()
         }
         toFront['curDate'] = studyPost.getFormattedDate(toFront['curDate'])
         
         viewresult = studyPost.updateViews(id)
         # print(viewresult)
-        return toFront
+        return jsonify({
+            'post' : result
+        })
 
 @study_bp.route('/<int:id>', methods = ['POST', 'PUT', 'DELETE'])
 def reply(id) :
@@ -152,8 +149,8 @@ def write():
 
         for room in roomList :
             result.append({
-                'roomId' : room[0],
-                'roomName' : room[1]
+                'value' : room[0],
+                'label' : room[1]
             })
 
         # print(result)
