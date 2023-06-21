@@ -1,6 +1,10 @@
+.CommunityBoard{
+    margin-bottom: 80px;
+}
+
 div.CommunityBoard 
 .category{
-    margin: 0 0;
+    margin: 30px 0;
     padding: 0 0;
 }
 
@@ -38,11 +42,42 @@ span{
     cursor:pointer;
 }
 
+div.CommunityBoard div.category 
+.body{
+    margin: 0 0;
+    padding: 0 0;
+}
+
 div.CommunityBoard div.category div.body
 .item{
     margin: 0 0;
     padding: 0 0;
     width: 630px;
     height: 40px;
-    border: 1px solid lightgray;
+    border: 1px solid #f0f0f0;
+    display: flex;
+    cursor: pointer;
+}
+
+div.CommunityBoard div.category div.body
+.item:hover{
+    background-color: #f0f0f0;
+}
+
+div.CommunityBoard div.category div.body p.item
+h3{
+    width: 70%;
+    font-size: 16px;
+    padding: 10px 0;
+    padding-left: 10px;
+    float: left;
+    text-align: left;
+}
+
+div.CommunityBoard div.category div.body p.item
+div{
+    width: 30%;
+    font-size: 16px;
+    float: right;
+    padding: 7px 0;
 }
