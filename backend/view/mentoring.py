@@ -51,8 +51,8 @@ def showDetail(mentoId) :
             url = "http://localhost:3000/mentoringroom/" + str(roomId)
 
             # 3. 쪽지 전송
-            menticontent = url + '\n' + "다음 스터디룸으로 입장해주세요"
-            mentocontent = '"' + mentiId + '님이 멘토링을 신청하셨습니다.' + '\n' + ' 수락하시겠습니까?'
+            menticontent = url + '\n' + "다음 스터디룸으로 입장해주세요."
+            mentocontent = '"' + mentiId + '"님이 멘토링을 신청하셨습니다.' + '\n' + ' 수락하시겠습니까?'
             
             done = chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
             done = chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
