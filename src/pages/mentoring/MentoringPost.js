@@ -82,9 +82,6 @@ function MentoringPost() {
                     <h4>{post.mento}</h4>
                     <hr style={{ width: '50%', margin: '0 auto' }} />
 
-
-
-
                     <div className="mentoringContent">
                         <p cols="50" rows="10">
                             {parsedContent}

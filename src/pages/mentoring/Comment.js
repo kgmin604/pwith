@@ -145,7 +145,7 @@ function Comment(props) {
                             <span style={{ width: '5px' }}></span>
                             <div className='align-side'>
                                 <div style={{ textAlign: 'start' }}>
-                                    <div>{k.menti}</div>
+                                    <div style={{fontSize:'13px'}}>{k.menti}</div>
                                     {updateInput ? <>
                                         <Form onSubmit={(event) => handleUpdateSubmit(event, k.reviewId)} style={{ width: '90%' }}>
                                             <Form.Control
