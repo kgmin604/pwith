@@ -33,26 +33,30 @@ function StudyPost(props) {
     const parsedContent = parse(post.content);
     const date=JSON.stringify(post.curDate).slice(3,11);
 
-
     return (
         <div className="StudyPost">
-            <h4 style={{ textAlign: 'left'}}>스터디 모집</h4>
+            <h2>스터디 모집</h2>
             <hr style={{ width: '100%', margin: '0 auto' }} />
-
-            <div className="studyTitle">
-                <h5>{post.title}</h5>
+            <div className="study-header">
+                <h3>{post.title}</h3>
+                <p className = "info">
+                    <strong>작성자</strong> <span className="info-content">{post.writer}</span>
+                    <span className="line">|</span>
+                    <strong>조회수</strong> <span className="info-content">{post.views}</span>
+                    <span className="line">|</span>
+                    <strong>등록일</strong> <span className="info-content">{date}</span>
+                    {
+                        user.id === post.writer ?
+                        <span className="control-part">
+                            <button className="control-btn">수정</button>
+                            <button className="control-btn">삭제</button>
+                        </span>
+                        :
+                        null
+                    }
+                </p>
             </div>
-            <hr style={{ width: '50%', margin: '0 auto' }} />
-          
-                <p className="align-right font-sm">조회수:{post.views}</p>
-                <p className="align-right font-sm">작성 날짜: {date}</p>
-
-            {user.id === post.writer ? <Stack direction="horizontal" className="rewrite-delete-Btn align-right" gap={3}>
-                    <Button variant='blue'>수정</Button>
-                    <Button variant='blue'>삭제</Button>
-                </Stack>
-                : null}
-
+            <hr style={{ width: '100%', margin: '0 auto' }} />
 
             <div className="studyContent">
                 <p cols="50" rows="10">
@@ -60,7 +64,14 @@ function StudyPost(props) {
                 </p>
             </div>
 
-            <Button variant='blue'>스터디 참여하기</Button>
+            <div className="studyroom-join">
+                <img src='/img_notebook.png'></img>
+                <span>{"왕초보 파이썬"}</span> {/* 현재 dummy 값! 받아와서 수정 */}
+                <Button className="button" variant='blue'>참여하기</Button>
+            </div>
+            
+            <hr style={{ width: '100%', margin: '0 auto' }} />
+            
             <LikeAndComment id={id} likes={post.likes} reply={reply}/>
         </div>
     );
