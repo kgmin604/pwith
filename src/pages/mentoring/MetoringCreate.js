@@ -112,40 +112,57 @@ useEffect(()=>{
 
 const onUpload = (e) => {
     const file = e.target.files[0];
-
     const reader = new FileReader();
     reader.readAsDataURL(file);
-
+  
     return new Promise((resolve) => {
-        reader.onload = () => {
-            setImageSrc(reader.result || null); // 파일의 컨텐츠
-            setportfolio({
-                ...portfolio,
-                image: `${imageSrc}`
-            })
-        };
+      reader.onload = () => {
+        setImageSrc(reader.result || null); // 파일의 컨텐츠
+        setportfolio({
+          ...portfolio,
+          image: reader.result || null // 포트폴리오의 이미지 업데이트
+        });
+        resolve();
+      };
     });
+  };
 
-    // return new Promise((resolve) => {
-    //   const reader = new FileReader();
-    //   reader.onload = () => {
-    //     const imageDataURL = reader.result || null;
+// const onUpload = (e) => {
+//     const file = e.target.files[0];
 
-    //     // 이미지를 Blob 객체로 변환
-    //     fetch(imageDataURL)
-    //       .then((res) => res.blob())
-    //       .then((blob) => {
-    //         setImageSrc(imageDataURL); // 데이터 URL로 이미지 표시
-    //         setportfolio({
-    //           ...portfolio,
-    //           image: blob, // Blob 객체로 포트폴리오의 이미지 업데이트
-    //         });
-    //         resolve();
-    //       });
-    //   };
-    //   reader.readAsDataURL(file);
-    // });
-};
+//     const reader = new FileReader();
+//     reader.readAsDataURL(file);
+
+//     return new Promise((resolve) => {
+//         reader.onload = () => {
+//             setImageSrc(reader.result || null); // 파일의 컨텐츠
+//             setportfolio({
+//                 ...portfolio,
+//                 image: `${imageSrc}`
+//             })
+//         };
+//     });
+
+//     // return new Promise((resolve) => {
+//     //   const reader = new FileReader();
+//     //   reader.onload = () => {
+//     //     const imageDataURL = reader.result || null;
+
+//     //     // 이미지를 Blob 객체로 변환
+//     //     fetch(imageDataURL)
+//     //       .then((res) => res.blob())
+//     //       .then((blob) => {
+//     //         setImageSrc(imageDataURL); // 데이터 URL로 이미지 표시
+//     //         setportfolio({
+//     //           ...portfolio,
+//     //           image: blob, // Blob 객체로 포트폴리오의 이미지 업데이트
+//     //         });
+//     //         resolve();
+//     //       });
+//     //   };
+//     //   reader.readAsDataURL(file);
+//     // });
+// };
 
 return (
     <div className="MentoringCreate">
