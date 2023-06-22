@@ -37,26 +37,25 @@ function StudyPost(props) {
     const date=JSON.stringify(post.curDate).slice(3,11);
 
     function joinStudyRoom(){
-        axios({
-            method: "GET",
-            url: `/study/${id}`,
-            params:{
-                apply : 'go'
-            }
-        })
-        .then(function (response) {
-            alert(response.data.done);
-            if(response.data.done===1){
+        if(post.isApplied){
+            axios({
+                method: "GET",
+                url: `/study/${id}`,
+                params:{
+                    apply : 'go'
+                }
+            })
+            .then(function (response) {
                 alert("스터디 참여 완료!");
-                navigate("../studyroom");
-            }
-            else if(response.data.done===0){
-                alert("이미 참여중인 스터디입니다.");
-            }
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+                    navigate("../studyroom");
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
+        else{
+            alert("이미 참여중인 스터디입니다.");
+        }
     }
 
     return (
