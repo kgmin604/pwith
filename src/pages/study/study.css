@@ -202,10 +202,72 @@ span{
     padding-left: 10px;
 }
 
-/* 페이지네이션 용 */
+/* 게시글 목록 */
+
 div.Board
+.posts-area{
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+}
+
+div.Board div.posts-area
+.post-item{
+    margin: 0 auto;
+    height: 40px;
+}
+
+div.Board div.posts-area
+.hover-effect:hover{
+    background-color: #e6e6e6;
+    cursor: pointer;
+}
+
+div.Board div.posts-area div.post-item
+.post-title {
+    display: block;
+    float: left;
+    width: 300px;
+    height: 40px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 10px;
+    padding-top: 5px;
+}
+
+div.Board div.posts-area div.post-item
+.post-comm {
+    display: block;
+    float: left;
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: 5px;
+}
+
+div.Board div.posts-area div.post-item
+.post-writer{
+    display: block;
+    width: 75px;
+    height: 40px;
+    float: left;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: 5px;
+}
+
+/* 페이지네이션 용 */
+
+
 .pagination{
-    
+    margin: 20px 0;
 }
 
 div.Board div.pagination
