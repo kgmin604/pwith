@@ -342,6 +342,16 @@ div.chat-bottom div.chat-box div.content div.item
 }
 
 div.chat-bottom div.chat-box div.content div.item
+.colortext{
+    color:rgb(255, 183, 0);
+}
+
+div.chat-bottom div.chat-box div.content div.item
+.colortext2{
+    color:rgb(25, 151, 0);
+}
+
+div.chat-bottom div.chat-box div.content div.item
 .text{
     margin-top: 4px;
     line-height: 20px;

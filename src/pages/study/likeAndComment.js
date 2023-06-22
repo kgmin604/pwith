@@ -72,12 +72,13 @@ function LikeAndComment(props) {
                 content: `${content}`
             })
             .then(function (response) {
+                console.log(response.data);
                 const newReply = [
                     ...reply,
                     {
                         "comment": `${content}`,
-                        "commentId": response.data,
-                        // "date": '2023-06-20',
+                        "commentId": response.data.replyId,
+                        "date": response.data.date,
                         "writer":`${user.id}`
                     }
                 ];

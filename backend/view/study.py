@@ -86,7 +86,7 @@ def showDetail(id) :
         viewresult = studyPost.updateViews(id)
         # print(viewresult)
 
-        replyList = Reply.showReply(0, id)
+        replyList = Reply.showReply(0, id) # 댓글 조회
 
         replyResult = []
 
@@ -112,8 +112,7 @@ def reply(id) :
 
         cnt = request.get_json()['content']
 
-        # writer = current_user.getId()
-        writer = 'a' # dummy !!
+        writer = current_user.getId()
 
         date = datetime.now()
 
@@ -124,7 +123,8 @@ def reply(id) :
             pk = 0
 
         return jsonify({
-            'replyId' : pk # 0 is fail
+            'replyId' : pk, # 0 is fail
+            'date' : studyPost.getFormattedDate(date)
         })
 
     elif request.method == 'PUT' : # 댓글 수정
@@ -162,8 +162,8 @@ def write():
     if request.method == 'GET' :
         result = []
 
-        # roomList = studyPost.getMyStudyList(current_user.getId())
-        roomList = studyPost.getMyStudyList('a')
+        roomList = studyPost.getMyStudyList(current_user.getId())
+        # roomList = studyPost.getMyStudyList('a')
 
         for room in roomList :
             result.append({
