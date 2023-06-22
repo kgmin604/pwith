@@ -1,5 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./community.css";
+import "../study/study.css"
 import "../../App.css";
 import React, { useState, useEffect } from 'react';
 import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
@@ -33,7 +34,7 @@ function CommunityQna(props) {
                 <div class="col-md-3">
                     {Category()}
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 Board">
                     <Stack direction="horizontal" gap={3} style={{ padding: "5px" }}>
                         <Form.Control className="me-auto" placeholder="궁금한 것이 무엇인가요?" />
                         <Button variant="blue">🔍</Button>
@@ -48,7 +49,7 @@ function CommunityQna(props) {
 
                     </Stack>
 
-                    <Table bordered hover>
+                    {/* <Table bordered hover>
                         <thead>
                             <tr>
                                 <th>no.</th>
@@ -74,7 +75,44 @@ function CommunityQna(props) {
                                 );
                             })}
                         </tbody>
-                    </Table>
+                    </Table> */}
+
+                    <div className="posts-area">
+                        {
+                            postList === null ? null :
+                                <>
+                                    <div className="post-item" style={{ 'height': '40px' }}>
+                                        <strong className=" post-comm">No.</strong>
+                                        <strong className=" post-title">제목</strong>
+                                        <strong className=" post-writer">글쓴이</strong>
+                                        <strong className=" post-comm">작성일</strong>
+                                        <strong className=" post-comm">좋아요</strong>
+                                        <strong className=" post-comm">조회수</strong>
+                                    </div>
+                                    <hr style={{ 'width': '100%', "margin": '5px auto' }} />
+                                    {
+                                        postList.map((post, i) => {
+                                            let date = post.curDate.slice(2, 10);
+                                            return (
+                                                <div
+                                                    className="post-item hover-effect"
+                                                    key={i}
+                                                    onClick={(e) => { e.stopPropagation(); navigate(`../community/qna/${post.id}`) }}
+                                                >
+                                                    <span className=" post-comm">{post.id}</span>
+                                                    <span className=" post-title">{post.title}</span>
+                                                    <span className=" post-writer">{post.writer}</span>
+                                                    <span className=" post-comm">{post.curDate}</span>
+                                                    <span className=" post-comm">{post.likes}</span>
+                                                    <span className=" post-comm">{post.views}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    <hr style={{ 'width': '100%', "margin": '5px auto' }} />
+                                </>
+                        }
+
+                    </div>
                 </div>
 
 

@@ -134,26 +134,48 @@ def review(mentoId) :
             'done' : done
         })
 
-@mento_bp.route('/create', methods = ['GET', 'POST'])
-def writePortfolio() :
-    if request.method == 'POST' :
-        portfolioInfo = request.get_json(silent=True)
+# @mento_bp.route('/create', methods = ['GET', 'POST'])
+# def writePortfolio() :
+#     if request.method == 'POST' :
+#         portfolioInfo = request.get_json(silent=True)
+
+#         writer = current_user.getId()
+#         # subject = portfolioInfo['subject']
+#         image = portfolioInfo['image']
+#         brief = portfolioInfo['brief']
+#         content = portfolioInfo['content']
+
+#         try :
+#             # result = Portfolio.create(writer, subject, image, brief, content)
+#             result = Portfolio.create(writer, image, brief, content)
+#         except Exception as ex:
+#             print("예외 발생 : " + str(ex))
+#             result = 0
+
+#         return jsonify({
+#             'done' : result
+#             })
+
+@mento_bp.route('/create', methods=['GET', 'POST'])
+def writePortfolio():
+    if request.method == 'POST':
+        portfolioInfo = request.form  # FormData로부터 데이터 가져오기
 
         writer = current_user.getId()
         subject = portfolioInfo['subject']
-        image = portfolioInfo['image']
+        image = request.files['image']  # 이미지 파일 가져오기
         brief = portfolioInfo['brief']
         content = portfolioInfo['content']
 
-        try :
+        try:
             result = Portfolio.create(writer, subject, image, brief, content)
         except Exception as ex:
-            print("예외 발생 : " + str(ex))
+            print("예외 발생: " + str(ex))
             result = 0
 
         return jsonify({
-            'done' : result
-            })
+            'done': result
+        })
 
 @mento_bp.route('/update/<mentoId>', methods = ['GET', 'PUT'])
 def modifyPortfolio(mentoId) :
