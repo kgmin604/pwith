@@ -2,7 +2,9 @@ from flask import Flask, session, Blueprint, render_template, redirect, request,
 from flask_login import login_required, current_user
 from controller.board_mgmt import studyPost
 from controller.reply_mgmt import Reply
+from controller.studyroom_mgmt import StudyRoom
 from datetime import datetime
+import json
 
 study_bp = Blueprint('study', __name__, url_prefix='/study')
 
@@ -82,6 +84,28 @@ def show():
 @study_bp.route('/<int:id>', methods=['GET']) # 글 조회
 def showDetail(id) :
     if request.method == 'GET' :
+
+        apply = request.args.get('apply')
+
+        if apply == 'go' : # 스터디 신청
+            roomId = studyPost.findRoomId(id)
+
+            studentsList_string = StudyRoom.getStudentList(roomId)
+
+            newStudentList = ''
+
+            if not studentsList_string :
+                newStudentList = f'["{current_user.getId}"]'
+                # newStudentList = f'["a"]' # dummmmmmmmmmmmmmy
+            else :
+                studentsList = json.loads(studentsList_string) # list
+                studentsList.append(current_user.getId())
+                # studentsList.append("a") # dummmmmmmmmmmmmmy
+                newStudentList = str(studentsList)
+                newStudentList = newStudentList.replace("\'", "\"")
+
+            done = StudyRoom.addStudent(roomId, newStudentList)
+
 
         result = {}
 
