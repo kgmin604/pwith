@@ -38,10 +38,10 @@ function StudyPost(props) {
 
     function joinStudyRoom(){
         axios({
-            method: "POST",
+            method: "GET",
             url: `/study/${id}`,
-            data: {
-                roomId: `${post.roomId}`
+            params:{
+                apply : 'go'
             }
         })
         .then(function (response) {
