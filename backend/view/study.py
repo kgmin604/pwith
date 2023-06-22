@@ -25,7 +25,7 @@ def show():
                         'writer' : posts[i][3],
                         'curDate' : posts[i][5],
                         'likes' : posts[i][7],
-                        'views' : posts[i][9]
+                        'views' : posts[i][8]
                     }
                 post['curDate'] = studyPost.getFormattedDate(posts[i][5])
 
@@ -56,8 +56,7 @@ def show():
                         'curDate' : posts[i][5],
                         'category' : posts[i][6],
                         'likes' : posts[i][7],
-                        'views' : posts[i][9],
-                        'liked' : posts[i][9]
+                        'views' : posts[i][8],
                     }
                     post['curDate'] = studyPost.getFormattedDate(posts[i][5])
                     
@@ -198,18 +197,19 @@ def write():
 @study_bp.route('/<int:id>/like', methods=['GET', 'POST'])
 def like(id):
     if request.method=='POST':
+        memId = current_user.getId()
         postId = request.get_json()['postId']
-        post = studyPost.findById(id)
-        liked = studyPost.toggleLike(id)
-        return jsonify({
-            'liked' : liked
-        })
+        
+        print(memId, postId)
+        studyPost.toggleLike(memId, postId)
+        print("liked")
         
     if request.method == 'GET':
         likes = studyPost.getLikes(id)
         return jsonify({
             'likes' : likes
-            })
+        })
+    return jsonify({'message': 'Invalid request method'})   # 추가: POST 요청 이외의 다른 요청에 대한 처리 로직
         
 """
 # update 

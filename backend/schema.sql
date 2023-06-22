@@ -82,3 +82,13 @@ create table mentoringRoom (
     foreign key(mentoId) references mento(mentoId),
     foreign key(mentiId) references member(memId)
 );
+
+create table like (
+    likeId int auto_increment,
+    memberId VARCHAR(10) not null,
+    postId INT not null, 
+    liked BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY(likeId),
+    FOREIGN KEY(memberId) references member(memId),
+    FOREIGN KEY(postId) references post(postId)
+);
