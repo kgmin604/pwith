@@ -37,7 +37,7 @@ class QNAPost() :
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
   
-        mysql_db.close()
+        # mysql_db.close()
         return rows
     
     @staticmethod
@@ -150,6 +150,20 @@ class QNAPost() :
         mysql_db.commit()
 
         mysql_db.close()
+        
+    @staticmethod
+    def pagenation(page, per_page):     # 게시글 10개 씩 페이지네이션 하는 함수
+        offset = (page - 1) * per_page  # 페이지의 시작 위치 계산
+        
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT * FROM post where postType = 0 LIMIT {per_page} OFFSET {offset}"
+        cursor_db.execute(sql)
+        results = cursor_db.fetchall()
+        mysql_db.close()
+        
+        return(results)
 
     @staticmethod
     def get3QNA():
@@ -186,11 +200,35 @@ class QNAPost() :
     def getCategory(self):
         return int(self.category)
     
-    def getLikes(self):
-        return int(self.likes)
+    def getLikes(id):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT likes from post where postId = '{str(id)}'"
+
+        cursor_db.execute(sql)
+        row = cursor_db.fetchone() 
+        # print(row)
+        likes = row[0]
+        # print("likes = "+str(likes))
+        
+        mysql_db.close()
+        return int(likes)
     
     def getViews(self):
         return int(self.views)
     
-    def getLiked(self):
-        return bool(self.liked)
+    def getLiked(memId):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT liked from liked where memberId = '{str(memId)}'"
+
+        cursor_db.execute(sql)
+        row = cursor_db.fetchone() 
+        # print(row)
+        liked = row[0]
+
+        mysql_db.close()
+        return bool(liked)
+    

@@ -286,8 +286,8 @@ def write():
 @login_required
 @community_bp.route('/qna/<int:id>/like', methods=['GET', 'POST'])
 def like(id):
+    memId = current_user.getId()
     if request.method=='POST':
-        memId = current_user.getId()
         postId = request.get_json()['postId']
         
         print(memId, postId)
@@ -296,8 +296,10 @@ def like(id):
         
     if request.method == 'GET':
         likes = QNAPost.getLikes(id)
+        liked = QNAPost.getLiked(memId)
         return jsonify({
-            'likes' : likes
+            'likes' : likes,
+            'liked' : liked
         })
     return jsonify({'message': 'Invalid request method'})   # 추가: POST 요청 이외의 다른 요청에 대한 처리 로직
       
