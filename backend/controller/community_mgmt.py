@@ -2,7 +2,7 @@ from model.db_mysql import conn_mysql
 from datetime import datetime
 
 class QNAPost() :
-    def __init__(self, postType, title, writer, content, curDate, category, likes, liked, views):
+    def __init__(self, postType, title, writer, content, curDate, category, likes, views):
         self.postType = postType
         self.title = title
         self.writer = writer
@@ -10,7 +10,6 @@ class QNAPost() :
         self.curDate = curDate
         self.category = category
         self.likes = likes
-        self.liked = liked
         self.views = views
         
     @staticmethod
@@ -18,45 +17,12 @@ class QNAPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"INSERT INTO post ( postType, title, writer, curDate, content, category, views, likes )VALUES ('{int(postType)}', '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(category)}', '{int(views)}', '{int(likes)}')"
+        sql = f"INSERT INTO post ( postType, title, writer, curDate, content, category, likes, views )VALUES ('{int(postType)}', '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(category)}', '{int(likes)}', '{int(views)}')"
         done = cursor_db.execute(sql)
         mysql_db.commit() 
         mysql_db.close()
         return done
     
-    @staticmethod
-    def incViews(writer):     #조회수 1씩 증가하는 함수
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
-        
-        sql = f"select views from post, member where QNAID = member.memId and member.memId = ( %s );"
-        cursor_db.execute(sql, writer)
-        row = cursor_db.fetchone()
-        mysql_db.close()
-        if row is None:  # better: if not row
-          views = 0
-        else:
-            views = row[0]
-        mysql_db.close()
-        return views+1
-    
-    @staticmethod
-    def incLikes(writer):     #좋아요 1씩 증가하는 함수
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
-        
-        sql = f"select likes from post, member where QNAID = member.memId and member.memId = ( %s );"
-        cursor_db.execute(sql, writer)
-        row = cursor_db.fetchone()
-        mysql_db.close()
-        if row is None:  # better: if not row
-          likes = 0
-        else:
-            likes = row[0]
-            
-        mysql_db.close()
-        return likes+1
-        
 
     def curdate():  # date 구하는 함수
         now = datetime.now()
@@ -123,7 +89,7 @@ class QNAPost() :
         if not res :
             return None
 
-        post = QNAPost(1, res[2], res[3], res[4], res[5], res[6], res[7], res[8], res[9])
+        post = QNAPost(res[1], res[2], res[3], res[4], res[5], res[6], res[7], res[8])
         return post
     
     @staticmethod
@@ -138,6 +104,52 @@ class QNAPost() :
         
         mysql_db.close()
         return 'view inc'
+    
+    @staticmethod
+    def toggleLike(memId, postId):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = "SELECT liked FROM liked WHERE memberId = %s AND postId = %s"
+        cursor_db.execute(sql, (str(memId), str(postId)))
+        liked = cursor_db.fetchone()
+        print(liked)
+
+        if liked is None:
+            sql = "INSERT INTO liked (memberId, postId, liked) VALUES (%s, %s, %s)"
+            likeType = 0
+            cursor_db.execute(sql, (str(memId), str(postId), True))
+            mysql_db.commit()
+        else:
+            liked_value = liked[0]
+            if liked_value == True:
+                sql = "UPDATE liked SET liked = False WHERE memberId = %s AND postId = %s"
+                likeType = 1
+                print(likeType)
+            else:
+                sql = "UPDATE liked SET liked = True WHERE memberId = %s AND postId = %s"
+                likeType = 0
+                print(likeType)
+            cursor_db.execute(sql, (str(memId), str(postId)))
+            mysql_db.commit()
+            mysql_db.close()
+
+        QNAPost.updateLikes(postId, likeType)
+        
+        
+    @staticmethod
+    def updateLikes(postId, likeType):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        if likeType == 1:
+            sql = f"UPDATE post SET likes = likes - 1 WHERE postId = '{str(postId)}'"
+        elif likeType == 0:
+            sql = f"UPDATE post SET likes = likes + 1 WHERE postId = '{str(postId)}'"
+        cursor_db.execute(sql)
+        mysql_db.commit()
+
+        mysql_db.close()
 
     @staticmethod
     def get3QNA():

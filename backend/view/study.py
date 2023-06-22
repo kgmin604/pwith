@@ -15,23 +15,38 @@ def show():
 
         if (searchType is None) or (searchValue is None) : # 전체 글 출력
             result = []
+            page = 0
+
+            page = request.args.get('page')
+
+            if not page :
+                return jsonify(result)
+
+            page = int(page)
 
             posts = studyPost.getStudy()
+            requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
 
-            for i in range(len(posts)):
+            for i in range(page) :  # 전체 페이지 수 만큼 각 페이 당 studyList 가져오기
+                studyList = studyPost.pagenation(i+1, 10)   # 매개변수 : 현재 페이지, 한 페이지 당 게시글 수
+
+            for i in range(len(studyList)):
                 post = {
                         'id' : posts[i][0],
                         'title' : posts[i][2],
                         'writer' : posts[i][3],
                         'curDate' : posts[i][5],
                         'likes' : posts[i][7],
-                        'views' : posts[i][9]
+                        'views' : posts[i][8]
                     }
                 post['curDate'] = studyPost.getFormattedDate(posts[i][5])
 
                 result.append(post)
 
-            return jsonify(result)
+            return jsonify({
+                'posts' : result,
+                'num' : requiredPage
+            })
 
         else : # 글 검색
             posts = []
@@ -56,8 +71,7 @@ def show():
                         'curDate' : posts[i][5],
                         'category' : posts[i][6],
                         'likes' : posts[i][7],
-                        'views' : posts[i][9],
-                        'liked' : posts[i][9]
+                        'views' : posts[i][8],
                     }
                     post['curDate'] = studyPost.getFormattedDate(posts[i][5])
                     
@@ -74,6 +88,8 @@ def showDetail(id) :
         post = studyPost.findById(id)
 
         postDate = studyPost.getFormattedDate(post.getCurDate())
+        
+        roomId= studyPost.getRoomId(id) #roomName 조회위해서 미리 변수로 리턴받음
 
         result = {
             'title': post.getTitle(),
@@ -81,7 +97,9 @@ def showDetail(id) :
             'content': post.getContent(),
             'curDate' : postDate,
             'likes' : studyPost.getLikes(id),
-            'views': post.getViews()
+            'views': post.getViews(),
+            'roomId' : roomId,
+            'roomTitle' : studyPost.getRoomName(roomId)
         }
         
         viewresult = studyPost.updateViews(id)
@@ -198,18 +216,19 @@ def write():
 @study_bp.route('/<int:id>/like', methods=['GET', 'POST'])
 def like(id):
     if request.method=='POST':
+        memId = current_user.getId()
         postId = request.get_json()['postId']
-        post = studyPost.findById(id)
-        liked = studyPost.toggleLike(id)
-        return jsonify({
-            'liked' : liked
-        })
+        
+        print(memId, postId)
+        studyPost.toggleLike(memId, postId)
+        print("liked")
         
     if request.method == 'GET':
         likes = studyPost.getLikes(id)
         return jsonify({
             'likes' : likes
-            })
+        })
+    return jsonify({'message': 'Invalid request method'})   # 추가: POST 요청 이외의 다른 요청에 대한 처리 로직
         
 """
 # update 

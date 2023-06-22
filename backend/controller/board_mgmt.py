@@ -4,7 +4,7 @@ from flask import Flask, jsonify
 
 class studyPost() :
     
-    def __init__(self, postType, title, writer, content, curDate, likes, views, liked):
+    def __init__(self, postType, title, writer, content, curDate, likes, views):
         self.postType = postType
         self.title = title
         self.writer = writer
@@ -12,7 +12,6 @@ class studyPost() :
         self.content = content
         self.likes = likes
         self.views = views
-        self.liked = liked
 
     @staticmethod
     def insertStudy(postType, title, writer, curDate, content, likes, views, roomId):
@@ -46,36 +45,6 @@ class studyPost() :
         return rows
     
     @staticmethod
-    def incViews(writer):     #조회수 1씩 증가하는 함수
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
-        
-        sql = f"select views from post, member where postId.writer = member.memId and member.memId = ( %s );"
-        cursor_db.execute(sql, writer)
-        row = cursor_db.fetchone()
-        mysql_db.close()
-        if row is None:  # better: if not row
-          views = 0
-        else:
-            views = row[0]
-        return views+1
-    
-    @staticmethod
-    def incLikes(writer):        #가입자 1씩 증가하는 함수
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
-        
-        sql = f"select likes from post, member where postId.writer = member.memId and member.memId = (%s);"
-        cursor_db.execute(sql, writer)
-        row = cursor_db.fetchone()
-        mysql_db.close()
-        if row is None:  # better: if not row
-          joiningP = 0
-        else:
-            joiningP = row[0]
-        return joiningP+1
-    
-    @staticmethod
     def curdate():  # date 구하는 함수
         now = datetime.now()
         return str(now)
@@ -107,7 +76,7 @@ class studyPost() :
         if not res :
             return None
 
-        post = studyPost(res[1], res[2], res[3], res[4], res[5], res[6], res[7], res[8])
+        post = studyPost(res[1], res[2], res[3], res[4], res[5], res[7], res[8])
         return post
 
     @staticmethod
@@ -157,6 +126,20 @@ class studyPost() :
         
         mysql_db.close()
         return 'view inc'
+    
+    @staticmethod
+    def pagenation(page, per_page):     # 게시글 10개 씩 페이지네이션 하는 함수
+        offset = (page - 1) * per_page  # 페이지의 시작 위치 계산
+        
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT * FROM post where postType = 0 LIMIT {per_page} OFFSET {offset}"
+        cursor_db.execute(sql)
+        results = cursor_db.fetchall()
+        mysql_db.close()
+        
+        return(results)
 
 
     def getTitle(self) :
@@ -193,12 +176,13 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT likes from post where post.postId = '{str(id)}'"
+        sql = f"SELECT likes from post where postId = '{str(id)}'"
 
         cursor_db.execute(sql)
         row = cursor_db.fetchone() 
-        print(row)
+        # print(row)
         likes = row[0]
+        # print("likes = "+str(likes))
         
         mysql_db.close()
         return int(likes)
@@ -206,8 +190,6 @@ class studyPost() :
     def getViews(self):
         return int(self.views)
     
-    def getLiked(self):
-        return bool(self.liked)
     
     def getFormattedDate(curDate):
         if isinstance(curDate, str):
@@ -226,37 +208,78 @@ class studyPost() :
         # print(rows)
         
         return rows
-    
-    def toggleLike(postId):
+    @staticmethod
+    def toggleLike(memId, postId):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = "SELECT liked FROM liked WHERE memberId = %s AND postId = %s"
+        cursor_db.execute(sql, (str(memId), str(postId)))
+        liked = cursor_db.fetchone()
+        print(liked)
+
+        if liked is None:
+            sql = "INSERT INTO liked (memberId, postId, liked) VALUES (%s, %s, %s)"
+            likeType = 0
+            cursor_db.execute(sql, (str(memId), str(postId), True))
+            mysql_db.commit()
+        else:
+            liked_value = liked[0]
+            if liked_value == True:
+                sql = "UPDATE liked SET liked = False WHERE memberId = %s AND postId = %s"
+                likeType = 1
+                print(likeType)
+            else:
+                sql = "UPDATE liked SET liked = True WHERE memberId = %s AND postId = %s"
+                likeType = 0
+                print(likeType)
+            cursor_db.execute(sql, (str(memId), str(postId)))
+            mysql_db.commit()
+            mysql_db.close()
+
+        studyPost.updateLikes(postId, likeType)
+        
+        
+    @staticmethod
+    def updateLikes(postId, likeType):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        if likeType == 1:
+            sql = f"UPDATE post SET likes = likes - 1 WHERE postId = '{str(postId)}'"
+        elif likeType == 0:
+            sql = f"UPDATE post SET likes = likes + 1 WHERE postId = '{str(postId)}'"
+        cursor_db.execute(sql)
+        mysql_db.commit()
+
+        mysql_db.close()
+        
+    def getRoomId(postId):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"select liked from post where postId = '{str(postId)}'"  # 현재 liked 상태에 따라서 실행되는 update문 다름
+        sql = f"select roomId from post where postId = '{str(postId)}'"
         cursor_db.execute(sql)
-        liked = cursor_db.fetchone()
-        
-        if liked == False:  # 현재 liked = false -> likes 증가
-            sql = f"UPDATE  post  SET liked = true  WHERE postId = '{str(postId)}'"
-            cursor_db.execute(sql)
-            mysql_db.commit()
-            
-            sql2 = f"UPDATE  post  SET likes = likes +1  WHERE postId = '{str(postId)}'"
-            
-        else:   # 현재 liked = true -> likes 감소
-            sql = f"UPDATE  post  SET liked = false  WHERE postId = '{str(postId)}'"
-            cursor_db.execute(sql)
-            mysql_db.commit()
-            
-            sql2 = f"UPDATE  post  SET likes = likes -1  WHERE postId = '{str(postId)}'"
-            
-        cursor_db.execute(sql2)
-        mysql_db.commit()
+        row = cursor_db.fetchone()
         mysql_db.close()
         
-        return liked
+        roomId = row[0]
+        return int(roomId)
+    
+    def getRoomName(roomId):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = f"select roomName from studyRoom where roomId = '{str(roomId)}'"
+        cursor_db.execute(sql)
+        row = cursor_db.fetchone()
+        mysql_db.close()
+        
+        roomName = row[0]
+        return str(roomName)
         
         
-        '''    
+'''    
     @staticmethod
     def deleteStudy(studyID):
         mysql_db = conn_mysql()
