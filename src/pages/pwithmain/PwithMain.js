@@ -7,13 +7,15 @@ import userEvent from "@testing-library/user-event";
 
 function PwithMain(){
     const dummy = {'id':1,'title':'로딩중...'}
+    const dummy2 = {'id':0, 'bridf':'로딩중...'}
     const dummylist = [dummy,dummy,dummy,dummy,dummy];
     const dummylist2 = [dummy,dummy,dummy,dummy];
+    const dummylist3 = [dummy2,dummy2,dummy2,dummy2,dummy2]
 
     let navigate = useNavigate();
     let [studyList, setStudyList] = useState(dummylist);
     let [newsList, setNewsList] = useState(dummylist);
-    let [mentorList, setMentorList] = useState(dummylist);
+    let [mentorList, setMentorList] = useState(dummylist3);
     let [contentList, setContentList] = useState(dummylist2);
 
     useEffect(()=>{

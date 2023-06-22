@@ -12,6 +12,7 @@ function StudyMain() {
   let studyPostList = useSelector((state) => state.studyPostList);
   let dispatch = useDispatch();
 
+  /* -- StudyBoard.js로 이동
   useEffect(() => {
     const updateStudy = () => {
       axios({
@@ -28,6 +29,7 @@ function StudyMain() {
 
     updateStudy();
   }, []);
+  */
 
   return (
     <div className="StudyMain">

@@ -46,6 +46,7 @@ div.StudyCreate div.form-wrapper div.study-bottom-area .submit-button {
 .StudyMain {
     /* font-family: "TmoneyRoundWind"; */
     text-align: center;
+    margin-bottom: 50px;
 }
 
 .StudyCreate {
@@ -126,7 +127,7 @@ div.StudyPost
 div.StudyPost div.study-header
 h3{
     text-align: left;
-    font-size: 26px;
+    font-size: 20px;
     font-weight: 600;
 }
 
@@ -176,7 +177,7 @@ div.StudyPost
 div.StudyPost
 .studyroom-join{
     border-radius: 5px;
-    border: 1px solid lightblue;
+    border: 1px solid #98AFCA;
     height: 80px;
     width: 95%;
     margin: 0 auto;
@@ -199,4 +200,53 @@ span{
     width: 400px;
     text-align: left;
     padding-left: 10px;
+}
+
+/* 페이지네이션 용 */
+div.Board
+.pagination{
+    border: solid;
+}
+
+div.Board div.pagination
+.control-page{
+    margin: 0 10px;
+    color: lightgray;
+}
+
+div.Board div.pagination
+.control-page:hover{
+    color: gray;
+}
+
+div.Board div.pagination
+.control-page:disabled{
+    display: none;
+}
+
+div.Board div.pagination
+.pages{
+    margin: 0 auto;
+}
+
+div.Board div.pagination
+.page{
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+div.Board div.pagination
+.page:hover{
+    color: black;
+}
+
+div.pagination
+.non-selected{
+    color: gray;
+}
+
+div.pagination
+.selected{
+    color: black;
+    text-decoration: underline;
 }

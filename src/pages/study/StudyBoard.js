@@ -18,10 +18,51 @@ function StudyBoard(props) {
 
     let user = useSelector((state) => state.user);
     let dispatch = useDispatch();
-    let studyPostList = useSelector((state) => state.studyPostList);
+
+    let [studyPostList,setStudyPostList] = useState([]);
 
     const [searchType, setSearchType] = useState(0);
     const [searchData, setSearchData] = useState(null);
+
+    let [totalPage, setTotalPage] = useState(1);
+    let [selectPage, setSelectPage] = useState(1);
+    let [pages, setPages] = useState([]); // 임시
+
+    let [disabled1, setDisabled1] = useState(true);
+    let [disabled2, setDisabled2] = useState(true);
+
+    let [isLoad, setIsLoad ] = useState(false);
+
+    useEffect(() => {
+        axios({
+            method: "GET",
+            url: "/study/main",
+            params: {
+                page: selectPage
+            }
+          })
+            .then(function (response) {
+                setStudyPostList(response.data);
+                //setStudyPostList(response.data.posts);
+                //setTotalPage(response.data.num);
+
+                if(!isLoad){ // 맨 처음 한번만 실행
+                    if(totalPage > 5){ 
+                        const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
+                        setPages(tmp);
+                        setDisabled2(false); // 페이지 이동 가능
+                    }
+                    else{
+                        const tmp = Array.from({ length: totalPage }, (_, index) => index + 1);
+                        setPages(tmp);
+                    }
+                    setIsLoad(true);
+                }
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+    }, [selectPage]);
 
     const searchStudy = () => {
         axios({
@@ -45,12 +86,11 @@ function StudyBoard(props) {
 
     };
 
+    /*
     useEffect(() => {
         console.log(studyPostList)
     }, [studyPostList])
-
-
-
+    */
 
     const [inputValue, setInputValue] = useState('');
 
@@ -65,8 +105,40 @@ function StudyBoard(props) {
     };
 
 
+    function controlPages(type){
+        if(type===-1){
+            const startPage = pages[0];
+            const tmp = Array.from({ length: 5 }, (_, index) => startPage - 5 + index);
+            setPages(tmp);
+            setSelectPage(tmp[0]);
+            setDisabled2(false); // > 클릭 가능
 
-    return (<div className="Board">
+            if(startPage===6){
+                setDisabled1(true); // < 클릭 불가
+            }
+        }
+        else if(type===1){
+            if(pages[4]+5<=totalPage){ // 페이지 5개 display 가능
+                const tmp = Array.from({ length: 5 }, (_, index) => pages[index] + 5);
+                setPages(tmp);
+                setSelectPage(tmp[0]);
+                if(pages[4]+5===totalPage){
+                    setDisabled2(true); // > 클릭 불가
+                }
+            }
+            else{   // 페이지 5개 dispaly 불가능
+                const num = totalPage-pages[4];
+                const tmp = Array.from({ length: num }, (_, index) => pages[index] + 5);
+                setPages(tmp);
+                setSelectPage(tmp[0]);
+                setDisabled2(true); // > 클릭 불가
+            }
+            setDisabled1(false); // < 클릭 가능
+        }
+    }
+
+    return (
+    <div className="Board">
         <Stack direction="horizontal" gap={3} style={{ padding: "5px" }}>
             <div>
                 {
@@ -169,6 +241,29 @@ function StudyBoard(props) {
                 })}
             </tbody>
         </Table>)}
+        <div className='pagination'>
+            <span className="pages">
+                <button disabled={disabled1} className="control-page" onClick={(e)=>{e.stopPropagation(); controlPages(-1);}}>
+                    {'<'}
+                </button>
+                {
+                    pages.map((page,i)=>{
+                        return(
+                            <span 
+                                key={i} 
+                                className={`page${selectPage === page ? ' selected' : ' non-selected'}`}
+                                onClick={(e)=>{e.stopPropagation(); setSelectPage(page);}}
+                            >
+                                {page}
+                            </span>
+                        );
+                    })
+                }
+                <button disabled={disabled2} className="control-page" onClick={(e)=>{e.stopPropagation(); controlPages(1);}}>
+                    {'>'}
+                </button>
+            </span>
+        </div>
 
     </div>);
 }
