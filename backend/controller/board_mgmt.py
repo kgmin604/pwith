@@ -209,6 +209,20 @@ class studyPost() :
     def getViews(self):
         return int(self.views)
     
+    def getLiked(memId):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT liked from liked where memberId = '{str(memId)}'"
+
+        cursor_db.execute(sql)
+        row = cursor_db.fetchone() 
+        # print(row)
+        liked = row[0]
+
+        mysql_db.close()
+        return bool(liked)
+    
     
     def getFormattedDate(curDate):
         if isinstance(curDate, str):
