@@ -25,15 +25,19 @@ function MentoringCreate() {
         'content': ''
     })//제목, 분야, 내용
 
+    const formData = new FormData();
     function postPortfolio() {
         const updatedSubject = JSON.stringify(selectedWords);
       
         // FormData 객체 생성
-        const formData = new FormData();
+        
         formData.append("brief", portfolio.brief);
         formData.append("subject", updatedSubject);
         formData.append("content", portfolio.content);
         formData.append("image", portfolio.image); // Blob 객체 추가
+
+        console.log(formData.get('brief'))
+        console.log(formData.get('content'))
       
         axios({
           method: "POST",
@@ -45,6 +49,10 @@ function MentoringCreate() {
         })
           .then(function (response) {
             console.log(response);
+            console.log(formData.get('brief'))
+            console.log(formData.get('content'))
+            console.log(formData.get('image'))
+            console.log(formData.get('subject'))
             alert("새 글이 등록되었습니다.");
             navigate("../mentoring/main");
           })
