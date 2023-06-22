@@ -42,18 +42,17 @@ function StudyBoard(props) {
             }
           })
             .then(function (response) {
-                setStudyPostList(response.data);
-                //setStudyPostList(response.data.posts);
-                //setTotalPage(response.data.num);
+                setStudyPostList(response.data.posts);
+                setTotalPage(response.data.num);
 
                 if(!isLoad){ // 맨 처음 한번만 실행
-                    if(totalPage > 5){ 
+                    if(response.data.num > 5){ 
                         const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
                         setPages(tmp);
                         setDisabled2(false); // 페이지 이동 가능
                     }
                     else{
-                        const tmp = Array.from({ length: totalPage }, (_, index) => index + 1);
+                        const tmp = Array.from({ length: response.data.num }, (_, index) => index + 1);
                         setPages(tmp);
                     }
                     setIsLoad(true);

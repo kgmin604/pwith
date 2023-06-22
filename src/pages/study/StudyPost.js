@@ -9,6 +9,9 @@ import { useDispatch, useSelector } from "react-redux";
 import LikeAndComment from './likeAndComment.js';
 
 function StudyPost(props) {
+
+    let navigate = useNavigate();
+
     let user = useSelector((state) => state.user);
     let { id } = useParams();
 
@@ -32,6 +35,24 @@ function StudyPost(props) {
     const parse = require('html-react-parser');
     const parsedContent = parse(post.content);
     const date=JSON.stringify(post.curDate).slice(3,11);
+
+    function joinStudyRoom(){
+        axios({
+            method: "POST",
+            url: `/study/${id}`,
+            data: {
+                roomId: 5 // dummy
+                // roomId: `post.roomId`
+            }
+        })
+        .then(function (response) {
+            alert("스터디 참여 완료!");
+            navigate("../studyroom");
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
 
     return (
         <div className="StudyPost">
@@ -67,7 +88,11 @@ function StudyPost(props) {
             <div className="studyroom-join">
                 <img src='/img_notebook.png'></img>
                 <span>{"왕초보 파이썬"}</span> {/* 현재 dummy 값! 받아와서 수정 */}
-                <Button className="button" variant='blue'>참여하기</Button>
+                <Button 
+                    className="button" 
+                    variant='blue'
+                    onClick={(e)=>{e.stopPropagation(); joinStudyRoom();}}
+                >참여하기</Button>
             </div>
             
             <hr style={{ width: '100%', margin: '0 auto' }} />
