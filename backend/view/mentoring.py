@@ -41,7 +41,6 @@ def showDetail(mentoId) :
 
             # 1. 룸 생성
             mentiId = current_user.getId()
-            # mentiId = 'q' # dummmmmmmmmmmmmmmy
             roomName = str(mentoId) + "와 " + str(mentiId) + "의 공부방"
 
             roomId = MentoringRoom.create(roomName, mentoId, mentiId)
@@ -76,11 +75,13 @@ def showDetail(mentoId) :
             'subject' : json.loads(portfolio.subject),
             'image' : base64.b64encode(portfolio.image).decode('utf-8'),
             'brief' : portfolio.brief,
-            'content' : portfolio.content,
-            'review' : review
+            'content' : portfolio.content
         }
 
-        return jsonify(detail)
+        return jsonify({
+            'portfolio' : detail,
+            'review' : review
+        })
 
 @mento_bp.route('/<mentoId>', methods = ['POST', 'PUT', 'DELETE'])
 def review(mentoId) :
@@ -89,7 +90,6 @@ def review(mentoId) :
         cnt = request.get_json()['content']
 
         writer = current_user.getId()
-        # writer = 'test' # dummy !!
 
         try :
             pk = Review.writeReview(writer, cnt, mentoId)
