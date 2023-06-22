@@ -183,13 +183,14 @@ function Chat(){
             method: "GET",
             url: "/mypage/chat"
           })
-          .then(function (response) {
-              setChatList(response.data); // chatList는 딕셔너리 리스트
-          })
-          .catch(function (error) {
+        .then(function (response) {
+            const updatedChatList = response.data.filter(item => item.oppId !== user.id); // 임시 예외처리
+            setChatList(updatedChatList); // chatList는 딕셔너리 리스트
+        })
+        .catch(function (error) {
               console.log(error);
-          });
-      }, []);
+        });
+    }, []);
 
 
     function sendRequest(){
@@ -270,17 +271,19 @@ function Chat(){
                         chatList.length === 0 ?
                         <div className='signMsg'>쪽지함이<br></br>비어있습니다.</div>
                         :
-                        chatList.map((item, i) => (
-                            <a
-                                className={`item ${selectedItem === i ? 'selected' : ''}`}
-                                key={i}
-                                onClick={(event) => handleItemClick(event, i)}
-                            >
-                                <time>{item.date}</time>
-                                <h3>{item.oppId}</h3>
-                                <p>{item.content}</p>
-                            </a>
-                        ))
+                        chatList.map((item, i) => {
+                            return(
+                                <a
+                                    className={`item ${selectedItem === i ? 'selected' : ''}`}
+                                    key={i}
+                                    onClick={(event) => handleItemClick(event, i)}
+                                >
+                                    <time>{item.date}</time>
+                                    <h3>{item.oppId}</h3>
+                                    <p>{item.content}</p>
+                                </a>
+                            );
+                        })
                     }
                     </div>
                     <div className="chat-box scroll-area scroll-area-hidden"> {/* 오른쪽 구역: 채팅 내용 */}
