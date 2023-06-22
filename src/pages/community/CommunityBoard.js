@@ -62,7 +62,7 @@ function CommunityBoard(){
             <div className="category">
                 <div className="header">
                     <h2>QnA</h2>
-                    <span onClick={() => navigate("../qna")}>(+)</span>
+                    <span onClick={() => navigate("../qna/main")}>(+)</span>
                 </div>
                 <div className="body">
                     {
