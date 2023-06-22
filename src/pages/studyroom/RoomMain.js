@@ -82,7 +82,7 @@ function RoomMain(){
                                             e.stopPropagation();
                                             navigate(`/studyroom/${room.roomId}`);
                                         }}>
-                                        <h3>{room.title}</h3>
+                                        <h3>{room.title}{room.leader===user.id?' 👑':''}</h3>
                                         </a>
                                     ))
                                 }

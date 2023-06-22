@@ -46,7 +46,7 @@ function RoomCreate(){
             }
         })
             .then(function (response) {
-                alert("새 글이 등록되었습니다.");
+                alert("스터디룸이 개설되었습니다.");
                 navigate("../studyroom");
 
             })

@@ -37,25 +37,20 @@ function StudyPost(props) {
     const date=JSON.stringify(post.curDate).slice(3,11);
 
     function joinStudyRoom(){
-        if(post.isApplied){
-            axios({
-                method: "GET",
-                url: `/study/${id}`,
-                params:{
-                    apply : 'go'
-                }
-            })
-            .then(function (response) {
-                alert("스터디 참여 완료!");
-                    navigate("../studyroom");
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-        }
-        else{
-            alert("이미 참여중인 스터디입니다.");
-        }
+        axios({
+            method: "GET",
+            url: `/study/${id}`,
+            params:{
+                apply : 'go'
+            }
+        })
+        .then(function (response) {
+            alert("스터디 참여 완료!");
+            navigate("../../studyroom");
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     }
 
     return (
@@ -94,11 +89,12 @@ function StudyPost(props) {
                 <span>{post.roomTitle}</span>
                 {
                     user.id===post.writer?null:
-                    <Button 
+                    <Button
+                        disabled = {post.isApplied}
                         className="button" 
                         variant='blue'
                         onClick={(e)=>{e.stopPropagation(); joinStudyRoom();}}
-                    >참여하기</Button>
+                    >{post.isApplied?"참여완료":"참여하기"}</Button>
                 }
             </div>
             

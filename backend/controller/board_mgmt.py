@@ -104,7 +104,7 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"SELECT * FROM post WHERE writer = '{writer}' and postType = {postType}"
+        sql = f"SELECT * FROM post WHERE writer LIKE '%{writer}%' and postType = {postType}"
         
         cursor_db.execute(sql)
         posts = cursor_db.fetchall() # tuple의 tuple
@@ -121,7 +121,7 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT * FROM post WHERE title = '{title}' and postType = {postType}"
+        sql = f"SELECT * FROM post WHERE title LIKE '%{title}%' and postType = {postType}"
 
         cursor_db.execute(sql)
         posts = cursor_db.fetchall() # page 만들 시 fetchmany() 사용
