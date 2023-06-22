@@ -106,10 +106,6 @@ def showDetail(id) :
 
             done = StudyRoom.addStudent(roomId, newStudentList)
 
-            return jsonify({
-                'done' : done
-            })
-
 
         result = {}
 
@@ -118,8 +114,11 @@ def showDetail(id) :
         postDate = studyPost.getFormattedDate(post.getCurDate())
         
         roomId= studyPost.getRoomId(id) #roomName 조회위해서 미리 변수로 리턴받음
+        
+        isApplied = f'"{current_user.getId()}"' in StudyRoom.getStudentList(roomId)
 
         result = {
+            'isApplied' : isApplied,
             'title': post.getTitle(),
             'writer' : post.getWriter(),
             'content': post.getContent(),
