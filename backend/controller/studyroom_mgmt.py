@@ -50,7 +50,7 @@ class StudyRoom() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT * FROM studyRoom WHERE leader = '{logUser}'"
+        sql = f"SELECT * FROM studyRoom WHERE leader = '{logUser}' or studentsList LIKE '%{logUser}%'"
         cursor_db.execute(sql)
 
         result = cursor_db.fetchall()
@@ -58,6 +58,8 @@ class StudyRoom() :
         mysql_db.close()
         
         return result
+
+
 
     @staticmethod
     def getStudentList(roomId) : # 스터디룸 참가자 조회
