@@ -116,6 +116,9 @@ def showDetail(id) :
         roomId= studyPost.getRoomId(id) #roomName 조회위해서 미리 변수로 리턴받음
         
         isApplied = f'"{current_user.getId()}"' in StudyRoom.getStudentList(roomId)
+        # print("==== 스터디 신청이 되었는가 ====")
+        # print(isApplied)
+        # print("================")
 
         result = {
             'isApplied' : isApplied,
