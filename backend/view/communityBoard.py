@@ -128,7 +128,7 @@ def show():
                         'curDate' : posts[i][5],
                         # 'category' : posts[i][6],
                         'likes' : posts[i][7],
-                        'views' : posts[i][9]
+                        'views' : posts[i][8]
                         }
                 post['curDate'] = QNAPost.getFormattedDate(posts[i][5])
                 result.append(post)
@@ -157,7 +157,7 @@ def show():
                         'curDate' : posts[i][5],
                         # 'category' : posts[i][6],
                         'likes' : posts[i][7],
-                        'views' : posts[i][9]
+                        'views' : posts[i][8]
                     }
                     post['curDate'] = QNAPost.getFormattedDate(posts[i][5])
                     
@@ -282,6 +282,25 @@ def write():
         return jsonify({
             'done' : done
         })
+        
+@login_required
+@community_bp.route('/qna/<int:id>/like', methods=['GET', 'POST'])
+def like(id):
+    if request.method=='POST':
+        memId = current_user.getId()
+        postId = request.get_json()['postId']
+        
+        print(memId, postId)
+        QNAPost.toggleLike(memId, postId)
+        print("liked")
+        
+    if request.method == 'GET':
+        likes = QNAPost.getLikes(id)
+        return jsonify({
+            'likes' : likes
+        })
+    return jsonify({'message': 'Invalid request method'})   # 추가: POST 요청 이외의 다른 요청에 대한 처리 로직
+      
 
 
 # # update 페이지 . 글 수정
