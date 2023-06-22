@@ -45,36 +45,6 @@ class studyPost() :
         return rows
     
     @staticmethod
-    def incViews(writer):     #조회수 1씩 증가하는 함수
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
-        
-        sql = f"select views from post, member where postId.writer = member.memId and member.memId = ( %s );"
-        cursor_db.execute(sql, writer)
-        row = cursor_db.fetchone()
-        mysql_db.close()
-        if row is None:  # better: if not row
-          views = 0
-        else:
-            views = row[0]
-        return views+1
-    
-    @staticmethod
-    def incLikes(writer):        #가입자 1씩 증가하는 함수
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
-        
-        sql = f"select likes from post, member where postId.writer = member.memId and member.memId = (%s);"
-        cursor_db.execute(sql, writer)
-        row = cursor_db.fetchone()
-        mysql_db.close()
-        if row is None:  # better: if not row
-          joiningP = 0
-        else:
-            joiningP = row[0]
-        return joiningP+1
-    
-    @staticmethod
     def curdate():  # date 구하는 함수
         now = datetime.now()
         return str(now)
@@ -156,6 +126,20 @@ class studyPost() :
         
         mysql_db.close()
         return 'view inc'
+    
+    @staticmethod
+    def pagenation(page, per_page):     # 게시글 10개 씩 페이지네이션 하는 함수
+        offset = (page - 1) * per_page  # 페이지의 시작 위치 계산
+        
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT * FROM post where postType = 0 LIMIT {per_page} OFFSET {offset}"
+        cursor_db.execute(sql)
+        results = cursor_db.fetchall()
+        mysql_db.close()
+        
+        return(results)
 
 
     def getTitle(self) :

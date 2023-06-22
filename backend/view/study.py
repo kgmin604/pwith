@@ -15,10 +15,22 @@ def show():
 
         if (searchType is None) or (searchValue is None) : # 전체 글 출력
             result = []
+            page = 0
+
+            page = request.args.get('page')
+
+            if not page :
+                return jsonify(result)
+
+            page = int(page)
 
             posts = studyPost.getStudy()
+            requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
 
-            for i in range(len(posts)):
+            for i in range(page) :  # 전체 페이지 수 만큼 각 페이 당 studyList 가져오기
+                studyList = studyPost.pagenation(i+1, 10)   # 매개변수 : 현재 페이지, 한 페이지 당 게시글 수
+
+            for i in range(len(studyList)):
                 post = {
                         'id' : posts[i][0],
                         'title' : posts[i][2],
@@ -31,7 +43,10 @@ def show():
 
                 result.append(post)
 
-            return jsonify(result)
+            return jsonify({
+                'posts' : result,
+                'num' : requiredPage
+            })
 
         else : # 글 검색
             posts = []
