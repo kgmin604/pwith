@@ -1,4 +1,5 @@
 from model.db_mysql import conn_mysql
+import json
 
 class StudyRoom() :
     
@@ -49,7 +50,7 @@ class StudyRoom() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT * FROM studyRoom WHERE leader = '{logUser}'"
+        sql = f"SELECT * FROM studyRoom WHERE leader = '{logUser}' or studentsList LIKE '%{logUser}%'"
         cursor_db.execute(sql)
 
         result = cursor_db.fetchall()
@@ -57,3 +58,37 @@ class StudyRoom() :
         mysql_db.close()
         
         return result
+
+
+
+    @staticmethod
+    def getStudentList(roomId) : # 스터디룸 참가자 조회
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT studentsList FROM studyRoom WHERE roomId = {roomId}"
+
+        cursor_db.execute(sql)
+
+        studentsList = cursor_db.fetchone()[0]
+        # print(studentsList)
+
+        mysql_db.close()
+
+        return studentsList
+
+    @staticmethod
+    def addStudent(id, students) : # 스터디룸 참가자 추가
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"UPDATE studyRoom SET studentsList = '{students}' WHERE roomId = {id}"
+
+        done = cursor_db.execute(sql)
+        # print(done)
+
+        mysql_db.commit()
+
+        mysql_db.close()
+        
+        return done

@@ -80,6 +80,25 @@ class studyPost() :
         return post
 
     @staticmethod
+    def findRoomId(id) : # 스터디글에 해당하는 스터디룸 찾기
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT roomId FROM post WHERE postType = 0 and postId = {id}"
+
+        cursor_db.execute(sql)
+
+        roomId = cursor_db.fetchone()[0]
+
+        mysql_db.close()
+        
+        # print(roomId)
+        if not roomId :
+            return None
+
+        return roomId
+
+    @staticmethod
     def findByWriter(writer, postType) : # 글쓴이로 검색 & 내 글 목록
 
         mysql_db = conn_mysql()
