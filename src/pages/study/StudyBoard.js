@@ -22,7 +22,6 @@ function StudyBoard(props) {
     let [studyPostList,setStudyPostList] = useState([]);
 
     const [searchType, setSearchType] = useState(0);
-    const [searchData, setSearchData] = useState(null);
 
     let [totalPage, setTotalPage] = useState(1);
     let [selectPage, setSelectPage] = useState(1);
@@ -186,60 +185,39 @@ function StudyBoard(props) {
                 </div>)}
 
         </Stack>
-        {searchData === null ? (<Table bordered hover className="table">
-            <thead>
-                <tr>
-                    <th >no.</th>
-                    <th colSpan={2} className="text-container" >글제목</th>
-                    <th >글쓴이</th>
-                    <th >날짜</th>
-                    <th >조회수</th>
-                    <th >좋아요</th>
-                </tr>
-            </thead>
-            <tbody>
-                {studyPostList.map(function (post, index) {
-                    let date=post.curDate.slice(2,10);
-                    return (
-                        <tr className="postCol pointer-cursor" key={post.id} onClick={() => navigate(`../${post.id}`)}>
-                            <td >{post.id}</td>
-                            <td colSpan={2} className="text-container">{post.title}</td>
-                            <td>{post.writer}</td>
-                            <td>{date}</td>
-                            <td>{post.views}</td>
-                            <td>{post.likes}</td>
-                        </tr>
-                    );
-                })}
-            </tbody>
-        </Table>
-        ) : (<Table bordered hover className="table">
-            <thead>
-                <tr>
-                    <th>no.</th>
-                    <th colSpan={2} className="text-container">글제목</th>
-                    <th>글쓴이</th>
-                    <th>좋아요</th>
-                    <th>날짜</th>
-                    <th>조회수</th>
-                </tr>
-            </thead>
-            <tbody>
-                {searchData.map((post,item) =>{ 
-                     let date=post.curDate.slice(2,10);
-                     return (
-                         <tr className="postCol pointer-cursor" key={post.id} onClick={() => navigate(`../${post.id}`)}>
-                             <td >{post.id}</td>
-                             <td colSpan={2} className="text-container">{post.title}</td>
-                             <td>{post.writer}</td>
-                             <td>{date}</td>
-                             <td>{post.views}</td>
-                             <td>{post.likes}</td>
-                         </tr>
-                     );
-                })}
-            </tbody>
-        </Table>)}
+        
+        <div className="posts-area">
+        {
+            studyPostList===null ? null:
+            <>
+            <div className="post-item" style={{ 'height':'40px' }}>
+                <strong className=" post-comm">No.</strong>
+                <strong className=" post-title">제목</strong>
+                <strong className=" post-writer">글쓴이</strong>
+                <strong className=" post-comm">작성일</strong>
+                <strong className=" post-comm">좋아요</strong>
+                <strong className=" post-comm">조회수</strong>
+            </div>
+            <hr style={{ 'width': '100%', "margin": '5px auto' }} />
+            {
+            studyPostList.map((post,i)=>{
+                return(
+                    <div className = "post-item hover-effect" key={i}>
+                        <span className=" post-comm">{post.id}</span>
+                        <span className=" post-title">{post.title}</span>
+                        <span className=" post-writer">{post.writer}</span>
+                        <span className=" post-comm">{post.curDate}</span>
+                        <span className=" post-comm">{post.likes}</span>
+                        <span className=" post-comm">{post.views}</span>
+                    </div>
+                );
+            })}
+            <hr style={{ 'width': '100%', "margin": '5px auto' }} />
+            </>
+        }
+        
+        </div>
+        
         <div className='pagination'>
             <span className="pages">
                 <button disabled={disabled1} className="control-page" onClick={(e)=>{e.stopPropagation(); controlPages(-1);}}>
