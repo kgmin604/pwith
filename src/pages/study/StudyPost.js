@@ -41,8 +41,7 @@ function StudyPost(props) {
             method: "POST",
             url: `/study/${id}`,
             data: {
-                roomId: 5 // dummy
-                // roomId: `post.roomId`
+                roomId: `${post.roomId}`
             }
         })
         .then(function (response) {
@@ -87,7 +86,7 @@ function StudyPost(props) {
 
             <div className="studyroom-join">
                 <img src='/img_notebook.png'></img>
-                <span>{"왕초보 파이썬"}</span> {/* 현재 dummy 값! 받아와서 수정 */}
+                <span>{post.roomTitle}</span> {/* 현재 dummy 값! 받아와서 수정 */}
                 <Button 
                     className="button" 
                     variant='blue'
