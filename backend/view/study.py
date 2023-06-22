@@ -95,7 +95,7 @@ def showDetail(id) :
             newStudentList = ''
 
             if not studentsList_string :
-                newStudentList = f'["{current_user.getId}"]'
+                newStudentList = f'["{current_user.getId()}"]'
                 # newStudentList = f'["a"]' # dummmmmmmmmmmmmmy
             else :
                 studentsList = json.loads(studentsList_string) # list
@@ -105,6 +105,10 @@ def showDetail(id) :
                 newStudentList = newStudentList.replace("\'", "\"")
 
             done = StudyRoom.addStudent(roomId, newStudentList)
+
+            return jsonify({
+                'done' : done
+            })
 
 
         result = {}

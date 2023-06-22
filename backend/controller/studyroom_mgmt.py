@@ -69,7 +69,7 @@ class StudyRoom() :
         cursor_db.execute(sql)
 
         studentsList = cursor_db.fetchone()[0]
-        print(studentsList)
+        # print(studentsList)
 
         mysql_db.close()
 
@@ -83,7 +83,7 @@ class StudyRoom() :
         sql = f"UPDATE studyRoom SET studentsList = '{students}' WHERE roomId = {id}"
 
         done = cursor_db.execute(sql)
-        print(done)
+        # print(done)
 
         mysql_db.commit()
 

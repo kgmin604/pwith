@@ -92,7 +92,7 @@ class studyPost() :
 
         mysql_db.close()
         
-        print(roomId)
+        # print(roomId)
         if not roomId :
             return None
 
