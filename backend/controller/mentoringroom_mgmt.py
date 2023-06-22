@@ -57,3 +57,34 @@ class MentoringRoom() :
         mysql_db.close()
         
         return result
+
+    @staticmethod
+    def getMentiList(mentoId) : # 멘토링 참가자 조회
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT studentsList FROM mentor WHERE roomId = {mentoId}"
+
+        cursor_db.execute(sql)
+
+        studentsList = cursor_db.fetchone()[0]
+        # print(studentsList)
+
+        mysql_db.close()
+
+        return studentsList
+
+    @staticmethod
+    def addStudent(mento, mentiList) :
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"UPDATE mento SET mentiList = '{mentiList}' WHERE mentoId = '{mento}'"
+
+        done = cursor_db.execute(sql)
+
+        mysql_db.commit()
+
+        mysql_db.close()
+        
+        return done

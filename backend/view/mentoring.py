@@ -56,6 +56,10 @@ def showDetail(mentoId) :
             done = chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
             done = chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
 
+            return jsonify({
+                'status' : 'success' # 필없
+            })
+
 
         detail = {}
 
