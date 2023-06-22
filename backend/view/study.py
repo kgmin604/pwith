@@ -73,6 +73,8 @@ def showDetail(id) :
         post = studyPost.findById(id)
 
         postDate = studyPost.getFormattedDate(post.getCurDate())
+        
+        roomId= studyPost.getRoomId(id) #roomName 조회위해서 미리 변수로 리턴받음
 
         result = {
             'title': post.getTitle(),
@@ -80,7 +82,9 @@ def showDetail(id) :
             'content': post.getContent(),
             'curDate' : postDate,
             'likes' : studyPost.getLikes(id),
-            'views': post.getViews()
+            'views': post.getViews(),
+            'roomId' : roomId,
+            'roomTitle' : studyPost.getRoomName(roomId)
         }
         
         viewresult = studyPost.updateViews(id)

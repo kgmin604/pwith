@@ -251,6 +251,7 @@ class studyPost() :
                 print(likeType)
             cursor_db.execute(sql, (str(memId), str(postId)))
             mysql_db.commit()
+            mysql_db.close()
 
         studyPost.updateLikes(postId, likeType)
         
@@ -268,6 +269,30 @@ class studyPost() :
         mysql_db.commit()
 
         mysql_db.close()
+        
+    def getRoomId(postId):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = f"select roomId from post where postId = '{str(postId)}'"
+        cursor_db.execute(sql)
+        row = cursor_db.fetchone()
+        mysql_db.close()
+        
+        roomId = row[0]
+        return int(roomId)
+    
+    def getRoomName(roomId):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = f"select roomName from studyRoom where roomId = '{str(roomId)}'"
+        cursor_db.execute(sql)
+        row = cursor_db.fetchone()
+        mysql_db.close()
+        
+        roomName = row[0]
+        return str(roomName)
         
         
 '''    
