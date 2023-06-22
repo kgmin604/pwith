@@ -202,7 +202,11 @@ function StudyBoard(props) {
             {
             studyPostList.map((post,i)=>{
                 return(
-                    <div className = "post-item hover-effect" key={i}>
+                    <div 
+                        className = "post-item hover-effect" 
+                        key={i}
+                        onClick={(e)=>{e.stopPropagation(); navigate(`../${post.id}`)}}
+                    >
                         <span className=" post-comm">{post.id}</span>
                         <span className=" post-title">{post.title}</span>
                         <span className=" post-writer">{post.writer}</span>

@@ -45,8 +45,14 @@ function StudyPost(props) {
             }
         })
         .then(function (response) {
-            alert("스터디 참여 완료!");
-            navigate("../studyroom");
+            alert(response.data.done);
+            if(response.data.done===1){
+                alert("스터디 참여 완료!");
+                navigate("../studyroom");
+            }
+            else if(response.data.done===0){
+                alert("이미 참여중인 스터디입니다.");
+            }
         })
         .catch(function (error) {
             console.log(error);
@@ -86,12 +92,15 @@ function StudyPost(props) {
 
             <div className="studyroom-join">
                 <img src='/img_notebook.png'></img>
-                <span>{post.roomTitle}</span> {/* 현재 dummy 값! 받아와서 수정 */}
-                <Button 
-                    className="button" 
-                    variant='blue'
-                    onClick={(e)=>{e.stopPropagation(); joinStudyRoom();}}
-                >참여하기</Button>
+                <span>{post.roomTitle}</span>
+                {
+                    user.id===post.writer?null:
+                    <Button 
+                        className="button" 
+                        variant='blue'
+                        onClick={(e)=>{e.stopPropagation(); joinStudyRoom();}}
+                    >참여하기</Button>
+                }
             </div>
             
             <hr style={{ width: '100%', margin: '0 auto' }} />

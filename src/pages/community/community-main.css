@@ -72,6 +72,9 @@ h3{
     padding-left: 10px;
     float: left;
     text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 div.CommunityBoard div.category div.body p.item
