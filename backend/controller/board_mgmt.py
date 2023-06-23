@@ -170,17 +170,30 @@ class studyPost() :
     def getViews(self) :
         return int(self.views)
 
-    def getTotalP() :   # totalP studyRoom 에서 받아오기 (roomId 같은 걸로)
+    def getTotalP(roomId) :   # totalP studyRoom 에서 받아오기 (roomId 같은 걸로)
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT totalP from studyRoom, post where studyRoom.roomId = post.postId"
+        sql = f"SELECT totalP from studyRoom where studyRoom.roomId = '{str(roomId)}'"
 
         cursor_db.execute(sql)
-        totalP = cursor_db.fetchone() 
+        totalP = cursor_db.fetchone()
+        print(totalP)
         
         mysql_db.close()
-        return int(totalP)
+        return int(totalP[0])
+    
+    def getJoinP(roomId):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT joinP from studyRoom where studyRoom.roomId = '{str(roomId)}'"
+
+        cursor_db.execute(sql)
+        joinP = cursor_db.fetchone()
+        
+        mysql_db.close()
+        return int(joinP[0])
     
     def getCurDate(self) :
         return str(self.curDate)

@@ -14,18 +14,19 @@ def show():
 
         searchType = request.args.get('type')
         searchValue = request.args.get('value')
+        
+        result = []
+        page = 0
+
+        page = request.args.get('page')
+
+        if not page :
+            return jsonify(result)
+
+        page = int(page)
+
 
         if (searchType is None) or (searchValue is None) : # 전체 글 출력
-            result = []
-            page = 0
-
-            page = request.args.get('page')
-
-            if not page :
-                return jsonify(result)
-
-            page = int(page)
-
             posts = studyPost.getStudy()
             requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
 
@@ -60,10 +61,14 @@ def show():
                 posts = studyPost.findByWriter(searchValue, 0)
 
             result = []
+            requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
 
             if posts is None :
                 pass # 결과 없을 시 empty list
             else :
+                for i in range(page):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
+                    studyList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
+                    
                 for i in range(len(posts)) :
                     post = {
                         'id' : posts[i][0],
@@ -77,7 +82,10 @@ def show():
                     
                     result.append(post)
 
-            return jsonify(result)
+            return jsonify({
+                'posts' : result,
+                'num': page
+                })
 
 @study_bp.route('/<int:id>', methods=['GET']) # 글 조회
 def showDetail(id) :
@@ -127,8 +135,10 @@ def showDetail(id) :
             'likes' : studyPost.getLikes(id),
             'views': post.getViews(),
             'roomId' : roomId,
-            'roomTitle' : studyPost.getRoomName(roomId)
-        }
+            'roomTitle' : studyPost.getRoomName(roomId),
+            'totalP': studyPost.getTotalP(roomId),
+            'joinP' : studyPost.getJoinP(roomId)
+            }
         
         viewresult = studyPost.updateViews(id)
         # print(viewresult)
