@@ -76,7 +76,6 @@ function StudyBoard(props) {
         })
             .then(function (response) {
                 setStudyPostList(response.data.posts);
-
                 
                 if(response.data.num > 5){ 
                     const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
@@ -188,7 +187,7 @@ function StudyBoard(props) {
                         variant="blue"
                         disabled = {isDisabled}
                         onClick={() => { navigate("../create"); }}
-                    >
+                >
                         New
                 </Button>
             </div>
@@ -208,7 +207,7 @@ function StudyBoard(props) {
             </div>
             <hr style={{ 'width': '100%', "margin": '5px auto' }} />
             {
-                studyPostList===[] ? <div>검색 결과가 없습니다.</div> :
+                studyPostList.length===0 ? <div style={{'margin':'20px 0'}}>검색 결과가 없습니다.</div> :
                 studyPostList.map((post,i)=>{
                     return(
                         <div 
