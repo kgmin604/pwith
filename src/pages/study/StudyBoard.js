@@ -156,8 +156,7 @@ function StudyBoard(props) {
                             id="dropdown-button-dark-example2"
                             variant="blue"
                             title="글제목"
-                            className="mt-2"
-                            style={{ margin: '0 0' }}
+                            className="mt-2 setting"
                         >
                             <Dropdown.Item>글제목</Dropdown.Item>
                             <Dropdown.Item onClick={() => { setSearchType(1) }}>글쓴이</Dropdown.Item>
@@ -166,7 +165,7 @@ function StudyBoard(props) {
                             id="dropdown-button-dark-example2"
                             variant="blue"
                             title="글쓴이"
-                            className="mt-2"
+                            className="mt-2 setting"
                         >
                             <Dropdown.Item onClick={() => { setSearchType(0) }}>글제목</Dropdown.Item>
                             <Dropdown.Item >글쓴이</Dropdown.Item>
@@ -185,14 +184,13 @@ function StudyBoard(props) {
                 
 
                 <div className="vr" />
-                <Nav.Link onClick={() => { navigate("../create"); }}>
-                    <Button 
+                <Button 
                         variant="blue"
                         disabled = {isDisabled}
+                        onClick={() => { navigate("../create"); }}
                     >
                         New
-                    </Button>
-                </Nav.Link>
+                </Button>
             </div>
         </Stack>
         

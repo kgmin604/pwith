@@ -111,31 +111,70 @@ function App() {
           <nav className="navbar" style={{}}>
             <div
               className="btn pwith-logo"
-              onClick={() => {
-                navigate("/");
+              onClick={(e) => {
+                e.stopPropagation();
+                if(window.location.pathname === "/"){ // 현재 접속중인 경로 확인
+                  //window.location.href = "/"; // 새로고침
+                }
+                else{
+                  navigate("/");
+                }
               }}
             ></div>
             <ul className="navbar-menu" style={{ "margin-right": "40px" }}>
               <li
                 className="navbar-btn"
-                onClick={() => {
-                  navigate("/study/main");
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if(window.location.pathname === "/study/main"){ // 현재 접속중인 경로 확인
+                    //window.location.href = "/study/main"; // 새로고침
+                  }
+                  else{
+                    navigate("/study/main");
+                  }
                 }}
               >
                 스터디
               </li>
-              <li className="navbar-btn" onClick={() => navigate("/studyroom")}>
+              <li 
+                className="navbar-btn" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if(window.location.pathname === "/studyroom"){ // 현재 접속중인 경로 확인
+                    //window.location.href = "/studyroom"; // 새로고침
+                  }
+                  else{
+                    navigate("/studyroom");
+                  }
+                }}
+              >
                 스터디룸
               </li>
               <li
-                className="navbar-btn"
-                onClick={() => navigate("/community/main")}
+                className="navbar-btn" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if(window.location.pathname === "/community/main"){ // 현재 접속중인 경로 확인
+                    //window.location.href = "/community/main"; // 새로고침
+                  }
+                  else{
+                    navigate("/community/main");
+                  }
+                }}
               >
                 커뮤니티
               </li>
               <li
                 className="navbar-btn"
-                onClick={() => navigate("/mentoring/main")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if(window.location.pathname === "/mentoring/main"){ // 현재 접속중인 경로 확인
+                    //window.location.href = "/mentoring/main"; // 새로고침
+                  }
+                  else{
+                    navigate("/mentoring/main");
+                  }
+                }}
               >
                 멘토링
               </li>

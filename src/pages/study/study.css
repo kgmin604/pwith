@@ -212,7 +212,7 @@ div.Board
 }
 div.Board div.study-top
 .setting{
-    margin: 0 0;
+    margin: 0 0 !important ;
     padding: 0 0;
 }
 

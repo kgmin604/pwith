@@ -48,6 +48,7 @@ function Login(){
               //localStorage.setItem("name", response.data.name);
               //localStorage.setItem("email", response.data.email);
               navigate("/");
+              //window.location.href = "/";
             }
           })
           .catch(function (error) {
