@@ -137,7 +137,7 @@ function Join() {
         console.log(response);
         alert('회원 가입 완료!');
         navigate("/");
-        window.location.href = "/"; // 새로고침
+        //window.location.href = "/"; // 새로고침
       })
       .catch(function (error) {
         console.log(error);
