@@ -35,8 +35,8 @@ class Portfolio() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"INSERT INTO mento(mentoId, mentiList, subject, mentoPic, brief, content) VALUES ('{writer}', null, '{subject}', '{image}', '{brief}', '{content}')"
-        print(sql)
+        sql = f"INSERT INTO mento(mentoId, mentiList, subject, mentoPic, brief, content) VALUES ('{writer}', null, '{subject}', {image}, '{brief}', '{content}')"
+        # print(sql)
         done = cursor_db.execute(sql)
 
         mysql_db.commit() ### None
@@ -109,5 +109,20 @@ class Portfolio() :
         return allP
 
 
-    ## menti list에 추가 구현
+    @staticmethod
+    def search(mentoId) : # 멘토 아이디로 검색
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT * FROM mento WHERE mentoId LIKE '%{mentoId}%'"
+
+        cursor_db.execute(sql)
+        result = cursor_db.fetchall()
+        
+        mysql_db.close()
+
+        if not result :
+            return None
+        
+        return result
 

@@ -66,14 +66,11 @@ def show():
                 for i in range(len(posts)) :
                     post = {
                         'id' : posts[i][0],
-                        'type' : posts[i][1],
                         'title' : posts[i][2],
                         'writer' : posts[i][3],
-                        'content' : posts[i][4],
                         'curDate' : posts[i][5],
-                        'category' : posts[i][6],
                         'likes' : posts[i][7],
-                        'views' : posts[i][8],
+                        'views' : posts[i][8]
                     }
                     post['curDate'] = studyPost.getFormattedDate(posts[i][5])
                     

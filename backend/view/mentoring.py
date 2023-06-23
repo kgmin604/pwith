@@ -1,5 +1,6 @@
 import json
 import base64
+import pymysql
 from flask import Flask, session, Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from controller.mentor_mgmt import Portfolio
@@ -8,28 +9,58 @@ from controller.mentoringroom_mgmt import MentoringRoom
 from controller.chat_mgmt import chat
 from datetime import datetime
 
+# from PIL import Image 
+
 mento_bp = Blueprint('mento', __name__, url_prefix='/mentoring')
 
 @mento_bp.route('/main', methods = ['GET', 'POST'])
 def showAll() :
     if request.method == 'GET' :
-        allP = Portfolio.loadAll()
-        allP = list(allP) # tuple to list for change
 
-        result = []
+        searchValue = request.args.get('value')
 
-        for i in range(len(allP)) :
-            allP[i] = list(allP[i])
+        if searchValue is None : # 전체 글 출력
 
-            result.append({
-                'writer' : allP[i][0],
-                'subject' : json.loads(allP[i][2]),
-                'image' : base64.b64encode(allP[i][3]).decode('utf-8'),
-                'brief' : allP[i][4],
-                'content' : allP[i][5]
-            })
+            allP = Portfolio.loadAll()
+            allP = list(allP) # tuple to list for change
 
-        return jsonify(result)
+            result = []
+
+            for i in range(len(allP)) :
+                allP[i] = list(allP[i])
+
+                result.append({
+                    'writer' : allP[i][0],
+                    'subject' : json.loads(allP[i][2]),
+                    'image' : base64.b64encode(allP[i][3]).decode('utf-8'),
+                    'brief' : allP[i][4],
+                    'content' : allP[i][5]
+                })
+
+            return jsonify(result)
+
+        else : # 검색
+
+            mentos = Portfolio.search(searchValue)
+
+            result = []
+
+            if mentos is None :
+                pass # 결과 없을 시 empty list
+            else :
+                for i in range(len(mentos)) :
+                    mento = {
+                        'writer' : mentos[i][0],
+                        'subject' : json.loads(mentos[i][2]),
+                        'image' : base64.b64encode(mentos[i][3]).decode('utf-8'),
+                        'brief' : mentos[i][4],
+                        'content' : mentos[i][5]
+                    }
+                    
+                    result.append(mento)
+
+            return jsonify(result)
+
 
 @mento_bp.route('/<mentoId>', methods = ['GET'])
 def showDetail(mentoId) :
@@ -73,7 +104,7 @@ def showDetail(mentoId) :
                 'menti' : rev[1],
                 'review' : rev[2]
             })
-        
+        # print(type(base64.b64encode(@bytes@).decode('utf-8'))) ################### test ###############
         detail = {
             'mento' : portfolio.writer, # @property instead getter
             'subject' : json.loads(portfolio.subject),
@@ -134,47 +165,43 @@ def review(mentoId) :
             'done' : done
         })
 
-# @mento_bp.route('/create', methods = ['GET', 'POST'])
-# def writePortfolio() :
-#     if request.method == 'POST' :
-#         portfolioInfo = request.get_json(silent=True)
-
-#         writer = current_user.getId()
-#         # subject = portfolioInfo['subject']
-#         image = portfolioInfo['image']
-#         brief = portfolioInfo['brief']
-#         content = portfolioInfo['content']
-
-#         try :
-#             # result = Portfolio.create(writer, subject, image, brief, content)
-#             result = Portfolio.create(writer, image, brief, content)
-#         except Exception as ex:
-#             print("예외 발생 : " + str(ex))
-#             result = 0
-
-#         return jsonify({
-#             'done' : result
-#             })
-
 @mento_bp.route('/create', methods=['GET', 'POST'])
 def writePortfolio():
     if request.method == 'POST':
+        # portfolioInfo = request.get_json(silent=True)
         portfolioInfo = request.form  # FormData로부터 데이터 가져오기
 
         writer = current_user.getId()
         subject = portfolioInfo['subject']
         image = request.files['image']  # 이미지 파일 가져오기
+        # image = portfolioInfo['image']
         brief = portfolioInfo['brief']
         content = portfolioInfo['content']
 
+        # print(image)
+        img_bytes = image.read() # bytes
+        print(img_bytes)
+        # img_str = str(img_bytes)
+        # img_str = img_str.replace("\'", "\"")
+        # img_bytes = bytes(img_str, 'utf-8')
+        # print(type(img_bytes))
+        # print(type(img_bytes))################### <class 'bytes'> ###############
+        # img_encode = base64.b64encode(img_bytes).decode('utf-8')
+        # img_encode = base64.b64decode(img_str).encode('utf-8')
+        # img_encode = base64.b64decode(img_bytes)
+        # img_encode = base64.b64encode(portfolio.image).decode('utf-8') # 원본
+        # print(img_encode)
+
         try:
-            result = Portfolio.create(writer, subject, image, brief, content)
+            result = Portfolio.create(writer, subject, img_bytes, brief, content)
+            # result = Portfolio.create(writer, subject, img, brief, content)
         except Exception as ex:
             print("예외 발생: " + str(ex))
             result = 0
 
         return jsonify({
             'done': result
+            # 'done': 0
         })
 
 @mento_bp.route('/update/<mentoId>', methods = ['GET', 'PUT'])
