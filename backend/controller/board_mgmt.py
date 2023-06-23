@@ -213,11 +213,13 @@ class studyPost() :
         cursor_db.execute(sql)
         row = cursor_db.fetchone() 
         # print(row)
-        likes = row[0]
-        # print("likes = "+str(likes))
-        
-        mysql_db.close()
-        return int(likes)
+        if row is not None:
+            likes = row[0]
+            mysql_db.close()
+            return int(likes)
+        else:
+            mysql_db.close()
+            return 0
     
     def getViews(self):
         return int(self.views)
@@ -231,10 +233,13 @@ class studyPost() :
         cursor_db.execute(sql)
         row = cursor_db.fetchone() 
         # print(row)
-        liked = row[0]
-
-        mysql_db.close()
-        return bool(liked)
+        if row is not None:
+            liked = row[0]
+            mysql_db.close()
+            return int(liked)
+        else:
+            mysql_db.close()
+            return 0
     
     
     def getFormattedDate(curDate):

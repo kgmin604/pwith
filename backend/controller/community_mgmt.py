@@ -200,6 +200,7 @@ class QNAPost() :
     def getCategory(self):
         return int(self.category)
     
+    @staticmethod
     def getLikes(id):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
@@ -208,16 +209,21 @@ class QNAPost() :
 
         cursor_db.execute(sql)
         row = cursor_db.fetchone() 
-        # print(row)
-        likes = row[0]
+        print(row[0])
         # print("likes = "+str(likes))
         
-        mysql_db.close()
-        return int(likes)
+        if row is not None:
+            likes = row[0]
+            mysql_db.close()
+            return int(likes)
+        else:
+            mysql_db.close()
+            return 0
     
     def getViews(self):
         return int(self.views)
     
+    @staticmethod
     def getLiked(memId):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
@@ -227,8 +233,11 @@ class QNAPost() :
         cursor_db.execute(sql)
         row = cursor_db.fetchone() 
         # print(row)
-        liked = row[0]
-
-        mysql_db.close()
-        return bool(liked)
+        if row is not None:
+            liked = row[0]
+            mysql_db.close()
+            return int(liked)
+        else:
+            mysql_db.close()
+            return 0
     

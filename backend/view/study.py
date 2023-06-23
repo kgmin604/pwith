@@ -133,6 +133,7 @@ def showDetail(id) :
             'content': post.getContent(),
             'curDate' : postDate,
             'likes' : studyPost.getLikes(id),
+            'liked' : studyPost.getLiked(id),
             'views': post.getViews(),
             'roomId' : roomId,
             'roomTitle' : studyPost.getRoomName(roomId),

@@ -181,7 +181,8 @@ def showDetail(id) :
             'writer' : post.getWriter(),
             'content': post.getContent(),
             'curDate' : post.getCurDate(),
-            'likes' : post.getLikes(),
+            'likes' : QNAPost.getLikes(id),
+            'liked' : QNAPost.getLiked(id),
             'views': post.getViews()
         }
         viewresult = QNAPost.updateViews(id)
