@@ -91,7 +91,10 @@ function StudyPost(props) {
 
             <div className="studyroom-join">
                 <img src='/img_notebook.png'></img>
-                <span>{post.roomTitle}</span>
+                <span className="room-title">
+                    {post.roomTitle}
+                    <span className="room-p">({post.joinP}명/{post.totalP}명)</span>
+                </span>
                 {
                     user.id===post.writer?null:
                     <Button
@@ -99,7 +102,12 @@ function StudyPost(props) {
                         className="button" 
                         variant='blue'
                         onClick={(e)=>{e.stopPropagation(); joinStudyRoom();}}
-                    >{post.isApplied?"참여완료":"참여하기"}</Button>
+                    >
+                        {
+                            post.joinP===post.totalP ? "모집완료" : 
+                            post.isApplied? "참여완료":"참여하기"
+                        }
+                    </Button>
                 }
             </div>
             

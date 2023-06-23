@@ -196,10 +196,17 @@ img{
 }
 
 div.StudyPost div.studyroom-join
-span{
+.room-title{
     width: 400px;
     text-align: left;
     padding-left: 10px;
+}
+
+div.StudyPost div.studyroom-join span.room-title
+.room-p{
+    margin-left: 10px;
+    color: gray;
+    font-size: small;
 }
 
 /* 게시글 목록 */
