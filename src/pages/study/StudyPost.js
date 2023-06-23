@@ -19,13 +19,18 @@ function StudyPost(props) {
     const [reply,setReply] = useState(null);
 
     useEffect(() => {
-        axios.get(`/study/${id}`)
-            .then((response)=>{
-                setPost(response.data.post);
-                setReply(response.data.reply);
-                console.log(response.data)
-            })
-            .catch();
+        axios({
+            method: "GET",
+            url: `/study/${id}`
+        })
+        .then(function (response) {
+            setPost(response.data.post);
+            setReply(response.data.reply);
+            //console.log(response.data)
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     }, []);
 
     if (!post) {
