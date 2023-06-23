@@ -133,17 +133,27 @@ function Chat(){
     let [chatList, setChatList] = useState([]);
     let [msgList, setMsgList] = useState([]);
 
+    let [update, setUpdate] = useState(0);
+
     let [selectedItem, setSelectedItem] = useState(null);
-    let handleItemClick = (event, index) => { // 특정 userid 선택
-        event.stopPropagation(); // 이벤트 버블링 중단
+    useEffect(() => {
+        if (selectedItem !== null) {
+          getMsgList();
+        }
+    }, [selectedItem]);
+      
+    function handleItemClick(event, index) {
+        event.stopPropagation();
         setSelectedItem(index);
-        
+    }
+
+    function getMsgList(){
         axios({
             method: "POST",
             url: "/mypage/chat",
             data: {
                 type: 0,
-                oppId : `${chatList[index]['oppId']}`,
+                oppId : `${chatList[selectedItem]['oppId']}`,
             },
           })
           .then(function (response) {
@@ -152,8 +162,7 @@ function Chat(){
           .catch(function (error) {
               console.log(error);
           });
-        
-    };
+    }
 
     let [content, setContent] = useState('');
     let changeContent = (event) =>{
@@ -190,7 +199,7 @@ function Chat(){
         .catch(function (error) {
               console.log(error);
         });
-    }, []);
+    }, [update]);
 
 
     function sendRequest(){
@@ -209,6 +218,9 @@ function Chat(){
                 setOpen(!open);
                 setMsg('');
                 setContent('');
+
+                setUpdate(update+1);
+                getMsgList();
           })
           .catch(function (error) {
                 console.log(error);
