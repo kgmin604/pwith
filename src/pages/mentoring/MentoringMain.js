@@ -12,6 +12,8 @@ function MentoringMain() {
 
     const [mentoList, setMentoList] = useState([]);
 
+    let [userinput,setUserinput] = useState('');
+
     useEffect(() => {
         axios({
             method: "GET",
@@ -31,6 +33,22 @@ function MentoringMain() {
         console.log(mentoList);
     }, [mentoList])
 
+    function searchMentor(){
+        axios({
+            method: "GET",
+            url: "/mentoring/main",
+            params: {
+                value: `${userinput}`
+            }
+        })
+        .then(function (response) {
+            setMentoList(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
+
     return (
         <div className="MentoringMain">
             <div className="row">
@@ -40,8 +58,18 @@ function MentoringMain() {
 
                 <div className="col-md-8">
                     <Stack direction="horizontal" gap={3} style={{ padding: "5px" }}>
-                        <Form.Control className="me-auto" placeholder="원하는 멘토를 찾아보세요!" />
-                        <Button variant="blue">🔍</Button>
+                        <Form.Control 
+                            className="me-auto"
+                            placeholder="원하는 멘토를 찾아보세요!"
+                            onChange={ (e)=>{e.stopPropagation(); setUserinput(e.target.value); }}
+                            onKeyDown={(e) => { if (e.key === "Enter") searchMentor(); }}
+                        />
+                        <Button 
+                            variant="blue"
+                            onClick={(e)=>{e.stopPropagation(); searchMentor();}}
+                        >
+                            🔍
+                        </Button>
                     </Stack>
                     <hr />
                     <Row className="row-cols-1 row-cols-md-4 g-2" style={{ padding: '10px' }}>
