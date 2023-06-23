@@ -43,6 +43,7 @@ function StudyBoard(props) {
             }
           })
             .then(function (response) {
+                console.log(response.data);
                 setStudyPostList(response.data.posts);
                 setTotalPage(response.data.num);
 
