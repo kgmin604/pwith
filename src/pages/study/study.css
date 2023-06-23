@@ -203,6 +203,18 @@ span{
 }
 
 /* 게시글 목록 */
+div.Board
+.study-top{
+    display: flex;
+    flex-direction: center;
+    gap:10px;
+    align-items: center;
+}
+div.Board div.study-top
+.setting{
+    margin: 0 0;
+    padding: 0 0;
+}
 
 div.Board
 .posts-area{

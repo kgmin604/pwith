@@ -34,7 +34,7 @@ function StudyPost(props) {
 
     const parse = require('html-react-parser');
     const parsedContent = parse(post.content);
-    const date=JSON.stringify(post.curDate).slice(3,11);
+    const date=JSON.stringify(post.curDate).slice(3,17);
 
     function joinStudyRoom(){
         axios({

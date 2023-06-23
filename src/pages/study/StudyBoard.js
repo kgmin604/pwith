@@ -32,6 +32,8 @@ function StudyBoard(props) {
 
     let [isLoad, setIsLoad ] = useState(false);
 
+    let [isDisabled, setIsDisabled] = useState(user.id===null);
+
     useEffect(() => {
         axios({
             method: "GET",
@@ -63,19 +65,19 @@ function StudyBoard(props) {
     }, [selectPage]);
 
     const searchStudy = () => {
-        console.log('검색기능 테스트');
         axios({
             method: "GET",
             url: `/study/main`,
             params: {
                 type: searchType, // 0: 제목 1: 글쓴이
-                value: inputValue
+                value: inputValue,
+                page: 1
             }
         })
             .then(function (response) {
-                setStudyPostList(response.data);
+                setStudyPostList(response.data.posts);
 
-                /* 페이지네이션
+                
                 if(response.data.num > 5){ 
                     const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
                     setPages(tmp);
@@ -85,8 +87,6 @@ function StudyBoard(props) {
                     const tmp = Array.from({ length: response.data.num }, (_, index) => index + 1);
                     setPages(tmp);
                 }
-                */
-               setPages([1]); // dummy
             })
             .catch(function (error) {
                 console.log(error);
@@ -149,7 +149,7 @@ function StudyBoard(props) {
     return (
     <div className="Board">
         <Stack direction="horizontal" gap={3} style={{ padding: "5px" }}>
-            <div>
+            <div className="study-top">
                 {
                     searchType === 0 ?
                         <DropdownButton
@@ -157,6 +157,7 @@ function StudyBoard(props) {
                             variant="blue"
                             title="글제목"
                             className="mt-2"
+                            style={{ margin: '0 0' }}
                         >
                             <Dropdown.Item>글제목</Dropdown.Item>
                             <Dropdown.Item onClick={() => { setSearchType(1) }}>글쓴이</Dropdown.Item>
@@ -171,30 +172,28 @@ function StudyBoard(props) {
                             <Dropdown.Item >글쓴이</Dropdown.Item>
                         </DropdownButton>
                 }
+                <Form onSubmit={handleSubmit} className="setting">
+                    <Form.Control
+                        className="me-auto"
+                        placeholder="원하는 스터디를 찾아보세요!"
+                        value={inputValue}
+                        onChange={(e)=>handleInputChange(e)}
+                        style={{ width: '380px' }}
+                    />
+                </Form>
+                <Button variant="blue" type="submit" onClick={() => searchStudy()}>🔍</Button>
+                
 
+                <div className="vr" />
+                <Nav.Link onClick={() => { navigate("../create"); }}>
+                    <Button 
+                        variant="blue"
+                        disabled = {isDisabled}
+                    >
+                        New
+                    </Button>
+                </Nav.Link>
             </div>
-            <Form onSubmit={handleSubmit}>
-                <Form.Control
-                    className="me-auto"
-                    placeholder="원하는 스터디를 찾아보세요!"
-                    value={inputValue}
-                    onChange={(e)=>handleInputChange(e)}
-                    style={{ width: '380px' }}
-                />
-            </Form>
-            <Button variant="blue" type="submit" onClick={() => searchStudy()}>🔍</Button>
-             
-
-            <div className="vr" />
-            {user.id === "" ? null :
-                (<div>
-
-                    <Nav.Link onClick={() => { navigate("../create"); }}>
-                        <Button variant="blue"
-                        >New</Button>
-                    </Nav.Link>
-                </div>)}
-
         </Stack>
         
         <div className="posts-area">
