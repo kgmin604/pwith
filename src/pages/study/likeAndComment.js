@@ -17,47 +17,46 @@ function LikeAndComment(props) {
     let user = useSelector((state) => state.user);
     const id = props.id;
     const [likes, setLikes] = useState(0);
-    // const [liked,setLiked]=useState(false);
+    const [liked,setLiked]=useState(false);
     const [reply,setReply]=useState([]);
     const [replyNum, setReplyNum] = useState(0);
 
     useEffect(()=>{
         if(props!=undefined){
             setLikes(props.likes);
-            // setLiked(props.liked);
+            setLiked(props.liked);
             setReply(props.reply);
             setReplyNum(props.reply.length);
             console.log(props);
         }
-        
     },[props])
 
     const [more, setMore] = useState(false);
 
-    // const sendLikeSignal = () => {
-    //     axios.post(`/study/${id}/like`, {
-    //         postId: id
-    //     })
-    //         .then(function (response) {
-    //             axios.get(`/study/${id}/like`)
-    //                 .then((response) => {
-    //                     console.log(response.data)
-    //                     setLiked(!liked);
-    //                     if(liked){
-    //                         setLikes(likes-1);
-    //                     }
-    //                     else{
-    //                         setLikes(likes+1);
-    //                     }
-    //                 })
-    //                 .catch(function (error) {
-    //                     // GET 요청 실패 처리
-    //                 });
-    //         })
-    //         .catch(function (error) {
-    //             // 요청 실패 시 처리할 로직
-    //         });
-    // };
+    const sendLikeSignal = () => {
+        axios.post(`/study/${id}/like`, {
+            postId: id
+        })
+            .then(function (response) {
+                axios.get(`/study/${id}/like`)
+                    .then((response) => {
+                        console.log(response.data)
+                        if(liked){
+                            setLikes(likes-1);
+                        }
+                        else{
+                            setLikes(likes+1);
+                        }
+                        setLiked(!liked);   
+                    })
+                    .catch(function (error) {
+                        // GET 요청 실패 처리
+                    });
+            })
+            .catch(function (error) {
+                // 요청 실패 시 처리할 로직
+            });
+    };
 
     function updateComment() {
 
@@ -113,10 +112,9 @@ function LikeAndComment(props) {
         <div className='likeAndComment'>
             <div className='align-row'>
                 <div className='align-row'>{/* 하트 */}
-                    {/* {liked === false ? <img src={heartOutline} className="heart" onClick={() => sendLikeSignal()} />
+                    {!liked? <img src={heartOutline} className="heart" onClick={() => sendLikeSignal()} />
                         : <img src={heartFull} className="heart" onClick={() => sendLikeSignal()} />
-                    } */}
-                    <img src={heartFull} className="heart"/>
+                    }
                     <span style={{ width: '5px' }}></span>
                     {likes}
                 </div>
