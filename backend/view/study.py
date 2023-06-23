@@ -61,12 +61,12 @@ def show():
                 posts = studyPost.findByWriter(searchValue, 0)
 
             result = []
-            requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
 
             if posts is None :
                 pass # 결과 없을 시 empty list
             else :
                 for i in range(page):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
+                    requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
                     studyList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
                     
                 for i in range(len(posts)) :
