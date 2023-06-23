@@ -63,23 +63,33 @@ function StudyBoard(props) {
     }, [selectPage]);
 
     const searchStudy = () => {
+        console.log('검색기능 테스트');
         axios({
             method: "GET",
             url: `/study/main`,
             params: {
-                type: searchType,
+                type: searchType, // 0: 제목 1: 글쓴이
                 value: inputValue
             }
         })
             .then(function (response) {
-                console.log(response);
-                console.log(searchType);
-                console.log(inputValue);
-                navigate(`/study/main?type=${searchType}&value=${inputValue}`);
+                setStudyPostList(response.data);
+
+                /* 페이지네이션
+                if(response.data.num > 5){ 
+                    const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
+                    setPages(tmp);
+                    setDisabled2(false); // 페이지 이동 가능
+                }
+                else{
+                    const tmp = Array.from({ length: response.data.num }, (_, index) => index + 1);
+                    setPages(tmp);
+                }
+                */
+               setPages([1]); // dummy
             })
             .catch(function (error) {
                 console.log(error);
-                //alert("글을 불러오지 못했습니다.");
             });
 
     };
@@ -93,6 +103,7 @@ function StudyBoard(props) {
     const [inputValue, setInputValue] = useState('');
 
     const handleInputChange = (event) => {
+        event.stopPropagation();
         setInputValue(event.target.value);
     };
 
@@ -167,8 +178,8 @@ function StudyBoard(props) {
                     className="me-auto"
                     placeholder="원하는 스터디를 찾아보세요!"
                     value={inputValue}
-                    onChange={handleInputChange}
-                    style={{ width: '400px' }}
+                    onChange={(e)=>handleInputChange(e)}
+                    style={{ width: '380px' }}
                 />
             </Form>
             <Button variant="blue" type="submit" onClick={() => searchStudy()}>🔍</Button>
@@ -200,21 +211,22 @@ function StudyBoard(props) {
             </div>
             <hr style={{ 'width': '100%', "margin": '5px auto' }} />
             {
-            studyPostList.map((post,i)=>{
-                return(
-                    <div 
-                        className = "post-item hover-effect" 
-                        key={i}
-                        onClick={(e)=>{e.stopPropagation(); navigate(`../${post.id}`)}}
-                    >
-                        <span className=" post-comm">{post.id}</span>
-                        <span className=" post-title">{post.title}</span>
-                        <span className=" post-writer">{post.writer}</span>
-                        <span className=" post-comm">{post.curDate}</span>
-                        <span className=" post-comm">{post.likes}</span>
-                        <span className=" post-comm">{post.views}</span>
-                    </div>
-                );
+                studyPostList===[] ? <div>검색 결과가 없습니다.</div> :
+                studyPostList.map((post,i)=>{
+                    return(
+                        <div 
+                            className = "post-item hover-effect" 
+                            key={i}
+                            onClick={(e)=>{e.stopPropagation(); navigate(`../${post.id}`)}}
+                        >
+                            <span className=" post-comm">{post.id}</span>
+                            <span className=" post-title">{post.title}</span>
+                            <span className=" post-writer">{post.writer}</span>
+                            <span className=" post-comm">{post.curDate}</span>
+                            <span className=" post-comm">{post.likes}</span>
+                            <span className=" post-comm">{post.views}</span>
+                        </div>
+                    );
             })}
             <hr style={{ 'width': '100%', "margin": '5px auto' }} />
             </>
