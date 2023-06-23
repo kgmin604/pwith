@@ -54,7 +54,7 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = "select * from post where postType = 0"
+        sql = "select * from post where postType = 0 ORDER BY curDate DESC"
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
         mysql_db.close()
@@ -153,7 +153,7 @@ class studyPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT * FROM post where postType = 0 LIMIT {per_page} OFFSET {offset}"
+        sql = f"SELECT * FROM post where postType = 0 order by curDate desc LIMIT {per_page} OFFSET {offset}"
         cursor_db.execute(sql)
         results = cursor_db.fetchall()
         mysql_db.close()
@@ -229,6 +229,12 @@ class studyPost() :
             curDate = datetime.strptime(curDate, "%Y-%m-%d %H:%M:%S")
         formatted_datetime = curDate.strftime("%Y-%m-%d %H:%M:%S")
         return formatted_datetime
+    
+    def mainFormattedDate(curDate):
+        if isinstance(curDate, str):
+            curDate = datetime.strptime(curDate, "%Y-%m-%d %H:%M:%S")
+        formatted_date = curDate.strftime("%m-%d")
+        return formatted_date
     
     def getNStudy():
         mysql_db = conn_mysql()

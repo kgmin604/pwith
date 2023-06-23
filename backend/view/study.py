@@ -29,26 +29,27 @@ def show():
             posts = studyPost.getStudy()
             requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
 
-            for i in range(page) :  # 전체 페이지 수 만큼 각 페이 당 studyList 가져오기
-                studyList = studyPost.pagenation(i+1, 10)   # 매개변수 : 현재 페이지, 한 페이지 당 게시글 수
+            for i in range(page):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
+                studyList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
 
-            for i in range(len(studyList)):
+            for row in studyList:
                 post = {
-                        'id' : posts[i][0],
-                        'title' : posts[i][2],
-                        'writer' : posts[i][3],
-                        'curDate' : posts[i][5],
-                        'likes' : posts[i][7],
-                        'views' : posts[i][8]
-                    }
-                post['curDate'] = studyPost.getFormattedDate(posts[i][5])
+                    'id': row[0],
+                    'title': row[2],
+                    'writer': row[3],
+                    'curDate': row[5],
+                    'likes': row[7],
+                    'views': row[8]
+                }
+                post['curDate'] = studyPost.mainFormattedDate(row[5])
 
                 result.append(post)
 
             return jsonify({
-                'posts' : result,
-                'num' : requiredPage
+                'posts': result,
+                'num': requiredPage
             })
+
 
         else : # 글 검색
             posts = []
@@ -72,7 +73,7 @@ def show():
                         'likes' : posts[i][7],
                         'views' : posts[i][8]
                     }
-                    post['curDate'] = studyPost.getFormattedDate(posts[i][5])
+                    post['curDate'] = studyPost.mainFormattedDate(posts[i][5])
                     
                     result.append(post)
 
