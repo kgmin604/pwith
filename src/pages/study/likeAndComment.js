@@ -40,7 +40,7 @@ function LikeAndComment(props) {
             .then(function (response) {
                 axios.get(`/study/${id}/like`)
                     .then((response) => {
-                        console.log(response.data)
+
                         if(liked){
                             setLikes(likes-1);
                         }
