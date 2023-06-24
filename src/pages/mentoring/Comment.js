@@ -16,9 +16,11 @@ function Comment(props) {
     const id = props.id;
 
     const [more, setMore] = useState(false);
+    const [moreId, setMoreId] = useState(-1);
+    const [updateId, setUpdateId] = useState(-1);
     const [review, setReview] = useState([]);
     const [reviewNum, setReviewNum] = useState(0);
-    
+
     useEffect(() => {
         if (props.review != undefined) {
             setReview(props.review);
@@ -42,7 +44,7 @@ function Comment(props) {
                     }
                 ];
                 setReview(newReview);
-                setReviewNum(reviewNum+1);
+                setReviewNum(reviewNum + 1);
                 setInputValue('');
             })
             .catch(function (error) {
@@ -59,31 +61,33 @@ function Comment(props) {
                 console.log(response);
                 const updatedReview = review.map(review => {
                     if (review.reviewId === reviewId) {
-                        review.content = `${content}`;
+                        review.review = `${content}`;
                     }
                     setUpdateInput("");
                     return review;
                 });
-                console.log(updatedReview);
                 setReview(updatedReview);
                 console.log(review);
                 alert("댓글 수정 성공");
+                setUpdateInput("");
+                setUpdateId(-1)
             }).catch(function (error) {
                 // 오류발생시 실행
             })
     }
     function deleteComment(reviewId) {
         axios.delete(`/mentoring/${id}`, {
-            data:{
+            data: {
                 reviewId: `${reviewId}`
             }
         })
             .then(function (response) {
                 console.log(response);
                 const filteredReview = review.filter(review => review.reviewId !== reviewId);
-                    setReview(filteredReview);
-                    setReviewNum(reviewNum - 1);
-                    alert("댓글 삭제 성공");
+                setReview(filteredReview);
+                setReviewNum(reviewNum - 1);
+                setMore(false);
+                alert("댓글 삭제 성공");
             })
             .catch(function (error) {
                 console.log(error);
@@ -112,7 +116,9 @@ function Comment(props) {
 
 
     const [updateInput, setUpdateInput] = useState('');
-    const handleClick = (content) => {
+    const handleClick = (content, id) => {
+        setUpdateId(id);
+        setMore(false);
         setUpdateInput(content);
     }
     const handleUpdateChange = (event) => {
@@ -123,6 +129,12 @@ function Comment(props) {
         console.log(updateInput);
         updateComment(reviewId, updateInput);
     };
+
+    function clickMore(id) {
+        setMoreId(id);
+        setMore(!more);
+        console.log(moreId);
+    }
 
     return (
         <div className='Comment'>
@@ -145,24 +157,22 @@ function Comment(props) {
                             <span style={{ width: '5px' }}></span>
                             <div className='align-side'>
                                 <div style={{ textAlign: 'start' }}>
-                                    <div style={{fontSize:'13px'}}>{k.menti}</div>
-                                    {updateInput ? <>
-                                        <Form onSubmit={(event) => handleUpdateSubmit(event, k.reviewId)} style={{ width: '90%' }}>
-                                            <Form.Control
-                                                className="me-auto"
-                                                value={updateInput}
-                                                onChange={handleUpdateChange}
-                                            />
-                                            <Button variant="blue" type="submit" style={{ width: '10%' }}>수정</Button>
-                                        </Form>
-
+                                    <div style={{ fontSize: '13px' }}>{k.menti}</div>
+                                    {k.reviewId === updateId ? <><Form onSubmit={(event) => handleUpdateSubmit(event, updateId)} className='align-side' tyle={{ width: '150%' }}>
+                                        <Form.Control
+                                            className="me-auto"
+                                            value={updateInput}
+                                            onChange={handleUpdateChange}
+                                        />
+                                        {/* <Button variant="blue" type="submit" style={{ width: '50%' }}>수정</Button> */}
+                                    </Form>
                                     </> : k.review}
                                 </div>
                                 <div style={{ textAlign: 'end' }}>
-                                    {user.id === k.menti ? <img src={moreImg} className="more" onClick={() => setMore(!more)} />
+                                    {user.id === k.menti ? <img src={moreImg} className="more" onClick={() => clickMore(k.reviewId)} />
                                         : null}
                                     <div>
-                                        {more === true ? <ListGroup>
+                                        {(more == true) && (moreId === k.reviewId) ? <ListGroup>
                                             <ListGroup.Item action onClick={() => handleClick(k.review, k.reviewId)}>수정</ListGroup.Item>
                                             <ListGroup.Item action onClick={() => deleteComment(k.reviewId)}>삭제</ListGroup.Item>
                                         </ListGroup> : null}
