@@ -40,25 +40,38 @@ function LikeAndComment(props) {
         axios.post(`/study/${id}/like`, {
             postId: id
         })
-            .then(function (response) {
-                axios.get(`/study/${id}/like`)
-                    .then((response) => {
-                        if (liked) {
-                            setLikes(likes - 1);
-                        }
-                        else {
-                            setLikes(likes + 1);
-                        }
-                        setLiked(!liked);
-                    })
-                    .catch(function (error) {
-                        // GET 요청 실패 처리
-                    });
+        .then(function (response) {
+            axios.get(`/study/${id}/like`)
+                .then((response) => {
+                    console.log(response.data)
+                    if(liked===1){//원래 좋아요 눌러져있음-다시 누르면 감소
+                        setLikes(likes-1);
+                        setLiked(0);
+                    }
+                    else{
+                        setLikes(likes+1);
+                        setLiked(1);
+                    }
+
+                    setLiked(response.data.likes);
+                    setLiked(response.data.liked);
+                    
+                })
+                .catch(function (error) {
+                    // GET 요청 실패 처리
+                });
             })
             .catch(function (error) {
                 // 요청 실패 시 처리할 로직
             });
     };
+    function clickHeart(){
+        if(user.id===null){
+            alert("로그인이 필요합니다")
+            return;
+        }
+        sendLikeSignal();
+    }
 
     function createComment(content) {
         axios
@@ -83,6 +96,7 @@ function LikeAndComment(props) {
                 // 오류발생시 실행
             });
     }
+    
 
     function updateComment(replyId, content) {
         axios.put(`/study/${id}`, {
@@ -173,8 +187,8 @@ function LikeAndComment(props) {
         <div className='likeAndComment'>
             <div className='align-row'>
                 <div className='align-row'>{/* 하트 */}
-                    {!liked ? <img src={heartOutline} className="heart" onClick={() => sendLikeSignal()} />
-                        : <img src={heartFull} className="heart" onClick={() => sendLikeSignal()} />
+                    {liked===0? <img src={heartOutline} className="heart" onClick={() => clickHeart()} />
+                        : <img src={heartFull} className="heart" onClick={() => clickHeart()} />
                     }
                     <span style={{ width: '5px' }}></span>
                     {likes}
@@ -227,7 +241,7 @@ function LikeAndComment(props) {
                 )
             })}
 
-            <div className='align-side' style={{ margin: '10px' }}>{/* 댓글달기*/}
+            <div className='align-side' style={{ margin: '10px',marginBottom:'20px' }}>{/* 댓글달기*/}
                 <Form onSubmit={handleSubmit} className='align-side' style={{ width: '100%' }}>
                     <Form.Control style={{ width: '90%' }}
                         className="me-auto"

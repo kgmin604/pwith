@@ -19,6 +19,7 @@ function LikeAndComment(props) {//좋아요 완료
 
     const [likes, setLikes] = useState(0);
     const [liked,setLiked]=useState(0);
+    
     const [reply,setReply]=useState([]);
     const [replyNum, setReplyNum] = useState(0);
 
