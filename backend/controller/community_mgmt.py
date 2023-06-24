@@ -218,25 +218,8 @@ class QNAPost() :
     def getContent(self) :
         return str(self.content)
 
-    @staticmethod
-    def getViews(id) :
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
-
-        sql = f"SELECT views from post where postId = '{str(id)}'"
-
-        cursor_db.execute(sql)
-        row = cursor_db.fetchone() 
-        print(row[0])
-        # print("likes = "+str(likes))
-        
-        if row is not None:
-            views = row[0]
-            mysql_db.close()
-            return int(views)
-        else:
-            mysql_db.close()
-            return 0
+    def getViews(self) :
+        return int(self.views)
     
     def getCurDate(self) :
         return str(self.curDate)

@@ -185,7 +185,7 @@ def showDetail(id) :
             'curDate' : post.getCurDate(),
             'likes' : QNAPost.getLikes(id),
             'liked' : QNAPost.getLiked(current_user.getId(), id),
-            'views': QNAPost.getViews(id)
+            'views': post.getViews()
         }
         
         # toFront['curDate'] = QNAPost.getFormattedDate(toFront['curDate'])
