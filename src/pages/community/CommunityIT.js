@@ -91,18 +91,13 @@ function CommunityIT() {
 
     return (
         <div className="CommunityIT">
-            <Stack direction="horizontal" gap={3} style={{ padding: "5px" }}>
-                <Form.Control className="me-auto" placeholder="IT 소식을 검색해보세요!" />
-                <Button variant="blue">🔍</Button>
-            </Stack>
-            <hr/>
-
+            
             <div className="selected-date">
                 <span onClick={(e)=>controlDate(e,-1)}>{'<'}</span>
                     {stringDate}
                 <span onClick={(e)=>controlDate(e,1)}>{'>'}</span>
             </div>
-
+            <hr/>
             <div className="itnews-list">
             {
                 itList.map((it,i) => {
