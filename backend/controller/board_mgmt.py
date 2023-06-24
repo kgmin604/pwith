@@ -160,7 +160,6 @@ class studyPost() :
         
         return(results)
 
-
     def getTitle(self) :
         return str(self.title)
 
@@ -254,11 +253,11 @@ class studyPost() :
         formatted_date = curDate.strftime("%m-%d")
         return formatted_date
     
-    def getNStudy():
+    def getNStudy(num):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = "select postId, title from post where postType = 0 ORDER BY curDate DESC LIMIT 5 "
+        sql = f"select postId, title from post where postType = 0 ORDER BY curDate DESC LIMIT {int(num)} "
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
         mysql_db.close()

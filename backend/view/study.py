@@ -11,6 +11,23 @@ study_bp = Blueprint('study', __name__, url_prefix='/study')
 @study_bp.route('/main', methods=['GET'])
 def show():
     if request.method == 'GET':
+        
+        # 추천 스터디 3개
+        recommend = request.args.get('recommend')
+        print("recommend")
+        print(recommend)
+        print("recommend")
+        if recommend is not None:
+            print("recommend")
+            recStudy=[]
+            recommendStudy = studyPost.getNStudy(3)
+            for study in recommendStudy:
+                rec = {
+                    'id' : study[0],
+                    'title' : study[1]
+                }
+                recStudy.append(rec)
+                
 
         searchType = request.args.get('type')
         searchValue = request.args.get('value')
@@ -48,7 +65,8 @@ def show():
 
             return jsonify({
                 'posts': result,
-                'num': requiredPage
+                'num': requiredPage,
+                'rec' : recStudy
             })
 
 
@@ -84,8 +102,10 @@ def show():
 
             return jsonify({
                 'posts' : result,
-                'num': page
+                'num': page,
+                'rec' : recStudy
                 })
+            
 
 @study_bp.route('/<int:id>', methods=['GET']) # 글 조회
 def showDetail(id) :
