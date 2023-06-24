@@ -65,8 +65,8 @@ def show():
 
             return jsonify({
                 'posts': result,
-                'num': requiredPage,
-                'rec' : recStudy
+                'num': requiredPage
+               # 'rec' : recStudy
             })
 
 
@@ -102,8 +102,8 @@ def show():
 
             return jsonify({
                 'posts' : result,
-                'num': page,
-                'rec' : recStudy
+                'num': page
+                #'rec' : recStudy
                 })
             
 
@@ -284,7 +284,7 @@ def like(id):
         
     if request.method == 'GET':
         likes = studyPost.getLikes(id)
-        liked = studyPost.getLiked(memId)
+        liked = studyPost.getLiked(memId, id)
         return jsonify({
             'likes' : likes,
             'liked' : liked

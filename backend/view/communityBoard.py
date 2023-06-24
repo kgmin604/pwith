@@ -292,12 +292,13 @@ def like(id):
         postId = request.get_json()['postId']
         
         print(memId, postId)
-        QNAPost.toggleLike(memId, postId)
+        liked = QNAPost.toggleLike(memId, postId)
         print("liked")
+        
         
     if request.method == 'GET':
         likes = QNAPost.getLikes(id)
-        liked = QNAPost.getLiked(memId)
+        liked = QNAPost.getLiked(memId, id)
         return jsonify({
             'likes' : likes,
             'liked' : liked

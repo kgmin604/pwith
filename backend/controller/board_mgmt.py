@@ -223,11 +223,11 @@ class studyPost() :
     def getViews(self):
         return int(self.views)
     
-    def getLiked(memId):
+    def getLiked(memId, postId):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT liked from liked where memberId = '{str(memId)}'"
+        sql = f"SELECT liked from liked where memberId = '{str(memId)}' and postId = '{str(postId)}'"
 
         cursor_db.execute(sql)
         row = cursor_db.fetchone() 

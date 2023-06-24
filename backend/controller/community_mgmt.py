@@ -224,19 +224,19 @@ class QNAPost() :
         return int(self.views)
     
     @staticmethod
-    def getLiked(memId):
+    def getLiked(memId, postId):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT liked from liked where memberId = '{str(memId)}'"
+        sql = f"SELECT liked from liked where memberId = '{str(memId)}' and postId = '{str(postId)}'"
 
         cursor_db.execute(sql)
         row = cursor_db.fetchone() 
         # print(row)
         if row is not None:
-            liked = row[0]
+            likes = row[0]
             mysql_db.close()
-            return int(liked)
+            return int(likes)
         else:
             mysql_db.close()
             return 0
