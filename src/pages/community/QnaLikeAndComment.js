@@ -53,6 +53,9 @@ function LikeAndComment(props) {//좋아요 완료
                             setLikes(likes+1);
                             setLiked(1);
                         }
+
+                        setLiked(response.data.likes);
+                        setLiked(response.data.liked);
                         
                     })
                     .catch(function (error) {
@@ -81,8 +84,8 @@ function LikeAndComment(props) {//좋아요 완료
                 const newReply = [
                     ...reply,
                     {
-                        "content": `${content}`,
-                        "commentId": response.data.commentId,
+                        "comment": `${content}`,
+                        "commentId": response.data.replyId,//통일 필요
                         "date":`${response.data.date}`,
                         "writer":`${user.id}`
                     }
@@ -95,6 +98,10 @@ function LikeAndComment(props) {//좋아요 완료
                 // 오류발생시 실행
             });
     }
+
+    useEffect(()=>{
+        console.log(reply)
+    },[reply])
 
     function updateComment(commentId, content) {
         axios.put(`/community/qna/${id}`, {
@@ -235,7 +242,7 @@ function LikeAndComment(props) {//좋아요 완료
                 )
             })}
 
-            <div className='align-side' style={{margin:'10px'}}>{/* 댓글달기*/}
+            <div className='align-side' style={{margin:'10px',marginBottom:'20px'}}>{/* 댓글달기*/}
                 <Form onSubmit={handleSubmit}  className='align-side' style={{ width: '100%' }}>
                     <Form.Control style={{ width: '90%' }}
                         className="me-auto"
