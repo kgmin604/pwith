@@ -15,11 +15,13 @@ function Comment(props) {
     const mento = props.mento;
     const id = props.id;
 
+    
+    const [review, setReview] = useState([]);
+    const [reviewNum, setReviewNum] = useState(0);
+    
     const [more, setMore] = useState(false);
     const [moreId, setMoreId] = useState(-1);
     const [updateId, setUpdateId] = useState(-1);
-    const [review, setReview] = useState([]);
-    const [reviewNum, setReviewNum] = useState(0);
 
     useEffect(() => {
         if (props.review != undefined) {
@@ -164,7 +166,6 @@ function Comment(props) {
                                             value={updateInput}
                                             onChange={handleUpdateChange}
                                         />
-                                        {/* <Button variant="blue" type="submit" style={{ width: '50%' }}>수정</Button> */}
                                     </Form>
                                     </> : k.review}
                                 </div>
