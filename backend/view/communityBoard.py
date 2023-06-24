@@ -175,6 +175,8 @@ def showDetail(id) :
 
         if not post :
             return result
+        
+        viewresult = QNAPost.updateViews(id)
 
         result = {
             'title': post.getTitle(),
@@ -183,9 +185,9 @@ def showDetail(id) :
             'curDate' : post.getCurDate(),
             'likes' : QNAPost.getLikes(id),
             'liked' : QNAPost.getLiked(current_user.getId(), id),
-            'views': post.getViews()
+            'views': QNAPost.getViews(id)
         }
-        viewresult = QNAPost.updateViews(id)
+        
         # toFront['curDate'] = QNAPost.getFormattedDate(toFront['curDate'])
 
         replyList = Reply.showReply(1, id) # 댓글 조회
@@ -332,37 +334,3 @@ def like(id):
         })
     return jsonify({'message': 'Invalid request method'})   # 추가: POST 요청 이외의 다른 요청에 대한 처리 로직
       
-
-
-# # update 페이지 . 글 수정
-# @community_bp.route('/QNA/update', methods=['GET', 'POST'])
-# @login_required
-# def update():
-#     if request.method == 'GET' :
-#         return jsonify(
-#             {'status': 'success'}
-#         )
-#     else :
-#         data = request.get_json(silent=True) # silent: parsing fail 에러 방지
-        
-#         title = data['title']
-#         writer = session.get("id")      # 현재 사용자 id
-#         curDate = ['cur_date']      # 현재 시간
-#         content = ['content']
-#         category = data['category']
-    
-#         QNAPost.updateStudy(title, writer, curDate, content, category)
-
-# #delete 페이지 글 삭제
-# @community_bp.route('/QNA/delete', methods=['GET', 'POST'])
-# @login_required
-# def delete():
-#     if request.method == 'GET' :
-#         return jsonify(
-#             {'status': 'success'}
-#         )
-#     else :
-#         data = request.get_json(silent=True) # silent: parsing fail 에러 방지
-        
-#         QNAID = data[QNAID]
-#         QNAPost.deleteQNA(QNAID)

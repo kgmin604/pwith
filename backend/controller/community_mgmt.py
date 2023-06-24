@@ -63,7 +63,7 @@ class QNAPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = "select * from post where postType = 1"
+        sql = "select * from post where postType = 1 order by curDate desc"
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
   
@@ -76,7 +76,7 @@ class QNAPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"SELECT * FROM post WHERE writer = '{writer}' and postType = {postType}"
+        sql = f"SELECT * FROM post WHERE writer = '{writer}' and postType = {postType} order by curDate desc"
         
         cursor_db.execute(sql)
         posts = cursor_db.fetchall() # tuple의 tuple
@@ -93,7 +93,7 @@ class QNAPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT * FROM post WHERE title = '{title}' and postType = {postType}"
+        sql = f"SELECT * FROM post WHERE title = '{title}' and postType = {postType} order by curDate desc"
 
         cursor_db.execute(sql)
         posts = cursor_db.fetchall() # page 만들 시 fetchmany() 사용
@@ -200,7 +200,7 @@ class QNAPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = "select * from post where postType = 1 ORDER BY curDate LIMIT 3"
+        sql = "select * from post where postType = 1 ORDER BY curDate desc LIMIT 3"
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
         print(rows)
@@ -218,8 +218,25 @@ class QNAPost() :
     def getContent(self) :
         return str(self.content)
 
-    def getViews(self) :
-        return int(self.views)
+    @staticmethod
+    def getViews(id) :
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql = f"SELECT views from post where postId = '{str(id)}'"
+
+        cursor_db.execute(sql)
+        row = cursor_db.fetchone() 
+        print(row[0])
+        # print("likes = "+str(likes))
+        
+        if row is not None:
+            views = row[0]
+            mysql_db.close()
+            return int(views)
+        else:
+            mysql_db.close()
+            return 0
     
     def getCurDate(self) :
         return str(self.curDate)
@@ -249,9 +266,6 @@ class QNAPost() :
         else:
             mysql_db.close()
             return 0
-    
-    def getViews(self):
-        return int(self.views)
     
     @staticmethod
     def getLiked(memId, postId):

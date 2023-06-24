@@ -153,7 +153,7 @@ def showDetail(id) :
             'content': post.getContent(),
             'curDate' : postDate,
             'likes' : studyPost.getLikes(id),
-            'liked' : studyPost.getLiked(id),
+            'liked' : studyPost.getLiked(current_user.getId(), id),
             'views': post.getViews(),
             'roomId' : roomId,
             'roomTitle' : studyPost.getRoomName(roomId),
