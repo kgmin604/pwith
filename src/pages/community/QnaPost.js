@@ -20,25 +20,25 @@ function QnaPost(props) {
     useEffect(() => {
         axios.get(`/community/qna/${id}`)
             .then((response) => {
-                // setPost(response.data.post);
-                // setReply(response.data.reply);
+                setPost(response.data.post);
+                setReply(response.data.reply);
                 console.log(response.data);
             })
             .catch();
     }, []);
 
-    // if (!post) {
-    //     return <div>Loading...</div>;
-    // }
+    if (!post) {
+        return <div>Loading...</div>;
+    }
 
-    // const parse = require('html-react-parser');
-    // const parsedContent = parse(post.content);
-    // const date = JSON.stringify(post.curDate).slice(3, 11);
+    const parse = require('html-react-parser');
+    const parsedContent = parse(post.content);
+    const date = JSON.stringify(post.curDate).slice(3, 11);
 
 
     return (
         <div className="QnaPost">
-            {/* <div class="row">
+            <div class="row">
                 <div class="col-md-3">
                     {Category()}
                 </div>
@@ -72,11 +72,11 @@ function QnaPost(props) {
                             {parsedContent}
                         </p>
                     </div>
-                    <LikeAndComment id={id} likes={post.likes} reply={reply} />
+                    <LikeAndComment id={id} likes={post.likes} liked={post.liked} reply={reply} />
 
                     <div class="col-md-3"></div>
                 </div>
-            </div> */}
+            </div>
 
         </div>
     );
