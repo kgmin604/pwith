@@ -187,7 +187,7 @@ function Comment(props) {
                 )
             })}
 
-            <div className='align-side'>{/* 댓글달기*/}
+            <div className='align-side' style={{margin:'10px',marginBottom:'20px'}}>{/* 댓글달기*/}
                 <Form onSubmit={handleSubmit} style={{ width: '100%' }} className='align-side'>
                     <Form.Control style={{ width: '90%' }}
                         className="me-auto"
