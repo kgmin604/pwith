@@ -182,7 +182,7 @@ def showDetail(id) :
             'content': post.getContent(),
             'curDate' : post.getCurDate(),
             'likes' : QNAPost.getLikes(id),
-            'liked' : QNAPost.getLiked(id),
+            'liked' : QNAPost.getLiked(current_user.getId(), id),
             'views': post.getViews()
         }
         viewresult = QNAPost.updateViews(id)
@@ -206,6 +206,33 @@ def showDetail(id) :
         return jsonify({
             'post' : result,
             'reply' : replyResult
+        })
+        
+    if request.method == 'PUT':     # 게시글 수정
+        id = request.get_json()['postId']
+        postContent = request.get_json()['content']
+        
+        try :
+            done = QNAPost.updateQNA(id, postContent)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return jsonify({
+            'done' : done
+        })
+        
+    if request.method == 'DELETE':      # 게시글 삭제
+        id = request.get_json()['postId']
+        
+        try :
+            done = QNAPost.deleteQNA(id)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return jsonify({
+            'done' : done
         })
 
 @community_bp.route('/qna/<int:id>', methods = ['POST', 'PUT', 'DELETE'])

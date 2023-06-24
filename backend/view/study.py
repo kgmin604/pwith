@@ -107,9 +107,9 @@ def show():
                 })
             
 
-@study_bp.route('/<int:id>', methods=['GET']) # 글 조회
+@study_bp.route('/<int:id>', methods=['GET', 'PUT', 'DELETE']) # 글 조회 수정 삭제
 def showDetail(id) :
-    if request.method == 'GET' :
+    if request.method == 'GET' :    # 글 조회
 
         apply = request.args.get('apply')
 
@@ -183,6 +183,34 @@ def showDetail(id) :
             'post' : result,
             'reply' : replyResult
         })
+        
+    if request.method == 'PUT':     # 게시글 수정
+        id = request.get_json()['postId']
+        postContent = request.get_json()['content']
+        
+        try :
+            done = studyPost.updateStudy(id, postContent)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return jsonify({
+            'done' : done
+        })
+        
+    if request.method == 'DELETE':      # 게시글 삭제
+        id = request.get_json()['postId']
+        
+        try :
+            done = studyPost.deleteStudy(id)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return jsonify({
+            'done' : done
+        })
+
 
 @study_bp.route('/<int:id>', methods = ['POST', 'PUT', 'DELETE'])
 def reply(id) :
@@ -291,38 +319,4 @@ def like(id):
         })
     return jsonify({'message': 'Invalid request method'})   # 추가: POST 요청 이외의 다른 요청에 대한 처리 로직
         
-"""
-# update 
-@study_bp.route('/update')
-@login_required
-def update():
-    if request.method == 'GET' :
-        return jsonify(
-            {'status': 'success'}
-        )
-    else :
-        data = request.get_json(silent=True) # silent: parsing fail 에러 방지
-        
-    title = data['title']
-    writer = session.get("id")      # 현재 사용자 id
-    curDate = ['cur_date']      # 현재 시간
-    content = ['content']
-    category = data['category']
-    totalP = ['totalP']
-    
-    studyPost.updateStudy(title, writer, curDate, content, category, totalP)
 
-#delete
-@study_bp.route('/delete')
-@login_required
-def delete():
-    if request.method == 'GET' :
-        return jsonify(
-            {'status': 'success'}
-        )
-    else :
-        data = request.get_json(silent=True) # silent: parsing fail 에러 방지
-        
-    studyID = data[studyID]
-    studyPost.deleteStudy(studyID)
-"""

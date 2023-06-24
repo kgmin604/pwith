@@ -335,22 +335,32 @@ class studyPost() :
         return str(roomName)
         
         
-'''    
     @staticmethod
     def deleteStudy(studyID):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"DELETE FROM post WHERE postID = " + studyID
-        cursor_db.execute(sql)
+        sql = f"DELETE FROM post WHERE postID = '{str(studyID)}'"
+        done = cursor_db.execute(sql)
+        if done ==0:
+            mysql_db.rollback()
+        
         mysql_db.commit() 
+        mysql_db.close()
+        
+        return done
         
     @staticmethod
-    def updateStudy(studyID, title, curDate, content, views, category, joiningP, totalP):
+    def updateStudy(postId, content):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"UPDATE study set title = " +title + "curDate = " + curDate + "content = " + content+ "views =" + views +"category = "+category+"joiningP = "+joiningP +"totalP = "+ totalP +  "WHERE studyID = " + studyID
-        cursor_db.execute(sql)
+        sql = f"UPDATE post SET content = '{str(content)}' WHERE postId = '{str(postId)}'"
+        done = cursor_db.execute(sql)
+        if done ==0:
+            mysql_db.rollback()
+            
         mysql_db.commit() 
-    '''
+        mysql_db.close()
+        
+        return done

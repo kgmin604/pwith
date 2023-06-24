@@ -23,6 +23,36 @@ class QNAPost() :
         mysql_db.close()
         return done
     
+    @staticmethod
+    def deleteQNA(postId):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = f"DELETE FROM post WHERE postID = '{str(postId)}'"
+        done = cursor_db.execute(sql)
+        if done ==0:
+            mysql_db.rollback()
+        
+        mysql_db.commit() 
+        mysql_db.close()
+        
+        return done
+        
+    @staticmethod
+    def updateQNA(postId, content):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = f"UPDATE post SET content = '{str(content)}' WHERE postId = '{str(postId)}'"
+        done = cursor_db.execute(sql)
+        if done ==0:
+            mysql_db.rollback()
+            
+        mysql_db.commit() 
+        mysql_db.close()
+        
+        return done
+    
 
     def curdate():  # date 구하는 함수
         now = datetime.now()
