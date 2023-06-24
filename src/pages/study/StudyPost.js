@@ -105,7 +105,7 @@ function StudyPost(props) {
             
             <hr style={{ width: '100%', margin: '0 auto' }} />
             
-            <LikeAndComment id={id} likes={post.likes} reply={reply} liked={post.liked}/>
+            <LikeAndComment id={id} likes={post.likes} reply={reply}/>
         </div>
     );
 

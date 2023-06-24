@@ -60,6 +60,13 @@ function LikeAndComment(props) {
             });
     };
 
+    function updateComment() {
+
+    }
+    function deleteComment() {
+
+    }
+
     function createComment(content) {
         axios
             .post(`/study/${id}`, {
@@ -69,8 +76,8 @@ function LikeAndComment(props) {
                 const newReply = [
                     ...reply,
                     {
-                        "reply": `${content}`,
-                        "replyId": response.data.replyId,
+                        "comment": `${content}`,
+                        "commentId": response.data.commentId,
                         "date": response.data.date,
                         "writer": `${user.id}`
                     }
@@ -84,16 +91,22 @@ function LikeAndComment(props) {
             });
     }
 
-    function updateComment(replyId, content) {
+    const [inputValue, setInputValue] = useState('');
+
+    const handleInputChange = (event) => {
+        setInputValue(event.target.value);
+    };
+
+    function updateComment(commentId, content) {
         axios.put(`/study/${id}`, {
-            replyId: `${replyId}`,
+            commentId: `${commentId}`,
             content: `${content}`
         })
             .then(function (response) {
                 console.log(response);
                 const updatedReply = reply.map(reply => {
-                    if (reply.replyId === replyId) {
-                        reply.content= `${content}`;
+                    if (reply.commentId === commentId) {
+                        reply.comment = `${content}`;
                     }
                     setUpdateInput("");
                     return reply;
@@ -108,14 +121,14 @@ function LikeAndComment(props) {
             })
     }
 
-    function deleteComment(replyId) {
-        axios.delete(`/study/${id}`, {
+    function deleteComment(commentId) {
+        axios.delete(`/mentoring/${id}`, {
             data: {
-                replyId: `${replyId}`
+                commentId: `${commentId}`
             }
         })
             .then(function (response) {
-                const filteredReply = reply.filter(reply => reply.replyId !== replyId);
+                const filteredReply = reply.filter(reply => reply.commentId !== commentId);
                 setReply(filteredReply);
                 setReplyNum(replyNum - 1);
                 setMore(false);
@@ -128,12 +141,6 @@ function LikeAndComment(props) {
                 // always executed
             });
     }
-
-    const [inputValue, setInputValue] = useState('');
-
-    const handleInputChange = (event) => {
-        setInputValue(event.target.value);
-    };
 
     const handleSubmit = (event) => {
         event.preventDefault();
