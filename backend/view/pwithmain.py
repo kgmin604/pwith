@@ -17,11 +17,11 @@ def showStudy():
             newsList = []
             mentoringList = []
 
-            posts = studyPost.getNStudy()
-            for i in range(len(posts)) :
+            posts = studyPost.getNStudy(5)
+            for post in posts :
                 post = {
-                    'id' : posts[i][0],
-                    'title' : posts[i][1],
+                    'id' : post[0],
+                    'title' : post[1],
                 }
                 studyList.append(post)
             # print(studyList)
@@ -34,10 +34,10 @@ def showStudy():
                 })
                 
             mentorings = Portfolio.getNmentoring()
-            for i in range(len(mentorings)):
+            for portfolio in mentorings:
                 portfolio = {
-                    'id' : mentorings[i][0],
-                    'brief' : mentorings[i][1]
+                    'id' : portfolio[0],
+                    'brief' : portfolio[1]
                 }
                 mentoringList.append(portfolio)
 

@@ -160,7 +160,6 @@ class studyPost() :
         
         return(results)
 
-
     def getTitle(self) :
         return str(self.title)
 
@@ -213,28 +212,33 @@ class studyPost() :
         cursor_db.execute(sql)
         row = cursor_db.fetchone() 
         # print(row)
-        likes = row[0]
-        # print("likes = "+str(likes))
-        
-        mysql_db.close()
-        return int(likes)
+        if row is not None:
+            likes = row[0]
+            mysql_db.close()
+            return int(likes)
+        else:
+            mysql_db.close()
+            return 0
     
     def getViews(self):
         return int(self.views)
     
-    def getLiked(memId):
+    def getLiked(memId, postId):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT liked from liked where memberId = '{str(memId)}'"
+        sql = f"SELECT liked from liked where memberId = '{str(memId)}' and postId = '{str(postId)}'"
 
         cursor_db.execute(sql)
         row = cursor_db.fetchone() 
         # print(row)
-        liked = row[0]
-
-        mysql_db.close()
-        return bool(liked)
+        if row is not None:
+            liked = row[0]
+            mysql_db.close()
+            return int(liked)
+        else:
+            mysql_db.close()
+            return 0
     
     
     def getFormattedDate(curDate):
@@ -249,11 +253,11 @@ class studyPost() :
         formatted_date = curDate.strftime("%m-%d")
         return formatted_date
     
-    def getNStudy():
+    def getNStudy(num):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = "select postId, title from post where postType = 0 ORDER BY curDate DESC LIMIT 5 "
+        sql = f"select postId, title from post where postType = 0 ORDER BY curDate DESC LIMIT {int(num)} "
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
         mysql_db.close()
@@ -331,22 +335,32 @@ class studyPost() :
         return str(roomName)
         
         
-'''    
     @staticmethod
     def deleteStudy(studyID):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"DELETE FROM post WHERE postID = " + studyID
-        cursor_db.execute(sql)
+        sql = f"DELETE FROM post WHERE postID = '{str(studyID)}'"
+        done = cursor_db.execute(sql)
+        if done ==0:
+            mysql_db.rollback()
+        
         mysql_db.commit() 
+        mysql_db.close()
+        
+        return done
         
     @staticmethod
-    def updateStudy(studyID, title, curDate, content, views, category, joiningP, totalP):
+    def updateStudy(postId, content):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"UPDATE study set title = " +title + "curDate = " + curDate + "content = " + content+ "views =" + views +"category = "+category+"joiningP = "+joiningP +"totalP = "+ totalP +  "WHERE studyID = " + studyID
-        cursor_db.execute(sql)
+        sql = f"UPDATE post SET content = '{str(content)}' WHERE postId = '{str(postId)}'"
+        done = cursor_db.execute(sql)
+        if done ==0:
+            mysql_db.rollback()
+            
         mysql_db.commit() 
-    '''
+        mysql_db.close()
+        
+        return done

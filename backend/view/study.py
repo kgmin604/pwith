@@ -11,6 +11,23 @@ study_bp = Blueprint('study', __name__, url_prefix='/study')
 @study_bp.route('/main', methods=['GET'])
 def show():
     if request.method == 'GET':
+        
+        # 추천 스터디 3개
+        recommend = request.args.get('recommend')
+        print("recommend")
+        print(recommend)
+        print("recommend")
+        if recommend is not None:
+            print("recommend")
+            recStudy=[]
+            recommendStudy = studyPost.getNStudy(3)
+            for study in recommendStudy:
+                rec = {
+                    'id' : study[0],
+                    'title' : study[1]
+                }
+                recStudy.append(rec)
+                
 
         searchType = request.args.get('type')
         searchValue = request.args.get('value')
@@ -49,6 +66,7 @@ def show():
             return jsonify({
                 'posts': result,
                 'num': requiredPage
+               # 'rec' : recStudy
             })
 
 
@@ -85,11 +103,13 @@ def show():
             return jsonify({
                 'posts' : result,
                 'num': page
+                #'rec' : recStudy
                 })
+            
 
-@study_bp.route('/<int:id>', methods=['GET']) # 글 조회
+@study_bp.route('/<int:id>', methods=['GET', 'PUT', 'DELETE']) # 글 조회 수정 삭제
 def showDetail(id) :
-    if request.method == 'GET' :
+    if request.method == 'GET' :    # 글 조회
 
         apply = request.args.get('apply')
 
@@ -133,6 +153,7 @@ def showDetail(id) :
             'content': post.getContent(),
             'curDate' : postDate,
             'likes' : studyPost.getLikes(id),
+            'liked' : studyPost.getLiked(current_user.getId(), id),
             'views': post.getViews(),
             'roomId' : roomId,
             'roomTitle' : studyPost.getRoomName(roomId),
@@ -162,6 +183,34 @@ def showDetail(id) :
             'post' : result,
             'reply' : replyResult
         })
+        
+    if request.method == 'PUT':     # 게시글 수정
+        id = request.get_json()['postId']
+        postContent = request.get_json()['content']
+        
+        try :
+            done = studyPost.updateStudy(id, postContent)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return jsonify({
+            'done' : done
+        })
+        
+    if request.method == 'DELETE':      # 게시글 삭제
+        id = request.get_json()['postId']
+        
+        try :
+            done = studyPost.deleteStudy(id)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return jsonify({
+            'done' : done
+        })
+
 
 @study_bp.route('/<int:id>', methods = ['POST', 'PUT', 'DELETE'])
 def reply(id) :
@@ -263,45 +312,11 @@ def like(id):
         
     if request.method == 'GET':
         likes = studyPost.getLikes(id)
-        liked = studyPost.getLiked(memId)
+        liked = studyPost.getLiked(memId, id)
         return jsonify({
             'likes' : likes,
             'liked' : liked
         })
     return jsonify({'message': 'Invalid request method'})   # 추가: POST 요청 이외의 다른 요청에 대한 처리 로직
         
-"""
-# update 
-@study_bp.route('/update')
-@login_required
-def update():
-    if request.method == 'GET' :
-        return jsonify(
-            {'status': 'success'}
-        )
-    else :
-        data = request.get_json(silent=True) # silent: parsing fail 에러 방지
-        
-    title = data['title']
-    writer = session.get("id")      # 현재 사용자 id
-    curDate = ['cur_date']      # 현재 시간
-    content = ['content']
-    category = data['category']
-    totalP = ['totalP']
-    
-    studyPost.updateStudy(title, writer, curDate, content, category, totalP)
 
-#delete
-@study_bp.route('/delete')
-@login_required
-def delete():
-    if request.method == 'GET' :
-        return jsonify(
-            {'status': 'success'}
-        )
-    else :
-        data = request.get_json(silent=True) # silent: parsing fail 에러 방지
-        
-    studyID = data[studyID]
-    studyPost.deleteStudy(studyID)
-"""

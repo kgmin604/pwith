@@ -23,6 +23,36 @@ class QNAPost() :
         mysql_db.close()
         return done
     
+    @staticmethod
+    def deleteQNA(postId):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = f"DELETE FROM post WHERE postID = '{str(postId)}'"
+        done = cursor_db.execute(sql)
+        if done ==0:
+            mysql_db.rollback()
+        
+        mysql_db.commit() 
+        mysql_db.close()
+        
+        return done
+        
+    @staticmethod
+    def updateQNA(postId, content):
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+        
+        sql = f"UPDATE post SET content = '{str(content)}' WHERE postId = '{str(postId)}'"
+        done = cursor_db.execute(sql)
+        if done ==0:
+            mysql_db.rollback()
+            
+        mysql_db.commit() 
+        mysql_db.close()
+        
+        return done
+    
 
     def curdate():  # date 구하는 함수
         now = datetime.now()
@@ -33,7 +63,7 @@ class QNAPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = "select * from post where postType = 1"
+        sql = "select * from post where postType = 1 order by curDate desc"
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
   
@@ -46,7 +76,7 @@ class QNAPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = f"SELECT * FROM post WHERE writer = '{writer}' and postType = {postType}"
+        sql = f"SELECT * FROM post WHERE writer = '{writer}' and postType = {postType} order by curDate desc"
         
         cursor_db.execute(sql)
         posts = cursor_db.fetchall() # tuple의 tuple
@@ -63,7 +93,7 @@ class QNAPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT * FROM post WHERE title = '{title}' and postType = {postType}"
+        sql = f"SELECT * FROM post WHERE title = '{title}' and postType = {postType} order by curDate desc"
 
         cursor_db.execute(sql)
         posts = cursor_db.fetchall() # page 만들 시 fetchmany() 사용
@@ -170,7 +200,7 @@ class QNAPost() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
         
-        sql = "select * from post where postType = 1 ORDER BY curDate LIMIT 3"
+        sql = "select * from post where postType = 1 ORDER BY curDate desc LIMIT 3"
         cursor_db.execute(sql)
         rows = cursor_db.fetchall()
         print(rows)
@@ -200,6 +230,7 @@ class QNAPost() :
     def getCategory(self):
         return int(self.category)
     
+    @staticmethod
     def getLikes(id):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
@@ -208,27 +239,32 @@ class QNAPost() :
 
         cursor_db.execute(sql)
         row = cursor_db.fetchone() 
-        # print(row)
-        likes = row[0]
+        print(row[0])
         # print("likes = "+str(likes))
         
-        mysql_db.close()
-        return int(likes)
+        if row is not None:
+            likes = row[0]
+            mysql_db.close()
+            return int(likes)
+        else:
+            mysql_db.close()
+            return 0
     
-    def getViews(self):
-        return int(self.views)
-    
-    def getLiked(memId):
+    @staticmethod
+    def getLiked(memId, postId):
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT liked from liked where memberId = '{str(memId)}'"
+        sql = f"SELECT liked from liked where memberId = '{str(memId)}' and postId = '{str(postId)}'"
 
         cursor_db.execute(sql)
         row = cursor_db.fetchone() 
         # print(row)
-        liked = row[0]
-
-        mysql_db.close()
-        return bool(liked)
+        if row is not None:
+            likes = row[0]
+            mysql_db.close()
+            return int(likes)
+        else:
+            mysql_db.close()
+            return 0
     

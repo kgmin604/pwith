@@ -53,7 +53,7 @@ function QnaCreate() {
         })
             .then(function (response) {
                 alert("새 글이 등록되었습니다.");
-                navigate("../community/main");
+                navigate("../community/qna/main");
 
             })
             .catch(function (error) {
