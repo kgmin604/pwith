@@ -137,24 +137,27 @@ def showDetail(id) :
 
 
         result = {}
-        isApplied = None
 
         post = studyPost.findById(id)
 
         postDate = studyPost.getFormattedDate(post.getCurDate())
         
         roomId= studyPost.getRoomId(id) #roomName 조회위해서 미리 변수로 리턴받음
-        
-        try :
+
+        isApplied = None
+        try : # 익명의 경우
             isApplied = f'"{current_user.getId()}"' in StudyRoom.getStudentList(roomId)
+            # print("ISAPPLIED" + str(isApplied))
+        except Exception as ex:
+            isApplied = False
+            # print("에러 발생 : " + str(ex))
 
-        except :
-            pass
+        liked = 0
+        try : # 익명의 경우
+            liked = studyPost.getLiked(current_user.getId(), id)
+        except Exception as ex :
+            liked = False
 
-        # studentList = StudyRoom.getStudentList(roomId)
-        # if studentList is not None:
-        #     isApplied = f'"{current_user.getId()}"' in studentList
-        
         result = {
             'isApplied' : isApplied,
             'title': post.getTitle(),
@@ -162,7 +165,7 @@ def showDetail(id) :
             'content': post.getContent(),
             'curDate' : postDate,
             'likes' : studyPost.getLikes(id),
-            'liked' : studyPost.getLiked(current_user.getId(), id),
+            'liked' : liked,
             'views': post.getViews(),
             'roomId' : roomId,
             'roomTitle' : studyPost.getRoomName(roomId),
