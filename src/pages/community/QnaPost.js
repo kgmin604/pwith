@@ -41,7 +41,7 @@ function QnaPost(props) {
     const date = JSON.stringify(post.curDate).slice(3, 11);
 
     function updatePost(content) {
-        axios.put(`/community/qna/${id}`, {
+        axios.put(`/community/qna/update/${id}`, {
             postId: `${id}`,
             content: `${content}`
         })
@@ -55,7 +55,7 @@ function QnaPost(props) {
     }
 
     function deletePost() {
-        axios.delete(`/community/qna/${id}`, {
+        axios.delete(`/community/qna/delete/${id}`, {
             data: {
                 postId: `${id}`
             }

@@ -64,7 +64,7 @@ function StudyPost(props) {
     }
 
     function updatePost(content) {
-        axios.put(`/study/${id}`, {
+        axios.put(`/study/update/${id}`, {
             postId: `${id}`,
             content: `${content}`
         })
@@ -78,7 +78,7 @@ function StudyPost(props) {
     }
 
     function deletePost() {
-        axios.delete(`/study/${id}`, {
+        axios.delete(`/study/delete/${id}`, {
             data: {
                 postId: `${id}`
             }
