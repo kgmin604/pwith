@@ -40,6 +40,7 @@ function CommunityIT() {
             }
           })
             .then(function (response) {
+                console.log(response.data)
                 console.log(response.data.page);
                 setTotalPage(response.data.page);
                 setItList(response.data.news);

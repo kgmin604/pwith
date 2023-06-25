@@ -106,14 +106,14 @@ function LikeAndComment(props) {//좋아요 완료
 
     function updateComment(commentId, content) {
         axios.put(`/community/qna/${id}`, {
-            commentId: `${commentId}`,
+            replyId: `${commentId}`,
             content: `${content}`
         })
             .then(function (response) {
                 console.log(response);
                 const updatedReply = reply.map(reply => {
                     if (reply.commentId === commentId) {
-                        reply.content= `${content}`;
+                        reply.comment= `${content}`;
                     }
                     setUpdateInput("");
                     return reply;
@@ -131,7 +131,7 @@ function LikeAndComment(props) {//좋아요 완료
     function deleteComment(commentId) {
         axios.delete(`/community/qna/${id}`, {
             data: {
-                commentId: `${commentId}`
+                replyId: `${commentId}`
             }
         })
             .then(function (response) {

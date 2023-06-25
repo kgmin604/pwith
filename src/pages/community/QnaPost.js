@@ -7,15 +7,20 @@ import axios from "axios";
 import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 import LikeAndComment from './QnaLikeAndComment';
 
 function QnaPost(props) {
     let user = useSelector((state) => state.user);
+    let navigate = useNavigate();
     let { id } = useParams();
 
     const [post, setPost] = useState(null);
     const [reply, setReply] = useState(null);
+    const [isUpdating, setIsUpdating] = useState(false);
+
 
     useEffect(() => {
         axios.get(`/community/qna/${id}`)
@@ -35,10 +40,48 @@ function QnaPost(props) {
     const parsedContent = parse(post.content);
     const date = JSON.stringify(post.curDate).slice(3, 11);
 
+    function updatePost(content) {
+        axios.put(`/community/qna/${id}`, {
+            postId: `${id}`,
+            content: `${content}`
+        })
+            .then(function (response) {
+                setIsUpdating(false);
+                navigate(`../community/qna/${id}`);
+                alert("글 수정 성공");
+            }).catch(function (error) {
+                // 오류발생시 실행
+            })
+    }
+
+    function deletePost() {
+        axios.delete(`/community/qna/${id}`, {
+            data: {
+                postId: `${id}`
+            }
+        })
+            .then(function (response) {
+                navigate(`../community/qna/main`);
+                alert("글 삭제 성공");
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+    }
+    function checkDelete() {
+        // eslint-disable-next-line no-restricted-globals
+        const result = confirm("정말 글을 삭제하시겠습니까?");
+        if (result) {
+            deletePost()
+        }
+    }
+
 
     return (
         <div className="QnaPost">
-            <div class="row">
+            {
+                !isUpdating?<div>
+                <div class="row">
                 <div class="col-md-3">
                     {Category()}
                 </div>
@@ -57,8 +100,8 @@ function QnaPost(props) {
                             {
                                 user.id === post.writer ?
                                     <span className="control-part">
-                                        <button className="control-btn">수정</button>
-                                        <button className="control-btn">삭제</button>
+                                        <button className="control-btn" onClick={()=>setIsUpdating(true)}>수정</button>
+                                        <button className="control-btn" onClick={()=>checkDelete()}>삭제</button>
                                     </span>
                                     :
                                     null
@@ -78,7 +121,50 @@ function QnaPost(props) {
                 </div>
             </div>
 
-        </div>
+        </div>:<div>
+          <div className='StudyCreate' style={{textAlign:'start',width:'60%',margin:'auto'}}>
+                    <h5>스터디 모집글 수정하기</h5>
+                    <h3>{post.title}</h3>
+                    <hr style={{ width: '100%', margin: '0 auto',marginBottom:'10px' }} />
+                    <div className='form-wrapper' style={{width:'100%'}}>
+                        <div style={{width:'100%'}}>
+                            <CKEditor
+                                editor={ClassicEditor}
+                                data=" "
+                                config={{
+                                    placeholder: "내용을 입력하세요.",
+                                }}
+                                onReady={editor => {
+                                    editor.setData(post.content);
+                                }}
+                                onChange={(event, editor) => {
+                                    const data = editor.getData();
+                                    setPost({
+                                        ...post,
+                                        content: data
+                                    })
+                                }}
+                                
+                            />
+                            <div style={{display:'flex',justifyContent:'center'}}>
+                                    <Button
+                                        className="submit-button"
+                                        variant="blue"
+                                        onClick={() => updatePost(post.content)}
+                                        style={{margin:'10px'}}
+                                    > 수정
+                                    </Button>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+            </div>}
+            </div>
     );
 
 }
