@@ -82,7 +82,17 @@ class StudyRoom() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
+        # 참가자 리스트 업뎃
         sql = f"UPDATE studyRoom SET studentsList = '{students}' WHERE roomId = {id}"
+
+        done = cursor_db.execute(sql)
+        # print(done)
+
+        mysql_db.commit()
+
+
+        # 참가자 수 업뎃
+        sql = f"UPDATE studyRoom SET joinP = joinP + 1 WHERE roomId = {id}"
 
         done = cursor_db.execute(sql)
         # print(done)
@@ -92,3 +102,4 @@ class StudyRoom() :
         mysql_db.close()
         
         return done
+
