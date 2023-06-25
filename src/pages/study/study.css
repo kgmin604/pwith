@@ -60,6 +60,7 @@ div.StudyCreate div.form-wrapper div.study-bottom-area .submit-button {
 .heart {
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
 
 .comment {
