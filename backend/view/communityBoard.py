@@ -130,7 +130,7 @@ def show():
                         'likes' : posts[i][7],
                         'views' : posts[i][8]
                         }
-                post['curDate'] = QNAPost.getFormattedDate(posts[i][5])
+                post['curDate'] = QNAPost.mainFormattedDate(posts[i][5])
                 result.append(post)
             return jsonify(result)
 
@@ -159,7 +159,7 @@ def show():
                         'likes' : posts[i][7],
                         'views' : posts[i][8]
                     }
-                    post['curDate'] = QNAPost.getFormattedDate(posts[i][5])
+                    post['curDate'] = QNAPost.mainFormattedDate(posts[i][5])
                     
                     result.append(post)
 
