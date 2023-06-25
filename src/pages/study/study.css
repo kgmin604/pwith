@@ -103,6 +103,34 @@ div.StudyCreate div.form-wrapper div.study-bottom-area .submit-button {
     margin: 5px;
 }
 
+/* 추천 스터디 */
+.rec-items{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+div.rec-items
+.rec-item{
+    width: 150px;
+    margin-top: 10px;
+}
+
+div.rec-items div.rec-item
+img{
+    width: 100%;
+    cursor: pointer;
+}
+
+div.rec-items div.rec-item
+p{
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /*study post*/
 
 .StudyPost{

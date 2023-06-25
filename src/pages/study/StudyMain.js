@@ -12,25 +12,26 @@ import { updateStudyPostList } from "../../store.js";
 function StudyMain() {
   let studyPostList = useSelector((state) => state.studyPostList);
   let dispatch = useDispatch();
+  let navigate = useNavigate();
 
-  /* -- StudyBoard.js로 이동
+  let [recStudy, setRecStudy] = useState([]);
+
   useEffect(() => {
-    const updateStudy = () => {
-      axios({
-        method: "GET",
-        url: "/study/main",
+    axios({
+      method: "GET",
+      url: "/study/main",
+      params : {
+        'recommend' : 1
+      }
+    })
+      .then(function (response) {
+        setRecStudy(response.data.rec);
+        console.log(response.data);
       })
-        .then(function (response) {
-          dispatch(updateStudyPostList(response.data));
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    };
-
-    updateStudy();
+      .catch(function (error) {
+        console.log(error);
+      });
   }, []);
-  */
 
   return (
     <div className="StudyMain">
@@ -43,7 +44,41 @@ function StudyMain() {
           <Outlet></Outlet>
         </div>
 
-        <div class="col-md-3">추천스터디</div>
+        <div class="col-md-3">
+          <h5>추천 스터디</h5>
+          <hr style={{ width: '60%', margin: '0 auto', marginBottom: '10px' }} />
+          <div className="rec-items">
+          {
+            recStudy === [] ? null :
+            recStudy.map((study,i)=>{
+              return(
+                <div className="rec-item" key={i}>
+                  <img 
+                    src='/rec_img.png'
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate("./main");
+                      setTimeout(() => {
+                        navigate(`./${study.id}`);
+                      }, 100);
+                  }}
+                  ></img>
+                  <p 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate("./main");
+                      setTimeout(() => {
+                        navigate(`./${study.id}`);
+                      }, 100);
+                  }}>
+                    {study.title}
+                  </p>
+                </div>
+              );
+            })
+          }
+          </div>
+        </div>
       </div>
     </div>
   );

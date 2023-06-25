@@ -27,6 +27,9 @@ def show():
                     'title' : study[1]
                 }
                 recStudy.append(rec)
+            return jsonify({
+                'rec' : recStudy # by. 경민
+            })
                 
 
         searchType = request.args.get('type')
@@ -65,8 +68,8 @@ def show():
 
             return jsonify({
                 'posts': result,
-                'num': requiredPage
-               # 'rec' : recStudy
+                'num': requiredPage,
+                #'rec' : recStudy
             })
 
 
