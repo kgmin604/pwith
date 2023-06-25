@@ -26,12 +26,12 @@ function MentoringPost() {
     const words = ['웹개발', '모바일 앱 개발', '게임 개발', '프로그래밍 언어', '알고리즘 · 자료구조', '데이터베이스', '자격증', '개발 도구', '데이터 사이언스', '데스크톱 앱 개발', '교양 · 기타'];
     const [selectedWords, setSelectedWords] = useState([]); // 클릭한 단어 배열
 
-    let [portfolio, setPortfolio] = useState({
-        'image': '',
-        'brief': '',
-        'subject': '',
-        'content': ''
-    })//제목, 분야, 내용
+    // let [portfolio, setPortfolio] = useState({
+    //     'image': '',
+    //     'brief': '',
+    //     'subject': '',
+    //     'content': ''
+    // })//제목, 분야, 내용
 
     function updatePortfolio() {
         // 원래는 함수 밖에 있었음 - ㅊㅇ
@@ -50,7 +50,7 @@ function MentoringPost() {
         axios.put(`/mentoring/update/${id}`, formData)
             .then(function (response) {
                 setIsUpdating(false);
-                navigate(`../${id}`);
+                navigate(`../mentoring/${id}`);
                 alert("글 수정 성공");
             }).catch(function (error) {
                 // 오류발생시 실행
@@ -142,7 +142,7 @@ function MentoringPost() {
             }
         })
             .then(function (response) {
-                navigate(`../main`);
+                navigate(`../mentoring/main`);
                 alert("글 삭제 성공");
             })
             .catch(function (error) {
