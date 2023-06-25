@@ -20,8 +20,8 @@ def showStudy():
             posts = studyPost.getNStudy(5)
             for post in posts :
                 post = {
-                    'id' : posts[0],
-                    'title' : posts[1],
+                    'id' : post[0],
+                    'title' : post[1],
                 }
                 studyList.append(post)
             # print(studyList)
@@ -36,8 +36,8 @@ def showStudy():
             mentorings = Portfolio.getNmentoring()
             for portfolio in mentorings:
                 portfolio = {
-                    'id' : mentorings[0],
-                    'brief' : mentorings[1]
+                    'id' : portfolio[0],
+                    'brief' : portfolio[1]
                 }
                 mentoringList.append(portfolio)
 
