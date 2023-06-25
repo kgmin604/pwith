@@ -137,6 +137,7 @@ def showDetail(id) :
 
 
         result = {}
+        isApplied = None
 
         post = studyPost.findById(id)
 
@@ -144,19 +145,16 @@ def showDetail(id) :
         
         roomId= studyPost.getRoomId(id) #roomName 조회위해서 미리 변수로 리턴받음
         
-        # isApplied = f'"{current_user.getId()}"' in StudyRoom.getStudentList(roomId)
-        studentList = StudyRoom.getStudentList(roomId)
-        if studentList is not None:
-            isApplied = f'"{current_user.getId()}"' in studentList
-        else:
-            isApplied = None
-    # 적절한 오류 처리 또는 기본값 설정을 수행하십시오.
+        try :
+            isApplied = f'"{current_user.getId()}"' in StudyRoom.getStudentList(roomId)
 
+        except :
+            pass
+
+        # studentList = StudyRoom.getStudentList(roomId)
+        # if studentList is not None:
+        #     isApplied = f'"{current_user.getId()}"' in studentList
         
-        # print("==== 스터디 신청이 되었는가 ====")
-        # print(isApplied)
-        # print("================")
-
         result = {
             'isApplied' : isApplied,
             'title': post.getTitle(),
