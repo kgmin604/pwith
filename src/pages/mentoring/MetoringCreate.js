@@ -14,6 +14,7 @@ function MentoringCreate() {
     let navigate = useNavigate();
     let user = useSelector((state) => state.user);
     let dispatch = useDispatch();
+    const [selectedFile, setSelectedFile] = useState(null); // ㅊㅇ 추가
 
     const words = ['웹개발', '모바일 앱 개발', '게임 개발', '프로그래밍 언어', '알고리즘 · 자료구조', '데이터베이스', '자격증', '개발 도구', '데이터 사이언스', '데스크톱 앱 개발', '교양 · 기타'];
     const [selectedWords, setSelectedWords] = useState([]); // 클릭한 단어 배열
@@ -25,26 +26,39 @@ function MentoringCreate() {
         'content': ''
     })//제목, 분야, 내용
 
-    const formData = new FormData();
     function postPortfolio() {
+        const formData = new FormData(); // 원래는 함수 밖에 있었음 - ㅊㅇ
         const updatedSubject = JSON.stringify(selectedWords);
 
         // FormData 객체 생성
-        // formData.append("brief", portfolio.brief);
-        // formData.append("subject", updatedSubject);
-        // formData.append("content", portfolio.content);
+        formData.append("brief", portfolio.brief);
+        formData.append("subject", updatedSubject);
+        formData.append("content", portfolio.content);
         // formData.append("image", portfolio.image); // Blob 객체 추가
+        formData.append('image', selectedFile); // ㅊㅇ
 
-        // console.log(formData.get('brief'))
-        // console.log(formData.get('content'))
+        console.log(formData.get('brief'))
+        console.log(formData.get('content'))
 
+        axios.post('/mentoring/create', formData)
+        .then((response) => {
+          console.log(response.data);
+          alert("새 글이 등록되었습니다.");
+          navigate("../mentoring/main");
+        })
+        .catch((error) => {
+          console.error(error);
+          alert("요청을 처리하지 못했습니다.");
+        });
+ 
+        // 밑에 주석 - ㅊㅇ
         // axios({
         //   method: "POST",
         //   url: "/mentoring/create",
         //   data: formData, // FormData 객체를 전송 데이터로 사용
-        //   headers: {
-        //     "Content-Type": "multipart/form-data", // 멀티파트(form-data) 컨텐츠 타입 설정
-        //   },
+        // //   headers: {
+        // //     "Content-Type": "multipart/form-data", // 멀티파트(form-data) 컨텐츠 타입 설정
+        // //   },
         // })
         //   .then(function (response) {
         //     console.log(response);
@@ -60,21 +74,21 @@ function MentoringCreate() {
         //     alert("요청을 처리하지 못했습니다.");
         //   });
 
-        axios({
-            method: "POST",
-            url: "/mentoring/create",
-            data:portfolio
-        }
-        )
-          .then(function (response) {
-            console.log(response);
-            alert("새 글이 등록되었습니다.");
-            navigate("../mentoring/main");
-        })
-        .catch(function (error) {
-            console.log(error);
-            alert("요청을 처리하지 못했습니다.");
-        });
+        // axios({
+        //     method: "POST",
+        //     url: "/mentoring/create",
+        //     data:portfolio
+        // }
+        // )
+        //   .then(function (response) {
+        //     console.log(response);
+        //     alert("새 글이 등록되었습니다.");
+        //     navigate("../mentoring/main");
+        // })
+        // .catch(function (error) {
+        //     console.log(error);
+        //     alert("요청을 처리하지 못했습니다.");
+        // });
 }
 
 
@@ -111,57 +125,58 @@ useEffect(()=>{
 },[portfolio])
 
 const onUpload = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
+    setSelectedFile(e.target.files[0]); // ㅊㅇ, 밑에 대신 이거 한 줄 사용했음
+    // const file = e.target.files[0];
+    // const reader = new FileReader();
+    // reader.readAsDataURL(file);
   
-    return new Promise((resolve) => {
-      reader.onload = () => {
-        setImageSrc(reader.result || null); // 파일의 컨텐츠
-        setportfolio({
-          ...portfolio,
-          image: reader.result || null // 포트폴리오의 이미지 업데이트
-        });
-        resolve();
-      };
-    });
+    // return new Promise((resolve) => {
+    //   reader.onload = () => {
+    //     setImageSrc(reader.result || null); // 파일의 컨텐츠
+    //     setportfolio({
+    //       ...portfolio,
+    //       image: reader.result || null // 포트폴리오의 이미지 업데이트
+    //     });
+    //     resolve();
+    //   };
+    // });
   };
 
 // const onUpload = (e) => {
 //     const file = e.target.files[0];
 
-//     const reader = new FileReader();
-//     reader.readAsDataURL(file);
-
-//     return new Promise((resolve) => {
-//         reader.onload = () => {
-//             setImageSrc(reader.result || null); // 파일의 컨텐츠
-//             setportfolio({
-//                 ...portfolio,
-//                 image: `${imageSrc}`
-//             })
-//         };
-//     });
+//     // const reader = new FileReader();
+//     // reader.readAsDataURL(file);
 
 //     // return new Promise((resolve) => {
-//     //   const reader = new FileReader();
-//     //   reader.onload = () => {
-//     //     const imageDataURL = reader.result || null;
-
-//     //     // 이미지를 Blob 객체로 변환
-//     //     fetch(imageDataURL)
-//     //       .then((res) => res.blob())
-//     //       .then((blob) => {
-//     //         setImageSrc(imageDataURL); // 데이터 URL로 이미지 표시
+//     //     reader.onload = () => {
+//     //         setImageSrc(reader.result || null); // 파일의 컨텐츠
 //     //         setportfolio({
-//     //           ...portfolio,
-//     //           image: blob, // Blob 객체로 포트폴리오의 이미지 업데이트
-//     //         });
-//     //         resolve();
-//     //       });
-//     //   };
-//     //   reader.readAsDataURL(file);
+//     //             ...portfolio,
+//     //             image: `${imageSrc}`
+//     //         })
+//     //     };
 //     // });
+
+//     return new Promise((resolve) => {
+//       const reader = new FileReader();
+//       reader.onload = () => {
+//         const imageDataURL = reader.result || null;
+
+//         // 이미지를 Blob 객체로 변환
+//         fetch(imageDataURL)
+//           .then((res) => res.blob())
+//           .then((blob) => {
+//             setImageSrc(imageDataURL); // 데이터 URL로 이미지 표시
+//             setportfolio({
+//               ...portfolio,
+//               image: blob, // Blob 객체로 포트폴리오의 이미지 업데이트
+//             });
+//             resolve();
+//           });
+//       };
+//       reader.readAsDataURL(file);
+//     });
 // };
 
 return (

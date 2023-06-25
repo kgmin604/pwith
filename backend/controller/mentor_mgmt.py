@@ -35,11 +35,11 @@ class Portfolio() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"INSERT INTO mento(mentoId, mentiList, subject, mentoPic, brief, content) VALUES ('{writer}', null, '{subject}', {image}, '{brief}', '{content}')"
-        # print(sql)
-        done = cursor_db.execute(sql)
+        sql = "INSERT INTO mento (mentoId, mentiList, subject, mentoPic, brief, content) VALUES (%s, null, %s, %s, %s, %s)"
 
-        mysql_db.commit() ### None
+        done = cursor_db.execute(sql, (writer, subject, image, brief, content,))
+
+        mysql_db.commit()
 
         mysql_db.close()
 

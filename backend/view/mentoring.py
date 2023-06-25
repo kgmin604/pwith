@@ -7,6 +7,7 @@ from controller.mentor_mgmt import Portfolio
 from controller.review_mgmt import Review
 from controller.mentoringroom_mgmt import MentoringRoom
 from controller.chat_mgmt import chat
+from model.db_mysql import conn_mysql
 from datetime import datetime
 
 # from PIL import Image 
@@ -104,7 +105,7 @@ def showDetail(mentoId) :
                 'menti' : rev[1],
                 'review' : rev[2]
             })
-        # print(type(base64.b64encode(@bytes@).decode('utf-8'))) ################### test ###############
+        # print(type(base64.b64encode(@bytes@).decode('utf-8')))
         detail = {
             'mento' : portfolio.writer, # @property instead getter
             'subject' : json.loads(portfolio.subject),
@@ -168,16 +169,28 @@ def review(mentoId) :
 @mento_bp.route('/create', methods=['GET', 'POST'])
 def writePortfolio():
     if request.method == 'POST':
-        # portfolioInfo = request.get_json(silent=True)
-        portfolioInfo = request.form  # FormData로부터 데이터 가져오기
+
+        portfolioInfo = request.form
 
         writer = current_user.getId()
         subject = portfolioInfo['subject']
-        image = request.files['image']  # 이미지 파일 가져오기
-        # image = portfolioInfo['image']
         brief = portfolioInfo['brief']
         content = portfolioInfo['content']
 
+        file = request.files['image']
+        image = file.read()
+
+        try:
+            result = Portfolio.create(writer, subject, image, brief, content)
+        except Exception as e:
+            print(f"예외 발생: {e}")
+            # connection.rollback()
+            result = 0
+        return jsonify({
+            'done': result
+        })
+
+'''
         # print(image)
         img_bytes = image.read() # bytes
         print(img_bytes)
@@ -198,11 +211,11 @@ def writePortfolio():
         except Exception as ex:
             print("예외 발생: " + str(ex))
             result = 0
-
         return jsonify({
             'done': result
             # 'done': 0
         })
+'''
 
 @mento_bp.route('/update/<mentoId>', methods = ['GET', 'PUT'])
 def modifyPortfolio(mentoId) :
