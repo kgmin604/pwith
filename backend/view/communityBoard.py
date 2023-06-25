@@ -210,32 +210,32 @@ def showDetail(id) :
             'reply' : replyResult
         })
         
-    if request.method == 'PUT':     # 게시글 수정
-        id = request.get_json()['postId']
-        postContent = request.get_json()['content']
+    # if request.method == 'PUT':     # 게시글 수정
+    #     id = request.get_json()['postId']
+    #     postContent = request.get_json()['content']
         
-        try :
-            done = QNAPost.updateQNA(id, postContent)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
+    #     try :
+    #         done = QNAPost.updateQNA(id, postContent)
+    #     except Exception as ex :
+    #         print("에러 이유 : " + str(ex))
+    #         done = 0
 
-        return jsonify({
-            'done' : done
-        })
+    #     return jsonify({
+    #         'done' : done
+    #     })
         
-    if request.method == 'DELETE':      # 게시글 삭제
-        id = request.get_json()['postId']
+    # if request.method == 'DELETE':      # 게시글 삭제
+    #     id = request.get_json()['postId']
         
-        try :
-            done = QNAPost.deleteQNA(id)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
+    #     try :
+    #         done = QNAPost.deleteQNA(id)
+    #     except Exception as ex :
+    #         print("에러 이유 : " + str(ex))
+    #         done = 0
 
-        return jsonify({
-            'done' : done
-        })
+    #     return jsonify({
+    #         'done' : done
+    #     })
 
 @community_bp.route('/qna/<int:id>', methods = ['POST', 'PUT', 'DELETE'])
 def reply(id) :
