@@ -60,7 +60,7 @@ function StudyMain() {
                       navigate("./main");
                       setTimeout(() => {
                         navigate(`./${study.id}`);
-                      }, 100);
+                      }, 10);
                   }}
                   ></img>
                   <p 
@@ -69,7 +69,7 @@ function StudyMain() {
                       navigate("./main");
                       setTimeout(() => {
                         navigate(`./${study.id}`);
-                      }, 100);
+                      }, 10);
                   }}>
                     {study.title}
                   </p>
