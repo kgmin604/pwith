@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { updateStudyPostList } from "../../store.js";
 
+
 function StudyMain() {
   let studyPostList = useSelector((state) => state.studyPostList);
   let dispatch = useDispatch();
@@ -44,10 +45,7 @@ function StudyMain() {
 
         <div class="col-md-3">추천스터디</div>
       </div>
-
-
     </div>
-
   );
 
 }
