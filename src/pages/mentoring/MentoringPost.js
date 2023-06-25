@@ -236,7 +236,7 @@ function MentoringPost() {
                     onChange={(event, editor) => {
                         const data = editor.getData();
                         setPost({
-                            ...portfolio,
+                            ...post,
                             content: data
                         })
                     }}
