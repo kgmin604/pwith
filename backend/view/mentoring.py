@@ -245,10 +245,32 @@ def modifyPortfolio(mentoId) :
 
     else : # request.method == 'PUT'
 
-        newPort = request.get_json()
+        newPort = request.form
+
+        file = request.files['image']
+        image = file.read()
         
-        done = Portfolio.update(mentoId, newPort['subject'], newPort['image'], newPort['brief'], newPort['content'])
+        done = Portfolio.update(mentoId, newPort['subject'], image, newPort['brief'], newPort['content'])
 
         return jsonify({
             'done' : done # 성공 시 1, 실패 또는 변경 사항 없을 시 0
+        })
+
+@mento_bp.route('/delete/<mentoId>', methods = ['DELETE'])
+def deletePortfolio(mentoId) :
+    if request.method == 'DELETE' :
+        
+        loginUser = current_user.getId()
+        # loginUser = 'q' # dummmmmmmmmy
+        
+        if loginUser != mentoId : # 본인의 글에 접근한 게 아닐 때
+            return jsonify({
+                'status' : 'fail'
+            })
+
+        done = 0
+        done = Portfolio.delete(mentoId)
+
+        return jsonify({
+            'done' : done
         })

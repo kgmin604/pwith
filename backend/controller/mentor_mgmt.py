@@ -84,15 +84,39 @@ class Portfolio() :
         mysql_db = conn_mysql()
         cursor_db = mysql_db.cursor()
 
-        sql = f"UPDATE mento SET subject = '{newSub}', mentoPic = '{newImg}', brief = '{newBrf}', content = '{newCnt}' WHERE mentoId = '{mentoId}'"
-        done = cursor_db.execute(sql)
+        sql = "UPDATE mento SET subject = %s, mentoPic = %s, brief = %s, content = %s WHERE mentoId = %s"
+
+        done = cursor_db.execute(sql, (newSub, newImg, newBrf, newCnt, mentoId, ))
 
         mysql_db.commit()
 
         mysql_db.close()
 
         return done
-    
+
+    # 임시로 삭제 만들었음. 이후 끌어올리기로 대체.
+    # on delete cascade 적용 안 돼서 무식하게 하는 중
+    @staticmethod
+    def delete(mentoId) :
+        mysql_db = conn_mysql()
+        cursor_db = mysql_db.cursor()
+
+        sql1 = f"DELETE FROM review WHERE mentoId = '{mentoId}'"
+        done = cursor_db.execute(sql1)
+        mysql_db.commit()
+
+        sql2 = f"DELETE FROM mentoringRoom WHERE mentoId = '{mentoId}'"
+        done = cursor_db.execute(sql2)
+        mysql_db.commit()
+
+        sql = f"DELETE FROM mento WHERE mentoId = '{mentoId}'"
+        done = cursor_db.execute(sql)
+        mysql_db.commit()
+
+        mysql_db.close()
+
+        return done
+
     @staticmethod
     def getNmentoring() :
         mysql_db = conn_mysql()
