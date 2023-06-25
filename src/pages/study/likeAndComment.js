@@ -207,7 +207,7 @@ function LikeAndComment(props) {
                 const date = JSON.stringify(k.date).slice(3, 11);
 
                 return (
-                    <div key={k.replyId}>{/* 댓글하나 */}
+                    <div key={k.commentId}>{/* 댓글하나 */}
                         <div className='align-row'>
                             <img img src={comment} className='comment' />
                             <span style={{ width: '5px' }}></span>
@@ -221,7 +221,7 @@ function LikeAndComment(props) {
                                             onChange={handleUpdateChange}
                                         />
                                     </Form>
-                                    </> : k.reply}
+                                    </> : k.comment}
                                 </div>
                                 <div style={{ textAlign: 'end' }}>
                                     {user.id === k.writer ? <img src={moreImg} className="more" onClick={() => clickMore(k.replyId)} />

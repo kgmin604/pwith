@@ -102,7 +102,7 @@ function StudyPost(props) {
 
     return (
         <div className="StudyPost">
-            {!isUpdating ? <><h2>스터디 모집</h2>
+            {!isUpdating ? <div><h2>스터디 모집</h2>
                 <hr style={{ width: '100%', margin: '0 auto' }} />
                 <div className="study-header">
                     <h3>{post.title}</h3>
@@ -153,10 +153,52 @@ function StudyPost(props) {
                 }
             </div>
             
-            <hr style={{ width: '100%', margin: '0 auto' }} />
-            
-            <LikeAndComment id={id} likes={post.likes} reply={reply}/>
+            <LikeAndComment id={id} likes={post.likes} reply={reply}/></div>:
+            <div>
+          <div className='StudyCreate' style={{textAlign:'start',width:'60%',margin:'auto'}}>
+                    <h5>스터디 모집글 수정하기</h5>
+                    <h3>{post.title}</h3>
+                    <hr style={{ width: '100%', margin: '0 auto',marginBottom:'10px' }} />
+                    <div className='form-wrapper' style={{width:'100%'}}>
+                        <div style={{width:'100%'}}>
+                            <CKEditor
+                                editor={ClassicEditor}
+                                data=" "
+                                config={{
+                                    placeholder: "내용을 입력하세요.",
+                                }}
+                                onReady={editor => {
+                                    editor.setData(post.content);
+                                }}
+                                onChange={(event, editor) => {
+                                    const data = editor.getData();
+                                    setPost({
+                                        ...post,
+                                        content: data
+                                    })
+                                }}
+                                
+                            />
+                            <div style={{display:'flex',justifyContent:'center'}}>
+                                    <Button
+                                        className="submit-button"
+                                        variant="blue"
+                                        onClick={() => updatePost(post.content)}
+                                        style={{margin:'10px'}}
+                                    > 수정
+                                    </Button>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+            </div>}
         </div>
+
     );
 
 }

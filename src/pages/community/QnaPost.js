@@ -123,7 +123,7 @@ function QnaPost(props) {
 
         </div>:<div>
           <div className='StudyCreate' style={{textAlign:'start',width:'60%',margin:'auto'}}>
-                    <h5>스터디 모집글 수정하기</h5>
+                    <h5>QnA 글 수정하기</h5>
                     <h3>{post.title}</h3>
                     <hr style={{ width: '100%', margin: '0 auto',marginBottom:'10px' }} />
                     <div className='form-wrapper' style={{width:'100%'}}>
