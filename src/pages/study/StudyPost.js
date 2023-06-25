@@ -138,12 +138,20 @@ function StudyPost(props) {
                     <span className="room-p">({post.joinP}명/{post.totalP}명)</span>
                 </span>
                 {
-                    user.id===post.writer?null:
+                    user.id===post.writer ? null:
                     <Button
                         disabled = {post.isApplied}
                         className="button" 
                         variant='blue'
-                        onClick={(e)=>{e.stopPropagation(); joinStudyRoom();}}
+                        onClick={(e)=>{
+                            e.stopPropagation(); 
+                            if(user.id===null){
+                                alert("로그인 해주세요.");
+                            }
+                            else{
+                                joinStudyRoom();
+                            }
+                        }}
                     >
                         {
                             post.joinP===post.totalP ? "모집완료" : 
