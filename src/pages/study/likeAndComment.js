@@ -40,33 +40,33 @@ function LikeAndComment(props) {
         axios.post(`/study/${id}/like`, {
             postId: id
         })
-        .then(function (response) {
-            axios.get(`/study/${id}/like`)
-                .then((response) => {
-                    console.log(response.data)
-                    if(liked===1){//원래 좋아요 눌러져있음-다시 누르면 감소
-                        setLikes(likes-1);
-                        setLiked(0);
-                    }
-                    else{
-                        setLikes(likes+1);
-                        setLiked(1);
-                    }
+            .then(function (response) {
+                axios.get(`/study/${id}/like`)
+                    .then((response) => {
+                        console.log(response.data)
+                        if (liked === 1) {//원래 좋아요 눌러져있음-다시 누르면 감소
+                            setLikes(likes - 1);
+                            setLiked(0);
+                        }
+                        else {
+                            setLikes(likes + 1);
+                            setLiked(1);
+                        }
 
-                    setLiked(response.data.likes);
-                    setLiked(response.data.liked);
-                    
-                })
-                .catch(function (error) {
-                    // GET 요청 실패 처리
-                });
+                        setLiked(response.data.likes);
+                        setLiked(response.data.liked);
+
+                    })
+                    .catch(function (error) {
+                        // GET 요청 실패 처리
+                    });
             })
             .catch(function (error) {
                 // 요청 실패 시 처리할 로직
             });
     };
-    function clickHeart(){
-        if(user.id===null){
+    function clickHeart() {
+        if (user.id === null) {
             alert("로그인이 필요합니다")
             return;
         }
@@ -82,8 +82,8 @@ function LikeAndComment(props) {
                 const newReply = [
                     ...reply,
                     {
-                        "reply": `${content}`,
-                        "replyId": response.data.replyId,
+                        "comment": `${content}`,
+                        "commentId": response.data.commentId,
                         "date": response.data.date,
                         "writer": `${user.id}`
                     }
@@ -96,18 +96,18 @@ function LikeAndComment(props) {
                 // 오류발생시 실행
             });
     }
-    
 
-    function updateComment(replyId, content) {
+
+    function updateComment(commentId, content) {
         axios.put(`/study/${id}`, {
-            replyId: `${replyId}`,
+            replyId: `${commentId}`,
             content: `${content}`
         })
             .then(function (response) {
                 console.log(response);
                 const updatedReply = reply.map(reply => {
-                    if (reply.replyId === replyId) {
-                        reply.content= `${content}`;
+                    if (reply.commentId === commentId) {
+                        reply.comment= `${content}`;
                     }
                     setUpdateInput("");
                     return reply;
@@ -122,14 +122,14 @@ function LikeAndComment(props) {
             })
     }
 
-    function deleteComment(replyId) {
+    function deleteComment(commentId) {
         axios.delete(`/study/${id}`, {
             data: {
-                replyId: `${replyId}`
+                replyId: `${commentId}`
             }
         })
             .then(function (response) {
-                const filteredReply = reply.filter(reply => reply.replyId !== replyId);
+                const filteredReply = reply.filter(reply => reply.commentId !== commentId);
                 setReply(filteredReply);
                 setReplyNum(replyNum - 1);
                 setMore(false);
@@ -169,10 +169,10 @@ function LikeAndComment(props) {
     const handleUpdateChange = (event) => {
         setUpdateInput(event.target.value);
     };
-    const handleUpdateSubmit = (event, replyId) => {
+    const handleUpdateSubmit = (event, commentId) => {
         event.preventDefault();
         console.log(updateInput);
-        updateComment(replyId, updateInput);
+        updateComment(commentId, updateInput);
     };
 
     function clickMore(id) {
@@ -187,8 +187,8 @@ function LikeAndComment(props) {
         <div className='likeAndComment'>
             <div className='align-row'>
                 <div className='align-row'>{/* 하트 */}
-                    {liked===0? <img src={heartOutline} className="heart" onClick={() => clickHeart()} />
-                        : <img src={heartFull} className="heart" onClick={() => clickHeart()} />
+                    {liked != 0 ? <img src={heartFull} className="heart" onClick={() => clickHeart()} /> :
+                        <img src={heartOutline} className="heart" onClick={() => clickHeart()} />
                     }
                     <span style={{ width: '5px' }}></span>
                     {likes}
@@ -214,7 +214,7 @@ function LikeAndComment(props) {
                             <div className='align-side'>
                                 <div style={{ textAlign: 'start' }}>
                                     <div style={{ fontSize: '13px' }}>{k.writer}</div>
-                                    {k.replyId === updateId ? <><Form onSubmit={(event) => handleUpdateSubmit(event, updateId)} className='align-side' tyle={{ width: '150%' }}>
+                                    {k.commentId === updateId ? <><Form onSubmit={(event) => handleUpdateSubmit(event, updateId)} className='align-side' tyle={{ width: '150%' }}>
                                         <Form.Control
                                             className="me-auto"
                                             value={updateInput}
@@ -224,12 +224,12 @@ function LikeAndComment(props) {
                                     </> : k.comment}
                                 </div>
                                 <div style={{ textAlign: 'end' }}>
-                                    {user.id === k.writer ? <img src={moreImg} className="more" onClick={() => clickMore(k.replyId)} />
+                                    {user.id === k.writer ? <img src={moreImg} className="more" onClick={() => clickMore(k.commentId)} />
                                         : null}
                                     <div>
-                                        {(more == true) && (moreId === k.replyId) ? <ListGroup>
-                                            <ListGroup.Item action onClick={() => handleClick(k.reply, k.replyId)}>수정</ListGroup.Item>
-                                            <ListGroup.Item action onClick={() => deleteComment(k.replyId)}>삭제</ListGroup.Item>
+                                        {(more == true) && (moreId === k.commentId) ? <ListGroup>
+                                            <ListGroup.Item action onClick={() => handleClick(k.reply, k.commentId)}>수정</ListGroup.Item>
+                                            <ListGroup.Item action onClick={() => deleteComment(k.commentId)}>삭제</ListGroup.Item>
                                         </ListGroup> : null}
                                     </div>
                                 </div>
@@ -241,7 +241,7 @@ function LikeAndComment(props) {
                 )
             })}
 
-            <div className='align-side' style={{ margin: '10px',marginBottom:'20px' }}>{/* 댓글달기*/}
+            <div className='align-side' style={{ margin: '10px', marginBottom: '20px' }}>{/* 댓글달기*/}
                 <Form onSubmit={handleSubmit} className='align-side' style={{ width: '100%' }}>
                     <Form.Control style={{ width: '90%' }}
                         className="me-auto"

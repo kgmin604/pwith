@@ -31,7 +31,7 @@ function StudyPost(props) {
             .then(function (response) {
                 setPost(response.data.post);
                 setReply(response.data.reply);
-                //console.log(response.data)
+                console.log(response.data);
             })
             .catch(function (error) {
                 console.log(error);
@@ -161,7 +161,7 @@ function StudyPost(props) {
                 }
             </div>
             
-            <LikeAndComment id={id} likes={post.likes} reply={reply}/></div>:
+            <LikeAndComment id={id} likes={post.likes} liked={post.liked} reply={reply}/></div>:
             <div>
           <div className='StudyCreate' style={{textAlign:'start',width:'100%'}}>
                     <h5>스터디 모집글 수정하기</h5>
