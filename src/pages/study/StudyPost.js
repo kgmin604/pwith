@@ -149,7 +149,8 @@ function StudyPost(props) {
                                 alert("로그인 해주세요.");
                             }
                             else{
-                                joinStudyRoom();
+                                if(post.joinP!==post.totalP)
+                                    joinStudyRoom();
                             }
                         }}
                     >
