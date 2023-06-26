@@ -189,8 +189,8 @@ function LikeAndComment(props) {//좋아요 완료
         <div className='likeAndComment'>
             <div className='align-row'>
                 <div className='align-row'>{/* 하트 */}
-                    {liked===0? <img src={heartOutline} className="heart" onClick={() => clickHeart()} />
-                        : <img src={heartFull} className="heart" onClick={() => clickHeart()} />
+                    {liked != 0 ? <img src={heartFull} className="heart" onClick={() => clickHeart()} /> :
+                        <img src={heartOutline} className="heart" onClick={() => clickHeart()} />
                     }
                     <span style={{ width: '5px' }}></span>
                     {likes}

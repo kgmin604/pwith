@@ -110,7 +110,7 @@ def show():
                 })
             
 
-@study_bp.route('/<int:id>', methods=['GET', 'PUT', 'DELETE']) # 글 조회 수정 삭제
+@study_bp.route('/<int:id>', methods=['GET']) # 글 조회 수정 삭제 (put, delete 메서드 삭제했어 - ㅊㅇ)
 def showDetail(id) :
     if request.method == 'GET' :    # 글 조회
 
@@ -196,6 +196,8 @@ def showDetail(id) :
             'reply' : replyResult
         })
         
+@study_bp.route('/update/<int:id>', methods = ['PUT'])
+def updatePost(id):
     if request.method == 'PUT':     # 게시글 수정
         id = request.get_json()['postId']
         postContent = request.get_json()['content']
@@ -209,7 +211,9 @@ def showDetail(id) :
         return jsonify({
             'done' : done
         })
-        
+         
+@study_bp.route('/delete/<int:id>', methods = ['POST', 'PUT', 'DELETE'])
+def deletePost(id):
     if request.method == 'DELETE':      # 게시글 삭제
         id = request.get_json()['postId']
         
@@ -249,6 +253,7 @@ def reply(id) :
 
         id = request.get_json()['replyId']
         newContent = request.get_json()['content']
+        print(id)
 
         try :
             done = Reply.modifyReply(id, newContent)
