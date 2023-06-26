@@ -139,20 +139,15 @@ function StudyPost(props) {
                 </span>
                 {
                     
-                    user.id===post.writer ? null:
+                    (user.id===post.writer || user.id===null) ? null:
                     <Button
                         disabled = {post.isApplied}
                         className="button" 
                         variant='blue'
                         onClick={(e)=>{
                             e.stopPropagation(); 
-                            if(user.id===null){
-                                alert("로그인 해주세요.");
-                            }
-                            else{
-                                if(post.joinP!==post.totalP)
-                                    joinStudyRoom();
-                            }
+                            if(post.joinP!==post.totalP)
+                                joinStudyRoom();
                         }}
                     >
                         {
