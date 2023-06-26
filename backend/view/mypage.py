@@ -55,8 +55,8 @@ def myPost() :
         
         postType = request.args.get('type')
 
-        # writer = current_user.getId()
-        writer = 'a' # dummy
+        writer = current_user.getId()
+        # writer = 'a' # dummy
 
         if postType == 'community' :
             myPosts = studyPost.findByWriter(writer, 1)
