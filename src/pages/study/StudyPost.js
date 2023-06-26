@@ -31,7 +31,7 @@ function StudyPost(props) {
             .then(function (response) {
                 setPost(response.data.post);
                 setReply(response.data.reply);
-                console.log(response.data);
+                //console.log(response.data)
             })
             .catch(function (error) {
                 console.log(error);
@@ -64,7 +64,7 @@ function StudyPost(props) {
     }
 
     function updatePost(content) {
-        axios.put(`/study/update/${id}`, {
+        axios.put(`/study/${id}`, {
             postId: `${id}`,
             content: `${content}`
         })
@@ -78,7 +78,7 @@ function StudyPost(props) {
     }
 
     function deletePost() {
-        axios.delete(`/study/delete/${id}`, {
+        axios.delete(`/study/${id}`, {
             data: {
                 postId: `${id}`
             }
@@ -138,6 +138,7 @@ function StudyPost(props) {
                     <span className="room-p">({post.joinP}명/{post.totalP}명)</span>
                 </span>
                 {
+                    
                     user.id===post.writer ? null:
                     <Button
                         disabled = {post.isApplied}
@@ -162,7 +163,7 @@ function StudyPost(props) {
                 }
             </div>
             
-            <LikeAndComment id={id} likes={post.likes} liked={post.liked} reply={reply}/></div>:
+            <LikeAndComment id={id} likes={post.likes} reply={reply}/></div>:
             <div>
           <div className='StudyCreate' style={{textAlign:'start',width:'100%'}}>
                     <h5>스터디 모집글 수정하기</h5>
