@@ -4,17 +4,19 @@ import "./study.css";
 import "../../App.css";
 import axios from "axios";
 import { Form, Nav, Stack, Button, Table, ListGroup } from "react-bootstrap";
-import { Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
+import WriteReplyForm from '../../component/WriteReplyForm';
 
 import heartOutline from "./img/heart-outline.png";
 import heartFull from "./img/heart-full.png"
 import comment from "./img/comment.png"
 import moreImg from "./img/more.png"
 
+
 function LikeAndComment(props) {
 
-    let user = useSelector((state) => state.user);
+    const user = useSelector((state) => state.user);
     const id = props.id;
     const [likes, setLikes] = useState(0);
     const [liked, setLiked] = useState(0);
@@ -73,29 +75,7 @@ function LikeAndComment(props) {
         sendLikeSignal();
     }
 
-    function createComment(content) {
-        axios
-            .post(`/study/${id}`, {
-                content: `${content}`
-            })
-            .then(function (response) {
-                const newReply = [
-                    ...reply,
-                    {
-                        "comment": `${content}`,
-                        "commentId": response.data.commentId,
-                        "date": response.data.date,
-                        "writer": `${user.id}`
-                    }
-                ];
-                setReply(newReply);
-                setReplyNum(replyNum + 1);
-                setInputValue('');
-            })
-            .catch(function (error) {
-                // 오류발생시 실행
-            });
-    }
+    
 
 
     function updateComment(commentId, content) {
@@ -143,21 +123,7 @@ function LikeAndComment(props) {
             });
     }
 
-    const [inputValue, setInputValue] = useState('');
-
-    const handleInputChange = (event) => {
-        setInputValue(event.target.value);
-    };
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        if (user.id === null) {
-            alert("로그인이 필요합니다")
-        }
-        else {
-            createComment(inputValue);
-        }
-    };
+    
 
 
     const [updateInput, setUpdateInput] = useState('');
@@ -241,18 +207,7 @@ function LikeAndComment(props) {
                 )
             })}
 
-            <div className='align-side' style={{ margin: '10px', marginBottom: '20px' }}>{/* 댓글달기*/}
-                <Form onSubmit={handleSubmit} className='align-side' style={{ width: '100%' }}>
-                    <Form.Control style={{ width: '90%' }}
-                        className="me-auto"
-                        placeholder="최고의 스터디, 추천합니다!"
-                        value={inputValue}
-                        onChange={handleInputChange}
-                    />
-                    <span style={{ width: '5px' }}></span>
-                    <Button variant="blue" type="submit" style={{ width: '10%' }}>등록</Button>
-                </Form>
-            </div>
+            <WriteReplyForm id={id} reply={reply} setReply={setReply} replyNum={replyNum} setReplyNum={setReplyNum}/>
 
         </div>
     )
