@@ -7,8 +7,8 @@ import { Form, Nav, Stack, Button, Table, ListGroup } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import comment from "./img/comment.png"
-import moreImg from "./img/more.png"
+import comment from "../../assets/img/comment.png"
+import moreImg from "../../assets/img/more.png"
 
 function Comment(props) {
     let user = useSelector((state) => state.user);

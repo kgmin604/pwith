@@ -7,9 +7,8 @@ import { Form, Nav, Stack, Button, Table, ListGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
 import WriteReplyForm from '../../component/WriteReplyForm';
+import LikeNumAndReplyNum from '../../component/LikeNumAndReplyNum';
 
-import heartOutline from "./img/heart-outline.png";
-import heartFull from "./img/heart-full.png"
 import comment from "./img/comment.png"
 import moreImg from "./img/more.png"
 
@@ -38,44 +37,9 @@ function LikeAndComment(props) {
         }
     }, [props])
 
-    const sendLikeSignal = () => {
-        axios.post(`/study/${id}/like`, {
-            postId: id
-        })
-            .then(function (response) {
-                axios.get(`/study/${id}/like`)
-                    .then((response) => {
-                        console.log(response.data)
-                        if (liked === 1) {//원래 좋아요 눌러져있음-다시 누르면 감소
-                            setLikes(likes - 1);
-                            setLiked(0);
-                        }
-                        else {
-                            setLikes(likes + 1);
-                            setLiked(1);
-                        }
 
-                        setLiked(response.data.likes);
-                        setLiked(response.data.liked);
 
-                    })
-                    .catch(function (error) {
-                        // GET 요청 실패 처리
-                    });
-            })
-            .catch(function (error) {
-                // 요청 실패 시 처리할 로직
-            });
-    };
-    function clickHeart() {
-        if (user.id === null) {
-            alert("로그인이 필요합니다")
-            return;
-        }
-        sendLikeSignal();
-    }
 
-    
 
 
     function updateComment(commentId, content) {
@@ -87,7 +51,7 @@ function LikeAndComment(props) {
                 console.log(response);
                 const updatedReply = reply.map(reply => {
                     if (reply.commentId === commentId) {
-                        reply.comment= `${content}`;
+                        reply.comment = `${content}`;
                     }
                     setUpdateInput("");
                     return reply;
@@ -123,7 +87,7 @@ function LikeAndComment(props) {
             });
     }
 
-    
+
 
 
     const [updateInput, setUpdateInput] = useState('');
@@ -151,22 +115,7 @@ function LikeAndComment(props) {
 
     return (
         <div className='likeAndComment'>
-            <div className='align-row'>
-                <div className='align-row'>{/* 하트 */}
-                    {liked != 0 ? <img src={heartFull} className="heart" onClick={() => clickHeart()} /> :
-                        <img src={heartOutline} className="heart" onClick={() => clickHeart()} />
-                    }
-                    <span style={{ width: '5px' }}></span>
-                    {likes}
-                </div>
-                <span style={{ width: '10px' }}></span>
-                <div className='align-row'>
-                    <img src={comment} className='comment' />
-                    <span style={{ width: '5px' }}></span>
-                    {replyNum}
-                </div>
-            </div>
-
+            <LikeNumAndReplyNum id={id} liked={liked} setLiked={setLiked} likes={likes} setLikes={setLikes} replyNum={replyNum} />
             <hr />
 
             {reply.map((k, i) => {
@@ -207,7 +156,7 @@ function LikeAndComment(props) {
                 )
             })}
 
-            <WriteReplyForm id={id} reply={reply} setReply={setReply} replyNum={replyNum} setReplyNum={setReplyNum}/>
+            <WriteReplyForm id={id} reply={reply} setReply={setReply} replyNum={replyNum} setReplyNum={setReplyNum} />
 
         </div>
     )
@@ -215,3 +164,5 @@ function LikeAndComment(props) {
 }
 
 export default LikeAndComment;
+
+
