@@ -47,7 +47,7 @@ function LikeNumAndReplyNum(props) {
     }
     return <div className='align-row'>
         <div className='align-row'>{/* 하트 */}
-            {liked !== 0 && <img src={heartFull} className="heart" onClick={() => clickHeart()} />}
+            {liked === 1 && <img src={heartFull} className="heart" onClick={() => clickHeart()} />}
             {liked === 0 && <img src={heartOutline} className="heart" onClick={() => clickHeart()} />}
             <span style={{ width: '5px' }}></span>
             {likes}
