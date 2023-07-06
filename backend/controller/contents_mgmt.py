@@ -3,7 +3,7 @@
 import requests
 from bs4 import BeautifulSoup
 from json import loads, decoder
-from model.db_mongo import conn_mongodb
+from backend.model.db_mongo import conn_mongodb
 
 conn_mongodb().lecture_crawling.delete_many({})
 

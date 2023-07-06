@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from model.db_mysql import conn_mysql
+from backend.model.db_mysql import conn_mysql
 
 class Member(UserMixin):
 

@@ -1,8 +1,8 @@
 from flask import Flask, session, Blueprint, render_template, redirect, request, jsonify, url_for
 from flask_login import login_required, current_user
-from controller.board_mgmt import studyPost
-from controller.reply_mgmt import Reply
-from controller.studyroom_mgmt import StudyRoom
+from backend.controller.board_mgmt import studyPost
+from backend.controller.reply_mgmt import Reply
+from backend.controller.studyroom_mgmt import StudyRoom
 from datetime import datetime
 import json
 

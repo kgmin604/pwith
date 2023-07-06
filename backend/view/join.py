@@ -1,5 +1,5 @@
 from flask import Flask, Blueprint, request, jsonify, redirect, url_for
-from controller.member_mgmt import Member
+from backend.controller.member_mgmt import Member
 
 bp = Blueprint('join', __name__, url_prefix='')
 

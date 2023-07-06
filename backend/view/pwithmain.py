@@ -1,8 +1,8 @@
 from flask import Flask, session, Blueprint, render_template, redirect, request, jsonify, url_for
 from flask_login import login_required, current_user
-from controller.board_mgmt import studyPost
-from controller.mentor_mgmt import Portfolio
-from model.db_mongo import conn_mongodb
+from backend.controller.board_mgmt import studyPost
+from backend.controller.mentor_mgmt import Portfolio
+from backend.model.db_mongo import conn_mongodb
 
 main_bp = Blueprint('pwithmain', __name__, url_prefix='')
 

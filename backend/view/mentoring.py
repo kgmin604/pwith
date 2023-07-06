@@ -3,11 +3,11 @@ import base64
 import pymysql
 from flask import Flask, session, Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from controller.mentor_mgmt import Portfolio
-from controller.review_mgmt import Review
-from controller.mentoringroom_mgmt import MentoringRoom
-from controller.chat_mgmt import chat
-from model.db_mysql import conn_mysql
+from backend.controller.mentor_mgmt import Portfolio
+from backend.controller.review_mgmt import Review
+from backend.controller.mentoringroom_mgmt import MentoringRoom
+from backend.controller.chat_mgmt import chat
+from backend.model.db_mysql import conn_mysql
 from datetime import datetime
 
 # from PIL import Image 

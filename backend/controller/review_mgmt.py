@@ -1,4 +1,4 @@
-from model.db_mysql import conn_mysql
+from backend.model.db_mysql import conn_mysql
 
 class Review :
     def __init__(self, writer, content, mentoId) :

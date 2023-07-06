@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint, request, jsonify, redirect, url_for, session
 from flask_login import login_user, current_user, logout_user, login_required
-from controller.member_mgmt import Member
+from backend.controller.member_mgmt import Member
 
 bp = Blueprint('login', __name__, url_prefix='')
 """

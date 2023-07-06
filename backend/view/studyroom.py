@@ -1,8 +1,8 @@
 from flask import Flask, session, Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime
-from controller.studyroom_mgmt import StudyRoom
-from controller.mentoringroom_mgmt import MentoringRoom
+from backend.controller.studyroom_mgmt import StudyRoom
+from backend.controller.mentoringroom_mgmt import MentoringRoom
 
 studyroom_bp = Blueprint('studyRoom', __name__, url_prefix='/studyroom')
 

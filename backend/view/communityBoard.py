@@ -1,13 +1,13 @@
 from flask import Flask, session, Blueprint, render_template, redirect, request, jsonify, url_for
 from flask_login import login_required, current_user
 from datetime import datetime
-# from controller.community_mgmt import bootPost, QNAPost
-from model.db_mongo import conn_mongodb
-from model.db_mysql import conn_mysql
-# from view.community import conn_mongodb
-from controller.community_mgmt import QNAPost
-from controller.board_mgmt import studyPost
-from controller.reply_mgmt import Reply
+# from backend.controller.community_mgmt import bootPost, QNAPost
+from backend.model.db_mongo import conn_mongodb
+from backend.model.db_mysql import conn_mysql
+# from backend.view.community import conn_mongodb
+from backend.controller.community_mgmt import QNAPost
+from backend.controller.board_mgmt import studyPost
+from backend.controller.reply_mgmt import Reply
 
 community_bp = Blueprint('community', __name__, url_prefix='/community')
 
