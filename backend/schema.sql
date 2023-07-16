@@ -1,18 +1,107 @@
 CREATE TABLE member
 (
-    memId VARCHAR(10),
-    memPw VARCHAR(20) NOT NULL,
-    memName VARCHAR(10) NOT NULL,
-    memEmail VARCHAR(20) NOT NULL,
-    isMento BOOLEAN DEFAULT 0,
-    joinStudy JSON,
-    PRIMARY KEY(memId)
+    id BIGINT AUTO_INCREMENT,
+    memId VARCHAR(10) NOT NULL,
+    password VARCHAR(20) NOT NULL,
+    name VARCHAR(10) NOT NULL,
+    email VARCHAR(20) NOT NULL,
+    image VARCHAR(2048) NOT NULL DEFAULT "https://cdn.discordapp.com/attachments/1119199513693933598/1130131200774779011/defalut_user.png",
+    PRIMARY KEY(id)
 );
 
-CREATE TABLE post
+CREATE TABLE replyStudy
 (
-    --
+    id BIGINT AUTO_INCREMENT,
+    writer BIGINT NOT NULL,
+    content VARCHAR(300) NOT NULL,
+    curDate DATETIME NOT NULL,
+    studyId BIGINT NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(writer) REFERENCES member(id) on delete set null,
+    FOREIGN KEY(studyId) REFERENCES study(id) on delete cascade
 )
+
+CREATE TABLE replyQna
+(
+    id BIGINT AUTO_INCREMENT,
+    writer BIGINT NOT NULL,
+    content VARCHAR(300) NOT NULL,
+    curDate DATETIME NOT NULL,
+    qnaId BIGINT NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(writer) REFERENCES member(id),
+    FOREIGN KEY(qnaId) REFERENCES qna(id)
+)
+
+CREATE TABLE portfolio
+(
+    id BIGINT AUTO_INCREMENT,
+    mento BIGINT NOT NULL,
+    mentoPic VARCHAR(2048) NOT NULL,
+    content VARCHAR(500) NOT NULL,
+    curDate DATETIME NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(mento) REFERENCES member(id)
+)
+
+CREATE TABLE portfolioSubject
+(
+    id BIGINT AUTO_INCREMENT,
+    portfolio BIGINT NOT NULL,
+    subject INT NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(portfolio) REFERENCES portfolio(id)
+)
+
+CREATE TABLE review
+(
+    id BIGINT AUTO_INCREMENT,
+    writer BIGINT NOT NULL,
+    content VARCHAR(300) NOT NULL,
+    mento BIGINT NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(writer) REFERENCES member(id),
+    FOREIGN KEY(mento) REFERENCES member(id)
+)
+
+CREATE TABLE studyRoom (
+	id BIGINT AUTO_INCREMENT,
+    name VARCHAR(20) NOT NULL,
+    category INT NOT NULL,
+    leader BIGINT NOT NULL,
+    image VARCHAR(2048) NOT NULL,
+    joinP INT NOT NULL DEFAULT 0,
+    totalP INT NOT NULL,
+    notice VARCHAR(50),
+    PRIMARY KEY(id),
+    FOREIGN KEY(leader) REFERENCES member(id)
+    -- FOREIGN KEY(notice) REFERENCES studyRoomChat(id)
+)
+
+CREATE TABLE mentoringRoom (
+    id BIGINT AUTO_INCREMENT,
+    name VARCHAR(20) NOT NULL,
+    mento BIGINT NOT NULL,
+    menti BIGINT NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(mento) REFERENCES member(id),
+    FOREIGN KEY(menti) REFERENCES member(id)
+)
+
+CREATE TABLE studyMember (
+	id BIGINT AUTO_INCREMENT,
+    member BIGINT NOT NULL,
+    room BIGINT NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(member) REFERENCES member(id),
+    FOREIGN KEY(room) REFERENCES studyRoom(id)
+)
+
+
+
+
+
+
 
 CREATE TABLE QNA
 (
@@ -29,39 +118,6 @@ CREATE TABLE QNA
     FOREIGN KEY(writer) REFERENCES member(memId)
 )
 
-
-CREATE TABLE reply (
-    replyId INT AUTO_INCREMENT,
-    writer VARCHAR(10) NOT NULL,
-    content VARCHAR(300) NOT NULL,
-    curDate DATETIME NOT NULL,
-    type INT NOT NULL,
-    postNum INT NOT NULL,
-    PRIMARY KEY(replyId),
-    FOREIGN KEY(writer) REFERENCES member(memId), -- 삭제 시 (알 수 없음) 구현
-    FOREIGN KEY(postNum) REFERENCES post(postId) on delete cascade
-)
-
-CREATE TABLE mento (
-    mentoId VARCHAR(10),
-    mentiList JSON,
-    subject JSON NOT NULL,
-    mentoPic LONGBLOB, -- NOT NULL
-    content VARCHAR(500) NOT NULL,
-    PRIMARY KEY(mentoId),
-    FOREIGN KEY(mentoId) REFERENCES member(memId) on delete cascade
-    -- FOREIGN KEY(mentoId, mentiList) REFERENCES member(memId, memId) on delete cascade -- json 안 됨. 일단 빼고 생성함.
-);
-
-create table review (
-	reviewId int auto_increment,
-    writer varchar(10) not null,
-    content varchar(300) not null,
-    mentoId varchar(10) not null,
-    primary key(reviewId),
-    foreign key(writer) references member(memId),
-    foreign key(mentoId) references mento(mentoId)
-);
 
 CREATE TABLE chat (
     chatId INT AUTO_INCREMENT,
