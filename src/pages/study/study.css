@@ -38,11 +38,6 @@ div.StudyCreate div.form-wrapper div.study-bottom-area .submit-button {
     height: 40px;
 }
 
-.ck.ck-editor__editable:not(.ck-editor__nested-editable) {
-    min-height: 400px;
-}
-
-
 .StudyMain {
     /* font-family: "TmoneyRoundWind"; */
     text-align: center;

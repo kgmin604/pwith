@@ -7,8 +7,7 @@ import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Comment from './Comment.js';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import MDEditor from '@uiw/react-md-editor';
 
 function MentoringPost() {
     let user = useSelector((state) => state.user);
@@ -99,7 +98,7 @@ function MentoringPost() {
             .then(response => {
                 setPost(response.data.portfolio);
                 setReview(response.data.review);
-                
+
                 const image = response.data.portfolio.image; // 이미지 데이터
                 const url = `data:image/jpeg;base64,${image}`;
                 setDataUrl(url);
@@ -159,25 +158,17 @@ function MentoringPost() {
     }
 
     return (<div>
-
         {!isUpdating ? <div className="MentoringPost">
-
             <div class="row">
                 <div class="col-md-3"></div>
-
-
                 <div class="col-md-6">
                     <h5>{post.brief}</h5>
                     <hr style={{ width: '100%', margin: '0 auto' }} />
-                    {
-                        user.id === post.mento ?
-                            <div className="control-part" style={{ display: 'flex', justifyContent: 'end', gap: '10px' }}>
-                                <button className="control-btn" onClick={() => setIsUpdating(true)}>수정</button>
-                                <button className="control-btn" onClick={() => checkDelete()}>삭제</button>
-                            </div>
-                            :
-                            null
-                    }
+                    {user.id === post.mento&&
+                        <div className="control-part" style={{ display: 'flex', justifyContent: 'end', gap: '10px' }}>
+                            <button className="control-btn" onClick={() => setIsUpdating(true)}>수정</button>
+                            <button className="control-btn" onClick={() => checkDelete()}>삭제</button>
+                        </div>}
 
                     <div className="MentoringTitle" style={{ display: 'flex', justifyContent: 'center' }} >
                         <img src={dataUrl} style={{ borderRadius: '100%', width: '150px', height: '150px', margin: '10px' }} />
@@ -185,12 +176,12 @@ function MentoringPost() {
                     <h4>{post.mento}</h4>
                     <hr style={{ width: '50%', margin: '0 auto' }} />
 
-                    <div className="mentoringContent">
-                        <p cols="50" rows="10">
-                            {parsedContent}
-                        </p>
+                    <div className="mentoringContent markdownDiv" data-color-mode="light" style={{ padding: 15 }}>
+                        <MDEditor.Markdown
+                            style={{ padding: 10 }}
+                            source={post.content}
+                        />
                     </div>
-
                     <Button variant='blue' onClick={() => joinMentoring()} style={{ margin: '20px' }}>멘토링 신청하기</Button>
                     <Comment id={id} mento={post.mento} review={review} />
                 </div>
@@ -223,25 +214,13 @@ function MentoringPost() {
             </div>
 
             <div className='form-wrapper'>
-                <input className="title-input" type='text' placeholder='한줄소개' onChange={getValue} name='brief' value={post.brief}/>
-                <CKEditor
-                    editor={ClassicEditor}
-                    data=" "
-                    config={{
-                        placeholder: "내용을 입력하세요.",
-                    }}
-                    onReady={editor => {
-                        editor.setData(post.content);
-                    }}
-                    onChange={(event, editor) => {
-                        const data = editor.getData();
-                        setPost({
-                            ...post,
-                            content: data
-                        })
-                    }}
-                    style={{ width: '500px' }}
-                />
+                <input className="title-input" type='text' placeholder='한줄소개' onChange={getValue} name='brief' value={post.brief} />
+                <MDEditor height={865} value={post.content} onChange={(value, event) => {
+                    setPost({
+                        ...post,
+                        content: value
+                    })
+                }} />
 
                 <div className='selectSubject'>
                     <hr />
