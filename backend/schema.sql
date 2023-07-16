@@ -17,8 +17,8 @@ CREATE TABLE replyStudy
     curDate DATETIME NOT NULL,
     studyId BIGINT NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(writer) REFERENCES member(id) on delete set null,
-    FOREIGN KEY(studyId) REFERENCES study(id) on delete cascade
+    FOREIGN KEY(writer) REFERENCES member(id) on delete set null on update cascade,
+    FOREIGN KEY(studyId) REFERENCES study(id) on delete cascade on update cascade
 )
 
 CREATE TABLE replyQna
@@ -29,8 +29,8 @@ CREATE TABLE replyQna
     curDate DATETIME NOT NULL,
     qnaId BIGINT NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(writer) REFERENCES member(id),
-    FOREIGN KEY(qnaId) REFERENCES qna(id)
+    FOREIGN KEY(writer) REFERENCES member(id) on delete set null on update cascade,
+    FOREIGN KEY(qnaId) REFERENCES qna(id) on delete cascade on update cascade
 )
 
 CREATE TABLE portfolio
@@ -41,7 +41,7 @@ CREATE TABLE portfolio
     content VARCHAR(500) NOT NULL,
     curDate DATETIME NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(mento) REFERENCES member(id)
+    FOREIGN KEY(mento) REFERENCES member(id) on delete cascade on update cascade
 )
 
 CREATE TABLE portfolioSubject
@@ -50,7 +50,7 @@ CREATE TABLE portfolioSubject
     portfolio BIGINT NOT NULL,
     subject INT NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(portfolio) REFERENCES portfolio(id)
+    FOREIGN KEY(portfolio) REFERENCES portfolio(id) on delete cascade on update cascade
 )
 
 CREATE TABLE review
@@ -60,8 +60,8 @@ CREATE TABLE review
     content VARCHAR(300) NOT NULL,
     mento BIGINT NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(writer) REFERENCES member(id),
-    FOREIGN KEY(mento) REFERENCES member(id)
+    FOREIGN KEY(writer) REFERENCES member(id) on delete set null on update cascade,
+    FOREIGN KEY(mento) REFERENCES member(id) on delete cascade on update cascade
 )
 
 CREATE TABLE studyRoom (
@@ -74,7 +74,7 @@ CREATE TABLE studyRoom (
     totalP INT NOT NULL,
     notice VARCHAR(50),
     PRIMARY KEY(id),
-    FOREIGN KEY(leader) REFERENCES member(id)
+    FOREIGN KEY(leader) REFERENCES member(id) on delete cascade on update cascade
     -- FOREIGN KEY(notice) REFERENCES studyRoomChat(id)
 )
 
@@ -84,8 +84,8 @@ CREATE TABLE mentoringRoom (
     mento BIGINT NOT NULL,
     menti BIGINT NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(mento) REFERENCES member(id),
-    FOREIGN KEY(menti) REFERENCES member(id)
+    FOREIGN KEY(mento) REFERENCES member(id) on delete cascade on update cascade,
+    FOREIGN KEY(menti) REFERENCES member(id) on delete cascade on update cascade
 )
 
 CREATE TABLE studyMember (
@@ -93,8 +93,8 @@ CREATE TABLE studyMember (
     member BIGINT NOT NULL,
     room BIGINT NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(member) REFERENCES member(id),
-    FOREIGN KEY(room) REFERENCES studyRoom(id)
+    FOREIGN KEY(member) REFERENCES member(id) on delete cascade on update cascade,
+    FOREIGN KEY(room) REFERENCES studyRoom(id) on delete cascade on update cascade
 )
 
 
