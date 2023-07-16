@@ -5,6 +5,7 @@
 from flask import Flask, redirect
 from flask_login import LoginManager
 from backend.view import join, login, study, studyroom, mypage, communityBoard, mentoring, pwithmain, chat
+from backend.controller.member_mgmt import Member
 # from flask_cors import CORS
 
 # CORS(app)
@@ -34,7 +35,7 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def loadUser(memId) : # 로그인 되어있는지 판단하기 전 사용자 정보 조회
-    print(memId)
+    print("memId : " + str(memId))
     return Member.findById(memId)
 
 @login_manager.unauthorized_handler
