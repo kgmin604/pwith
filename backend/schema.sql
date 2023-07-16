@@ -1,11 +1,12 @@
 CREATE TABLE member
 (
     id BIGINT AUTO_INCREMENT,
-    memId VARCHAR(10) NOT NULL,
-    password VARCHAR(20) NOT NULL,
-    name VARCHAR(10) NOT NULL,
+    memId VARCHAR(10) NOT NULL UNIQUE,
+    password VARBINARY(100) NOT NULL,
+    nickname VARCHAR(10) NOT NULL UNIQUE,
     email VARCHAR(20) NOT NULL,
     image VARCHAR(2048) NOT NULL DEFAULT "https://cdn.discordapp.com/attachments/1119199513693933598/1130131200774779011/defalut_user.png",
+    isAdmin BOOLEAN NOT NULL DEFAULT false,
     PRIMARY KEY(id)
 );
 
@@ -69,7 +70,7 @@ CREATE TABLE studyRoom (
     name VARCHAR(20) NOT NULL,
     category INT NOT NULL,
     leader BIGINT NOT NULL,
-    image VARCHAR(2048) NOT NULL,
+    image VARCHAR(2048) NOT NULL DEFAULT "https://cdn.discordapp.com/attachments/1120631568311009360/1130188761989386412/image.png",
     joinP INT NOT NULL DEFAULT 0,
     totalP INT NOT NULL,
     notice VARCHAR(50),
