@@ -7,8 +7,8 @@ mongo_conn = pymongo.MongoClient(MONGO_SERVER)
 def conn_mongodb() :
     try:
         mongo_conn.admin.command('ismaster')
-        pwith_db = mongo_conn.pwith_db
     except:
         mongo_conn = pymongo.MongoClient(MONGO_SERVER)
+    finally:
         pwith_db = mongo_conn.pwith_db
     return pwith_db
