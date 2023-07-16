@@ -3,12 +3,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./study.css";
 import "../../App.css";
 import axios from "axios";
-import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
-import { Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { Button } from "react-bootstrap";
+import {useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import LikeAndComment from './likeAndComment.js';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import MDEditor from '@uiw/react-md-editor';
 
 function StudyPost(props) {
 
@@ -126,71 +125,62 @@ function StudyPost(props) {
                 <hr style={{ width: '100%', margin: '0 auto' }} />
 
                 <div className="studyContent">
-                    <p cols="50" rows="10">
-                        {parsedContent}
-                    </p>
+                    <div className="markdownDiv" data-color-mode="light" style={{ padding: 15 }}>
+                        <MDEditor.Markdown
+                            style={{ padding: 10 }}
+                            source={post.content}
+                        />
+                    </div>
                 </div>
 
-            <div className="studyroom-join">
-                <img src='/img_notebook.png'></img>
-                <span className="room-title">
-                    {post.roomTitle}
-                    <span className="room-p">({post.joinP}명/{post.totalP}명)</span>
-                </span>
-                {
-                    
-                    (user.id===post.writer || user.id===null) ? null:
-                    <Button
-                        disabled = {post.isApplied}
-                        className="button" 
-                        variant='blue'
-                        onClick={(e)=>{
-                            e.stopPropagation(); 
-                            if(post.joinP!==post.totalP)
-                                joinStudyRoom();
-                        }}
-                    >
-                        {
-                            post.joinP===post.totalP ? "모집완료" : 
-                            post.isApplied? "참여완료":"참여하기"
-                        }
-                    </Button>
-                }
-            </div>
-            
-            <LikeAndComment id={id} liked={post.liked} likes={post.likes} reply={reply}/></div>:
+                <div className="studyroom-join">
+                    <img src='/img_notebook.png'></img>
+                    <span className="room-title">
+                        {post.roomTitle}
+                        <span className="room-p">({post.joinP}명/{post.totalP}명)</span>
+                    </span>
+                    {
 
-            <div>
-          <div className='StudyCreate' style={{textAlign:'start',width:'100%'}}>
-                    <h5>스터디 모집글 수정하기</h5>
-                    <h3>{post.title}</h3>
-                    <hr style={{ width: '100%', margin: '0 auto',marginBottom:'10px' }} />
-                    <div className='form-wrapper' style={{width:'100%'}}>
-                        <div style={{width:'100%'}}>
-                            <CKEditor
-                                editor={ClassicEditor}
-                                data=" "
-                                config={{
-                                    placeholder: "내용을 입력하세요.",
+                        (user.id === post.writer || user.id === null) ? null :
+                            <Button
+                                disabled={post.isApplied}
+                                className="button"
+                                variant='blue'
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (post.joinP !== post.totalP)
+                                        joinStudyRoom();
                                 }}
-                                onReady={editor => {
-                                    editor.setData(post.content);
-                                }}
-                                onChange={(event, editor) => {
-                                    const data = editor.getData();
+                            >
+                                {
+                                    post.joinP === post.totalP ? "모집완료" :
+                                        post.isApplied ? "참여완료" : "참여하기"
+                                }
+                            </Button>
+                    }
+                </div>
+
+                <LikeAndComment id={id} liked={post.liked} likes={post.likes} reply={reply} /></div> :
+
+                <div>
+                    <div className='StudyCreate' style={{ textAlign: 'start', width: '100%' }}>
+                        <h5>스터디 모집글 수정하기</h5>
+                        <h3>{post.title}</h3>
+                        <hr style={{ width: '100%', margin: '0 auto', marginBottom: '10px' }} />
+                        <div className='form-wrapper' style={{ width: '100%' }}>
+                            <div style={{ width: '100%' }}>
+                                 <MDEditor height={865} value={post.content} onChange={(value, event) => {
                                     setPost({
                                         ...post,
-                                        content: data
+                                        content: value
                                     })
-                                }}
-                                
-                            />
-                            <div style={{display:'flex',justifyContent:'center'}}>
+                                }} />
+                                <div style={{ display: 'flex', justifyContent: 'center' }}>
                                     <Button
                                         className="submit-button"
                                         variant="blue"
                                         onClick={() => updatePost(post.content)}
-                                        style={{margin:'10px'}}
+                                        style={{ margin: '10px' }}
                                     > 수정
                                     </Button>
                                 </div>
@@ -202,11 +192,11 @@ function StudyPost(props) {
 
 
                     </div>
-            </div>}
+                </div>}
         </div>
 
     );
 
 }
 
- export default StudyPost;
+export default StudyPost;
