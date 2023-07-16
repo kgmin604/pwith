@@ -1,18 +1,21 @@
 from backend.model.db_mysql import conn_mysql
 import json
+from backend.controller import commit, selectAll, selectOne, commitAndGetId
 
 class StudyRoom() :
     
-    def __init__(self, roomName, category, leader, joinP, totalP):
-        self.__roomName = roomName
+    def __init__(self, roomName, category, leader, image, joinP, totalP):
+        self.__id = id
+        self.__name = roomName
         self.__category = category
         self.__leader = leader
+        self.__image = image
         self.__joinP = joinP
         self.__totalP = totalP
     
     @property
-    def roomName(self) :
-        return str(self.__roomName)
+    def name(self) :
+        return str(self.__name)
 
     @property
     def category(self) :
@@ -32,48 +35,44 @@ class StudyRoom() :
 
     @staticmethod
     def create(roomName, category, leader, totalP) :
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
 
-        sql = f"INSERT INTO studyRoom(roomName, category, leader, totalP) VALUES('{roomName}', {category}, '{leader}', {totalP})"
+        sql1 = f"INSERT INTO studyRoom(name, category, leader, totalP) VALUES('{roomName}', {category}, {leader}, {totalP})"
 
-        done = cursor_db.execute(sql)
+        roomId = commitAndGetId(sql1)
 
-        mysql_db.commit()
+        sql2 = f"INSERT INTO studyMember(member, room) VALUES({leader}, {roomId})"
 
-        mysql_db.close()
+        done = commit(sql2)
 
         return done
 
     @staticmethod
     def show(logUser) :
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT * FROM studyRoom WHERE leader = '{logUser}' or studentsList LIKE '%{logUser}%'"
-        cursor_db.execute(sql)
+        result = []
 
-        result = cursor_db.fetchall()
+        sql1 = f"SELECT room FROM studyMember WHERE member = '{logUser}'"
 
-        mysql_db.close()
+        rooms = selectAll(sql1) # id 형태
+
+        for room in rooms :
+            
+            roomId = room[0]
+
+            sql2 = f"SELECT * FROM studyRoom WHERE id = {roomId}"
+
+            roomInfo = selectOne(sql2)
+
+            result.append(roomInfo)
         
         return result
 
-
-
     @staticmethod
     def getStudentList(roomId) : # 스터디룸 참가자 조회
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
 
         sql = f"SELECT studentsList FROM studyRoom WHERE roomId = {roomId}"
 
-        cursor_db.execute(sql)
-
-        studentsList = cursor_db.fetchone()[0]
-        # print(studentsList)
-
-        mysql_db.close()
+        studentsList = selectOne(sql)[0]
 
         return studentsList
 
