@@ -15,19 +15,80 @@ function CommunityQna(props) {
 
     let [postList, setPostList] = useState([]);
 
+    let [totalPage, setTotalPage] = useState(1);
+    let [selectPage, setSelectPage] = useState(1);
+    let [pages, setPages] = useState([]); // 임시
+
+    let [disabled1, setDisabled1] = useState(true);
+    let [disabled2, setDisabled2] = useState(true);
+
+    let [isLoad, setIsLoad ] = useState(false);
+
+    let [isDisabled, setIsDisabled] = useState(user.id===null);
+
     useEffect(() => {
         axios({
             method: "GET",
             url: "/community/qna/main",
-        })
+            params: {
+                page: selectPage
+            }
+          })
             .then(function (response) {
                 console.log(response.data);
-                setPostList(response.data);
+                setPostList(response.data.posts);
+                setTotalPage(response.data.num);
+
+                if(!isLoad){ // 맨 처음 한번만 실행
+                    if(response.data.num > 5){ 
+                        const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
+                        setPages(tmp);
+                        setDisabled2(false); // 페이지 이동 가능
+                    }
+                    else{
+                        const tmp = Array.from({ length: response.data.num }, (_, index) => index + 1);
+                        setPages(tmp);
+                    }
+                    setIsLoad(true);
+                }
             })
             .catch(function (error) {
-                console.log(error);
+              console.log(error);
             });
-    }, []);
+    }, [selectPage]);
+
+    function controlPages(type){
+        if(type===-1){
+            const startPage = pages[0];
+            const tmp = Array.from({ length: 5 }, (_, index) => startPage - 5 + index);
+            setPages(tmp);
+            setSelectPage(tmp[0]);
+            setDisabled2(false); // > 클릭 가능
+
+            if(startPage===6){
+                setDisabled1(true); // < 클릭 불가
+            }
+        }
+        else if(type===1){
+            if(pages[4]+5<=totalPage){ // 페이지 5개 display 가능
+                const tmp = Array.from({ length: 5 }, (_, index) => pages[index] + 5);
+                setPages(tmp);
+                setSelectPage(tmp[0]);
+                if(pages[4]+5===totalPage){
+                    setDisabled2(true); // > 클릭 불가
+                }
+            }
+            else{   // 페이지 5개 dispaly 불가능
+                const num = totalPage-pages[4];
+                const tmp = Array.from({ length: num }, (_, index) => pages[index] + 5);
+                setPages(tmp);
+                setSelectPage(tmp[0]);
+                setDisabled2(true); // > 클릭 불가
+            }
+            setDisabled1(false); // < 클릭 가능
+        }
+    }
+
     return (
         <div className="CommunityQna">
             <div class="row">
@@ -48,34 +109,6 @@ function CommunityQna(props) {
                             </div>)}
 
                     </Stack>
-
-                    {/* <Table bordered hover>
-                        <thead>
-                            <tr>
-                                <th>no.</th>
-                                <th colSpan={2}>글제목</th>
-                                <th>글쓴이</th>
-                                <th>날짜</th>
-                                <th>조회수</th>
-                                <th>좋아요</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {postList.map(function (post, index) {
-                                let date = post.curDate.slice(2, 10);
-                                return (
-                                    <tr className="postCol pointer-cursor" key={post.id} onClick={() => navigate(`../community/qna/${post.id}`)}>
-                                        <td >{post.id}</td>
-                                        <td colSpan={2} className="text-container">{post.title}</td>
-                                        <td>{post.writer}</td>
-                                        <td>{date}</td>
-                                        <td>{post.views}</td>
-                                        <td>{post.likes}</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </Table> */}
 
                     <div className="posts-area">
                         {
