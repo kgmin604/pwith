@@ -28,6 +28,7 @@ import {
   Mentor,
   PwChange,
   Email,
+  Withdraw,
 } from "./pages/member/mypageComp.js";
 import { loginUser, clearUser } from "./store.js";
 import StudyCreate from "./pages/study/StudyCreate.js";
@@ -44,6 +45,8 @@ function App() {
   let navigate = useNavigate();
   let user = useSelector((state) => state.user);
   let dispatch = useDispatch();
+
+  let [isModal, setIsModal] = useState(false);
 
   // 로그인 유지 목적
   // useEffect(()=>{
@@ -71,6 +74,18 @@ function App() {
   //     });
   // },[])
 
+  //db 리팩토링 임시
+  
+  useEffect(()=>{
+    dispatch(
+      loginUser({
+        id: 'kgm604',
+        name: '경민',
+        email: 'kgmin604@hongik.ac.kr'
+      })
+    )
+  },[]);
+  
   function logout() {
     axios({
       method: "GET",
@@ -225,12 +240,49 @@ function App() {
               </div>
             ) : (
               <div className="mem-area">
-                <div
-                  className="mem-btn"
-                  style={{ width: "70px" }}
-                  onClick={() => navigate("/mypage/chat")}
-                >
-                  쪽지함
+                <div className="parent-container">
+                  <div
+                    className="mem-btn"
+                    style={{ width: "70px" }}
+                    onClick={(e) => {e.stopPropagation(); setIsModal(!isModal); }}
+                  >
+                    알림함
+                  {
+                    !isModal ? null :
+                    <>
+                      <div className='drop-down'>
+                        <div className='item'>
+                          <h5>{"댓글이 달렸습니다."}</h5>
+                          <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                        </div>
+                        <div className='item'>
+                          <h5>{"댓글이 달렸습니다."}</h5>
+                          <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                        </div>
+                        <div className='item'>
+                          <h5>{"댓글이 달렸습니다."}</h5>
+                          <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                        </div>
+                        <div className='item'>
+                          <h5>{"댓글이 달렸습니다."}</h5>
+                          <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                        </div>
+                        <div className='item'>
+                          <h5>{"댓글이 달렸습니다."}</h5>
+                          <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                        </div>
+                        <div className='item'>
+                          <h5>{"댓글이 달렸습니다."}</h5>
+                          <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                        </div>
+                        <div className='item'>
+                          <h5>{"댓글이 달렸습니다."}</h5>
+                          <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                        </div>
+                      </div>
+                    </>
+                  }
+                  </div>
                 </div>
                 <div
                   className="mem-btn"
@@ -276,6 +328,8 @@ function App() {
             <Route path="account" element={<Account />} />
             <Route path="writinglist" element={<WritingList />} />
             <Route path="chat" element={<Chat />} />
+            <Route path="withdraw" element={<Withdraw />} />
+            
           </Route>
           <Route path="*" element={ 
             <div className="img-error">
@@ -300,5 +354,4 @@ function App() {
     </>
   );
 }
-
 export default App;

@@ -7,12 +7,12 @@
 }
 
 .top-area {
-  overflow: hidden;
   min-width: 1280px;
   position: relative;
   margin: 0 auto;
   margin-bottom: 30px;
   padding: 0px;
+  overflow: visible;
 }
 
 .navbar{
@@ -137,4 +137,65 @@
   display: flex;
   justify-content: right;
   align-items: right;
+}
+
+.parent-container {
+  position: relative;
+}
+
+div.mem-area div.mem-btn
+.drop-down {
+  margin-top: 8px;
+  right: 15%;
+  position: absolute;
+  width: 270px;
+  height: 300px;
+  background-color: white;
+  border: 1px lightgray solid;
+  z-index: 999 !important;
+  border-radius: 5px;
+  font-family: "Noto Sans KR";
+  color: black;
+  padding: 5px 0;
+  overflow: auto;
+}
+
+div.mem-area div.mem-btn div.drop-down
+.item{
+  display: flex;
+  flex-direction: column;
+  margin: 0 0;
+  padding: 5px 10px;
+  width: 250px;
+  height: 60px;
+  border-bottom: 1px lightgray solid;
+}
+
+div.mem-area div.mem-btn div.drop-down div.item
+h5{
+  margin: 0 0;
+  padding: 0 0;
+  float: left;
+  font-size: small;
+  font-weight: 700;
+  width : 100%;
+  height: 20px;
+  text-align: left;
+  line-height: 20px;
+}
+
+div.mem-area div.mem-btn div.drop-down div.item
+h6{
+  margin: 0 0;
+  padding: 0 0;
+  float: left;
+  font-size:small;
+  font-weight: 500;
+  width : 100%;
+  height: 20px;
+  text-align: left;
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

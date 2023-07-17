@@ -15,27 +15,6 @@ import { loginUser, clearUser } from '../../store.js'
 function Account(){
     let user = useSelector((state) => state.user);
     let navigate = useNavigate();
-    
-    function requestWithdraw(){
-
-        let confirm_withdraw =  window.confirm("정말 탈퇴하시겠습니까?");
-        
-        if(confirm_withdraw){
-            alert("탈퇴 요청");
-            /*
-            axios({
-                method: "POST",
-                url: "/mypage/account/withdraw"
-            })
-            .then(function (response) {
-                alret("탈퇴가 완료되었습니다.")
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-            */
-        }
-    }
 
     return(
         <>
@@ -51,14 +30,6 @@ function Account(){
                         이메일 인증 
                     </Button>
                 </div>
-            </div>
-            <div className="withdraw-area">
-                <span 
-                    className="mini-text"
-                    onClick={(e)=>{e.stopPropagation(); requestWithdraw();}}
-                >
-                    회원 탈퇴
-                </span>
             </div>
         </>
     );
@@ -613,4 +584,76 @@ function Email(){
     );
 }
 
-export  {Account, WritingList, Chat, PwChange, Email }
+function Withdraw(){
+    let user = useSelector((state) => state.user);
+    let navigate = useNavigate();
+    
+    let [pw,setPw] = useState('');
+
+    let [msg,setMsg] = useState('');
+
+    function requestWithdraw(e){
+        e.stopPropagation();
+
+        let confirm_withdraw =  window.confirm("정말 탈퇴하시겠습니까?");
+        
+        if(pw===''){
+            setMsg('비밀번호를 입력해주세요.');
+            return;
+        }
+
+        if(confirm_withdraw){
+            alert("탈퇴 요청");
+            /*
+            axios({
+                method: "POST",
+                url: "/mypage/account/withdraw",
+                data: {
+                    pw : `${pw}`,
+                }
+            })
+            .then(function (response) {
+                if(response.data.type===1){
+                    alret("탈퇴가 완료되었습니다.")
+                }
+                else if(response.data.type===0){
+                    setMsg('잘못된 비밀번호입니다.');
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+            */
+        }
+    }
+
+    return(
+        <>
+           <h3 className="my-header">회원 탈퇴</h3>
+            <div className="acc-wrap" style={{'height':'80px'}}>
+            <form method="POST">
+                <div className="acc-box" style={{'width':'100%'}}> 
+                    <div className="acc-header" style={{'width':'200px'}}>현재 비밀번호</div>
+                    <div className="pwc-box-wrap">
+                        <input className="pwc-box" type="password" onChange={e=>{
+                            e.stopPropagation();
+                            setPw(e.target.value);
+                        }}/>
+                    </div>
+                    {
+                    msg==='' ? null :
+                    <div className="err-msg">{msg}</div>
+                    }
+                </div>
+                
+            </form>
+            </div>
+
+            <div style={{'width':'100%'}}>
+                <Button variant="light" className="pwBtn" onClick={(e)=>requestWithdraw(e)}>확인</Button>
+            </div>
+        </>
+    );
+}
+
+export  {Account, WritingList, Chat, PwChange, Email,Withdraw }
