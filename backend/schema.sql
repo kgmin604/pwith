@@ -38,6 +38,7 @@ CREATE TABLE portfolio
 (
     id BIGINT AUTO_INCREMENT,
     mento BIGINT NOT NULL,
+    brief VARCHAR(50) NOT NULL,
     mentoPic VARCHAR(2048) NOT NULL,
     content VARCHAR(500) NOT NULL,
     curDate DATETIME NOT NULL,
@@ -57,11 +58,11 @@ CREATE TABLE portfolioSubject
 CREATE TABLE review
 (
     id BIGINT AUTO_INCREMENT,
-    writer BIGINT NOT NULL,
+    writer BIGINT NOT NULL DEFAULT 0,
     content VARCHAR(300) NOT NULL,
     mento BIGINT NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(writer) REFERENCES member(id) on delete set null on update cascade,
+    FOREIGN KEY(writer) REFERENCES member(id) on delete set default on update cascade,
     FOREIGN KEY(mento) REFERENCES member(id) on delete cascade on update cascade
 )
 
