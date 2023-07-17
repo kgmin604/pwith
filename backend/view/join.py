@@ -41,7 +41,7 @@ def join() :
             )
 
 def isDuplicated(memId) :
-    if not Member.findById(memId) :
+    if not Member.findByMemberId(memId) :
         return False
     else :
         return True

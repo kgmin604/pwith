@@ -45,7 +45,7 @@ def login() :
             'email':''
         }
 
-        mem = Member.findById(memId)
+        mem = Member.findByMemberId(memId)
 
         if not mem :
             res['code']=400
