@@ -10,7 +10,7 @@ studyroom_bp = Blueprint('studyRoom', __name__, url_prefix='/studyroom')
 def showRoom() :
     if request.method == 'GET' :
 
-        logUser = current_user.getId()
+        logUser = current_user.get_id()
 
         study_rooms = StudyRoom.show(logUser)
         mentoring_rooms = MentoringRoom.show(logUser)
@@ -49,7 +49,7 @@ def createRoom() :
         title = info['title']
         category = info['category']
         totalP = info['totalP']
-        leader = current_user.getId()
+        leader = current_user.get_id()
 
         done = StudyRoom.create(title, category, leader, totalP)
 

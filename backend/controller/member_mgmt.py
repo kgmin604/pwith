@@ -1,99 +1,96 @@
 from flask_login import UserMixin
-from backend.model.db_mysql import conn_mysql
+
+from backend.controller import commit
+from backend.controller import selectOne
 
 class Member(UserMixin):
 
-    def __init__(self, memId, pw, name, email):
-        self.id = memId
-        self.pw = pw
-        self.name = name
+    def __init__(self, id, memId, pw, nickname, email, image, isAdmin):
+        self.id = id
+        self.memId = memId
+        self.password = pw
+        self.nickname = nickname
         self.email = email
+        self.image = image
+        self.isAdmin = isAdmin
 
-    def getId(self): # UserMixin's get_id()
+    # ⛔ 정윤아 get_id()는 오버라이드한 거라 property 접근법으로 수정할 때 안 해도 돼 ~! ⛔
+
+    def get_id(self): # UserMixin's get_id() override
         return str(self.id)
 
-    def getName(self):
-        return str(self.name)
+    def getMemberId(self):
+        return self.memId
+
+    def getNickname(self):
+        return str(self.nickname)
 
     def getEmail(self):
         return str(self.email)
+    
+    def getPassword(self):
+        return self.password
 
     @staticmethod
-    def findById(memId):
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
-        sql = f"SELECT * FROM member WHERE memId = '{str(memId)}'"
-        # print (sql)
-        cursor_db.execute(sql)
-        mem = cursor_db.fetchone()
+    def findById(id):
+
+        sql = f"SELECT * FROM member WHERE id = {id}"
+
+        mem = selectOne(sql)
+
         if not mem:
             return None
-        member = Member(mem[0], mem[1], mem[2], mem[3])
-        mysql_db.close()
+
+        member = Member(mem[0], mem[1], mem[2], mem[3], mem[4], mem[5], mem[6])
+
         return member
 
     @staticmethod
-    def findByIdPw(memId, memPw):
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
-        sql = f"SELECT * FROM member WHERE memId = '{str(memId)}' and memPw = '{str(memPw)}'"
-        # print (sql)
-        cursor_db.execute(sql)
-        mem = cursor_db.fetchone()
+    def findByMemberId(memId):
+
+        sql = f"SELECT * FROM member WHERE memId = '{memId}'"
+
+        mem = selectOne(sql)
+
         if not mem:
             return None
-        member = Member(mem[0], mem[1], mem[2], mem[3])
-        mysql_db.close()
+
+        member = Member(mem[0], mem[1], mem[2], mem[3], mem[4], mem[5], mem[6])
+
         return member
     
     @staticmethod
-    def insert(memId, pw, name, email):
-        mem = Member.findById(memId)
-        if mem == None :
-            mysql_db = conn_mysql()
-            cursor_db = mysql_db.cursor()
-            # sql = f"INSERT INTO member(memId, memPw, memName, memEmail) VALUES ('{memId}', '{pw}', '{name}', '{email}')"
-            sql = f"INSERT INTO member(memId, memPw, memName, memEmail) VALUES ('{str(memId)}', '{str(pw)}', '{str(name)}', '{str(email)}')"
-            cursor_db.execute(sql)
-            mysql_db.commit()
-            mysql_db.close()
-            return Member.findById(memId)
-        else :
-            return mem
+    def save(memId, pw, nickname, email):
+
+        sql = f"INSERT INTO member(memId, password, nickname, email) VALUES ('{memId}', '{pw}', '{nickname}', '{email}')"
+
+        done = commit(sql)
+
+        return done
 
     @staticmethod
     def changePw(memId, oldPw, newPw):
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
-        sql = f"UPDATE member SET memPw = '{newPw}' WHERE memId = '{memId}' and memPw = '{oldPw}'"
-        print(sql)
-        done = cursor_db.execute(sql)
-        print(done)
-        mysql_db.commit()
-        mysql_db.close()
+
+        sql = f"UPDATE member SET password = '{newPw}' WHERE memId = '{memId}' and password = '{oldPw}'"
+
+        done = commit(sql)
 
         return done
 
     @staticmethod
     def changeEmail(memId, newEmail):
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
 
-        sql = f"UPDATE member SET memEmail = '{newEmail}' WHERE memId = '{memId}'"
-        print(sql)
-        done = cursor_db.execute(sql)
-        print(done)
-        mysql_db.commit()
-        mysql_db.close()
+        sql = f"UPDATE member SET email = '{newEmail}' WHERE memId = '{memId}'"
+
+        done = commit(sql)
 
         return done
 
     @staticmethod
     def delete(memId):
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
+
         sql = f"DELETE FROM member WHERE memId = '{str(memId)}'"
-        done = cursor_db.execute(sql)
-        mysql_db.commit()
-        mysql_db.close()
+
+        done = commit(sql)
+
         return done
