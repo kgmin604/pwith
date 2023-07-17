@@ -51,7 +51,6 @@ class Member(UserMixin):
         sql = f"SELECT * FROM member WHERE memId = '{memId}'"
 
         mem = selectOne(sql)
-        print(mem)
 
         if not mem:
             return None

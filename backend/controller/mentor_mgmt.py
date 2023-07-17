@@ -1,13 +1,14 @@
-from backend.model.db_mysql import conn_mysql
+from backend.controller import commit, commitAndGetId, selectAll, selectOne
 
 class Portfolio() :
     
-    def __init__(self, writer, subject, image, brief, content):
-        self.__writer = writer # 더던
-        self.__subject = subject
-        self.__image = image
+    def __init__(self, id, mento, brief, mentoPic, content, date):
+        self.__id = id
+        self.__mento = mento
         self.__brief = brief
+        self.__mentoPic = mentoPic
         self.__content = content
+        self.__date = date
         # 끌어올리기 구현 시 ON/OFF or date 추가 - DB에도
     
     @property # getter 함수를 다음과 같이 정의 for 은닉
@@ -30,92 +31,80 @@ class Portfolio() :
     def content(self) :
         return str(self.__content)
 
+
     @staticmethod
-    def create(writer, subject, image, brief, content) :
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
+    def create(mentoId, mentoPic, brief, content, date, subjects) :
 
-        sql = "INSERT INTO mento (mentoId, mentiList, subject, mentoPic, brief, content) VALUES (%s, null, %s, %s, %s, %s)"
+        sql1 = f"INSERT INTO portfolio(mento, mentoPic, brief, content, curDate) VALUES ({mentoId}, '{mentoPic}', '{brief}', '{content}', '{date}')"
 
-        done = cursor_db.execute(sql, (writer, subject, image, brief, content,))
+        portfolioId = commitAndGetId(sql1)
 
-        mysql_db.commit()
+        for subject in subjects :
 
-        mysql_db.close()
+            sql2 = f"INSERT INTO portfolioSubject(portfolio, subject) VALUES({portfolioId}, {subject})"
+
+            done = commit(sql2)
 
         return done
 
     @staticmethod
     def loadAll() :
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
 
-        sql = "SELECT * FROM mento"
-        cursor_db.execute(sql)
+        sql = "SELECT * FROM portfolio"
 
-        allP = cursor_db.fetchall() # tuple of tuple
-        # print(allP)
-
-        mysql_db.close()
+        allP = selectAll(sql)
 
         return allP
 
     @staticmethod
-    def findById(mentoId) :
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
+    def findByMento(mentoId) :
 
-        sql = f"SELECT * FROM mento WHERE mentoId = '{mentoId}'"
-        cursor_db.execute(sql)
+        sql = f"SELECT * FROM portfolio WHERE mento = '{mentoId}'"
 
-        port = cursor_db.fetchone()
+        port = selectOne(sql)
 
         if not port :
             return None
             
-        result = Portfolio(port[0], port[2], port[3], port[4], port[5]) # mentiList 외
-
-        mysql_db.close()
+        result = Portfolio(port[0], port[1], port[2], port[3], port[4], port[5])
 
         return result
 
     @staticmethod
-    def update(mentoId, newSub, newImg, newBrf, newCnt) :
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
+    def update(mentoId, newImg, newBrf, newCnt, subjects) :
 
-        sql = "UPDATE mento SET subject = %s, mentoPic = %s, brief = %s, content = %s WHERE mentoId = %s"
+        sql = f"UPDATE portfolio SET mentoPic = {newImg}, brief = {newBrf}, content = {newCnt} WHERE mento = {mentoId}"
 
-        done = cursor_db.execute(sql, (newSub, newImg, newBrf, newCnt, mentoId, ))
+        portfolioId = commitAndGetId(sql)
 
-        mysql_db.commit()
+        for subject in subjects :
 
-        mysql_db.close()
+            sql2 = f"INSERT INTO portfolioSubject(portfolio, subject) VALUES({portfolioId}, {subject})"
+
+            done = commit(sql2)
 
         return done
 
-    # 임시로 삭제 만들었음. 이후 끌어올리기로 대체.
-    # on delete cascade 적용 안 돼서 무식하게 하는 중
     @staticmethod
-    def delete(mentoId) :
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
+    def delete(mentoId) : # TODO test
 
-        sql1 = f"DELETE FROM review WHERE mentoId = '{mentoId}'"
-        done = cursor_db.execute(sql1)
-        mysql_db.commit()
+        sql = f"DELETE FROM portfolio WHERE mento = '{mentoId}'"
 
-        sql2 = f"DELETE FROM mentoringRoom WHERE mentoId = '{mentoId}'"
-        done = cursor_db.execute(sql2)
-        mysql_db.commit()
-
-        sql = f"DELETE FROM mento WHERE mentoId = '{mentoId}'"
-        done = cursor_db.execute(sql)
-        mysql_db.commit()
-
-        mysql_db.close()
+        done = commit(sql)
 
         return done
+
+    @staticmethod
+    def search(mentoId) : # 멘토 아이디로 검색
+
+        sql = f"SELECT * FROM portfolio WHERE mento LIKE '%{mentoId}%'"
+
+        result = selectAll(sql)        
+
+        if not result :
+            return None
+        
+        return result
 
     @staticmethod
     def getNmentoring() :
@@ -132,21 +121,4 @@ class Portfolio() :
 
         return allP
 
-
-    @staticmethod
-    def search(mentoId) : # 멘토 아이디로 검색
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
-
-        sql = f"SELECT * FROM mento WHERE mentoId LIKE '%{mentoId}%'"
-
-        cursor_db.execute(sql)
-        result = cursor_db.fetchall()
-        
-        mysql_db.close()
-
-        if not result :
-            return None
-        
-        return result
 
