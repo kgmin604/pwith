@@ -34,9 +34,9 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 @login_manager.user_loader
-def loadUser(memId) : # 로그인 되어있는지 판단하기 전 사용자 정보 조회
-    print("memId : " + str(memId))
-    return Member.findById(memId)
+def loadUser(id) : # 로그인 되어있는지 판단하기 전 사용자 정보 조회
+    print("memId : " + str(id))
+    return Member.findById(id)
 
 @login_manager.unauthorized_handler
 def unauthorized() : # login_required로 요청된 기능에서 로그인되어 있지 않은 경우
