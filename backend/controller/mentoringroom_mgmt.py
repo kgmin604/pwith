@@ -1,4 +1,4 @@
-from backend.model.db_mysql import conn_mysql
+from backend.controller import commit, commitAndGetId, selectAll, selectOne
 
 class MentoringRoom() :
     

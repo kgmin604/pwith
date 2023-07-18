@@ -7,8 +7,8 @@ from backend.model.db_mysql import conn_mysql
 # from backend.view.community import conn_mongodb
 from backend.controller.community_mgmt import QNAPost
 from backend.controller.study_mgmt import studyPost
-from backend.controller.reply_mgmt import Reply
-from backend.controller import getFormattedDate, mainFormattedDate
+from backend.controller.replyQna_mgmt import ReplyQna
+from backend.controller import getFormattedDate, mainFormattedDate, formatDateToString
 
 community_bp = Blueprint('community', __name__, url_prefix='/community')
 
@@ -190,13 +190,13 @@ def showDetail(id) :
         
         # toFront['curDate'] = QNAPost.getFormattedDate(toFront['curDate'])
 
-        replyList = Reply.showReply(1, id) # 댓글 조회
+        replyList = ReplyQna.showReplies(id) # 댓글 조회
 
         replyResult = []
 
         for reply in replyList :
 
-            date = getFormattedDate(reply[3])
+            date = formatDateToString(reply[3])
 
             replyResult.append({
                 'commentId' : reply[0],
@@ -248,19 +248,18 @@ def reply(id) :
         cnt = request.get_json()['content']
 
         writer = current_user.get_id()
-        # writer = 'bb' # dummmmmmmmmmmmmmmmmmmmmmy
 
         date = datetime.now()
 
         try :
-            pk = Reply.writeReply(writer, cnt, date, 1, id)
+            pk = ReplyQna.writeReply(writer, cnt, date, id)
         except Exception as ex:
             print("에러 이유 : " + str(ex))
             pk = 0
 
         return jsonify({
             'replyId' : pk, # 0 is fail
-            'date' : getFormattedDate(date)
+            'date' : formatDateToString(date)
         })
 
     elif request.method == 'PUT' : # 댓글 수정
@@ -269,7 +268,7 @@ def reply(id) :
         newContent = request.get_json()['content']
 
         try :
-            done = Reply.modifyReply(replyId, newContent)
+            done = ReplyQna.modifyReply(replyId, newContent)
         except Exception as ex :
             print("에러 이유 : " + str(ex))
             done = 0
@@ -283,7 +282,7 @@ def reply(id) :
         replyId = request.get_json()['replyId']
 
         try :
-            done = Reply.removeReply(replyId)
+            done = ReplyQna.removeReply(replyId)
         except Exception as ex :
             print("에러 이유 : " + str(ex))
             done = 0

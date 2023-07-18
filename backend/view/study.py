@@ -1,9 +1,9 @@
 from flask import Flask, session, Blueprint, render_template, redirect, request, jsonify, url_for
 from flask_login import login_required, current_user
 from backend.controller.study_mgmt import studyPost
-from backend.controller.reply_mgmt import Reply
+from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.studyroom_mgmt import StudyRoom
-from backend.controller import getFormattedDate, mainFormattedDate
+from backend.controller import getFormattedDate, mainFormattedDate, formatDateToString
 from datetime import datetime
 import json
 
@@ -111,7 +111,7 @@ def show():
                 })
             
 
-@study_bp.route('/<int:id>', methods=['GET']) # 글 조회 수정 삭제 (put, delete 메서드 삭제했어 - ㅊㅇ)
+@study_bp.route('/<int:id>', methods=['GET'])
 def showDetail(id) :
     if request.method == 'GET' :    # 글 조회
 
@@ -177,13 +177,13 @@ def showDetail(id) :
         viewresult = studyPost.updateViews(id)
         # print(viewresult)
 
-        replyList = Reply.showReply(0, id) # 댓글 조회
+        replyList = ReplyStudy.showReplies(id) # 댓글 조회
 
         replyResult = []
 
         for reply in replyList :
 
-            date = getFormattedDate(reply[3])
+            date = formatDateToString(reply[3])
 
             replyResult.append({
                 'commentId' : reply[0],
@@ -229,8 +229,8 @@ def deletePost(id):
         })
 
 
-@study_bp.route('/<int:id>', methods = ['POST', 'PUT', 'DELETE'])
-def reply(id) :
+@study_bp.route('/<int:studyId>', methods = ['POST', 'PUT', 'DELETE'])
+def reply(studyId) :
     if request.method == 'POST' : # 댓글 작성
 
         cnt = request.get_json()['content']
@@ -240,24 +240,24 @@ def reply(id) :
         date = datetime.now()
 
         try :
-            pk = Reply.writeReply(writer, cnt, date, 0, id)
+            replyId = ReplyStudy.writeReply(writer, cnt, date, studyId)
         except Exception as ex:
             print("에러 이유 : " + str(ex))
-            pk = 0
+            replyId = 0
 
         return jsonify({
-            'replyId' : pk, # 0 is fail
-            'date' : getFormattedDate(date)
+            'replyId' : replyId, # 0 is fail
+            'date' : formatDateToString(date)
         })
 
     elif request.method == 'PUT' : # 댓글 수정
 
-        id = request.get_json()['replyId']
+        replyId = request.get_json()['replyId']
+        # print(replyId)
         newContent = request.get_json()['content']
-        print(id)
 
         try :
-            done = Reply.modifyReply(id, newContent)
+            done = ReplyStudy.modifyReply(replyId, newContent)
         except Exception as ex :
             print("에러 이유 : " + str(ex))
             done = 0
@@ -268,10 +268,10 @@ def reply(id) :
 
     else : # 댓글 삭제
 
-        id = request.get_json()['replyId']
+        replyId = request.get_json()['replyId']
 
         try :
-            done = Reply.removeReply(id)
+            done = ReplyStudy.removeReply(replyId)
         except Exception as ex :
             print("에러 이유 : " + str(ex))
             done = 0
