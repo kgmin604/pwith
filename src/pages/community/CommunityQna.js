@@ -9,22 +9,16 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 function CommunityQna(props) {
-    let navigate = useNavigate();
-    let user = useSelector((state) => state.user);
-    let dispatch = useDispatch();
-
-    let [postList, setPostList] = useState([]);
-
-    let [totalPage, setTotalPage] = useState(1);
-    let [selectPage, setSelectPage] = useState(1);
-    let [pages, setPages] = useState([]); // 임시
-
-    let [disabled1, setDisabled1] = useState(true);
-    let [disabled2, setDisabled2] = useState(true);
-
-    let [isLoad, setIsLoad ] = useState(false);
-
-    let [isDisabled, setIsDisabled] = useState(user.id===null);
+    const navigate = useNavigate();
+    const user = useSelector((state) => state.user);
+    const [postList, setPostList] = useState([]);
+    const [totalPage, setTotalPage] = useState(1);
+    const [selectPage, setSelectPage] = useState(1);
+    const [pages, setPages] = useState([]); // 임시
+    const [disabled1, setDisabled1] = useState(true);
+    const [disabled2, setDisabled2] = useState(true);
+    const [isLoad, setIsLoad] = useState(false);
+    const [isDisabled, setIsDisabled] = useState(user.id === null);
 
     useEffect(() => {
         axios({
@@ -33,19 +27,19 @@ function CommunityQna(props) {
             params: {
                 page: selectPage
             }
-          })
+        })
             .then(function (response) {
                 console.log(response.data);
-                setPostList(response.data.posts);
+                setPostList(response.data);
                 setTotalPage(response.data.num);
 
-                if(!isLoad){ // 맨 처음 한번만 실행
-                    if(response.data.num > 5){ 
+                if (!isLoad) { // 맨 처음 한번만 실행
+                    if (response.data.num > 5) {
                         const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
                         setPages(tmp);
                         setDisabled2(false); // 페이지 이동 가능
                     }
-                    else{
+                    else {
                         const tmp = Array.from({ length: response.data.num }, (_, index) => index + 1);
                         setPages(tmp);
                     }
@@ -53,33 +47,33 @@ function CommunityQna(props) {
                 }
             })
             .catch(function (error) {
-              console.log(error);
+                console.log(error);
             });
     }, [selectPage]);
 
-    function controlPages(type){
-        if(type===-1){
+    function controlPages(type) {
+        if (type === -1) {
             const startPage = pages[0];
             const tmp = Array.from({ length: 5 }, (_, index) => startPage - 5 + index);
             setPages(tmp);
             setSelectPage(tmp[0]);
             setDisabled2(false); // > 클릭 가능
 
-            if(startPage===6){
+            if (startPage === 6) {
                 setDisabled1(true); // < 클릭 불가
             }
         }
-        else if(type===1){
-            if(pages[4]+5<=totalPage){ // 페이지 5개 display 가능
+        else if (type === 1) {
+            if (pages[4] + 5 <= totalPage) { // 페이지 5개 display 가능
                 const tmp = Array.from({ length: 5 }, (_, index) => pages[index] + 5);
                 setPages(tmp);
                 setSelectPage(tmp[0]);
-                if(pages[4]+5===totalPage){
+                if (pages[4] + 5 === totalPage) {
                     setDisabled2(true); // > 클릭 불가
                 }
             }
-            else{   // 페이지 5개 dispaly 불가능
-                const num = totalPage-pages[4];
+            else {   // 페이지 5개 dispaly 불가능
+                const num = totalPage - pages[4];
                 const tmp = Array.from({ length: num }, (_, index) => pages[index] + 5);
                 setPages(tmp);
                 setSelectPage(tmp[0]);
@@ -100,57 +94,70 @@ function CommunityQna(props) {
                         <Form.Control className="me-auto" placeholder="궁금한 것이 무엇인가요?" />
                         <Button variant="blue">🔍</Button>
                         <div className="vr" />
-                        {user.id === "" ? null :
-                            (<div>
-                                <Nav.Link onClick={() => { navigate("../community/qna/create"); }}>
-                                    <Button variant="blue"
-                                    >New</Button>
-                                </Nav.Link>
-                            </div>)}
+                        <Button
+                            variant="blue"
+                            disabled={isDisabled}
+                            onClick={() => { navigate("../community/qna/create"); }}
+                        >
+                            New
+                        </Button>
 
                     </Stack>
 
                     <div className="posts-area">
-                        {
-                            postList === null ? null :
-                                <>
-                                    <div className="post-item" style={{ 'height': '40px' }}>
-                                        <strong className=" post-comm">No.</strong>
-                                        <strong className=" post-title">제목</strong>
-                                        <strong className=" post-writer">글쓴이</strong>
-                                        <strong className=" post-comm">작성일</strong>
-                                        <strong className=" post-comm">좋아요</strong>
-                                        <strong className=" post-comm">조회수</strong>
+                        <div className="post-item" style={{ 'height': '40px' }}>
+                            <strong className=" post-comm">No.</strong>
+                            <strong className=" post-title">제목</strong>
+                            <strong className=" post-writer">글쓴이</strong>
+                            <strong className=" post-comm">작성일</strong>
+                            <strong className=" post-comm">좋아요</strong>
+                            <strong className=" post-comm">조회수</strong>
+                        </div>
+                        <hr style={{ 'width': '100%', "margin": '5px auto' }} />
+                        {postList?.length === 0 ? <div style={{ 'margin': '20px 0' }}>검색 결과가 없습니다.</div> :
+                            postList?.map((post, i) => {
+                                return (
+                                    <div
+                                        className="post-item hover-effect"
+                                        key={i}
+                                        onClick={(e) => { e.stopPropagation(); navigate(`../community/qna/${post.id}`) }}
+                                    >
+                                        <span className=" post-comm">{post.id}</span>
+                                        <span className=" post-title">{post.title}</span>
+                                        <span className=" post-writer">{post.writer}</span>
+                                        <span className=" post-comm">{post.curDate}</span>
+                                        <span className=" post-comm">{post.likes}</span>
+                                        <span className=" post-comm">{post.views}</span>
                                     </div>
-                                    <hr style={{ 'width': '100%', "margin": '5px auto' }} />
-                                    {
-                                        postList.map((post, i) => {
-                                            let date = post.curDate.slice(2, 10);
-                                            return (
-                                                <div
-                                                    className="post-item hover-effect"
-                                                    key={i}
-                                                    onClick={(e) => { e.stopPropagation(); navigate(`../community/qna/${post.id}`) }}
-                                                >
-                                                    <span className=" post-comm">{post.id}</span>
-                                                    <span className=" post-title">{post.title}</span>
-                                                    <span className=" post-writer">{post.writer}</span>
-                                                    <span className=" post-comm">{post.curDate}</span>
-                                                    <span className=" post-comm">{post.likes}</span>
-                                                    <span className=" post-comm">{post.views}</span>
-                                                </div>
-                                            );
-                                        })}
-                                    <hr style={{ 'width': '100%', "margin": '5px auto' }} />
-                                </>
-                        }
-
+                                );
+                            })}
+                        <hr style={{ 'width': '100%', "margin": '5px auto' }} />
+                    </div>
+                    <div className='pagination'>
+                        <span className="pages">
+                            <button disabled={disabled1} className="control-page" onClick={(e) => { e.stopPropagation(); controlPages(-1); }}>
+                                {'<'}
+                            </button>
+                            {
+                                pages.map((page, i) => {
+                                    return (
+                                        <span
+                                            key={i}
+                                            className={`page${selectPage === page ? ' selected' : ' non-selected'}`}
+                                            onClick={(e) => { e.stopPropagation(); setSelectPage(page); }}
+                                        >
+                                            {page}
+                                        </span>
+                                    );
+                                })
+                            }
+                            <button disabled={disabled2} className="control-page" onClick={(e) => { e.stopPropagation(); controlPages(1); }}>
+                                {'>'}
+                            </button>
+                        </span>
                     </div>
                 </div>
-
-
             </div>
-
         </div>
     );
 }

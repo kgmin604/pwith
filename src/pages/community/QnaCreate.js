@@ -51,7 +51,6 @@ function QnaCreate() {
             .then(function (response) {
                 alert("새 글이 등록되었습니다.");
                 navigate("../community/qna/main");
-
             })
             .catch(function (error) {
                 console.log(error);
@@ -61,9 +60,6 @@ function QnaCreate() {
         !post['title']|| !post['content']? alert("제목 또는 내용을 입력해주세요.") :
             post['category'] === "" ? alert("카테고리를 선택해주세요") :
                 postStudyContent();
-
-        console.log(post);
-
     }
 
     const getValue = e => {
@@ -100,8 +96,6 @@ function QnaCreate() {
                     </div>
 
                 </div>
-
-
 
                 <Button className="submit-button" variant="blue" style={{ margin: "5px" }}
                     onClick={() => { checkTitle(); }}>입력</Button>

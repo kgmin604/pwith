@@ -14,12 +14,10 @@ import LikeAndComment from './QnaLikeAndComment';
 function QnaPost(props) {
     let user = useSelector((state) => state.user);
     let navigate = useNavigate();
-    let { id } = useParams();
-
+    const { id } = useParams();
     const [post, setPost] = useState(null);
     const [reply, setReply] = useState(null);
     const [isUpdating, setIsUpdating] = useState(false);
-
 
     useEffect(() => {
         axios.get(`/community/qna/${id}`)
@@ -34,7 +32,6 @@ function QnaPost(props) {
     if (!post) {
         return <div>Loading...</div>;
     }
-    const date = JSON.stringify(post.curDate).slice(3, 11);
 
     function updatePost(content) {
         axios.put(`/community/qna/update/${id}`, {
@@ -92,7 +89,7 @@ function QnaPost(props) {
                                     <span className="line">|</span>
                                     <strong>조회수</strong> <span className="info-content">{post.views}</span>
                                     <span className="line">|</span>
-                                    <strong>등록일</strong> <span className="info-content">{date}</span>
+                                    <strong>등록일</strong> <span className="info-content">{post.curdate}</span>
                                     {
                                         user.id === post.writer ?
                                             <span className="control-part">
