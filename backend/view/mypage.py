@@ -17,7 +17,7 @@ def changePw() :
     else :
         data = request.get_json()
         
-        memId = current_user.getId()
+        memId = current_user.get_id()
         oldPw = data['oldPw']
         newPw = data['newPw']
 
@@ -35,7 +35,7 @@ def changeEmail() :
         newEmail = request.get_json()['newEmail']
 
         # done = Member.changeEmail('a', newEmail)
-        done = Member.changeEmail(current_user.getId(), newEmail)
+        done = Member.changeEmail(current_user.get_id(), newEmail)
         # done = Member.changeEmail('a', 'a@test.com') # dummy
         
         return jsonify({
@@ -55,7 +55,7 @@ def myPost() :
         
         postType = request.args.get('type')
 
-        writer = current_user.getId()
+        writer = current_user.get_id()
         # writer = 'a' # dummy
 
         if postType == 'community' :
