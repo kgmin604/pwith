@@ -1,4 +1,5 @@
 from backend.model.db_mysql import conn_mysql
+from datetime import datetime
     
 def selectOne(sql) :
 
@@ -62,3 +63,14 @@ def rollback(sql) :
     mysql_db.rollback()
 
     mysql_db.close()
+
+
+def getFormattedDate(curDate):      # 날짜 포맷 상세시간까지
+    formatted_datetime = curDate.strftime("%Y-%m-%d %H:%M:%S")
+    return formatted_datetime  # 출력 예: 2023-06-21 14:30:45
+
+def mainFormattedDate(curDate):     # 날짜 포맷 월/일 만
+    if isinstance(curDate, str):        
+        curDate = datetime.strptime(curDate, "%Y-%m-%d %H:%M:%S")
+    formatted_date = curDate.strftime("%m-%d")
+    return formatted_date

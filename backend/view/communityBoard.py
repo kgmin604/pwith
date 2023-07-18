@@ -8,6 +8,7 @@ from backend.model.db_mysql import conn_mysql
 from backend.controller.community_mgmt import QNAPost
 from backend.controller.study_mgmt import studyPost
 from backend.controller.reply_mgmt import Reply
+from backend.controller import getFormattedDate, mainFormattedDate
 
 community_bp = Blueprint('community', __name__, url_prefix='/community')
 
@@ -130,7 +131,7 @@ def show():
                         'likes' : posts[i][6],
                         'views' : posts[i][7]
                         }
-                post['curDate'] = QNAPost.mainFormattedDate(posts[i][3])
+                post['curDate'] = mainFormattedDate(posts[i][3])
                 result.append(post)
             return jsonify(result)
 
@@ -158,7 +159,7 @@ def show():
                         'likes' : posts[i][6],
                         'views' : posts[i][7]
                     }
-                    post['curDate'] = QNAPost.mainFormattedDate(posts[i][3])
+                    post['curDate'] = mainFormattedDate(posts[i][3])
                     
                     result.append(post)
 
@@ -195,7 +196,7 @@ def showDetail(id) :
 
         for reply in replyList :
 
-            date = studyPost.getFormattedDate(reply[3])
+            date = getFormattedDate(reply[3])
 
             replyResult.append({
                 'commentId' : reply[0],
@@ -259,7 +260,7 @@ def reply(id) :
 
         return jsonify({
             'replyId' : pk, # 0 is fail
-            'date' : studyPost.getFormattedDate(date)
+            'date' : getFormattedDate(date)
         })
 
     elif request.method == 'PUT' : # 댓글 수정

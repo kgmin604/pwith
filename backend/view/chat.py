@@ -1,6 +1,7 @@
 from flask import Flask, Blueprint, request, jsonify, redirect, url_for, session, render_template
 from flask_login import login_user, current_user, login_required
 from backend.controller.chat_mgmt import chat
+from backend.controller import getFormattedDate
 
 chat_bp = Blueprint('chat', __name__, url_prefix='/mypage/chat')
 
@@ -31,7 +32,7 @@ def send():
                     'content'  : chats[3],
                     'date' : chats[4]
                 }
-                chatting_data['date'] = chat.getFormattedDate(chats[4])
+                chatting_data['date'] = getFormattedDate(chats[4])
                 
                 msgList.append(chatting_data)
             #print(chatlist)
@@ -72,7 +73,7 @@ def send():
                 'date': chatting[4]
             }
             #print(chatting_data)
-            chatting_data['date'] = chat.getFormattedDate(chatting[4])  #date 출력 형식 변경
+            chatting_data['date'] = getFormattedDate(chatting[4])  #date 출력 형식 변경
             toFront.append(chatting_data)
         print(toFront)
         return jsonify(toFront)

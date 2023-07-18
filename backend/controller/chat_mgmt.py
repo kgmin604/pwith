@@ -63,6 +63,3 @@ class chat():
     def getCurDate(self):
         return self.curDate
     
-    def getFormattedDate(curDate):
-        formatted_datetime = curDate.strftime("%Y-%m-%d %H:%M:%S")
-        return formatted_datetime  # 출력 예: 2023-06-21 14:30:45

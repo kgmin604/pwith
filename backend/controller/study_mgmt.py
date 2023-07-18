@@ -214,18 +214,6 @@ class studyPost() :
     #    sql = f"SELECT liked from liked where memberId = '{str(memId)}' and postId = '{str(postId)}'"
     #    row = selectOne(sql)
     
-    def getFormattedDate(curDate):      # 날짜 포맷 상세 시간까지
-        if isinstance(curDate, str):
-            curDate = datetime.strptime(curDate, "%Y-%m-%d %H:%M:%S")
-        formatted_datetime = curDate.strftime("%Y-%m-%d %H:%M:%S")
-        return formatted_datetime
-    
-    def mainFormattedDate(curDate):     # 날짜 포맷 월/일 만
-        if isinstance(curDate, str):
-            curDate = datetime.strptime(curDate, "%Y-%m-%d %H:%M:%S")
-        formatted_date = curDate.strftime("%m-%d")
-        return formatted_date
-    
 
     def getRoomName(roomId):    # 스터디룸 이름 받아오기
         

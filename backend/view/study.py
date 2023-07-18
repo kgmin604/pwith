@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from backend.controller.study_mgmt import studyPost
 from backend.controller.reply_mgmt import Reply
 from backend.controller.studyroom_mgmt import StudyRoom
+from backend.controller import getFormattedDate, mainFormattedDate
 from datetime import datetime
 import json
 
@@ -62,7 +63,7 @@ def show():
                     'likes': row[5],
                     'views': row[6]
                 }
-                post['curDate'] = studyPost.mainFormattedDate(row[3])
+                post['curDate'] = mainFormattedDate(row[3])
 
                 result.append(post)
 
@@ -99,7 +100,7 @@ def show():
                         'likes' : posts[i][5],
                         'views' : posts[i][6]
                     }
-                    post['curDate'] = studyPost.mainFormattedDate(posts[i][5])
+                    post['curDate'] = mainFormattedDate(posts[i][5])
                     
                     result.append(post)
 
@@ -140,7 +141,7 @@ def showDetail(id) :
 
         post = studyPost.findById(id)
 
-        postDate = studyPost.getFormattedDate(post.getCurDate())
+        postDate = getFormattedDate(post.getCurDate())
         
         roomId= studyPost.findRoomId(id) #roomName 조회위해서 미리 변수로 리턴받음
 
@@ -182,7 +183,7 @@ def showDetail(id) :
 
         for reply in replyList :
 
-            date = studyPost.getFormattedDate(reply[3])
+            date = getFormattedDate(reply[3])
 
             replyResult.append({
                 'commentId' : reply[0],
@@ -246,7 +247,7 @@ def reply(id) :
 
         return jsonify({
             'replyId' : pk, # 0 is fail
-            'date' : studyPost.getFormattedDate(date)
+            'date' : getFormattedDate(date)
         })
 
     elif request.method == 'PUT' : # 댓글 수정
