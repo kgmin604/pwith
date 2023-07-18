@@ -46,7 +46,8 @@ function App() {
   let user = useSelector((state) => state.user);
   let dispatch = useDispatch();
 
-  let [isModal, setIsModal] = useState(false);
+  let [isModal, setIsModal] = useState(false); // 알림함
+  let [isNav, setIsNav] = useState(0);
 
   // 로그인 유지 목적
   // useEffect(()=>{
@@ -123,77 +124,127 @@ function App() {
               </u>
             </div>
           )}
-          <nav className="navbar" style={{}}>
+          <nav className="navbar">
             <div
               className="btn pwith-logo"
               onClick={(e) => {
                 e.stopPropagation();
-                if(window.location.pathname === "/"){ // 현재 접속중인 경로 확인
-                  //window.location.href = "/"; // 새로고침
-                }
-                else{
                   navigate("/");
-                }
               }}
             ></div>
             <ul className="navbar-menu" style={{ "margin-right": "40px" }}>
+              <div className="parent-container">
               <li
                 className="navbar-btn"
                 onClick={(e) => {
                   e.stopPropagation();
-                  if(window.location.pathname === "/study/main"){ // 현재 접속중인 경로 확인
-                    //window.location.href = "/study/main"; // 새로고침
-                  }
-                  else{
-                    navigate("/study/main");
-                  }
+                  navigate("/study/main");
                 }}
+                onMouseEnter={() => setIsNav(1)}
+                onMouseLeave={() => setIsNav(0)}
               >
                 스터디
+                {
+                  isNav===1?
+                  <div className='navbar-modal' onClick={(e)=>{e.stopPropagation();}}>
+                    <ul className='lst'>
+                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/study/main");}}>
+                        스터디
+                      </li>
+                    </ul>
+                  </div>
+                  : null
+                }             
               </li>
-              <li 
-                className="navbar-btn" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if(window.location.pathname === "/studyroom"){ // 현재 접속중인 경로 확인
-                    //window.location.href = "/studyroom"; // 새로고침
-                  }
-                  else{
-                    navigate("/studyroom");
-                  }
-                }}
-              >
-                스터디룸
-              </li>
-              <li
-                className="navbar-btn" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if(window.location.pathname === "/community/main"){ // 현재 접속중인 경로 확인
-                    //window.location.href = "/community/main"; // 새로고침
-                  }
-                  else{
-                    navigate("/community/main");
-                  }
-                }}
-              >
-                커뮤니티
-              </li>
+              </div>
+              <div className="parent-container">
               <li
                 className="navbar-btn"
                 onClick={(e) => {
                   e.stopPropagation();
-                  if(window.location.pathname === "/mentoring/main"){ // 현재 접속중인 경로 확인
-                    //window.location.href = "/mentoring/main"; // 새로고침
-                  }
-                  else{
-                    navigate("/mentoring/main");
-                  }
+                  navigate("/studyroom");
                 }}
+                onMouseEnter={() => setIsNav(2)}
+                onMouseLeave={() => setIsNav(0)}
+              >
+                스터디룸
+                {
+                  isNav===2?
+                  <div
+                    className='navbar-modal' 
+                    onClick={(e)=>{e.stopPropagation();}}
+                    onMouseEnter={() => setIsNav(2)}
+                    onMouseLeave={() => setIsNav(0)}
+                  >
+                    <ul className='lst'>
+                    <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/studyroom");}}>
+                      스터디룸
+                      </li>
+                    </ul>
+                  </div>
+                  : null
+                }  
+              </li>
+              </div>
+              <div className="parent-container">
+              <li
+                className="navbar-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/community/main");
+                }}
+                onMouseEnter={() => setIsNav(3)}
+                onMouseLeave={() => setIsNav(0)}
+              >
+                커뮤니티
+                {
+                  isNav===3?
+                  <div className='navbar-modal' onClick={(e)=>{e.stopPropagation();}}>
+                    <ul className='lst'>
+                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/community/it");}}>
+                        IT뉴스
+                      </li>
+                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/community/qna/main");}}>
+                        QnA
+                      </li>
+                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/community/contents/book");}}>
+                        학습콘텐츠
+                      </li>
+                    </ul>
+                  </div>
+                  : null
+                }             
+              </li>
+              </div>
+              <div className="parent-container">
+              <li
+                className="navbar-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/mentoring/main");
+                }}
+                onMouseEnter={() => setIsNav(4)}
+                onMouseLeave={() => setIsNav(0)}
               >
                 멘토링
+                {
+                  isNav===4?
+                  <div className='navbar-modal' onClick={(e)=>{e.stopPropagation();}}>
+                    <ul className='lst'>
+                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/mentoring/main");}}>
+                        멘토링
+                      </li>
+                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/mentoring/create");}}>
+                        포트폴리오 작성
+                      </li>
+                    </ul>
+                  </div>
+                  : null
+                }             
               </li>
+              </div>
             </ul>
+           
 
             <Form
               className="d-flex"
@@ -250,7 +301,7 @@ function App() {
                   {
                     !isModal ? null :
                     <>
-                      <div className='drop-down'>
+                      <div className='drop-down' onClick={(e)=>{e.stopPropagation();}}>
                         <div className='item'>
                           <h5>{"댓글이 달렸습니다."}</h5>
                           <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
