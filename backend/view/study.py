@@ -186,9 +186,9 @@ def showDetail(id) :
             date = formatDateToString(reply[3])
 
             replyResult.append({
-                'commentId' : reply[0],
+                'id' : reply[0],
                 'writer' : reply[1],
-                'comment' : reply[2],
+                'content' : reply[2],
                 'date' : date
             })
 
@@ -246,13 +246,13 @@ def reply(studyId) :
             replyId = 0
 
         return jsonify({
-            'replyId' : replyId, # 0 is fail
+            'id' : replyId, # 0 is fail
             'date' : formatDateToString(date)
         })
 
     elif request.method == 'PUT' : # 댓글 수정
 
-        replyId = request.get_json()['replyId']
+        replyId = request.get_json()['id']
         # print(replyId)
         newContent = request.get_json()['content']
 
@@ -268,7 +268,7 @@ def reply(studyId) :
 
     else : # 댓글 삭제
 
-        replyId = request.get_json()['replyId']
+        replyId = request.get_json()['id']
 
         try :
             done = ReplyStudy.removeReply(replyId)
