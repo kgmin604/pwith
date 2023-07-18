@@ -148,7 +148,7 @@ function App() {
                   isNav===1?
                   <div className='navbar-modal' onClick={(e)=>{e.stopPropagation();}}>
                     <ul className='lst'>
-                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/study/main");}}>
+                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/study/main"); setIsNav(0);}}>
                         스터디
                       </li>
                     </ul>
@@ -177,7 +177,7 @@ function App() {
                     onMouseLeave={() => setIsNav(0)}
                   >
                     <ul className='lst'>
-                    <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/studyroom");}}>
+                    <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/studyroom"); setIsNav(0);}}>
                       스터디룸
                       </li>
                     </ul>
@@ -201,13 +201,13 @@ function App() {
                   isNav===3?
                   <div className='navbar-modal' onClick={(e)=>{e.stopPropagation();}}>
                     <ul className='lst'>
-                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/community/it");}}>
+                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/community/it"); setIsNav(0);}}>
                         IT뉴스
                       </li>
-                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/community/qna/main");}}>
+                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/community/qna/main"); setIsNav(0);}}>
                         QnA
                       </li>
-                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/community/contents/book");}}>
+                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/community/contents/book"); setIsNav(0);}}>
                         학습콘텐츠
                       </li>
                     </ul>
@@ -231,10 +231,10 @@ function App() {
                   isNav===4?
                   <div className='navbar-modal' onClick={(e)=>{e.stopPropagation();}}>
                     <ul className='lst'>
-                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/mentoring/main");}}>
+                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/mentoring/main"); setIsNav(0);}}>
                         멘토링
                       </li>
-                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/mentoring/create");}}>
+                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/mentoring/create"); setIsNav(0);}}>
                         포트폴리오 작성
                       </li>
                     </ul>
