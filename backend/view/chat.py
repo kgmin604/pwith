@@ -13,7 +13,7 @@ def send():
         
         print(data)
         postType = data.get('type')
-        memId = current_user.getId()
+        memId = current_user.get_id()
         oppId = data.get('oppId')
         
         #print('postType = ' + str(postType)) # 형변환 추가-kgm
@@ -60,7 +60,7 @@ def send():
     if request.method == 'GET':     #전체 채팅목록 가져오기 (current_user id와 관련있는 채팅 모두)
         print("Get request")
         
-        postMemId = current_user.getId()
+        postMemId = current_user.get_id()
         toFront = []
         chattings = chat.getAllChat(postMemId)
         print("memid = " + postMemId)

@@ -134,13 +134,36 @@ CREATE TABLE qna
 
 
 CREATE TABLE chat (
-    chatId INT AUTO_INCREMENT,
-    sender VARCHAR(10),
-    receiver VARCHAR(10),
+    id BIGINT AUTO_INCREMENT,
+    sender BIGINT,
+    receiver BIGINT,
     content VARCHAR(500),
-    curDate DATE,
-    PRIMARY KEY(chatId),
-    FOREIGN KEY(sender, receiver) REFERENCES member(memId) on delete cascade
+    curDate DATETIME,
+    PRIMARY KEY(id),
+    FOREIGN KEY(sender) REFERENCES member(id),
+    FOREIGN KEY(receiver) REFERENCES member(id)
+);
+
+CREATE TABLE studyRoomChat (
+    id BIGINT AUTO_INCREMENT,
+    memId BIGINT NOT NULL,
+    roomId BIGINT NOT NULL,
+    content VARCHAR(500) NOT NULL,
+    curDate DATETIME NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(memId) REFERENCES member(id),
+    FOREIGN KEY(roomId) REFERENCES studyRoom(id)
+);
+
+CREATE TABLE mentoringRoomChat (
+    id BIGINT AUTO_INCREMENT,
+    memId BIGINT NOT NULL,
+    roomId BIGINT NOT NULL,
+    content VARCHAR(500) NOT NULL,
+    curDate DATETIME NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(memId) REFERENCES member(id),
+    FOREIGN KEY(roomId) REFERENCES mentoringRoom(id)
 );
 
 create table mentoringRoom (
