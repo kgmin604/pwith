@@ -9,7 +9,7 @@ main_bp = Blueprint('pwithmain', __name__, url_prefix='')
 @main_bp.route('/', methods = ['GET', 'POST'])
 def showStudy():
     if request.method == 'POST':
-        
+         
         chk = request.get_json()['chkSession']
         
         if chk == 0:
