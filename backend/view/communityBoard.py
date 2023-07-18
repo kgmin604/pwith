@@ -6,7 +6,7 @@ from backend.model.db_mongo import conn_mongodb
 from backend.model.db_mysql import conn_mysql
 # from backend.view.community import conn_mongodb
 from backend.controller.community_mgmt import QNAPost
-from backend.controller.board_mgmt import studyPost
+from backend.controller.study_mgmt import studyPost
 from backend.controller.reply_mgmt import Reply
 
 community_bp = Blueprint('community', __name__, url_prefix='/community')
@@ -38,9 +38,9 @@ def communityMain() :
         for q in qna_db :
 
             postId = q[0]
-            title = q[2]
+            title = q[1]
 
-            date = q[5]
+            date = q[3]
             formatted_date = date.strftime("%Y-%m-%d")
 
             qna.append({
@@ -123,14 +123,14 @@ def show():
             for i in range(len(posts)):
                 post = {
                         'id' : posts[i][0],
-                        'title' : posts[i][2],
-                        'writer' : posts[i][3],
-                        'curDate' : posts[i][5],
-                        # 'category' : posts[i][6],
-                        'likes' : posts[i][7],
-                        'views' : posts[i][8]
+                        'title' : posts[i][1],
+                        'writer' : posts[i][2],
+                        'curDate' : posts[i][3],
+                        # 'category' : posts[i][5],
+                        'likes' : posts[i][6],
+                        'views' : posts[i][7]
                         }
-                post['curDate'] = QNAPost.mainFormattedDate(posts[i][5])
+                post['curDate'] = QNAPost.mainFormattedDate(posts[i][3])
                 result.append(post)
             return jsonify(result)
 
@@ -150,16 +150,15 @@ def show():
                 for i in range(len(posts)) :
                     post = {
                         'id' : posts[i][0],
-                        'type' : posts[i][1],
-                        'title' : posts[i][2],
-                        'writer' : posts[i][3],
+                        'title' : posts[i][1],
+                        'writer' : posts[i][2],
                         # 'content' : posts[i][4],
-                        'curDate' : posts[i][5],
-                        # 'category' : posts[i][6],
-                        'likes' : posts[i][7],
-                        'views' : posts[i][8]
+                        'curDate' : posts[i][3],
+                        # 'category' : posts[i][5],
+                        'likes' : posts[i][6],
+                        'views' : posts[i][7]
                     }
-                    post['curDate'] = QNAPost.mainFormattedDate(posts[i][5])
+                    post['curDate'] = QNAPost.mainFormattedDate(posts[i][3])
                     
                     result.append(post)
 
@@ -184,7 +183,7 @@ def showDetail(id) :
             'content': post.getContent(),
             'curDate' : post.getCurDate(),
             'likes' : QNAPost.getLikes(id),
-            'liked' : QNAPost.getLiked(current_user.getId(), id),
+            'liked' : QNAPost.getLiked(current_user.get_id(), id),
             'views': post.getViews()
         }
         
@@ -247,7 +246,7 @@ def reply(id) :
 
         cnt = request.get_json()['content']
 
-        writer = current_user.getId()
+        writer = current_user.get_id()
         # writer = 'bb' # dummmmmmmmmmmmmmmmmmmmmmy
 
         date = datetime.now()
@@ -301,9 +300,8 @@ def write():
         data = request.get_json(silent=True)
         # print(data)
         
-        postType = 1
         title = data['title']
-        writer = current_user.getId()
+        writer = current_user.get_id()
         curDate = QNAPost.curdate()
         content = data['content']
         category = data['category']
@@ -311,7 +309,7 @@ def write():
         views = 0
         
         # print(postType, title, writer, curDate, content, category, likes, views)
-        done = QNAPost.insertQNA(postType, title, writer, curDate, content, category, likes, views)
+        done = QNAPost.insertQNA(title, writer, curDate, content, category, likes, views)
         
         return jsonify({
             'done' : done
@@ -320,7 +318,7 @@ def write():
 @login_required
 @community_bp.route('/qna/<int:id>/like', methods=['GET', 'POST'])
 def like(id):
-    memId = current_user.getId()
+    memId = current_user.get_id()
     if request.method=='POST':
         postId = request.get_json()['postId']
         

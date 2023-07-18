@@ -54,3 +54,11 @@ def commitAndGetId(sql) :
     mysql_db.close()
 
     return id
+
+def rollback(sql) :
+
+    mysql_db = conn_mysql()
+    
+    mysql_db.rollback()
+
+    mysql_db.close()

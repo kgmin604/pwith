@@ -1,8 +1,8 @@
 from flask import Flask, Blueprint, request, jsonify, redirect, url_for, session
 from flask_login import login_user, current_user, logout_user, login_required
 from backend.controller.member_mgmt import Member
-from backend.controller.board_mgmt import studyPost
-from backend.controller.board_mgmt import studyPost
+from backend.controller.study_mgmt import studyPost
+from backend.controller.study_mgmt import studyPost
 
 mypage_bp = Blueprint('mypage', __name__, url_prefix='/mypage')
 
