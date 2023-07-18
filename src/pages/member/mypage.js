@@ -18,8 +18,9 @@ function Mypage(){
             <div className="mypage-wrap">
                 <ul className="mypageList">
                     <li className="mypageList-btn" onClick={()=>navigate('./account')}>회원정보 관리</li>
-                    <li className="mypageList-btn" onClick={()=>navigate('./writinglist')}>내 글 목록</li>
                     <li className="mypageList-btn" onClick={()=>navigate('./chat')}>쪽지함</li>
+                    <li className="mypageList-btn" onClick={()=>navigate('./writinglist')}>내 글 목록</li>
+                    <li className="mypageList-btn" onClick={()=>navigate('./commentlist')}>댓글 목록</li>
                     <li className="mypageList-btn" onClick={()=>navigate('./withdraw')}>회원 탈퇴</li>
                 </ul>
                 <div className="mypage-area"> 

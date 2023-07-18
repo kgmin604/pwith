@@ -24,10 +24,9 @@ import Mypage from "./pages/member/mypage.js";
 import {
   Account,
   WritingList,
+  CommentList,
   Chat,
-  Mentor,
   PwChange,
-  Email,
   Withdraw,
 } from "./pages/member/mypageComp.js";
 import { loginUser, clearUser } from "./store.js";
@@ -139,6 +138,7 @@ function App() {
                 onClick={(e) => {
                   e.stopPropagation();
                   navigate("/study/main");
+                  setIsNav(0);
                 }}
                 onMouseEnter={() => setIsNav(1)}
                 onMouseLeave={() => setIsNav(0)}
@@ -163,6 +163,7 @@ function App() {
                 onClick={(e) => {
                   e.stopPropagation();
                   navigate("/studyroom");
+                  setIsNav(0);
                 }}
                 onMouseEnter={() => setIsNav(2)}
                 onMouseLeave={() => setIsNav(0)}
@@ -192,6 +193,7 @@ function App() {
                 onClick={(e) => {
                   e.stopPropagation();
                   navigate("/community/main");
+                  setIsNav(0);
                 }}
                 onMouseEnter={() => setIsNav(3)}
                 onMouseLeave={() => setIsNav(0)}
@@ -222,6 +224,7 @@ function App() {
                 onClick={(e) => {
                   e.stopPropagation();
                   navigate("/mentoring/main");
+                  setIsNav(0);
                 }}
                 onMouseEnter={() => setIsNav(4)}
                 onMouseLeave={() => setIsNav(0)}
@@ -298,6 +301,11 @@ function App() {
                     onClick={(e) => {e.stopPropagation(); setIsModal(!isModal); }}
                   >
                     알림함
+                  { // 조건 추가 필요
+                    <>
+                    <div className='notice_new'>N</div>
+                    </>
+                  }
                   {
                     !isModal ? null :
                     <>
@@ -375,12 +383,11 @@ function App() {
           <Route path="/help" element={<Help />} />
           <Route path="/mypage" element={<Mypage />}>
             <Route path="account/changepw" element={<PwChange />} />
-            <Route path="account/email" element={<Email />} />
             <Route path="account" element={<Account />} />
             <Route path="writinglist" element={<WritingList />} />
+            <Route path="commentlist" element={<CommentList />} />
             <Route path="chat" element={<Chat />} />
             <Route path="withdraw" element={<Withdraw />} />
-            
           </Route>
           <Route path="*" element={ 
             <div className="img-error">

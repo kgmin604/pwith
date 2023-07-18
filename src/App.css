@@ -31,6 +31,8 @@
   background-size: cover;
 }
 
+
+
 .navbar-menu{
   width: 500px;
   height: 50px;
@@ -182,6 +184,23 @@ ul.navbar-menu div.parent-container li.navbar-btn div.navbar-modal ul.lst
 .parent-container {
   position: relative;
   z-index: 1;
+}
+
+.notice_new{
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background-color: rgb(255, 59, 59);
+  font-family: "Noto Sans KR";
+  border-radius: 5px;
+  z-index: 2 !important;
+  border: none;
+  left: 3px;
+  top: -5px;
+  color:white;
+  font-weight: 800;
+  font-size: 12px;
+  line-height: 18px;
 }
 
 div.mem-area div.mem-btn

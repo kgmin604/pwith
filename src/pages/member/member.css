@@ -135,13 +135,76 @@
     border-top: solid #98AFCA ;
     border-bottom: solid #98AFCA ;
     background-color: aliceblue;
+    display: flex;
 }
 
+div.acc-wrap
+.img-area{
+    margin: 0 0;
+    padding: 0 0;
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 가로 방향으로 중앙 정렬 */
+    align-items: center; /* 세로 방향으로 중앙 정렬 */
+}
+
+div.acc-wrap div.img-area
+img{
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+div.acc-wrap 
+.info-area{
+    margin: 0 0;
+    padding: 20px 0;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+div.acc-wrap div.info-area
 .acc-box{
-    width: 50%;
-    height: 50px;
+    width: 100%;
+    height: 30px;
     margin: 10px 0;
-    line-height: 50px;
+}
+
+div.acc-wrap div.info-area div.acc-box
+h5{
+    width: 100px;
+    height: 30px;
+    font-size:medium;
+    font-weight: 700;
+    font-family: 'Noto Sans KR';
+    float: left;
+    text-align: left;
+    line-height: 30px;
+}
+
+div.acc-wrap div.info-area div.acc-box
+div{
+    margin: 0 0;
+    padding: 0 0;
+    height: 30px;
+    float: left;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Noto Sans KR';
+    line-height: 30px;
+    
+}
+
+.span-btn{
+    text-decoration: underline;
+    cursor: pointer;
+    color: gray;
+}
+
+.span-btn:hover{
+    color:black;
 }
 
 .acc-header{
@@ -487,4 +550,58 @@ div.mypage-chat div.modal
 /* Chrome, Safari, Opera */
 .scroll-area-hidden::-webkit-scrollbar {
     display: none;
+}
+
+/* 회원탈퇴 */
+
+.witdraw-wrap{
+    width: 100%;
+    height: 260px;
+    border-top: solid #98AFCA ;
+    border-bottom: solid #98AFCA ;
+    background-color: aliceblue;
+}
+
+div.witdraw-wrap
+.witdraw-box{
+    width: 50%;
+    height: 50px;
+    margin: 10px 0;
+    line-height: 50px;
+}
+
+div.witdraw-wrap div.witdraw-box
+.witdraw-header{
+    width: 150px;
+    height: 50px;
+    margin: 0 0;
+    padding: 0 40px;
+    font-size:medium;
+    font-family: 'Noto Sans KR';
+    float: left;
+}
+
+div.witdraw-wrap div.witdraw-box
+.witdraw-box-wrap{
+    width:200px;
+    height: 50px;
+    margin: 0 0;
+    margin-right: 10px;
+    padding: 2px 0;
+    float: left;
+}
+
+div.witdraw-wrap div.witdraw-box
+.witdraw-box{
+    width: 200px;
+    height: 30px;
+    border-radius: 5px;
+    border: solid 1px;
+    border-color: #98AFCA;
+}
+
+.witdrawBtn{
+    margin: 20px 47%;
+    border: solid 1px;
+    border-color: #98AFCA;
 }

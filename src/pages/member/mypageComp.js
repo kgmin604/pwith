@@ -20,15 +20,30 @@ function Account(){
         <>
             <h3 className="my-header">회원정보 관리</h3>
             <div className="acc-wrap">
-                <div className="acc-box"> <div className="acc-header">아이디</div>{user.id}</div>
-                <div className="acc-box"> <div className="acc-header">비밀번호</div>
-                    <Button variant="secondary" size="sm" onClick={()=>navigate('./changepw')}>비밀번호 변경 </Button>
+                <div className="img-area">
+                    <img src='/default_user.png'></img>
+                    <Button variant="secondary" size="sm" style={{'width':'100px'}}>이미지 변경</Button>
                 </div>
-                <div className="acc-box"> <div className="acc-header">이름</div>{user.name}</div>
-                <div className="acc-box"> <div className="acc-header">이메일</div> {user.email}
-                    <Button variant="secondary" size="sm" onClick={()=>navigate('./email')} style={{'margin' : '0 10px'}}> 
-                        이메일 인증 
-                    </Button>
+                <div className="info-area">
+                    <div className="acc-box">
+                        <h5>닉네임</h5>
+                        <div>{user.name}</div>
+                    </div>
+                    <div className="acc-box">
+                        <h5>아이디</h5>
+                        <div>{user.id}</div>
+                    </div>
+                    <div className="acc-box">
+                        <h5>비밀번호</h5>
+                        <div 
+                            className="span-btn"
+                            onClick={(e)=>{e.stopPropagation(); navigate('./changepw');}}
+                        >비밀번호 변경</div>
+                    </div>
+                    <div className="acc-box">
+                        <h5>이메일</h5>
+                        <div>{user.email}</div>
+                    </div>
                 </div>
             </div>
         </>
@@ -93,6 +108,100 @@ function WritingList(){
         <>
             <div className="writinglist">
                 <h3 className="my-header">내가 쓴 글 목록</h3>
+                <div className="type-select">
+                <ul style={{ padding: '0 0' }}>
+                    <li 
+                        className={sel === 0 ? "type-btn-click" : "type-btn"} 
+                        onClick={(event) => { event.stopPropagation(); setSel(0); getWritingList(0); }}
+                    >스터디</li>
+                    <li 
+                        className={sel === 1 ? "type-btn-click" : "type-btn"} 
+                        onClick={(event) => { event.stopPropagation(); setSel(1); getWritingList(1);}}
+                    >커뮤니티</li>
+                </ul>
+                </div>
+                <div className="writinglist-bottom scroll-area">
+                {
+                    mypost === [] ? null : 
+                    mypost.map((post, index) => {
+                    return (
+                        <div 
+                            className="item" 
+                            key={index}
+                            onClick = { e => movePage(e, post.id) }
+                        >
+                            <time>{post.curDate}</time>
+                            <h3 className="header">{post.title}</h3>
+                            <p className="content">{parse(post.content)}</p>
+                        </div>
+                    );})
+                }
+                </div>
+            </div>
+        </>
+    );
+}
+
+function CommentList(){
+    // 수정해야하는 컴포넌트
+
+    let navigate = useNavigate();
+    let [sel, setSel] = useState(0); // 0: 스터디 글 목록 1: 커뮤니티 글 목록
+    let [mypost, setMypost] = useState([]);
+    const parse = require('html-react-parser');//html 파싱
+
+
+    function loadWritingList(){
+        axios({
+          method: "GET",
+          url: "/mypage/writinglist",
+          params: {
+            type: "study"
+          }
+        })
+        .then(function (response) {
+            setMypost(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    function getWritingList(type){
+        let type_text = (type === 0 ? 'study' : 'community');
+        axios({
+            method: "GET",
+            url: "/mypage/writinglist",
+            params: {
+              type: `${type_text}`
+            }
+        })
+        .then(function (response) {
+            setMypost(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    useEffect(() => {
+        loadWritingList();
+    }, []); 
+
+    function movePage(event, id){
+        event.stopPropagation();
+        if(sel===0){ // 스터디 글
+            navigate(`/study/${id}`);
+        }
+        else if(sel===1){ // 커뮤니티 글
+            navigate(`/community/qna/${id}`);
+        }
+    }
+
+    return(
+        <>
+            <div className="writinglist">
+                <h3 className="my-header">내가 쓴 댓글 목록</h3>
                 <div className="type-select">
                 <ul style={{ padding: '0 0' }}>
                     <li 
@@ -478,7 +587,7 @@ function PwChange(){ // 컴포넌트
     return(
         <>
            <h3 className="my-header">비밀번호 변경</h3>
-            <div className="acc-wrap" style={{'height':'195px'}}>
+            <div className="acc-wrap" style={{'height':'195px', 'padding':'25px 0'}}>
             <form method="POST">
                 <div className="acc-box" style={{'width':'100%'}}> 
                     <div className="acc-header" style={{'width':'200px'}}>현재 비밀번호</div>
@@ -509,79 +618,6 @@ function PwChange(){ // 컴포넌트
             </div>
         </>
     )
-}
-
-function Email(){
-
-    let user = useSelector((state) => state.user);
-    let dispatch = useDispatch();
-
-    let [modify, setModify] = useState(false);
-    let [email, setEmail] = useState(user.email);
-
-    function emailChange(){ // **************************** axios 요청 추가
-        axios({
-            method: "POST",
-            url: "/mypage/account/email",
-            data: {
-              newEmail: `${email}`
-            },
-        })
-        .then(function (response) {
-            if(response.data.done===1){ // 성공
-                console.log(response.data);
-                dispatch(
-                    loginUser({
-                      id: user.id,
-                      name: user.name,
-                      email: email
-                    })
-                );
-                alert('이메일 변경 완료');
-            }
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-    }
-
-    function emailChangeRequest(){
-        const emailRE = /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
-        if(emailRE.test(email)){
-            setModify(false);
-            emailChange();
-        }
-        else{
-            alert('잘못된 이메일 형식입니다.');
-        }
-    }
-
-    return(
-        <>
-        <form method="POST">
-            <h3 className="my-header">이메일 인증</h3>
-            <div className="acc-wrap" style={{'height':'80px'}}>
-                <div className="acc-box" style={{'width':'100%'}}> 
-                    <div className="acc-header" style={{'width':'200px'}}>이메일</div>
-                    { modify === true?
-                    <>
-                        <div className="pwc-box-wrap">
-                            <input type="text" className="pwc-box" defaultValue={email} onChange={ e=>setEmail(e.target.value) }/>
-                        </div>
-                        <Button variant="secondary" size="sm" onClick={ emailChangeRequest }> 완료 </Button>
-                    </> : <>
-                        <div className="pwc-box-wrap">{email}</div>
-                        <Button variant="secondary" size="sm" onClick={ ()=>setModify(true)}> 변경 </Button>
-                    </>
-                    }
-                </div>
-            </div>
-            <div style={{'width':'100%'}}>
-                <Button variant="light" onClick={ null } className="pwBtn">인증</Button>
-            </div>
-        </form>
-        </>
-    );
 }
 
 function Withdraw(){
@@ -630,12 +666,12 @@ function Withdraw(){
     return(
         <>
            <h3 className="my-header">회원 탈퇴</h3>
-            <div className="acc-wrap" style={{'height':'80px'}}>
+            <div className="witdraw-wrap" style={{'height':'80px'}}>
             <form method="POST">
-                <div className="acc-box" style={{'width':'100%'}}> 
-                    <div className="acc-header" style={{'width':'200px'}}>현재 비밀번호</div>
-                    <div className="pwc-box-wrap">
-                        <input className="pwc-box" type="password" onChange={e=>{
+                <div className="witdraw-box" style={{'width':'100%'}}> 
+                    <div className="witdraw-header" style={{'width':'200px'}}>현재 비밀번호</div>
+                    <div className="witdraw-box-wrap">
+                        <input className="witdraw-box" type="password" onChange={e=>{
                             e.stopPropagation();
                             setPw(e.target.value);
                         }}/>
@@ -650,10 +686,10 @@ function Withdraw(){
             </div>
 
             <div style={{'width':'100%'}}>
-                <Button variant="light" className="pwBtn" onClick={(e)=>requestWithdraw(e)}>확인</Button>
+                <Button variant="light" className="witdrawBtn" onClick={(e)=>requestWithdraw(e)}>확인</Button>
             </div>
         </>
     );
 }
 
-export  {Account, WritingList, Chat, PwChange, Email,Withdraw }
+export  {Account, WritingList, Chat, PwChange,  Withdraw, CommentList }
