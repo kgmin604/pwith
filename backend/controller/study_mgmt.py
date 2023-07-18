@@ -5,13 +5,12 @@ from flask import Flask, jsonify
 
 class studyPost() :
     
-    def __init__(self, id, title, writer, curDate, content, category, likes, views, roomId):
+    def __init__(self, id, title, writer, curDate, content, likes, views, roomId):
         self.id = id
         self.title = title
         self.writer = writer
         self.curDate = curDate
         self.content = content
-        self.category = category
         self.likes = likes
         self.views = views
         self.roomId = roomId
@@ -48,17 +47,15 @@ class studyPost() :
 
     @staticmethod
     def findById(id) : # 게시글 ID로 검색
-
-        
-        sql = f"SELECT * FROM study WHERE id = {id}"
+        sql = f"SELECT * FROM study WHERE id = '{int(id)}'"
      
-        res = selectOne # tuple
+        res = selectOne(sql) # tuple
    
         print(res)
         if not res :
             return None
 
-        post = studyPost(res[1], res[2], res[3], res[4], res[5], res[7], res[8])
+        post = studyPost(res[0], res[1], res[2], res[3], res[4], res[5], res[6], res[7])
         return post
 
     @staticmethod
@@ -216,8 +213,7 @@ class studyPost() :
     
 
     def getRoomName(roomId):    # 스터디룸 이름 받아오기
-        
-        sql = f"select roomName from studyRoom where roomId = '{str(roomId)}'"
+        sql = f"select name from studyRoom where id = '{str(roomId)}'"
         
         row = selectOne(sql)
         

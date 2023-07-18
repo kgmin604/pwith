@@ -165,7 +165,7 @@ def showDetail(id) :
             'writer' : post.getWriter(),
             'content': post.getContent(),
             'curDate' : postDate,
-            'likes' : studyPost.getLikes(id),
+            'likes' : post.getLikes(),
             'liked' : liked,
             'views': post.getViews(),
             'roomId' : roomId,

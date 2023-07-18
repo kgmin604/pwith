@@ -183,8 +183,8 @@ def showDetail(id) :
             'writer' : post.getWriter(),
             'content': post.getContent(),
             'curDate' : post.getCurDate(),
-            'likes' : QNAPost.getLikes(id),
-            'liked' : QNAPost.getLiked(current_user.get_id(), id),
+            'likes' : post.getLikes(),
+            # 'liked' : QNAPost.getLiked(current_user.get_id(), id),
             'views': post.getViews()
         }
         
