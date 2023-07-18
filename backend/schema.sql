@@ -13,24 +13,24 @@ CREATE TABLE member
 CREATE TABLE replyStudy
 (
     id BIGINT AUTO_INCREMENT,
-    writer BIGINT NOT NULL,
+    writer BIGINT NOT NULL DEFAULT 0,
     content VARCHAR(300) NOT NULL,
     curDate DATETIME NOT NULL,
     studyId BIGINT NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(writer) REFERENCES member(id) on delete set null on update cascade,
+    FOREIGN KEY(writer) REFERENCES member(id) on delete set default on update cascade,
     FOREIGN KEY(studyId) REFERENCES study(id) on delete cascade on update cascade
 )
 
 CREATE TABLE replyQna
 (
     id BIGINT AUTO_INCREMENT,
-    writer BIGINT NOT NULL,
+    writer BIGINT NOT NULL DEFAULT 0,
     content VARCHAR(300) NOT NULL,
     curDate DATETIME NOT NULL,
     qnaId BIGINT NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(writer) REFERENCES member(id) on delete set null on update cascade,
+    FOREIGN KEY(writer) REFERENCES member(id) on delete set default on update cascade,
     FOREIGN KEY(qnaId) REFERENCES qna(id) on delete cascade on update cascade
 )
 
