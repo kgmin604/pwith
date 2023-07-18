@@ -8,8 +8,7 @@ import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import MDEditor from '@uiw/react-md-editor';
-
-import LikeAndComment from './QnaLikeAndComment';
+import LikeAndComment from '../../component/likeAndComment';
 
 function QnaPost(props) {
     let user = useSelector((state) => state.user);
@@ -79,7 +78,7 @@ function QnaPost(props) {
                             {Category()}
                         </div>
                         <div class="col-md-6 StudyPost">
-                            <h2 style={{ textAlign: 'left' }}>Qna</h2>
+                            <h2 style={{ textAlign: 'left' }}>QnA</h2>
                             <hr style={{ width: '100%', margin: '0 auto' }} />
 
                             <div className="study-header">
@@ -89,7 +88,7 @@ function QnaPost(props) {
                                     <span className="line">|</span>
                                     <strong>조회수</strong> <span className="info-content">{post.views}</span>
                                     <span className="line">|</span>
-                                    <strong>등록일</strong> <span className="info-content">{post.curdate}</span>
+                                    <strong>등록일</strong> <span className="info-content">{post.curDate}</span>
                                     {
                                         user.id === post.writer ?
                                             <span className="control-part">
@@ -111,7 +110,7 @@ function QnaPost(props) {
                                     />
                                 </div>
                             </div>
-                            <LikeAndComment id={id} likes={post.likes} liked={post.liked} reply={reply} />
+                            <LikeAndComment id={id} liked={post.liked} likes={post.likes} reply={reply} type={'qna'}/>
 
                             <div class="col-md-3"></div>
                         </div>

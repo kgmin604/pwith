@@ -7,8 +7,7 @@ import comment from "../assets/img/comment.png"
 import moreImg from "../assets/img/more.png"
 
 function Reply(props) {
-    const { reply, id, item, setReply, replyNum, setReplyNum } = props;
-    const date = JSON.stringify(item.date).slice(3, 11);
+    const { reply, id, item, setReply, replyNum, setReplyNum,baseUrl} = props;
     const [more, setMore] = useState(false);
     const [update, setUpdate] = useState(false);
     const user = useSelector((state) => state.user);
@@ -24,13 +23,14 @@ function Reply(props) {
     };
 
     function deleteComment(replyId) {
-        axios.delete(`/study/${id}`, {
+        if(baseUrl===undefined||id===undefined)return
+        axios.delete(`${baseUrl}/${id}`, {
             data: {
-                replyId: `${replyId}`
+                id: `${replyId}`
             }
         })
             .then(function (response) {
-                const filteredReply = reply.filter(reply => reply.commentId !== replyId);
+                const filteredReply = reply.filter(reply => reply.id !== id);
                 setReply(filteredReply);
                 setReplyNum(replyNum - 1);
                 alert("댓글 삭제 성공");
@@ -43,15 +43,16 @@ function Reply(props) {
             });
     }
     function updateComment(replyId, content) {
-        axios.put(`/study/${id}`, {
-            replyId: `${replyId}`,
+        if(baseUrl===undefined||id===undefined)return
+        axios.put(`${baseUrl}/${id}`, {
+            id: `${replyId}`,
             content: `${content}`
         })
             .then(function (response) {
                 console.log(response);
                 const updatedReply = reply.map(reply => {
-                    if (reply.commentId === replyId) {
-                        reply.comment = `${content}`;
+                    if (reply.id === replyId) {
+                        reply.content = `${content}`;
                     }
                     setUpdateInput("");
                     return reply;
@@ -78,16 +79,17 @@ function Reply(props) {
                             value={updateInput}
                             onChange={handleUpdateChange} />
                     </Form>
-                    </> : item.comment}
+                    </> : item.content}
                 </div>
                 <div style={{ textAlign: 'end' }}>
                     {user.id === item.writer && <img src={moreImg} className="more" onClick={() => setMore(!more)} />}
                     <div>
                         {more && <ListGroup>
                             <ListGroup.Item action onClick={() => { setUpdate(true); setMore(false) }}>수정</ListGroup.Item>
-                            <ListGroup.Item action onClick={() => deleteComment(item.commentId)}>삭제</ListGroup.Item>
+                            <ListGroup.Item action onClick={() => deleteComment(item.id)}>삭제</ListGroup.Item>
                         </ListGroup>}
                     </div>
+                    <div style={{ fontSize: '10px'}}>{item.date}</div>
                 </div>
             </div>
         </div>

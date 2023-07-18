@@ -5,20 +5,21 @@ import { Form,Button } from "react-bootstrap";
 
 function WriteReplyForm(props) {
     const user = useSelector((state) => state.user);
-    const {id,reply,setReply,replyNum,setReplyNum}=props;
+    const {id,reply,setReply,replyNum,setReplyNum,baseUrl}=props;
     const [inputValue, setInputValue] = useState('');
-
+    console.log(id,baseUrl)
     function createComment(content) {
+        if(baseUrl===undefined||id===undefined)return
         axios
-            .post(`/study/${id}`, {
+            .post(`${baseUrl}/${id}`, {
                 content: `${content}`
             })
             .then(function (response) {
                 const newReply = [
                     ...reply,
                     {
-                        "comment": `${content}`,
-                        "commentId": response.data.commentId,
+                        "content": `${content}`,
+                        "id": response.data.id,
                         "date": response.data.date,
                         "writer": `${user.id}`
                     }

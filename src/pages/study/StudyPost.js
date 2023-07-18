@@ -6,7 +6,7 @@ import axios from "axios";
 import { Button } from "react-bootstrap";
 import {useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import LikeAndComment from './likeAndComment.js';
+import LikeAndComment from '../../component/likeAndComment';
 import MDEditor from '@uiw/react-md-editor';
 
 function StudyPost(props) {
@@ -160,7 +160,7 @@ function StudyPost(props) {
                     }
                 </div>
 
-                <LikeAndComment id={id} liked={post.liked} likes={post.likes} reply={reply} /></div> :
+                <LikeAndComment id={id} liked={post.liked} likes={post.likes} reply={reply} type={'study'}/></div> :
 
                 <div>
                     <div className='StudyCreate' style={{ textAlign: 'start', width: '100%' }}>
@@ -186,11 +186,7 @@ function StudyPost(props) {
                                 </div>
 
                             </div>
-
-
                         </div>
-
-
                     </div>
                 </div>}
         </div>
