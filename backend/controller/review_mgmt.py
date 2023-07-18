@@ -1,10 +1,11 @@
 from backend.model.db_mysql import conn_mysql
 
 class Review :
-    def __init__(self, writer, content, mentoId) :
+    def __init__(self, id, writer, content, mento) :
+        self.__id = id
         self.__writer = writer
         self.__content = content
-        self.__mentoId = mentoId
+        self.__mento = mento
 
     @property
     def writer(self) :
@@ -20,75 +21,45 @@ class Review :
 
     @staticmethod
     def showReview(mentoId) :
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT * FROM review WHERE mentoId = '{mentoId}'"
+        sql = f"SELECT * FROM review WHERE mento = '{mentoId}'"
 
-        cursor_db.execute(sql)
-
-        reviews = cursor_db.fetchall()
-
-        mysql_db.close()
+        reviews = selectAll(sql)
 
         return reviews
 
     @staticmethod
-    def writeReview(writer, content, mentoId) :
+    def writeReview(writer, content, mento) :
         
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
+        sql = f"INSERT INTO review(writer, content, mento) VALUES({writer}, '{content}', {mento})"
 
-        sql = f"INSERT INTO review(writer, content, mentoId) VALUES('{writer}', '{content}', '{mentoId}')"
+        reviewId = commitAndGetId(sql)
 
-        done = cursor_db.execute(sql)
+        # if done == 0 :
+        #     mysql_db.rollback()
 
-        if done == 0 :
-            mysql_db.rollback()
-
-        mysql_db.commit()
-
-        pk_sql = "SELECT LAST_INSERT_ID()"
-
-        cursor_db.execute(pk_sql)
-
-        result = cursor_db.fetchone()
-        pk = result[0]
-
-        mysql_db.close()
-        
-        return pk
+        return reviewId
 
     @staticmethod
     def modifyReview(id, newCnt) :
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
 
-        sql = f"UPDATE review SET content = '{newCnt}' WHERE reviewId = {id}"
+        sql = f"UPDATE review SET content = '{newCnt}' WHERE id = {id}"
 
-        done = cursor_db.execute(sql)
+        done = commit(sql)
 
         if done == 0 :
             mysql_db.rollback()
         
-        mysql_db.commit()
-        mysql_db.close()
-
         return done
 
     @staticmethod
     def removeReview(id) :
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
 
-        sql = f"DELETE FROM review WHERE reviewId = {id}"
+        sql = f"DELETE FROM review WHERE id = {id}"
 
-        done = cursor_db.execute(sql)
+        done = commit(sql)
 
         if done == 0 :
             mysql_db.rollback()
-
-        mysql_db.commit()
-        mysql_db.close()
 
         return done
