@@ -1,8 +1,9 @@
 from flask import Flask, session, Blueprint, render_template, redirect, request, jsonify, url_for
 from flask_login import login_required, current_user
-from backend.controller.board_mgmt import studyPost
-from backend.controller.reply_mgmt import Reply
+from backend.controller.study_mgmt import studyPost
+from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.studyroom_mgmt import StudyRoom
+from backend.controller import getFormattedDate, mainFormattedDate, formatDateToString
 from datetime import datetime
 import json
 
@@ -56,13 +57,13 @@ def show():
             for row in studyList:
                 post = {
                     'id': row[0],
-                    'title': row[2],
-                    'writer': row[3],
-                    'curDate': row[5],
-                    'likes': row[7],
-                    'views': row[8]
+                    'title': row[1],
+                    'writer': row[2],
+                    'curDate': row[3],
+                    'likes': row[5],
+                    'views': row[6]
                 }
-                post['curDate'] = studyPost.mainFormattedDate(row[5])
+                post['curDate'] = mainFormattedDate(row[3])
 
                 result.append(post)
 
@@ -93,13 +94,13 @@ def show():
                 for i in range(len(posts)) :
                     post = {
                         'id' : posts[i][0],
-                        'title' : posts[i][2],
-                        'writer' : posts[i][3],
-                        'curDate' : posts[i][5],
-                        'likes' : posts[i][7],
-                        'views' : posts[i][8]
+                        'title' : posts[i][1],
+                        'writer' : posts[i][2],
+                        'curDate' : posts[i][3],
+                        'likes' : posts[i][5],
+                        'views' : posts[i][6]
                     }
-                    post['curDate'] = studyPost.mainFormattedDate(posts[i][5])
+                    post['curDate'] = mainFormattedDate(posts[i][5])
                     
                     result.append(post)
 
@@ -110,7 +111,7 @@ def show():
                 })
             
 
-@study_bp.route('/<int:id>', methods=['GET']) # 글 조회 수정 삭제 (put, delete 메서드 삭제했어 - ㅊㅇ)
+@study_bp.route('/<int:id>', methods=['GET'])
 def showDetail(id) :
     if request.method == 'GET' :    # 글 조회
 
@@ -124,11 +125,11 @@ def showDetail(id) :
             newStudentList = ''
 
             if not studentsList_string :
-                newStudentList = f'["{current_user.getId()}"]'
+                newStudentList = f'["{current_user.get_id()}"]'
                 # newStudentList = f'["a"]' # dummmmmmmmmmmmmmy
             else :
                 studentsList = json.loads(studentsList_string) # list
-                studentsList.append(current_user.getId())
+                studentsList.append(current_user.get_id())
                 # studentsList.append("a") # dummmmmmmmmmmmmmy
                 newStudentList = str(studentsList)
                 newStudentList = newStudentList.replace("\'", "\"")
@@ -140,13 +141,13 @@ def showDetail(id) :
 
         post = studyPost.findById(id)
 
-        postDate = studyPost.getFormattedDate(post.getCurDate())
+        postDate = getFormattedDate(post.getCurDate())
         
-        roomId= studyPost.getRoomId(id) #roomName 조회위해서 미리 변수로 리턴받음
+        roomId= studyPost.findRoomId(id) #roomName 조회위해서 미리 변수로 리턴받음
 
         isApplied = None
         try : # 익명의 경우
-            isApplied = f'"{current_user.getId()}"' in StudyRoom.getStudentList(roomId)
+            isApplied = f'"{current_user.get_id()}"' in StudyRoom.getStudentList(roomId)
             # print("ISAPPLIED" + str(isApplied))
         except Exception as ex:
             isApplied = False
@@ -154,7 +155,7 @@ def showDetail(id) :
 
         liked = 0
         try : # 익명의 경우
-            liked = studyPost.getLiked(current_user.getId(), id)
+            liked = studyPost.getLiked(current_user.get_id(), id)
         except Exception as ex :
             liked = False
 
@@ -164,7 +165,7 @@ def showDetail(id) :
             'writer' : post.getWriter(),
             'content': post.getContent(),
             'curDate' : postDate,
-            'likes' : studyPost.getLikes(id),
+            'likes' : post.getLikes(),
             'liked' : liked,
             'views': post.getViews(),
             'roomId' : roomId,
@@ -176,18 +177,18 @@ def showDetail(id) :
         viewresult = studyPost.updateViews(id)
         # print(viewresult)
 
-        replyList = Reply.showReply(0, id) # 댓글 조회
+        replyList = ReplyStudy.showReplies(id) # 댓글 조회
 
         replyResult = []
 
         for reply in replyList :
 
-            date = studyPost.getFormattedDate(reply[3])
+            date = formatDateToString(reply[3])
 
             replyResult.append({
-                'commentId' : reply[0],
+                'id' : reply[0],
                 'writer' : reply[1],
-                'comment' : reply[2],
+                'content' : reply[2],
                 'date' : date
             })
 
@@ -228,35 +229,35 @@ def deletePost(id):
         })
 
 
-@study_bp.route('/<int:id>', methods = ['POST', 'PUT', 'DELETE'])
-def reply(id) :
+@study_bp.route('/<int:studyId>', methods = ['POST', 'PUT', 'DELETE'])
+def reply(studyId) :
     if request.method == 'POST' : # 댓글 작성
 
         cnt = request.get_json()['content']
 
-        writer = current_user.getId()
+        writer = current_user.get_id()
 
         date = datetime.now()
 
         try :
-            pk = Reply.writeReply(writer, cnt, date, 0, id)
+            replyId = ReplyStudy.writeReply(writer, cnt, date, studyId)
         except Exception as ex:
             print("에러 이유 : " + str(ex))
-            pk = 0
+            replyId = 0
 
         return jsonify({
-            'replyId' : pk, # 0 is fail
-            'date' : studyPost.getFormattedDate(date)
+            'id' : replyId, # 0 is fail
+            'date' : formatDateToString(date)
         })
 
     elif request.method == 'PUT' : # 댓글 수정
 
-        id = request.get_json()['replyId']
+        replyId = request.get_json()['id']
+        # print(replyId)
         newContent = request.get_json()['content']
-        print(id)
 
         try :
-            done = Reply.modifyReply(id, newContent)
+            done = ReplyStudy.modifyReply(replyId, newContent)
         except Exception as ex :
             print("에러 이유 : " + str(ex))
             done = 0
@@ -267,10 +268,10 @@ def reply(id) :
 
     else : # 댓글 삭제
 
-        id = request.get_json()['replyId']
+        replyId = request.get_json()['id']
 
         try :
-            done = Reply.removeReply(id)
+            done = ReplyStudy.removeReply(replyId)
         except Exception as ex :
             print("에러 이유 : " + str(ex))
             done = 0
@@ -285,7 +286,7 @@ def write():
     if request.method == 'GET' :
         result = []
 
-        roomList = studyPost.getMyStudyList(current_user.getId())
+        roomList = studyPost.getMyStudyList(current_user.get_id())
         # roomList = studyPost.getMyStudyList('a')
 
         for room in roomList :
@@ -301,16 +302,16 @@ def write():
 
         data = request.get_json(silent=True)
 
-        postType = 0
+
         title = data['title']
-        writer = current_user.getId()
+        writer = current_user.get_id()
         curDate = studyPost.curdate()
         content = data['content']
         likes = 0
         views = 0
         roomId = data['roomId']
         
-        done =studyPost.insertStudy(postType, title, writer, curDate, content, likes, views, roomId)
+        done =studyPost.insertStudy(title, writer, curDate, content, likes, views, roomId)
         
         return jsonify({
             'done' : done
@@ -319,7 +320,7 @@ def write():
 @login_required
 @study_bp.route('/<int:id>/like', methods=['GET', 'POST'])
 def like(id):
-    memId = current_user.getId()
+    memId = current_user.get_id()
     if request.method=='POST':
         postId = request.get_json()['postId']
         

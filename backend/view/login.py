@@ -19,7 +19,7 @@ def chkSession() :
             if current_user.is_anonymous :
                 print('익명')
             else :
-                memInfo['id'] = current_user.getId()
+                memInfo['id'] = current_user.get_id()
                 memInfo['name'] = current_user.getName()
                 memInfo['email'] = current_user.getEmail()
                 print('전달 완료')

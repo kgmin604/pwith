@@ -13,24 +13,24 @@ CREATE TABLE member
 CREATE TABLE replyStudy
 (
     id BIGINT AUTO_INCREMENT,
-    writer BIGINT NOT NULL,
+    writer BIGINT NOT NULL DEFAULT 0,
     content VARCHAR(300) NOT NULL,
     curDate DATETIME NOT NULL,
     studyId BIGINT NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(writer) REFERENCES member(id) on delete set null on update cascade,
+    FOREIGN KEY(writer) REFERENCES member(id) on delete set default on update cascade,
     FOREIGN KEY(studyId) REFERENCES study(id) on delete cascade on update cascade
 )
 
 CREATE TABLE replyQna
 (
     id BIGINT AUTO_INCREMENT,
-    writer BIGINT NOT NULL,
+    writer BIGINT NOT NULL DEFAULT 0,
     content VARCHAR(300) NOT NULL,
     curDate DATETIME NOT NULL,
     qnaId BIGINT NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(writer) REFERENCES member(id) on delete set null on update cascade,
+    FOREIGN KEY(writer) REFERENCES member(id) on delete set default on update cascade,
     FOREIGN KEY(qnaId) REFERENCES qna(id) on delete cascade on update cascade
 )
 
@@ -100,35 +100,70 @@ CREATE TABLE studyMember (
 )
 
 
-
-
-
-
-
-CREATE TABLE QNA
+CREATE TABLE study
 (
-    QNAId INT,
-    title VARCHAR(50),
-    writer VARCHAR(10),
-    curDate DATE,
-    content VARCHAR(500),
-    category VARCHAR(10),
-    views INT,
-    likes INT,
-    reply VARCHAR(200),
-    PRIMARY KEY(QNAId),
-    FOREIGN KEY(writer) REFERENCES member(memId)
-)
+    id BIGINT AUTO_INCREMENT,
+    title VARCHAR(50) NOT NULL,
+    writer BIGINT NOT NULL,
+    curDate DATETIME NOT NULL,
+    content VARCHAR(500) NOT NULL,
+    category INT NOT NULL,
+    likes INT DEFAULT 0, 
+    views INT DEFAULT 0,
+    roomId BIGINT NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(writer) REFERENCES member(id),
+    FOREIGN KEY(roomId) REFERENCES studyRoom(id)
+);
+
+
+
+CREATE TABLE qna
+(
+    id BIGINT AUTO_INCREMENT,
+    title VARCHAR(50) NOT NULL,
+    writer BIGINT NOT NULL,
+    curDate DATETIME NOT NULL,
+    content VARCHAR(500) NOT NULL,
+    category INT NOT NULL,
+    likes INT DEFAULT 0, 
+    views INT DEFAULT 0,
+    PRIMARY KEY(id),
+    FOREIGN KEY(writer) REFERENCES member(id)
+);
 
 
 CREATE TABLE chat (
-    chatId INT AUTO_INCREMENT,
-    sender VARCHAR(10),
-    receiver VARCHAR(10),
+    id BIGINT AUTO_INCREMENT,
+    sender BIGINT,
+    receiver BIGINT,
     content VARCHAR(500),
-    curDate DATE,
-    PRIMARY KEY(chatId),
-    FOREIGN KEY(sender, receiver) REFERENCES member(memId) on delete cascade
+    curDate DATETIME,
+    PRIMARY KEY(id),
+    FOREIGN KEY(sender) REFERENCES member(id),
+    FOREIGN KEY(receiver) REFERENCES member(id)
+);
+
+CREATE TABLE studyRoomChat (
+    id BIGINT AUTO_INCREMENT,
+    memId BIGINT NOT NULL,
+    roomId BIGINT NOT NULL,
+    content VARCHAR(500) NOT NULL,
+    curDate DATETIME NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(memId) REFERENCES member(id),
+    FOREIGN KEY(roomId) REFERENCES studyRoom(id)
+);
+
+CREATE TABLE mentoringRoomChat (
+    id BIGINT AUTO_INCREMENT,
+    memId BIGINT NOT NULL,
+    roomId BIGINT NOT NULL,
+    content VARCHAR(500) NOT NULL,
+    curDate DATETIME NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(memId) REFERENCES member(id),
+    FOREIGN KEY(roomId) REFERENCES mentoringRoom(id)
 );
 
 create table mentoringRoom (
@@ -141,12 +176,22 @@ create table mentoringRoom (
     foreign key(mentiId) references member(memId)
 );
 
-create table like (
-    likeId int auto_increment,
-    memberId VARCHAR(10) not null,
-    postId INT not null, 
-    liked BOOLEAN DEFAULT FALSE,
-    PRIMARY KEY(likeId),
-    FOREIGN KEY(memberId) references member(memId),
-    FOREIGN KEY(postId) references post(postId)
+create table studyLike
+(
+    id BIGINT AUTO_INCREMENT,
+    memberId BIGINT NOT NULL,
+    studyId BIGINT NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(memberId) REFERENCES member(id),
+    FOREIGN KEY(studyId) REFERENCES study(id)
+);
+
+create table qnaLike
+(
+    id BIGINT AUTO_INCREMENT,
+    memberId BIGINT NOT NULL,
+    qnaId BIGINT NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(memberId) REFERENCES member(id),
+    FOREIGN KEY(qnaId) REFERENCES qna(id)
 );

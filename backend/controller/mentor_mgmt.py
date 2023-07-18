@@ -108,16 +108,10 @@ class Portfolio() :
 
     @staticmethod
     def getNmentoring() :
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
 
-        sql = "SELECT mentoId, brief FROM mento LIMIT 5"
-        cursor_db.execute(sql)
+        sql = "SELECT mento, brief FROM portfolio LIMIT 5"
 
-        allP = cursor_db.fetchall() # tuple of tuple
-        # print(allP)
-
-        mysql_db.close()
+        allP = selectAll(sql)
 
         return allP
 
