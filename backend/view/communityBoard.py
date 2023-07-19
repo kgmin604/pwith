@@ -6,8 +6,9 @@ from backend.model.db_mongo import conn_mongodb
 from backend.model.db_mysql import conn_mysql
 # from backend.view.community import conn_mongodb
 from backend.controller.community_mgmt import QNAPost
-from backend.controller.board_mgmt import studyPost
-from backend.controller.reply_mgmt import Reply
+from backend.controller.study_mgmt import studyPost
+from backend.controller.replyQna_mgmt import ReplyQna
+from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString
 
 community_bp = Blueprint('community', __name__, url_prefix='/community')
 
@@ -38,9 +39,9 @@ def communityMain() :
         for q in qna_db :
 
             postId = q[0]
-            title = q[2]
+            title = q[1]
 
-            date = q[5]
+            date = q[3]
             formatted_date = date.strftime("%Y-%m-%d")
 
             qna.append({
@@ -123,14 +124,14 @@ def show():
             for i in range(len(posts)):
                 post = {
                         'id' : posts[i][0],
-                        'title' : posts[i][2],
-                        'writer' : posts[i][3],
-                        'curDate' : posts[i][5],
-                        # 'category' : posts[i][6],
-                        'likes' : posts[i][7],
-                        'views' : posts[i][8]
+                        'title' : posts[i][1],
+                        'writer' : findNickName(posts[i][2]),
+                        'curDate' : posts[i][3],
+                        # 'category' : posts[i][5],
+                        'likes' : posts[i][6],
+                        'views' : posts[i][7]
                         }
-                post['curDate'] = QNAPost.mainFormattedDate(posts[i][5])
+                post['curDate'] = mainFormattedDate(posts[i][3])
                 result.append(post)
             return jsonify(result)
 
@@ -150,16 +151,15 @@ def show():
                 for i in range(len(posts)) :
                     post = {
                         'id' : posts[i][0],
-                        'type' : posts[i][1],
-                        'title' : posts[i][2],
-                        'writer' : posts[i][3],
+                        'title' : posts[i][1],
+                        'writer' : findNickName(posts[i][2]),
                         # 'content' : posts[i][4],
-                        'curDate' : posts[i][5],
-                        # 'category' : posts[i][6],
-                        'likes' : posts[i][7],
-                        'views' : posts[i][8]
+                        'curDate' : posts[i][3],
+                        # 'category' : posts[i][5],
+                        'likes' : posts[i][6],
+                        'views' : posts[i][7]
                     }
-                    post['curDate'] = QNAPost.mainFormattedDate(posts[i][5])
+                    post['curDate'] = mainFormattedDate(posts[i][3])
                     
                     result.append(post)
 
@@ -180,28 +180,28 @@ def showDetail(id) :
 
         result = {
             'title': post.getTitle(),
-            'writer' : post.getWriter(),
+            'writer' : findNickName(post.getWriter()),
             'content': post.getContent(),
             'curDate' : post.getCurDate(),
-            'likes' : QNAPost.getLikes(id),
-            'liked' : QNAPost.getLiked(current_user.getId(), id),
+            'likes' : post.getLikes(),
+            # 'liked' : QNAPost.getLiked(current_user.get_id(), id),
             'views': post.getViews()
         }
         
         # toFront['curDate'] = QNAPost.getFormattedDate(toFront['curDate'])
 
-        replyList = Reply.showReply(1, id) # 댓글 조회
+        replyList = ReplyQna.showReplies(id) # 댓글 조회
 
         replyResult = []
 
         for reply in replyList :
 
-            date = studyPost.getFormattedDate(reply[3])
+            date = formatDateToString(reply[3])
 
             replyResult.append({
-                'commentId' : reply[0],
-                'writer' : reply[1],
-                'comment' : reply[2],
+                'id' : reply[0],
+                'writer' : findNickName(reply[1]),
+                'content' : reply[2],
                 'date' : date
             })
         
@@ -247,29 +247,28 @@ def reply(id) :
 
         cnt = request.get_json()['content']
 
-        writer = current_user.getId()
-        # writer = 'bb' # dummmmmmmmmmmmmmmmmmmmmmy
+        writer = current_user.get_id()
 
         date = datetime.now()
 
         try :
-            pk = Reply.writeReply(writer, cnt, date, 1, id)
+            pk = ReplyQna.writeReply(writer, cnt, date, id)
         except Exception as ex:
             print("에러 이유 : " + str(ex))
             pk = 0
 
         return jsonify({
-            'replyId' : pk, # 0 is fail
-            'date' : studyPost.getFormattedDate(date)
+            'id' : pk, # 0 is fail
+            'date' : formatDateToString(date)
         })
 
     elif request.method == 'PUT' : # 댓글 수정
 
-        replyId = request.get_json()['replyId']
+        replyId = request.get_json()['id']
         newContent = request.get_json()['content']
 
         try :
-            done = Reply.modifyReply(replyId, newContent)
+            done = ReplyQna.modifyReply(replyId, newContent)
         except Exception as ex :
             print("에러 이유 : " + str(ex))
             done = 0
@@ -280,10 +279,10 @@ def reply(id) :
 
     else : # 댓글 삭제
 
-        replyId = request.get_json()['replyId']
+        replyId = request.get_json()['id']
 
         try :
-            done = Reply.removeReply(replyId)
+            done = ReplyQna.removeReply(replyId)
         except Exception as ex :
             print("에러 이유 : " + str(ex))
             done = 0
@@ -301,9 +300,8 @@ def write():
         data = request.get_json(silent=True)
         # print(data)
         
-        postType = 1
         title = data['title']
-        writer = current_user.getId()
+        writer = current_user.get_id()
         curDate = QNAPost.curdate()
         content = data['content']
         category = data['category']
@@ -311,7 +309,7 @@ def write():
         views = 0
         
         # print(postType, title, writer, curDate, content, category, likes, views)
-        done = QNAPost.insertQNA(postType, title, writer, curDate, content, category, likes, views)
+        done = QNAPost.insertQNA(title, writer, curDate, content, category, likes, views)
         
         return jsonify({
             'done' : done
@@ -320,7 +318,7 @@ def write():
 @login_required
 @community_bp.route('/qna/<int:id>/like', methods=['GET', 'POST'])
 def like(id):
-    memId = current_user.getId()
+    memId = current_user.get_id()
     if request.method=='POST':
         postId = request.get_json()['postId']
         

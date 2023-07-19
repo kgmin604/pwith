@@ -10,8 +10,6 @@ from backend.controller.chat_mgmt import chat
 from backend.model.db_mysql import conn_mysql
 from datetime import datetime
 
-# from PIL import Image 
-
 mento_bp = Blueprint('mento', __name__, url_prefix='/mentoring')
 
 @mento_bp.route('/main', methods = ['GET', 'POST'])
@@ -72,7 +70,7 @@ def showDetail(mentoId) :
         if apply == 'go' : # 멘토링 신청
 
             # 1. 룸 생성
-            mentiId = current_user.getId()
+            mentiId = current_user.get_id()
             roomName = str(mentoId) + "와 " + str(mentiId) + "의 공부방"
 
             roomId = MentoringRoom.create(roomName, mentoId, mentiId)
@@ -95,7 +93,7 @@ def showDetail(mentoId) :
 
         detail = {}
 
-        portfolio = Portfolio.findById(mentoId)
+        portfolio = Portfolio.findByMento(mentoId)
         review_list = Review.showReview(mentoId)
         review = []
 
@@ -125,7 +123,7 @@ def review(mentoId) :
 
         cnt = request.get_json()['content']
 
-        writer = current_user.getId()
+        writer = current_user.get_id()
 
         try :
             pk = Review.writeReview(writer, cnt, mentoId)
@@ -172,56 +170,36 @@ def writePortfolio():
 
         portfolioInfo = request.form
 
-        writer = current_user.getId()
-        subject = portfolioInfo['subject']
+        mento = current_user.get_id()
+        subjects = portfolioInfo['subject']
+        # TODO string에서 list 형식으로 받아야 함. 현재는 str
         brief = portfolioInfo['brief']
         content = portfolioInfo['content']
 
-        file = request.files['image']
-        image = file.read()
+        # file = request.files['image'] # TODO image 받는 형식 바뀌어야 함
+        # image = file.read()
+
+
+        # TODO dummy
+        mentoPic = "https://s3.orbi.kr/data/file/united/251cc0d1434cc0aed00afe93082bb25a.jpeg"
+
+        date = datetime.now()
 
         try:
-            result = Portfolio.create(writer, subject, image, brief, content)
-        except Exception as e:
-            print(f"예외 발생: {e}")
+            # result = Portfolio.create(writer, subject, image, brief, content)
+            result = Portfolio.create(mento, mentoPic, brief, content, date, subjects)
+        except Exception as ex:
+            print(f"예외 발생: {ex}")
             # connection.rollback()
             result = 0
         return jsonify({
             'done': result
         })
 
-'''
-        # print(image)
-        img_bytes = image.read() # bytes
-        print(img_bytes)
-        # img_str = str(img_bytes)
-        # img_str = img_str.replace("\'", "\"")
-        # img_bytes = bytes(img_str, 'utf-8')
-        # print(type(img_bytes))
-        # print(type(img_bytes))################### <class 'bytes'> ###############
-        # img_encode = base64.b64encode(img_bytes).decode('utf-8')
-        # img_encode = base64.b64decode(img_str).encode('utf-8')
-        # img_encode = base64.b64decode(img_bytes)
-        # img_encode = base64.b64encode(portfolio.image).decode('utf-8') # 원본
-        # print(img_encode)
-
-        try:
-            result = Portfolio.create(writer, subject, img_bytes, brief, content)
-            # result = Portfolio.create(writer, subject, img, brief, content)
-        except Exception as ex:
-            print("예외 발생: " + str(ex))
-            result = 0
-        return jsonify({
-            'done': result
-            # 'done': 0
-        })
-'''
-
 @mento_bp.route('/update/<mentoId>', methods = ['GET', 'PUT'])
 def modifyPortfolio(mentoId) :
 
-    loginUser = current_user.getId()
-    # loginUser = 'q' # dummmmmmmmmy
+    loginUser = current_user.get_id()
     
     if loginUser != mentoId : # 본인의 글에 접근한 게 아닐 때
         return jsonify({
@@ -232,7 +210,7 @@ def modifyPortfolio(mentoId) :
 
         detail = {}
 
-        portfolio = Portfolio.findById(mentoId)
+        portfolio = Portfolio.findByMento(mentoId)
 
         detail = {
             'subject' : json.loads(portfolio.subject),
@@ -243,14 +221,15 @@ def modifyPortfolio(mentoId) :
         
         return jsonify(detail)
 
-    else : # request.method == 'PUT'
+    else : # 'PUT'
 
         newPort = request.form
 
         file = request.files['image']
         image = file.read()
         
-        done = Portfolio.update(mentoId, newPort['subject'], image, newPort['brief'], newPort['content'])
+        # TODO string에서 list 형식으로 받아야 함. 현재는 str
+        done = Portfolio.update(mentoId, image, newPort['brief'], newPort['content'], newPort['subject'])
 
         return jsonify({
             'done' : done # 성공 시 1, 실패 또는 변경 사항 없을 시 0
@@ -260,8 +239,7 @@ def modifyPortfolio(mentoId) :
 def deletePortfolio(mentoId) :
     if request.method == 'DELETE' :
         
-        loginUser = current_user.getId()
-        # loginUser = 'q' # dummmmmmmmmy
+        loginUser = current_user.get_id()
         
         if loginUser != mentoId : # 본인의 글에 접근한 게 아닐 때
             return jsonify({

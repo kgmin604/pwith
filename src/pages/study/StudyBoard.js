@@ -15,23 +15,15 @@ import { loginUser } from "../../store";
 
 function StudyBoard(props) {
     let navigate = useNavigate();
-
     let user = useSelector((state) => state.user);
-    let dispatch = useDispatch();
-
     let [studyPostList,setStudyPostList] = useState([]);
-
     const [searchType, setSearchType] = useState(0);
-
     let [totalPage, setTotalPage] = useState(1);
     let [selectPage, setSelectPage] = useState(1);
     let [pages, setPages] = useState([]); // 임시
-
     let [disabled1, setDisabled1] = useState(true);
     let [disabled2, setDisabled2] = useState(true);
-
     let [isLoad, setIsLoad ] = useState(false);
-
     let [isDisabled, setIsDisabled] = useState(user.id===null);
 
     useEffect(() => {
@@ -93,12 +85,6 @@ function StudyBoard(props) {
             });
 
     };
-
-    /*
-    useEffect(() => {
-        console.log(studyPostList)
-    }, [studyPostList])
-    */
 
     const [inputValue, setInputValue] = useState('');
 

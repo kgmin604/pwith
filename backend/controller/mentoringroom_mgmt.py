@@ -1,11 +1,12 @@
-from backend.model.db_mysql import conn_mysql
+from backend.controller import commit, commitAndGetId, selectAll, selectOne
 
 class MentoringRoom() :
     
-    def __init__(self, roomName, mentoId, mentiId):
-        self.__roomName = roomName
-        self.__mentoId = mentoId
-        self.__mentiId = mentiId
+    def __init__(self, id, name, mentoId, mentiId):
+        self.__id = id
+        self.__name = name
+        self.__mento = mentoId
+        self.__menti = mentiId
     
     @property
     def roomName(self) :
@@ -21,70 +22,45 @@ class MentoringRoom() :
 
     @staticmethod
     def create(roomName, mentoId, mentiId) :
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
 
-        sql = f"INSERT INTO mentoringRoom(roomName, mentoId, mentiId) VALUES('{roomName}', '{mentoId}', '{mentiId}')"
+        sql = f"INSERT INTO mentoringRoom(name, mento, menti) VALUES('{roomName}', {mentoId}, {mentiId})"
 
-        done = cursor_db.execute(sql)
+        roomId = commitAndGetId(sql)
 
-        if done == 0 :
-            mysql_db.rollback()
+        # if done == 0 :
+        #     mysql_db.rollback()
 
-        mysql_db.commit()
-
-        pk_sql = "SELECT LAST_INSERT_ID()"
-
-        cursor_db.execute(pk_sql)
-
-        result = cursor_db.fetchone()
-        pk = result[0]
-
-        mysql_db.close()
-
-        return pk
+        return roomId
 
     @staticmethod
     def show(logUser) :
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
 
-        sql = f"SELECT * FROM mentoringRoom WHERE mentoId = '{logUser}' or mentiId = '{logUser}'"
-        cursor_db.execute(sql)
+        sql = f"SELECT * FROM mentoringRoom WHERE mento = {logUser} or menti = {logUser}"
 
-        result = cursor_db.fetchall()
+        result = selectAll(sql)
 
-        mysql_db.close()
-        
         return result
 
-    @staticmethod
-    def getMentiList(mentoId) : # 멘토링 참가자 조회
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
+    # @staticmethod
+    # def getMentiList(mentoId) : # 멘토링 참가자 조회
 
-        sql = f"SELECT studentsList FROM mentor WHERE roomId = {mentoId}"
+    #     sql = f"SELECT studentsList FROM mentor WHERE roomId = {mentoId}"
 
-        cursor_db.execute(sql)
+    #     studentsList = selectOne(sql)[0]
 
-        studentsList = cursor_db.fetchone()[0]
-        # print(studentsList)
+    #     return studentsList
 
-        mysql_db.close()
+    # @staticmethod
+    # def addStudent(mento, mentiList) :
+    #     mysql_db = conn_mysql()
+    #     cursor_db = mysql_db.cursor()
 
-        return studentsList
+    #     sql = f"UPDATE mento SET mentiList = '{mentiList}' WHERE mentoId = '{mento}'"
 
-    @staticmethod
-    def addStudent(mento, mentiList) :
-        mysql_db = conn_mysql()
-        cursor_db = mysql_db.cursor()
+    #     done = cursor_db.execute(sql)
 
-        sql = f"UPDATE mento SET mentiList = '{mentiList}' WHERE mentoId = '{mento}'"
+    #     mysql_db.commit()
 
-        done = cursor_db.execute(sql)
-
-        mysql_db.commit()
-
-        mysql_db.close()
+    #     mysql_db.close()
         
-        return done
+    #     return done
