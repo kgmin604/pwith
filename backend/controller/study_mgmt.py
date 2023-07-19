@@ -6,14 +6,14 @@ from flask import Flask, jsonify
 class studyPost() :
     
     def __init__(self, id, title, writer, curDate, content, likes, views, roomId):
-        self.id = id
-        self.title = title
-        self.writer = writer
-        self.curDate = curDate
-        self.content = content
-        self.likes = likes
-        self.views = views
-        self.roomId = roomId
+        self._id = id
+        self._title = title
+        self._writer = writer
+        self._curDate = curDate
+        self._content = content
+        self._likes = likes
+        self._views = views
+        self._roomId = roomId
 
     @staticmethod
     def insertStudy(title, writer, curDate, content, likes, views, roomId):     #스터디 글 생성
@@ -191,24 +191,29 @@ class studyPost() :
         
         return int(joinP[0])
     
+    @property
+    def title(self) :
+        return self.__title
 
-    def getTitle(self) :
-        return str(self.title)
+    @property
+    def content(self) :
+        return self.__content
 
-    def getContent(self) :
-        return str(self.content)
-
-    def getCurDate(self) :
-        return str(self.curDate)
+    @property
+    def curDate(self) :
+        return self.__curDate
     
-    def getWriter(self):
-        return str(self.writer)
+    @property
+    def writer(self):
+        return self.__writer
     
-    def getLikes(self):
-        return int(self.likes)
+    @property
+    def likes(self):
+        return self.__likes
     
-    def getViews(self):
-        return int(self.views)
+    @property
+    def views(self):
+        return self.__views
     
     # def getLiked(memId, postId):      # 좋아요 여부 받아오기
     #    sql = f"SELECT liked from liked where memberId = '{str(memId)}' and postId = '{str(postId)}'"

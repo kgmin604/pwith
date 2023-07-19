@@ -141,7 +141,7 @@ def showDetail(id) :
 
         post = studyPost.findById(id)
 
-        postDate = getFormattedDate(post.getCurDate())
+        postDate = getFormattedDate(formatDateToString(post._curDate))
         
         roomId= studyPost.findRoomId(id) #roomName 조회위해서 미리 변수로 리턴받음
 
@@ -161,13 +161,13 @@ def showDetail(id) :
 
         result = {
             'isApplied' : isApplied,
-            'title': post.getTitle(),
-            'writer' : findNickName(post.getWriter()),
-            'content': post.getContent(),
+            'title': post._title,
+            'writer' : findNickName(post._writer),
+            'content': post._content,
             'curDate' : postDate,
-            'likes' : post.getLikes(),
+            'likes' : post._likes,
             'liked' : liked,
-            'views': post.getViews(),
+            'views': post._views,
             'roomId' : roomId,
             'roomTitle' : studyPost.getRoomName(roomId),
             'totalP': studyPost.getTotalP(roomId),
@@ -330,7 +330,7 @@ def like(id):
      
         
     if request.method == 'GET':
-        likes = post.getLikes()
+        likes = post._likes
         liked = studyPost.findLike(memId, id)
         return jsonify({
             'likes' : likes,

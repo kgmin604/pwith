@@ -5,10 +5,10 @@ from flask import Flask, jsonify
 
 class chat(): 
     def __init__(self, sender, receiver, content, curDate):
-        self.sender = sender
-        self.receiver = receiver
-        self.content = content
-        self.curDate = curDate
+        self._sender = sender
+        self._receiver = receiver
+        self._content = content
+        self._curDate = curDate
         
     def insertChat(sender, receiver, content, curDate):
         sql = f"INSERT INTO chat ( sender, receiver, content, curDate ) VALUES ('{str(sender)}', '{str(receiver)}', '{str(content)}', '{str(curDate)}' )"
@@ -51,15 +51,16 @@ class chat():
         now = datetime.now()
         return str(now)
     
-    def getSender(self):
-        return self.sender
-    
-    def getReceiver(self):
-        return self.receiver
-    
-    def getContent(self):
-        return self.content
-    
-    def getCurDate(self):
-        return self.curDate
+    @property
+    def sender(self):
+        return self._sender
+    @property
+    def receiver(self):
+        return self._receiver
+    @property
+    def content(self):
+        return self._content
+    @property
+    def curDate(self):
+        return self._curDate
     
