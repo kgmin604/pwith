@@ -319,17 +319,18 @@ def write():
 @community_bp.route('/qna/<int:id>/like', methods=['GET', 'POST'])
 def like(id):
     memId = current_user.get_id()
+    post = studyPost.findById(id)
     if request.method=='POST':
         postId = request.get_json()['postId']
         
         print(memId, postId)
-        liked = QNAPost.toggleLike(memId, postId)
+        liked = QNAPost.Like(memId, postId)
         print("liked")
         
         
     if request.method == 'GET':
-        likes = QNAPost.getLikes(id)
-        liked = QNAPost.getLiked(memId, id)
+        likes = post.getLikes()
+        liked = QNAPost.findLike(memId, id)
         return jsonify({
             'likes' : likes,
             'liked' : liked

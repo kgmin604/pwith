@@ -122,41 +122,44 @@ class studyPost() :
         return done
     
     @staticmethod
-    def toggleLike(memId, postId):      # toggle like
-        sql = f"SELECT liked FROM studyLike WHERE memberId = '{int(memId)}'  AND postId = '{int(postId)}'"
+    def findLike(memId, postId):
+        sql = f"select id from studyLike where memberId = '{int(memId)}' and studyId = '{int(postId)}' "
+        
+        rows = selectOne(sql)
+        
+        if rows is None:
+            return False    # 좋아요 없는 상태
+        else:
+            return True     # 좋아요 있는 상태
     
-        liked = selectOne(sql)
+    @staticmethod
+    def Like(memId, postId):      # toggle like
+        
+        liked = studyPost.findLike(memId, postId)
+        
+        if liked is False:
+            # insert studyLike
+            sql = f"insert into studyLike(memberId, studyId) values ('{(memId)}', '{(postId)}')"
+            done = commit(sql)
 
-        if liked is None:
-            sql = f"INSERT INTO studyLike (memberId, postId, liked) VALUES ('{int(memId)}', '{int(postId)}')"
-            likeType = 0
+            studyPost.updateLikes(liked, postId)
+           
+        else:
+            # delete studyLike
+            sql = f"delete from studyLike where memberId = '{(memId)}' and studyId = '{(postId)}'"
+            done = commit(sql)
+
+            studyPost.updateLikes(liked, postId)
+            
+    @staticmethod
+    def updateLikes(liked, postId):
+        if liked is False:
+            sql = f"update study set likes = likes +1 where id = '{str(postId)}'"
             done = commit(sql)
         else:
-            liked_value = liked[0]
-            if liked_value == True:
-                sql = "UPDATE liked SET studyLike = False WHERE memberId = '{int(memId)}' AND postId = '{int(postId)}'"
-                likeType = 1
-                print(likeType)
-            else:
-                sql = "UPDATE liked SET studyLike = True WHERE memberId = '{int(memId)}' AND postId = '{int(postId)}'"
-                likeType = 0
-                print(likeType)
-                
-            done = commit(sql)
-
-        studyPost.updateLikes(postId, likeType)
-        
-        
-    @staticmethod
-    def updateLikes(postId, likeType):      # 게시글에 실제 좋아요 수 반영
-        if likeType == 1:
             sql = f"UPDATE study SET likes = likes - 1 WHERE id = '{str(postId)}'"
-        elif likeType == 0:
-            sql = f"UPDATE study SET likes = likes + 1 WHERE id = '{str(postId)}'"
-        
-        done = commit(sql)
-        return done
-        
+            update_done = commit(sql)
+                  
     def getNStudy(num):     # study 게시글 일부만 가져오기
         sql = f"select id, title from study ORDER BY curDate DESC LIMIT {int(num)} "
       

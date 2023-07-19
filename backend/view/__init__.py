@@ -21,7 +21,7 @@ def mainFormattedDate(curDate):     # 날짜 포맷 월/일 만
 
 
 def nicknameToId(memId):
-        sql = f"select id from member where nickname = '{str(memId)}'"
+        sql = f"select id from member where nickname = '{str(memId)}' or memId = '{str(memId)}'"
         id = selectOne(sql)
         
         return id[0]

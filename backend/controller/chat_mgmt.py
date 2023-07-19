@@ -32,7 +32,7 @@ class chat():
         return rows
     
     def chkOppId(oppId):
-        sql = f"select memId from member"
+        sql = f"select id from member"
         
         memIdList = selectAll(sql)
         

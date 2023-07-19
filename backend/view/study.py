@@ -321,16 +321,17 @@ def write():
 @study_bp.route('/<int:id>/like', methods=['GET', 'POST'])
 def like(id):
     memId = current_user.get_id()
+    post = studyPost.findById(id)
     if request.method=='POST':
         postId = request.get_json()['postId']
         
         print(memId, postId)
-        studyPost.toggleLike(memId, postId)
-        print("liked")
+        studyPost.Like(memId, id)
+     
         
     if request.method == 'GET':
-        likes = studyPost.getLikes(id)
-        liked = studyPost.getLiked(memId, id)
+        likes = post.getLikes()
+        liked = studyPost.findLike(memId, id)
         return jsonify({
             'likes' : likes,
             'liked' : liked

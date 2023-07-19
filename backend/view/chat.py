@@ -44,7 +44,7 @@ def send():
             content = data['content']
             curDate = chat.curdate()
             oppMemId = data['oppId']
-            oppId = MemIdtoId(oppMemId)
+            oppId = nicknameToId(oppMemId)
             print(str(oppId), memId)
             chat.insertChat(memId, str(oppId), content, curDate)
             print("insert 완.")
