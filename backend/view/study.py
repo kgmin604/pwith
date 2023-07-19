@@ -155,7 +155,7 @@ def showDetail(id) :
 
         liked = 0
         try : # 익명의 경우
-            liked = studyPost.getLiked(current_user.get_id(), id)
+            liked = studyPost.findLike(current_user.get_id(), id)
         except Exception as ex :
             liked = False
 
@@ -322,6 +322,7 @@ def write():
 def like(id):
     memId = current_user.get_id()
     post = studyPost.findById(id)
+    
     if request.method=='POST':
         postId = request.get_json()['postId']
         

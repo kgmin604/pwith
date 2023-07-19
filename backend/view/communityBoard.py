@@ -182,9 +182,9 @@ def showDetail(id) :
             'title': post._title,
             'writer' : findNickName(post._writer),
             'content': post._content,
-            'curDate' : post._curDate,
+            'curDate' : getFormattedDate(formatDateToString(post._curDate)),
             'likes' : post._likes,
-            # 'liked' : QNAPost.getLiked(current_user.get_id(), id),
+            'liked' : QNAPost.findLike(current_user.get_id(), id),
             'views': post._views
         }
         
