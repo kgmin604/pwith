@@ -28,6 +28,7 @@ import {
   Chat,
   PwChange,
   Withdraw,
+  NameChange,
 } from "./pages/member/mypageComp.js";
 import { loginUser, clearUser } from "./store.js";
 import StudyCreate from "./pages/study/StudyCreate.js";
@@ -74,8 +75,9 @@ function App() {
   //     });
   // },[])
 
-  //db 리팩토링 임시
-  
+
+  // db 리팩토링 임시 로그인
+  /* **************************************
   useEffect(()=>{
     dispatch(
       loginUser({
@@ -85,7 +87,8 @@ function App() {
       })
     )
   },[]);
-  
+  ************************************** */
+
   function logout() {
     axios({
       method: "GET",
@@ -383,6 +386,7 @@ function App() {
           <Route path="/help" element={<Help />} />
           <Route path="/mypage" element={<Mypage />}>
             <Route path="account/changepw" element={<PwChange />} />
+            <Route path="account/changename" element={<NameChange />} />
             <Route path="account" element={<Account />} />
             <Route path="writinglist" element={<WritingList />} />
             <Route path="commentlist" element={<CommentList />} />
