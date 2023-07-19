@@ -84,7 +84,7 @@ class QNAPost() :
         if not res :
             return None
 
-        post = QNAPost(res[0],res[1], res[2], res[3], res[4], res[5], res[6], res[7])
+        post = QNAPost(res[0],res[1], res[2], res[4], res[3], res[5], res[6], res[7])
         return post
     
     @staticmethod
@@ -156,7 +156,7 @@ class QNAPost() :
     def title(self) :
         return str(self._title)
     @property
-    def cContent(self) :
+    def content(self) :
         return self._content
     @property
     def views(self) :
