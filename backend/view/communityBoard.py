@@ -8,7 +8,7 @@ from backend.model.db_mysql import conn_mysql
 from backend.controller.community_mgmt import QNAPost
 from backend.controller.study_mgmt import studyPost
 from backend.controller.replyQna_mgmt import ReplyQna
-from backend.controller import getFormattedDate, mainFormattedDate, formatDateToString
+from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString
 
 community_bp = Blueprint('community', __name__, url_prefix='/community')
 
@@ -125,7 +125,7 @@ def show():
                 post = {
                         'id' : posts[i][0],
                         'title' : posts[i][1],
-                        'writer' : posts[i][2],
+                        'writer' : findNickName(posts[i][2]),
                         'curDate' : posts[i][3],
                         # 'category' : posts[i][5],
                         'likes' : posts[i][6],
@@ -152,7 +152,7 @@ def show():
                     post = {
                         'id' : posts[i][0],
                         'title' : posts[i][1],
-                        'writer' : posts[i][2],
+                        'writer' : findNickName(posts[i][2]),
                         # 'content' : posts[i][4],
                         'curDate' : posts[i][3],
                         # 'category' : posts[i][5],
@@ -180,7 +180,7 @@ def showDetail(id) :
 
         result = {
             'title': post.getTitle(),
-            'writer' : post.getWriter(),
+            'writer' : findNickName(post.getWriter()),
             'content': post.getContent(),
             'curDate' : post.getCurDate(),
             'likes' : post.getLikes(),
@@ -200,7 +200,7 @@ def showDetail(id) :
 
             replyResult.append({
                 'id' : reply[0],
-                'writer' : reply[1],
+                'writer' : findNickName(reply[1]),
                 'content' : reply[2],
                 'date' : date
             })

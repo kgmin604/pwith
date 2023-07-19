@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from backend.controller.study_mgmt import studyPost
 from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.studyroom_mgmt import StudyRoom
-from backend.controller import getFormattedDate, mainFormattedDate, formatDateToString
+from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString
 from datetime import datetime
 import json
 
@@ -58,7 +58,7 @@ def show():
                 post = {
                     'id': row[0],
                     'title': row[1],
-                    'writer': row[2],
+                    'writer': findNickName(row[2]),
                     'curDate': row[3],
                     'likes': row[5],
                     'views': row[6]
@@ -95,7 +95,7 @@ def show():
                     post = {
                         'id' : posts[i][0],
                         'title' : posts[i][1],
-                        'writer' : posts[i][2],
+                        'writer' : findNickName(posts[i][2]),
                         'curDate' : posts[i][3],
                         'likes' : posts[i][5],
                         'views' : posts[i][6]
@@ -162,7 +162,7 @@ def showDetail(id) :
         result = {
             'isApplied' : isApplied,
             'title': post.getTitle(),
-            'writer' : post.getWriter(),
+            'writer' : findNickName(post.getWriter()),
             'content': post.getContent(),
             'curDate' : postDate,
             'likes' : post.getLikes(),
@@ -187,7 +187,7 @@ def showDetail(id) :
 
             replyResult.append({
                 'id' : reply[0],
-                'writer' : reply[1],
+                'writer' : findNickName(reply[1]),
                 'content' : reply[2],
                 'date' : date
             })

@@ -65,18 +65,4 @@ def rollback(sql) :
     mysql_db.close()
 
 
-def getFormattedDate(curDate):      # 날짜 포맷 상세시간까지
-    date_object = datetime.strptime(curDate, "%Y-%m-%d %H:%M:%S")
-    formatted_datetime = date_object.strftime("%Y-%m-%d %H:%M:%S")
-    return formatted_datetime
 
-def formatDateToString(date):      # datetime type to string
-    
-    return datetime.strftime(date, "%Y-%m-%d %H:%M:%S")
-
-
-def mainFormattedDate(curDate):     # 날짜 포맷 월/일 만
-    if isinstance(curDate, str):        
-        curDate = datetime.strptime(curDate, "%Y-%m-%d %H:%M:%S")
-    formatted_date = curDate.strftime("%m-%d")
-    return formatted_date
