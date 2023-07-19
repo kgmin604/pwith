@@ -4,14 +4,14 @@ from datetime import datetime
 
 class QNAPost() :
     def __init__(self, id, title, writer, content, curDate, category, likes, views):
-        self.id = id
-        self.title = title
-        self.writer = writer
-        self.content = content
-        self.curDate = curDate
-        self.category = category
-        self.likes = likes
-        self.views = views
+        self._id = id
+        self._title = title
+        self._writer = writer
+        self._content = content
+        self._curDate = curDate
+        self._category = category
+        self._likes = likes
+        self._views = views
         
     @staticmethod
     def insertQNA(title, writer, curDate, content, category, likes, views):     # qna 글 생성
@@ -84,7 +84,7 @@ class QNAPost() :
         if not res :
             return None
 
-        post = QNAPost(res[0],res[1], res[2], res[3], res[4], res[5], res[6], res[7])
+        post = QNAPost(res[0],res[1], res[2], res[4], res[3], res[5], res[6], res[7])
         return post
     
     @staticmethod
@@ -152,26 +152,27 @@ class QNAPost() :
        
         return rows
     
-    def getTitle(self) :
-        return str(self.title)
-
-    def getContent(self) :
-        return str(self.content)
-
-    def getViews(self) :
-        return int(self.views)
-    
-    def getCurDate(self) :
-        return str(self.curDate)
-    
-    def getWriter(self):
-        return str(self.writer)
-    
-    def getCategory(self):
-        return int(self.category)
-    
-    def getLikes(self):
-        return int(self.likes)
+    @property
+    def title(self) :
+        return str(self._title)
+    @property
+    def content(self) :
+        return self._content
+    @property
+    def views(self) :
+        return self._views
+    @property
+    def curDate(self) :
+        return self._curDate
+    @property
+    def writer(self):
+        return self._writer
+    @property
+    def category(self):
+        return self._category
+    @property
+    def likes(self):
+        return self._likes
     
    # @staticmethod
    # def getLiked(memId, postId):

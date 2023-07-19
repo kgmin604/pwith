@@ -179,13 +179,13 @@ def showDetail(id) :
         viewresult = QNAPost.updateViews(id)
 
         result = {
-            'title': post.getTitle(),
-            'writer' : findNickName(post.getWriter()),
-            'content': post.getContent(),
-            'curDate' : post.getCurDate(),
-            'likes' : post.getLikes(),
-            # 'liked' : QNAPost.getLiked(current_user.get_id(), id),
-            'views': post.getViews()
+            'title': post._title,
+            'writer' : findNickName(post._writer),
+            'content': post._content,
+            'curDate' : getFormattedDate(formatDateToString(post._curDate)),
+            'likes' : post._likes,
+            'liked' : QNAPost.findLike(current_user.get_id(), id),
+            'views': post._views
         }
         
         # toFront['curDate'] = QNAPost.getFormattedDate(toFront['curDate'])
@@ -329,7 +329,7 @@ def like(id):
         
         
     if request.method == 'GET':
-        likes = post.getLikes()
+        likes = post._likes
         liked = QNAPost.findLike(memId, id)
         return jsonify({
             'likes' : likes,
