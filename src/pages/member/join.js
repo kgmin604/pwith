@@ -27,7 +27,7 @@ function Join() {
     'joinIdRe': false,
     'joinPw': false,
     'joinPwChk' : false,
-    'joinName' : false,
+    'joinName' : true,  // API 연결 후 수정 필요
     'joinEmail' : true    // 수정 필요 - 이메일 인증
   })
   let [poseMsg,setPostMsg] = useState('');

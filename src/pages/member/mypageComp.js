@@ -382,8 +382,7 @@ function Chat(){
             url: "/mypage/chat"
           })
         .then(function (response) {
-            const updatedChatList = response.data.filter(item => item.oppId !== user.id); // 임시 예외처리
-            setChatList(updatedChatList); // chatList는 딕셔너리 리스트
+            setChatList(response.data); // chatList는 딕셔너리 리스트
         })
         .catch(function (error) {
               console.log(error);
