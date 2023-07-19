@@ -96,41 +96,44 @@ class QNAPost() :
         return done
     
     @staticmethod
-    def toggleLike(memId, postId):      # toggle like
-        sql = f"SELECT qnaLike FROM liked WHERE memberId = '{int(memId)}'  AND postId = '{int(postId)}'"
+    def findLike(memId, postId):
+        sql = f"select id from qnaLike where memberId = '{int(memId)}' and qnaId = '{int(postId)}' "
+        
+        rows = selectOne(sql)
+        
+        if rows is None:
+            return False    # 좋아요 없는 상태
+        else:
+            return True     # 좋아요 있는 상태
     
-        liked = selectOne(sql)
+    @staticmethod
+    def Like(memId, postId):      # toggle like
+        
+        liked = QNAPost.findLike(memId, postId)
+        
+        if liked is False:
+            # insert qnaLike
+            sql = f"insert into qnaLike(memberId, qnaId) values ('{(memId)}', '{(postId)}')"
+            done = commit(sql)
 
-        if liked is None:
-            sql = f"INSERT INTO qnaLike (memberId, postId, liked) VALUES ('{int(memId)}', '{int(postId)}')"
-            likeType = 0
+            QNAPost.updateLikes(liked, postId)
+           
+        else:
+            # delete qnaLike
+            sql = f"delete from qnaLike where memberId = '{(memId)}' and qnaId = '{(postId)}'"
+            done = commit(sql)
+
+            QNAPost.updateLikes(liked, postId)
+            
+    @staticmethod
+    def updateLikes(liked, postId):
+        if liked is False:
+            sql = f"update qna set likes = likes +1 where id = '{str(postId)}'"
             done = commit(sql)
         else:
-            liked_value = liked[0]
-            if liked_value == True:
-                sql = f"UPDATE qnaLike SET qnaLike = False WHERE memberId = '{int(memId)}' AND postId = '{int(postId)}'"
-                likeType = 1
-                print(likeType)
-            else:
-                sql = f"UPDATE qnaLike SET qnaLike = True WHERE memberId = '{int(memId)}' AND postId = '{int(postId)}'"
-                likeType = 0
-                print(likeType)
-                
-            done = commit(sql)
-
-        QNAPost.updateLikes(postId, likeType)
-        
-        
-    @staticmethod
-    def updateLikes(postId, likeType):      # 게시글에 실제 좋아요 수 반영
-        if likeType == 1:
             sql = f"UPDATE qna SET likes = likes - 1 WHERE id = '{str(postId)}'"
-        elif likeType == 0:
-            sql = f"UPDATE qna SET likes = likes + 1 WHERE id = '{str(postId)}'"
-        
-        done = commit(sql)
-        return done
-        
+            update_done = commit(sql)
+             
     @staticmethod
     def pagenation(page, per_page):     # 게시글 10개씩 페이지네이션 하는 함수
         offset = (page - 1) * per_page  # 페이지의 시작 위치 계산
