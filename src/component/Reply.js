@@ -3,8 +3,8 @@ import {useSelector } from "react-redux";
 import axios from "axios";
 import { Form, ListGroup } from "react-bootstrap";
 
-import comment from "../assets/img/comment.png"
 import moreImg from "../assets/img/more.png"
+import defaultUserImage from "../assets/img/default_user.png"
 
 function Reply(props) {
     const { reply, id, item, setReply, replyNum, setReplyNum,baseUrl} = props;
@@ -65,8 +65,9 @@ function Reply(props) {
     }
 
     return <div key={item.id}>{/* 댓글하나 */}
-        <div className='align-row'>
-            <img img src={comment} className='comment' />
+        <div className='align-row' style={{justifyContent:"center",alignItems:"center"}}>
+            <img src={defaultUserImage} className='comment' style={{width:'45px',height:'45px'}} />
+            {/* <img src={item.image} className='comment' style={{width:'45px',height:'45px'}}/> */}
             <span style={{ width: '5px' }}></span>
             <div className='align-side'>
                 <div style={{ textAlign: 'start' }}>
