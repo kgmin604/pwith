@@ -29,7 +29,6 @@ function CommunityQna(props) {
             }
         })
             .then(function (response) {
-                console.log(response.data);
                 setPostList(response.data);
                 setTotalPage(response.data.num);
 
@@ -47,7 +46,6 @@ function CommunityQna(props) {
                 }
             })
             .catch(function (error) {
-                console.log(error);
             });
     }, [selectPage]);
 

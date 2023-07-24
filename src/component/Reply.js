@@ -18,7 +18,6 @@ function Reply(props) {
     };
     const handleUpdateSubmit = (event, replyId) => {
         event.preventDefault();
-        console.log(updateInput);
         updateComment(replyId, updateInput);
     };
 
@@ -30,13 +29,14 @@ function Reply(props) {
             }
         })
             .then(function (response) {
-                const filteredReply = reply.filter(reply => reply.id !== id);
+                const filteredReply = reply.filter(reply => reply.id !== replyId);
                 setReply(filteredReply);
                 setReplyNum(replyNum - 1);
+                console.log('댓글삭제')
                 alert("댓글 삭제 성공");
             })
             .catch(function (error) {
-                console.log(error);
+                console.log(error)
             })
             .then(function () {
                 // always executed
@@ -49,7 +49,6 @@ function Reply(props) {
             content: `${content}`
         })
             .then(function (response) {
-                console.log(response);
                 const updatedReply = reply.map(reply => {
                     if (reply.id === replyId) {
                         reply.content = `${content}`;
@@ -58,7 +57,6 @@ function Reply(props) {
                     return reply;
                 });
                 setReply(updatedReply);
-                console.log(reply);
                 alert("댓글 수정 성공");
                 setUpdate(false);
             }).catch(function (error) {
@@ -66,14 +64,14 @@ function Reply(props) {
             })
     }
 
-    return <div key={item.commentId}>{/* 댓글하나 */}
+    return <div key={item.id}>{/* 댓글하나 */}
         <div className='align-row'>
             <img img src={comment} className='comment' />
             <span style={{ width: '5px' }}></span>
             <div className='align-side'>
                 <div style={{ textAlign: 'start' }}>
                     <div style={{ fontSize: '13px' }}>{item.writer}</div>
-                    {update !== false ? <><Form onSubmit={(event) => handleUpdateSubmit(event, item.commentId)} className='align-side' tyle={{ width: '150%' }}>
+                    {update !== false ? <><Form onSubmit={(event) => handleUpdateSubmit(event, item.id)} className='align-side' tyle={{ width: '150%' }}>
                         <Form.Control
                             className="me-auto"
                             value={updateInput}
@@ -85,7 +83,7 @@ function Reply(props) {
                     {user.id === item.writer && <img src={moreImg} className="more" onClick={() => setMore(!more)} />}
                     <div>
                         {more && <ListGroup>
-                            <ListGroup.Item action onClick={() => { setUpdate(true); setMore(false) }}>수정</ListGroup.Item>
+                            <ListGroup.Item action onClick={() => {setUpdate(true); setMore(false) }}>수정</ListGroup.Item>
                             <ListGroup.Item action onClick={() => deleteComment(item.id)}>삭제</ListGroup.Item>
                         </ListGroup>}
                     </div>
