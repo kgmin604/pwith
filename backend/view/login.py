@@ -53,7 +53,7 @@ def login() :
             # print('wrong id')
             return res
 
-        hashed_password = mem.getPassword()
+        hashed_password = mem._password
         isVerified = verifyPassword(memPw, hashed_password)
 
         if (isVerified is False) :
@@ -64,9 +64,9 @@ def login() :
         login_user(mem)
         
         res['code'] = 401
-        res['id'] = mem.getMemberId()
-        res['name'] = mem.getNickname()
-        res['email'] = mem.getEmail()
+        res['id'] = mem._memId
+        res['name'] = mem._nickname
+        res['email'] = mem._email
 
         print('로그인 성공')
         return res

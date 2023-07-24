@@ -6,14 +6,14 @@ from flask import Flask, jsonify
 class studyPost() :
     
     def __init__(self, id, title, writer, curDate, content, likes, views, roomId):
-        self.id = id
-        self.title = title
-        self.writer = writer
-        self.curDate = curDate
-        self.content = content
-        self.likes = likes
-        self.views = views
-        self.roomId = roomId
+        self._id = id
+        self._title = title
+        self._writer = writer
+        self._curDate = curDate
+        self._content = content
+        self._likes = likes
+        self._views = views
+        self._roomId = roomId
 
     @staticmethod
     def insertStudy(title, writer, curDate, content, likes, views, roomId):     #스터디 글 생성
@@ -122,41 +122,44 @@ class studyPost() :
         return done
     
     @staticmethod
-    def toggleLike(memId, postId):      # toggle like
-        sql = f"SELECT liked FROM studyLike WHERE memberId = '{int(memId)}'  AND postId = '{int(postId)}'"
+    def findLike(memId, postId):
+        sql = f"select id from studyLike where memberId = '{int(memId)}' and studyId = '{int(postId)}' "
+        
+        rows = selectOne(sql)
+        
+        if rows is None:
+            return False    # 좋아요 없는 상태
+        else:
+            return True     # 좋아요 있는 상태
     
-        liked = selectOne(sql)
+    @staticmethod
+    def Like(memId, postId):      # toggle like
+        
+        liked = studyPost.findLike(memId, postId)
+        
+        if liked is False:
+            # insert studyLike
+            sql = f"insert into studyLike(memberId, studyId) values ('{(memId)}', '{(postId)}')"
+            done = commit(sql)
 
-        if liked is None:
-            sql = f"INSERT INTO studyLike (memberId, postId, liked) VALUES ('{int(memId)}', '{int(postId)}')"
-            likeType = 0
+            studyPost.updateLikes(liked, postId)
+           
+        else:
+            # delete studyLike
+            sql = f"delete from studyLike where memberId = '{(memId)}' and studyId = '{(postId)}'"
+            done = commit(sql)
+
+            studyPost.updateLikes(liked, postId)
+            
+    @staticmethod
+    def updateLikes(liked, postId):
+        if liked is False:
+            sql = f"update study set likes = likes +1 where id = '{str(postId)}'"
             done = commit(sql)
         else:
-            liked_value = liked[0]
-            if liked_value == True:
-                sql = "UPDATE liked SET studyLike = False WHERE memberId = '{int(memId)}' AND postId = '{int(postId)}'"
-                likeType = 1
-                print(likeType)
-            else:
-                sql = "UPDATE liked SET studyLike = True WHERE memberId = '{int(memId)}' AND postId = '{int(postId)}'"
-                likeType = 0
-                print(likeType)
-                
-            done = commit(sql)
-
-        studyPost.updateLikes(postId, likeType)
-        
-        
-    @staticmethod
-    def updateLikes(postId, likeType):      # 게시글에 실제 좋아요 수 반영
-        if likeType == 1:
             sql = f"UPDATE study SET likes = likes - 1 WHERE id = '{str(postId)}'"
-        elif likeType == 0:
-            sql = f"UPDATE study SET likes = likes + 1 WHERE id = '{str(postId)}'"
-        
-        done = commit(sql)
-        return done
-        
+            update_done = commit(sql)
+                  
     def getNStudy(num):     # study 게시글 일부만 가져오기
         sql = f"select id, title from study ORDER BY curDate DESC LIMIT {int(num)} "
       
@@ -188,24 +191,29 @@ class studyPost() :
         
         return int(joinP[0])
     
+    @property
+    def title(self) :
+        return self.__title
 
-    def getTitle(self) :
-        return str(self.title)
+    @property
+    def content(self) :
+        return self.__content
 
-    def getContent(self) :
-        return str(self.content)
-
-    def getCurDate(self) :
-        return str(self.curDate)
+    @property
+    def curDate(self) :
+        return self.__curDate
     
-    def getWriter(self):
-        return str(self.writer)
+    @property
+    def writer(self):
+        return self.__writer
     
-    def getLikes(self):
-        return int(self.likes)
+    @property
+    def likes(self):
+        return self.__likes
     
-    def getViews(self):
-        return int(self.views)
+    @property
+    def views(self):
+        return self.__views
     
     # def getLiked(memId, postId):      # 좋아요 여부 받아오기
     #    sql = f"SELECT liked from liked where memberId = '{str(memId)}' and postId = '{str(postId)}'"

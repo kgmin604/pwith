@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from backend.controller.study_mgmt import studyPost
 from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.studyroom_mgmt import StudyRoom
-from backend.controller import getFormattedDate, mainFormattedDate, formatDateToString
+from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString
 from datetime import datetime
 import json
 
@@ -58,7 +58,7 @@ def show():
                 post = {
                     'id': row[0],
                     'title': row[1],
-                    'writer': row[2],
+                    'writer': findNickName(row[2]),
                     'curDate': row[3],
                     'likes': row[5],
                     'views': row[6]
@@ -95,7 +95,7 @@ def show():
                     post = {
                         'id' : posts[i][0],
                         'title' : posts[i][1],
-                        'writer' : posts[i][2],
+                        'writer' : findNickName(posts[i][2]),
                         'curDate' : posts[i][3],
                         'likes' : posts[i][5],
                         'views' : posts[i][6]
@@ -141,7 +141,7 @@ def showDetail(id) :
 
         post = studyPost.findById(id)
 
-        postDate = getFormattedDate(post.getCurDate())
+        postDate = getFormattedDate(formatDateToString(post._curDate))
         
         roomId= studyPost.findRoomId(id) #roomName 조회위해서 미리 변수로 리턴받음
 
@@ -155,19 +155,19 @@ def showDetail(id) :
 
         liked = 0
         try : # 익명의 경우
-            liked = studyPost.getLiked(current_user.get_id(), id)
+            liked = studyPost.findLike(current_user.get_id(), id)
         except Exception as ex :
             liked = False
 
         result = {
             'isApplied' : isApplied,
-            'title': post.getTitle(),
-            'writer' : post.getWriter(),
-            'content': post.getContent(),
+            'title': post._title,
+            'writer' : findNickName(post._writer),
+            'content': post._content,
             'curDate' : postDate,
-            'likes' : post.getLikes(),
+            'likes' : post._likes,
             'liked' : liked,
-            'views': post.getViews(),
+            'views': post._views,
             'roomId' : roomId,
             'roomTitle' : studyPost.getRoomName(roomId),
             'totalP': studyPost.getTotalP(roomId),
@@ -187,7 +187,7 @@ def showDetail(id) :
 
             replyResult.append({
                 'id' : reply[0],
-                'writer' : reply[1],
+                'writer' : findNickName(reply[1]),
                 'content' : reply[2],
                 'date' : date
             })
@@ -321,16 +321,18 @@ def write():
 @study_bp.route('/<int:id>/like', methods=['GET', 'POST'])
 def like(id):
     memId = current_user.get_id()
+    post = studyPost.findById(id)
+    
     if request.method=='POST':
         postId = request.get_json()['postId']
         
         print(memId, postId)
-        studyPost.toggleLike(memId, postId)
-        print("liked")
+        studyPost.Like(memId, id)
+     
         
     if request.method == 'GET':
-        likes = studyPost.getLikes(id)
-        liked = studyPost.getLiked(memId, id)
+        likes = post._likes
+        liked = studyPost.findLike(memId, id)
         return jsonify({
             'likes' : likes,
             'liked' : liked

@@ -6,30 +6,34 @@ from backend.controller import selectOne
 class Member(UserMixin):
 
     def __init__(self, id, memId, pw, nickname, email, image, isAdmin):
-        self.id = id
-        self.memId = memId
-        self.password = pw
-        self.nickname = nickname
-        self.email = email
-        self.image = image
-        self.isAdmin = isAdmin
+        self._id = id
+        self._memId = memId
+        self._password = pw
+        self._nickname = nickname
+        self._email = email
+        self._image = image
+        self._isAdmin = isAdmin
 
     # ⛔ 정윤아 get_id()는 오버라이드한 거라 property 접근법으로 수정할 때 안 해도 돼 ~! ⛔
 
     def get_id(self): # UserMixin's get_id() override
-        return str(self.id)
+        return str(self._id)
 
-    def getMemberId(self):
-        return self.memId
+    @property
+    def memberId(self):
+        return self._memId
 
-    def getNickname(self):
-        return str(self.nickname)
+    @property
+    def nickname(self):
+        return str(self._nickname)
 
-    def getEmail(self):
-        return str(self.email)
+    @property
+    def email(self):
+        return str(self._email)
     
-    def getPassword(self):
-        return self.password
+    @property
+    def password(self):
+        return self._password
 
     @staticmethod
     def findById(id):
