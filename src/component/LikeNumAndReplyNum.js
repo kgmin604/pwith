@@ -15,25 +15,8 @@ function LikeNumAndReplyNum(props) {
             postId: id
         })
             .then(function (response) {
-                axios.get(`${baseUrl}/${id}/like`)
-                    .then((response) => {
-                        console.log(response.data)
-                        if (liked === 1) {//원래 좋아요 눌러져있음-다시 누르면 감소
-                            setLikes(likes - 1);
-                            setLiked(0);
-                        }
-                        else {
-                            setLikes(likes + 1);
-                            setLiked(1);
-                        }
-
-                        setLiked(response.data.likes);
-                        setLiked(response.data.liked);
-
-                    })
-                    .catch(function (error) {
-                        // GET 요청 실패 처리
-                    });
+                setLiked(response.data.liked)
+                setLikes(response.data.likes)
             })
             .catch(function (error) {
                 // 요청 실패 시 처리할 로직

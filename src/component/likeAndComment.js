@@ -27,7 +27,6 @@ function LikeAndComment(props) {
             setLiked(props.liked);
             setReply(props.reply);
             setReplyNum(props.reply.length);
-            console.log(props);
         }
     }, [props])
 
@@ -36,7 +35,7 @@ function LikeAndComment(props) {
             <LikeNumAndReplyNum id={id} liked={liked} setLiked={setLiked} likes={likes} setLikes={setLikes} replyNum={replyNum} baseUrl={baseUrl} />
             <hr />
             {reply.map((item) => {
-                return <Reply item={item} id={id} reply={reply} setReply={setReply} replyNum={replyNum} baseUrl={baseUrl} />
+                return <Reply item={item} id={id} reply={reply} setReply={setReply} replyNum={replyNum} setReplyNum={setReplyNum} baseUrl={baseUrl} />
             })}
             <WriteReplyForm id={id} reply={reply} setReply={setReply} replyNum={replyNum} setReplyNum={setReplyNum} baseUrl={baseUrl} />
         </div>

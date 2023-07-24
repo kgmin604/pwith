@@ -23,7 +23,7 @@ function QnaPost(props) {
             .then((response) => {
                 setPost(response.data.post);
                 setReply(response.data.reply);
-                console.log(response.data);
+                console.log(response.data)
             })
             .catch();
     }, []);
