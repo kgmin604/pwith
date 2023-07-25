@@ -31,6 +31,7 @@ function Account(){
         if (cropper) {
             setCroppedImage(cropper.getCroppedCanvas().toDataURL());
             setIsCrop(false);
+            console.log(croppedImage);
         }
     };
     

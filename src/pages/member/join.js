@@ -3,6 +3,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux"
 import { loginUser, clearUser } from "./../../store.js"
+import kakaoLogo from "./../../assets/img/kakao_logo.png"
+import naverLogo from "./../../assets/img/naver_logo.png"
+import googleLogo from "./../../assets/img/google_logo.png"
 
 function Join() {
 
@@ -218,7 +221,7 @@ function Join() {
 
   return (
     <>
-      <div style={{'height':'730px'}} className='round-box'>
+      <div style={{'height':'810px'}} className='round-box'>
         <div style={{'margin-bottom':'40px'}} className = "top-message">회원가입</div>
         <form method="POST">
           <div className="jointext">
@@ -261,6 +264,15 @@ function Join() {
           <div className="box-design2 mybtn" onClick={isPost}>회원가입</div>
           <div className="msgtext"> {poseMsg} </div>
         </form>
+        <div>
+          <hr style={{'width':'90%', 'margin':'15px auto'}}></hr>
+          <span className="small-msg-center">소셜 계정으로 가입하기</span>
+          <div className="social-logo-list">
+            <img className="social-logo" src={kakaoLogo}></img>
+            <img className="social-logo" src={naverLogo}></img>
+            <img className="social-logo" src={googleLogo}></img>
+          </div>
+        </div>
       </div>
     </>
   );

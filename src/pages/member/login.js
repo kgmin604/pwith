@@ -5,6 +5,9 @@ import { useState } from "react";
 import { useNavigate } from 'react-router-dom'; 
 import { useDispatch } from "react-redux"
 import { loginUser, clearUser } from "./../../store.js"
+import kakaoLogo from "./../../assets/img/kakao_logo.png"
+import naverLogo from "./../../assets/img/naver_logo.png"
+import googleLogo from "./../../assets/img/google_logo.png"
 
 function Login(){
     
@@ -61,7 +64,7 @@ function Login(){
     }
     return(
         <>
-            <div className='round-box'>
+            <div style={{'height':'510px'}} className='round-box'>
                 <div className="top-message">로그인</div>
 
                 <form method='POST'>
@@ -83,8 +86,6 @@ function Login(){
                     ></input>
                     <div className="box-design2 mybtn" onClick={checkLogin}>로그인</div>
                 </form>
-                
-                
 
                 <div style={{'width':'300px','height':'30px', 'margin':'0 auto','margin-top':'20px'}}>
                     <div 
@@ -101,6 +102,14 @@ function Login(){
                     >회원가입</div>
                 </div>
                 
+                <hr style={{'width':'90%', 'margin':'15px auto'}}></hr>
+                <span className="small-msg-center">소셜 계정으로 로그인하기</span>
+                <div className="social-logo-list">
+                  <img className="social-logo" src={kakaoLogo}></img>
+                  <img className="social-logo" src={naverLogo}></img>
+                  <img className="social-logo" src={googleLogo}></img>
+                </div>
+
             </div>
         </>
     );
