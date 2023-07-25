@@ -2,22 +2,29 @@
 
 # __name__ = "backend"
 
-from flask import Flask, redirect
+from flask import Flask, redirect, jsonify, Response
+from flask_mail import Mail
 from flask_login import LoginManager
-from backend.view import join, login, study, studyroom, mypage, communityBoard, mentoring, pwithmain, chat
-from backend.controller.member_mgmt import Member
-# from flask_cors import CORS
+import json
 
-# CORS(app)
+from backend.controller.member_mgmt import Member
+from backend.view import member, study, studyroom, mypage, communityBoard, mentoring, pwithmain, chat
+from backend import config
 
 def create_app() :
 
     app = Flask(__name__)
 
-    app.secret_key = 'cf7822958fb4032d2c973d58a88fceb6a2a6c3f02ce3167338cb2004478ecfa7'
+    app.secret_key = config.SECRET_KEY
 
-    app.register_blueprint(join.bp)
-    app.register_blueprint(login.bp)
+    app.config['MAIL_SERVER'] = config.MAIL_SERVER
+    app.config['MAIL_PORT'] = config.MAIL_PORT
+    app.config['MAIL_USERNAME'] = config.MAIL_USERNAME
+    app.config['MAIL_PASSWORD'] = config.MAIL_PASSWORD
+    app.config['MAIL_USE_TLS'] = config.MAIL_USE_TLS
+    app.config['MAIL_USE_SSL'] = config.MAIL_USE_SSL
+
+    app.register_blueprint(member.member_bp)
     app.register_blueprint(study.study_bp)
     app.register_blueprint(studyroom.studyroom_bp)
     app.register_blueprint(mypage.mypage_bp)
@@ -26,9 +33,24 @@ def create_app() :
     app.register_blueprint(pwithmain.main_bp)
     app.register_blueprint(chat.chat_bp)
 
+    @app.after_request
+    def final_return(response) :
+        response = app.response_class(
+            response = json.dumps({
+                'status' : response.json.get('status', 200),
+                'message' : response.json.get('message', '성공'),
+                'data' : response.json.get('data', response.json)
+            }),
+            status = response.json.get('status', 200),
+            mimetype='application/json'
+        )
+        return response
+
     return app
     
 app = create_app()
+
+mail = Mail(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
