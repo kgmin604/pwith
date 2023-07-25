@@ -1,4 +1,5 @@
 from backend.controller import commit, commitAndGetId, selectAll, selectOne
+import pymysql
 
 class Portfolio() :
     
@@ -10,34 +11,32 @@ class Portfolio() :
         self.__content = content
         self.__date = date
         # 끌어올리기 구현 시 ON/OFF or date 추가 - DB에도
-    
-    @property # getter 함수를 다음과 같이 정의 for 은닉
+    @property
     def writer(self) :
-        return str(self.__writer)
-
+        return self.__writer
     @property
     def brief(self) :
-        return str(self.__brief)
-
+        return self.__brief
     @property
     def subject(self) :
-        return str(self.__subject)
-
+        return self.__subject
     @property
     def image(self) :
         return self.__image
-
     @property
     def content(self) :
-        return str(self.__content)
-
+        return self.__content
 
     @staticmethod
-    def create(mentoId, mentoPic, brief, content, date, subjects) :
+    def save(mentoId, mentoPic, brief, content, date, subjects) :
 
         sql1 = f"INSERT INTO portfolio(mento, mentoPic, brief, content, curDate) VALUES ({mentoId}, '{mentoPic}', '{brief}', '{content}', '{date}')"
 
-        portfolioId = commitAndGetId(sql1)
+        try :
+            portfolioId = commitAndGetId(sql1)
+        except pymysql.err.IntegrityError as ex:
+            # print(f"SQL 예외 발생: {ex}")
+            return 0
 
         for subject in subjects :
 
@@ -48,13 +47,34 @@ class Portfolio() :
         return done
 
     @staticmethod
-    def loadAll() :
+    def findAll() : # 전체 목록 조회
 
-        sql = "SELECT * FROM portfolio"
+        sql = '''
+            SELECT m.nickname, p.mentoPic, p.brief, group_concat(subject), p.score
+            FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id
+            GROUP BY m.nickname
+            '''
 
         allP = selectAll(sql)
 
         return allP
+
+    @staticmethod
+    def searchByMento(value) : # 닉네임으로 검색
+
+        sql =  f'''
+            SELECT m.nickname, p.mentoPic, p.brief, group_concat(subject), p.score
+            FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id 
+            WHERE m.nickname LIKE '%{value}%'
+            GROUP BY m.nickname
+            '''
+
+        result = selectAll(sql)
+
+        if not result :
+            return None
+        
+        return result
 
     @staticmethod
     def findByMento(mentoId) :
@@ -93,18 +113,6 @@ class Portfolio() :
         done = commit(sql)
 
         return done
-
-    @staticmethod
-    def search(mentoId) : # 멘토 아이디로 검색
-
-        sql = f"SELECT * FROM portfolio WHERE mento LIKE '%{mentoId}%'"
-
-        result = selectAll(sql)        
-
-        if not result :
-            return None
-        
-        return result
 
     @staticmethod
     def getNmentoring() :

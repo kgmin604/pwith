@@ -10,55 +10,86 @@ from backend.controller.chat_mgmt import chat
 from backend.model.db_mysql import conn_mysql
 from datetime import datetime
 
-mento_bp = Blueprint('mento', __name__, url_prefix='/mentoring')
+mento_bp = Blueprint('mentoring', __name__, url_prefix='/mentoring')
 
-@mento_bp.route('/main', methods = ['GET', 'POST'])
-def showAll() :
-    if request.method == 'GET' :
+@mento_bp.route('', methods=['POST'])
+def writePortfolio():
+    
+    data = request.get_json()
 
-        searchValue = request.args.get('value')
+    subjects = data['subject']
+    brief = data['brief']
+    content = data['content']
+    mentoPic = data['image']
 
-        if searchValue is None : # 전체 글 출력
+    mento = current_user.get_id()
 
-            allP = Portfolio.loadAll()
-            allP = list(allP) # tuple to list for change
+    date = datetime.now()
 
-            result = []
+    done = Portfolio.save(mento, mentoPic, brief, content, date, subjects)
 
-            for i in range(len(allP)) :
-                allP[i] = list(allP[i])
+    if done == 1 :
+        return {
+            'data' : None
+        }
+    else :
+        return {
+            'status' : 400,
+            'message' : '포트폴리오 존재',
+            'data' : None
+        }
+
+
+@mento_bp.route('', methods = ['GET'])
+def listPortfolios() :
+
+    searchWord = request.args.get('search')
+
+    if searchWord is None : # 전체 글 출력
+
+        allP = Portfolio.findAll()
+
+        result = []
+
+        for p in allP :
+
+            subjects = list(map(int, p[3].split(',')))
+
+            result.append({
+                'mento' : p[0],
+                'mentoPic' : p[1],
+                'brief' : p[2],
+                'subject' : subjects,
+                'score' : p[4]
+            })
+
+        return {
+            'data' : result
+        }
+
+    else : # 검색
+
+        searchResults = Portfolio.searchByMento(searchWord)
+
+        result = []
+
+        if searchResults is not None :
+
+            for sr in searchResults :
+
+                subjects = list(map(int, sr[3].split(',')))
 
                 result.append({
-                    'writer' : allP[i][0],
-                    'subject' : json.loads(allP[i][2]),
-                    'image' : base64.b64encode(allP[i][3]).decode('utf-8'),
-                    'brief' : allP[i][4],
-                    'content' : allP[i][5]
+                    'mento' : sr[0],
+                    'mentoPic' : sr[1],
+                    'brief' : sr[2],
+                    'subject' : subjects,
+                    'score' : sr[4]
                 })
 
-            return jsonify(result)
-
-        else : # 검색
-
-            mentos = Portfolio.search(searchValue)
-
-            result = []
-
-            if mentos is None :
-                pass # 결과 없을 시 empty list
-            else :
-                for i in range(len(mentos)) :
-                    mento = {
-                        'writer' : mentos[i][0],
-                        'subject' : json.loads(mentos[i][2]),
-                        'image' : base64.b64encode(mentos[i][3]).decode('utf-8'),
-                        'brief' : mentos[i][4],
-                        'content' : mentos[i][5]
-                    }
-                    
-                    result.append(mento)
-
-            return jsonify(result)
+        return {
+            'data' : result
+        }
 
 
 @mento_bp.route('/<mentoId>', methods = ['GET'])
@@ -117,7 +148,7 @@ def showDetail(mentoId) :
             'review' : review
         })
 
-@mento_bp.route('/<mentoId>', methods = ['POST', 'PUT', 'DELETE'])
+@mento_bp.route('/<mentoId>/review', methods = ['POST', 'PUT', 'DELETE'])
 def review(mentoId) :
     if request.method == 'POST' : # 후기 작성
 
@@ -164,37 +195,7 @@ def review(mentoId) :
             'done' : done
         })
 
-@mento_bp.route('/create', methods=['GET', 'POST'])
-def writePortfolio():
-    if request.method == 'POST':
-
-        portfolioInfo = request.form
-
-        mento = current_user.get_id()
-        subjects = portfolioInfo['subject']
-        # TODO string에서 list 형식으로 받아야 함. 현재는 str
-        brief = portfolioInfo['brief']
-        content = portfolioInfo['content']
-
-        # file = request.files['image'] # TODO image 받는 형식 바뀌어야 함
-        # image = file.read()
-
-
-        # TODO dummy
-        mentoPic = "https://s3.orbi.kr/data/file/united/251cc0d1434cc0aed00afe93082bb25a.jpeg"
-
-        date = datetime.now()
-
-        try:
-            # result = Portfolio.create(writer, subject, image, brief, content)
-            result = Portfolio.create(mento, mentoPic, brief, content, date, subjects)
-        except Exception as ex:
-            print(f"예외 발생: {ex}")
-            # connection.rollback()
-            result = 0
-        return jsonify({
-            'done': result
-        })
+        
 
 @mento_bp.route('/update/<mentoId>', methods = ['GET', 'PUT'])
 def modifyPortfolio(mentoId) :
