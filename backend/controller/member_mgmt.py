@@ -6,34 +6,60 @@ from backend.controller import selectOne
 class Member(UserMixin):
 
     def __init__(self, id, memId, pw, nickname, email, image, isAdmin):
-        self._id = id
-        self._memId = memId
-        self._password = pw
-        self._nickname = nickname
-        self._email = email
-        self._image = image
-        self._isAdmin = isAdmin
-
-    # ⛔ 정윤아 get_id()는 오버라이드한 거라 property 접근법으로 수정할 때 안 해도 돼 ~! ⛔
+        self.__id = id
+        self.__memId = memId
+        self.__password = pw
+        self.__nickname = nickname
+        self.__email = email
+        self.__image = image
+        self.__isAdmin = isAdmin
 
     def get_id(self): # UserMixin's get_id() override
-        return str(self._id)
+        return str(self.__id)
 
     @property
     def memberId(self):
-        return self._memId
+        return self.__memId
 
     @property
     def nickname(self):
-        return str(self._nickname)
+        return str(self.__nickname)
 
     @property
     def email(self):
-        return str(self._email)
+        return str(self.__email)
     
     @property
     def password(self):
-        return self._password
+        return self.__password
+
+
+    @staticmethod
+    def existsByEmail(email) : # for 이메일 중복 체크
+
+        sql = f"SELECT EXISTS (SELECT id FROM member WHERE email = '{email}')"
+
+        result = selectOne(sql)[0]
+
+        return True if result == 1 else False
+
+    @staticmethod
+    def existsById(memId) : # for 아이디 중복 체크
+
+        sql = f"SELECT EXISTS (SELECT id FROM member WHERE memId = '{memId}')"
+
+        result = selectOne(sql)[0]
+
+        return True if result == 1 else False
+
+    @staticmethod
+    def existsByNickname(nickname) : # for 닉네임 중복 체크
+
+        sql = f"SELECT EXISTS (SELECT id FROM member WHERE nickname = '{nickname}')"
+
+        result = selectOne(sql)[0]
+
+        return True if result == 1 else False
 
     @staticmethod
     def findById(id):
