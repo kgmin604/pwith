@@ -86,67 +86,59 @@ def join() :
         'data' : None
     }
 
-
-
-def hashPassword(pw):
-
-    hashed_pw = bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt())
-
-    return hashed_pw.decode('utf-8')
-
-@member_bp.route('/login', methods=['GET', 'POST'])
+@member_bp.route('/login', methods=['POST'])
 def login() :
-    if request.method == 'GET' :
-        return jsonify(
-            {'status': 'success'}
-        )
-    else :
-        data = request.get_json()
 
-        memId = data['memberId']
-        memPw = data['memberPw']
-        res = {
-            'code': 0,
-            'id':'',
-            'name':'',
-            'email':''
+    data = request.get_json()
+
+    memId = data['id']
+    memPw = data['password']
+
+    member = Member.findByMemberId(memId)
+
+    if not member :
+        return {
+            'status' : 404,
+            'message' : '없는 아이디',
+            'data' : None
         }
 
-        mem = Member.findByMemberId(memId)
+    hashed_password = member.password
+    isVerified = verifyPassword(memPw, hashed_password)
 
-        if not mem :
-            res['code']=400
-            # res['message'] = '없는 아이디'
-            # print('wrong id')
-            return res
+    if isVerified == False :
+        return {
+            'status' : 400,
+            'message' : '잘못된 비밀번호',
+            'data' : None
+        }
 
-        hashed_password = mem._password
-        isVerified = verifyPassword(memPw, hashed_password)
-
-        if (isVerified is False) :
-            res['code'] = 400
-            # res['message'] = '잘못된 비밀번호'
-            return res
-
-        login_user(mem)
-        
-        res['code'] = 401
-        res['id'] = mem._memId
-        res['name'] = mem._nickname
-        res['email'] = mem._email
-
-        print('로그인 성공')
-        return res
+    login_user(member)
+    
+    return {
+        'id' : member.memId,
+        'nickname' : member.nickname
+    }
 
 @login_required
-@member_bp.route('/logout')
+@member_bp.route('/logout', methods=['GET'])
 def logout() :
-    logout_user() # True 반환
-    print('로그아웃 성공')
-    
-    return jsonify(
-        {'status':'success'}
-    )
+
+    result = logout_user()
+
+    if result == True :
+        return {
+            'data' : None
+        }
+    else :
+        return {
+            'status' : 401,
+            'message' : '로그아웃 불가'
+        }
+
+def hashPassword(pw):
+    hashed_pw = bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt())
+    return hashed_pw.decode('utf-8')
 
 def verifyPassword(pw, hashed_pw) :
     return bcrypt.checkpw(pw.encode('utf-8'), hashed_pw.encode('utf-8'))
