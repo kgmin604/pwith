@@ -28,6 +28,15 @@ class Portfolio() :
         return self.__content
 
     @staticmethod
+    def existsById(id) :
+        sql = f"SELECT EXISTS (SELECT id FROM portfolio WHERE id = {id})"
+
+        result = selectOne(sql)[0]
+        print(result)
+
+        return True if result == 1 else False
+
+    @staticmethod
     def save(mentoId, mentoPic, brief, content, date, subjects) :
 
         sql1 = f"INSERT INTO portfolio(mento, mentoPic, brief, content, curDate) VALUES ({mentoId}, '{mentoPic}', '{brief}', '{content}', '{date}')"
@@ -87,7 +96,7 @@ class Portfolio() :
 
         result = selectOne(sql)
 
-        if not result :
+        if not result[0] :
             return None
 
         return result

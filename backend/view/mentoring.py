@@ -1,18 +1,15 @@
-import json
-import base64
-import pymysql
-from flask import Flask, session, Blueprint, request, jsonify
+from flask import Blueprint, request
 from flask_login import login_required, current_user
+from datetime import datetime
+
 from backend.controller.member_mgmt import Member
 from backend.controller.mentor_mgmt import Portfolio
-from backend.controller.review_mgmt import Review
 from backend.controller.mentoringroom_mgmt import MentoringRoom
 from backend.controller.chat_mgmt import chat
-from backend.model.db_mysql import conn_mysql
-from datetime import datetime
 
 mento_bp = Blueprint('mentoring', __name__, url_prefix='/mentoring')
 
+@login_required
 @mento_bp.route('', methods=['POST'])
 def writePortfolio():
     
@@ -39,7 +36,6 @@ def writePortfolio():
             'message' : '포트폴리오 존재',
             'data' : None
         }
-
 
 @mento_bp.route('', methods = ['GET'])
 def listPortfolio() :
@@ -96,11 +92,18 @@ def listPortfolio() :
             'data' : result
         }
 
-
+@login_required
 @mento_bp.route('/<id>', methods = ['GET'])
 def showPortfolio(id) :
 
     portfolio = Portfolio.findById(id)
+    
+    if not portfolio:
+        return {
+            'status' : 400,
+            'message' : '없는 포트폴리오',
+            'data' : None
+        }
 
     result = {
         'mentoId' : portfolio[0],
@@ -130,8 +133,16 @@ def showPortfolio(id) :
     #     'review' : review
     # })
 
+@login_required
 @mento_bp.route('/<id>', methods = ['PATCH'])
 def modifyPortfolio(id) :
+
+    if Portfolio.existsById(id) == False:
+        return {
+            'status' : 400,
+            'message' : '없는 포트폴리오',
+            'data' : None
+        }
 
     data = request.get_json()
 
@@ -146,8 +157,16 @@ def modifyPortfolio(id) :
         'data' : None
     }
 
+@login_required
 @mento_bp.route('/<id>', methods = ['DELETE'])
 def deletePortfolio(id) :
+
+    if Portfolio.existsById(id) == False:
+        return {
+            'status' : 400,
+            'message' : '없는 포트폴리오',
+            'data' : None
+        }
 
     done = Portfolio.delete(id)
 
@@ -155,8 +174,16 @@ def deletePortfolio(id) :
         'data' : None
     }
 
+@login_required
 @mento_bp.route('/<id>', methods=['POST'])
 def applyMentoring(id) :
+
+    if Portfolio.existsById(id) == False:
+        return {
+            'status' : 400,
+            'message' : '없는 포트폴리오',
+            'data' : None
+        }
     
     # 1. 룸 생성
     mentiId = current_user.get_id()
