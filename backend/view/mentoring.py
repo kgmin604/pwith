@@ -20,7 +20,7 @@ def writePortfolio():
     subjects = data['subject']
     brief = data['brief']
     content = data['content']
-    mentoPic = data['image']
+    mentoPic = data['mentoPic']
 
     mento = current_user.get_id()
 
@@ -41,7 +41,7 @@ def writePortfolio():
 
 
 @mento_bp.route('', methods = ['GET'])
-def listPortfolios() :
+def listPortfolio() :
 
     searchWord = request.args.get('search')
 
@@ -53,14 +53,16 @@ def listPortfolios() :
 
         for p in allP :
 
-            subjects = list(map(int, p[3].split(',')))
+            subjects = list(map(int, p[6].split(',')))
 
             result.append({
-                'mento' : p[0],
-                'mentoPic' : p[1],
-                'brief' : p[2],
-                'subject' : subjects,
-                'score' : p[4]
+                'id' : p[0],
+                'mentoId' : p[1],
+                'mentoNick' : p[2],
+                'mentoPic' : p[3],
+                'brief' : p[4],
+                'score' : p[5],
+                'subject' : subjects
             })
 
         return {
@@ -77,14 +79,16 @@ def listPortfolios() :
 
             for sr in searchResults :
 
-                subjects = list(map(int, sr[3].split(',')))
+                subjects = list(map(int, sr[6].split(',')))
 
                 result.append({
-                    'mento' : sr[0],
-                    'mentoPic' : sr[1],
-                    'brief' : sr[2],
-                    'subject' : subjects,
-                    'score' : sr[4]
+                    'id' : sr[0],
+                    'mentoId' : sr[1],
+                    'mentoNick' : sr[2],
+                    'mentoPic' : sr[3],
+                    'brief' : sr[4],
+                    'score' : sr[5],
+                    'subject' : subjects
                 })
 
         return {
@@ -92,164 +96,133 @@ def listPortfolios() :
         }
 
 
-@mento_bp.route('/<mentoId>', methods = ['GET'])
-def showDetail(mentoId) :
-    if request.method == 'GET' :
+@mento_bp.route('/<id>', methods = ['GET'])
+def showPortfolio(id) :
+    # apply = request.args.get('apply')
 
-        apply = request.args.get('apply')
+    # if apply == 'go' : # 멘토링 신청
 
-        if apply == 'go' : # 멘토링 신청
+    #     # 1. 룸 생성
+    #     mentiId = current_user.get_id()
+    #     roomName = str(mentoId) + "와 " + str(mentiId) + "의 공부방"
 
-            # 1. 룸 생성
-            mentiId = current_user.get_id()
-            roomName = str(mentoId) + "와 " + str(mentiId) + "의 공부방"
+    #     roomId = MentoringRoom.create(roomName, mentoId, mentiId)
 
-            roomId = MentoringRoom.create(roomName, mentoId, mentiId)
+    #     # 2. 멘토링룸 쪽지로 전송
 
-            # 2. 멘토링룸 쪽지로 전송
+    #     url = "http://localhost:3000/mentoringroom/" + str(roomId)
 
-            url = "http://localhost:3000/mentoringroom/" + str(roomId)
+    #     # 3. 쪽지 전송
+    #     menticontent = url + '\n' + "다음 스터디룸으로 입장해주세요."
+    #     mentocontent = '"' + mentiId + '"님이 멘토링을 신청하셨습니다.' + '\n' + ' 수락하시겠습니까?'
+        
+    #     done = chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
+    #     done = chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
 
-            # 3. 쪽지 전송
-            menticontent = url + '\n' + "다음 스터디룸으로 입장해주세요."
-            mentocontent = '"' + mentiId + '"님이 멘토링을 신청하셨습니다.' + '\n' + ' 수락하시겠습니까?'
-            
-            done = chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
-            done = chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
-
-            return jsonify({
-                'status' : 'success' # 필없
-            })
+    #     return jsonify({
+    #         'status' : 'success' # 필없
+    #     })
 
 
-        detail = {}
+    portfolio = Portfolio.findById(id)
 
-        portfolio = Portfolio.findByMento(mentoId)
-        review_list = Review.showReview(mentoId)
-        review = []
+    result = {
+        'mentoId' : portfolio[0],
+        'mentoNick' : portfolio[1],
+        'mentoPic' : portfolio[2],
+        'brief' : portfolio[3],
+        'content' : portfolio[4],
+        'score' : portfolio[5],
+        'subject' : list(map(int, portfolio[6].split(',')))
+    }
 
-        for rev in review_list :
-            review.append({
-                'reviewId' : rev[0],
-                'menti' : rev[1],
-                'review' : rev[2]
-            })
-        # print(type(base64.b64encode(@bytes@).decode('utf-8')))
-        detail = {
-            'mento' : portfolio.writer, # @property instead getter
-            'subject' : json.loads(portfolio.subject),
-            'image' : base64.b64encode(portfolio.image).decode('utf-8'),
-            'brief' : portfolio.brief,
-            'content' : portfolio.content
-        }
+    return result
+    # review_list = Review.showReview(mentoId)
+    # review = []
 
-        return jsonify({
-            'portfolio' : detail,
-            'review' : review
-        })
+    # for rev in review_list :
+    #     review.append({
+    #         'reviewId' : rev[0],
+    #         'menti' : rev[1],
+    #         'review' : rev[2]
+    #     })
 
-@mento_bp.route('/<mentoId>/review', methods = ['POST', 'PUT', 'DELETE'])
-def review(mentoId) :
-    if request.method == 'POST' : # 후기 작성
+    # return jsonify({
+    #     'portfolio' : detail,
+    #     'review' : review
+    # })
 
-        cnt = request.get_json()['content']
 
-        writer = current_user.get_id()
+# @mento_bp.route('/<mentoId>/review', methods = ['POST', 'PUT', 'DELETE'])
+# def review(mentoId) :
+#     if request.method == 'POST' : # 후기 작성
 
-        try :
-            pk = Review.writeReview(writer, cnt, mentoId)
-        except Exception as ex:
-            print("에러 이유 : " + str(ex))
-            pk = 0
+#         cnt = request.get_json()['content']
 
-        return jsonify({
-            'reviewId' : pk # 0 is fail
-        })
+#         writer = current_user.get_id()
 
-    elif request.method == 'PUT' : # 후기 수정
+#         try :
+#             pk = Review.writeReview(writer, cnt, mentoId)
+#         except Exception as ex:
+#             print("에러 이유 : " + str(ex))
+#             pk = 0
 
-        reviewId = request.get_json()['reviewId']
-        newContent = request.get_json()['content']
+#         return jsonify({
+#             'reviewId' : pk # 0 is fail
+#         })
 
-        try :
-            done = Review.modifyReview(reviewId, newContent)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
+#     elif request.method == 'PUT' : # 후기 수정
 
-        return jsonify({
-            'done' : done
-        })
+#         reviewId = request.get_json()['reviewId']
+#         newContent = request.get_json()['content']
 
-    else : # 후기 삭제
+#         try :
+#             done = Review.modifyReview(reviewId, newContent)
+#         except Exception as ex :
+#             print("에러 이유 : " + str(ex))
+#             done = 0
 
-        reviewId = request.get_json()['reviewId']
+#         return jsonify({
+#             'done' : done
+#         })
 
-        try :
-            done = Review.removeReview(reviewId)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
+#     else : # 후기 삭제
 
-        return jsonify({
-            'done' : done
-        })
+#         reviewId = request.get_json()['reviewId']
+
+#         try :
+#             done = Review.removeReview(reviewId)
+#         except Exception as ex :
+#             print("에러 이유 : " + str(ex))
+#             done = 0
+
+#         return jsonify({
+#             'done' : done
+#         })
 
         
 
-@mento_bp.route('/update/<mentoId>', methods = ['GET', 'PUT'])
-def modifyPortfolio(mentoId) :
+@mento_bp.route('/<id>', methods = ['PATCH'])
+def modifyPortfolio(id) :
 
-    loginUser = current_user.get_id()
+    data = request.get_json()
+
+    mentoPic = data['mentoPic']
+    brief = data['brief']
+    content = data['content']
+    subjects = data['subject']
     
-    if loginUser != mentoId : # 본인의 글에 접근한 게 아닐 때
-        return jsonify({
-            'status' : 'fail'
-        })
+    Portfolio.update(id, mentoPic, brief, content, subjects)
 
-    if request.method == 'GET' : # 작성 정보 띄우기
+    return {
+        'data' : None
+    }
 
-        detail = {}
+@mento_bp.route('/<id>', methods = ['DELETE'])
+def deletePortfolio(id) :
 
-        portfolio = Portfolio.findByMento(mentoId)
+    done = Portfolio.delete(id)
 
-        detail = {
-            'subject' : json.loads(portfolio.subject),
-            'image' : portfolio.image,
-            'brief' : portfolio.brief,
-            'content' : portfolio.content
-        }
-        
-        return jsonify(detail)
-
-    else : # 'PUT'
-
-        newPort = request.form
-
-        file = request.files['image']
-        image = file.read()
-        
-        # TODO string에서 list 형식으로 받아야 함. 현재는 str
-        done = Portfolio.update(mentoId, image, newPort['brief'], newPort['content'], newPort['subject'])
-
-        return jsonify({
-            'done' : done # 성공 시 1, 실패 또는 변경 사항 없을 시 0
-        })
-
-@mento_bp.route('/delete/<mentoId>', methods = ['DELETE'])
-def deletePortfolio(mentoId) :
-    if request.method == 'DELETE' :
-        
-        loginUser = current_user.get_id()
-        
-        if loginUser != mentoId : # 본인의 글에 접근한 게 아닐 때
-            return jsonify({
-                'status' : 'fail'
-            })
-
-        done = 0
-        done = Portfolio.delete(mentoId)
-
-        return jsonify({
-            'done' : done
-        })
+    return {
+        'data' : None
+    }

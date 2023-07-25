@@ -12,17 +12,17 @@ class Portfolio() :
         self.__date = date
         # 끌어올리기 구현 시 ON/OFF or date 추가 - DB에도
     @property
-    def writer(self) :
-        return self.__writer
+    def mento(self) :
+        return self.__mento
     @property
     def brief(self) :
         return self.__brief
+    # @property
+    # def subject(self) :
+    #     return self.__subject
     @property
-    def subject(self) :
-        return self.__subject
-    @property
-    def image(self) :
-        return self.__image
+    def mentoPic(self) :
+        return self.__mentoPic
     @property
     def content(self) :
         return self.__content
@@ -50,9 +50,9 @@ class Portfolio() :
     def findAll() : # 전체 목록 조회
 
         sql = '''
-            SELECT m.nickname, p.mentoPic, p.brief, group_concat(subject), p.score
+            SELECT p.id, m.memId, m.nickname, p.mentoPic, p.brief, p.score, group_concat(subject)
             FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id
-            GROUP BY m.nickname
+            GROUP BY m.memId
             '''
 
         allP = selectAll(sql)
@@ -63,10 +63,10 @@ class Portfolio() :
     def searchByMento(value) : # 닉네임으로 검색
 
         sql =  f'''
-            SELECT m.nickname, p.mentoPic, p.brief, group_concat(subject), p.score
+            SELECT p.id, m.memId, m.nickname, p.mentoPic, p.brief, p.score, group_concat(subject)
             FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id 
             WHERE m.nickname LIKE '%{value}%'
-            GROUP BY m.nickname
+            GROUP BY m.memId
             '''
 
         result = selectAll(sql)
@@ -77,40 +77,50 @@ class Portfolio() :
         return result
 
     @staticmethod
-    def findByMento(mentoId) :
+    def findById(id) : # 상세 조회
 
-        sql = f"SELECT * FROM portfolio WHERE mento = '{mentoId}'"
+        sql = f'''
+            SELECT m.memId, m.nickname, p.mentoPic, p.brief, p.content, p.score, group_concat(subject)
+            FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id
+            WHERE p.id = {id}
+            '''
 
-        port = selectOne(sql)
+        result = selectOne(sql)
 
-        if not port :
+        if not result :
             return None
-            
-        result = Portfolio(port[0], port[1], port[2], port[3], port[4], port[5])
 
         return result
 
     @staticmethod
-    def update(mentoId, newImg, newBrf, newCnt, subjects) :
+    def update(id, newImg, newBrf, newCnt, subjects) :
 
-        sql = f"UPDATE portfolio SET mentoPic = {newImg}, brief = {newBrf}, content = {newCnt} WHERE mento = {mentoId}"
+        sql = f"UPDATE portfolio SET mentoPic = '{newImg}', brief = '{newBrf}', content = '{newCnt}' WHERE id = {id}"
 
-        portfolioId = commitAndGetId(sql)
+        commit(sql)
+
+        sql2 = f"DELETE FROM portfolioSubject WHERE portfolio = {id}"
+
+        commit(sql2)
 
         for subject in subjects :
 
-            sql2 = f"INSERT INTO portfolioSubject(portfolio, subject) VALUES({portfolioId}, {subject})"
+            sql3 = f"INSERT INTO portfolioSubject(portfolio, subject) VALUES({id}, {subject})"
 
-            done = commit(sql2)
+            done = commit(sql3)
 
         return done
 
     @staticmethod
-    def delete(mentoId) : # TODO test
+    def delete(id) :
 
-        sql = f"DELETE FROM portfolio WHERE mento = '{mentoId}'"
+        sql = f"DELETE FROM portfolio WHERE id = {id}"
 
-        done = commit(sql)
+        commit(sql)
+
+        sql2 = f"DELETE FROM portfolioSubject WHERE portfolio = {id}"
+
+        done = commit(sql2)
 
         return done
 
