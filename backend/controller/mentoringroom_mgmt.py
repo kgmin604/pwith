@@ -21,7 +21,7 @@ class MentoringRoom() :
         return str(self.__mentiId)
 
     @staticmethod
-    def create(roomName, mentoId, mentiId) :
+    def save(roomName, mentoId, mentiId) :
 
         sql = f"INSERT INTO mentoringRoom(name, mento, menti) VALUES('{roomName}', {mentoId}, {mentiId})"
 

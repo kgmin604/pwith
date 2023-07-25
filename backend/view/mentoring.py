@@ -3,6 +3,7 @@ import base64
 import pymysql
 from flask import Flask, session, Blueprint, request, jsonify
 from flask_login import login_required, current_user
+from backend.controller.member_mgmt import Member
 from backend.controller.mentor_mgmt import Portfolio
 from backend.controller.review_mgmt import Review
 from backend.controller.mentoringroom_mgmt import MentoringRoom
@@ -98,31 +99,6 @@ def listPortfolio() :
 
 @mento_bp.route('/<id>', methods = ['GET'])
 def showPortfolio(id) :
-    # apply = request.args.get('apply')
-
-    # if apply == 'go' : # 멘토링 신청
-
-    #     # 1. 룸 생성
-    #     mentiId = current_user.get_id()
-    #     roomName = str(mentoId) + "와 " + str(mentiId) + "의 공부방"
-
-    #     roomId = MentoringRoom.create(roomName, mentoId, mentiId)
-
-    #     # 2. 멘토링룸 쪽지로 전송
-
-    #     url = "http://localhost:3000/mentoringroom/" + str(roomId)
-
-    #     # 3. 쪽지 전송
-    #     menticontent = url + '\n' + "다음 스터디룸으로 입장해주세요."
-    #     mentocontent = '"' + mentiId + '"님이 멘토링을 신청하셨습니다.' + '\n' + ' 수락하시겠습니까?'
-        
-    #     done = chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
-    #     done = chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
-
-    #     return jsonify({
-    #         'status' : 'success' # 필없
-    #     })
-
 
     portfolio = Portfolio.findById(id)
 
@@ -137,6 +113,8 @@ def showPortfolio(id) :
     }
 
     return result
+
+    # 후기 관련 파트
     # review_list = Review.showReview(mentoId)
     # review = []
 
@@ -151,56 +129,6 @@ def showPortfolio(id) :
     #     'portfolio' : detail,
     #     'review' : review
     # })
-
-
-# @mento_bp.route('/<mentoId>/review', methods = ['POST', 'PUT', 'DELETE'])
-# def review(mentoId) :
-#     if request.method == 'POST' : # 후기 작성
-
-#         cnt = request.get_json()['content']
-
-#         writer = current_user.get_id()
-
-#         try :
-#             pk = Review.writeReview(writer, cnt, mentoId)
-#         except Exception as ex:
-#             print("에러 이유 : " + str(ex))
-#             pk = 0
-
-#         return jsonify({
-#             'reviewId' : pk # 0 is fail
-#         })
-
-#     elif request.method == 'PUT' : # 후기 수정
-
-#         reviewId = request.get_json()['reviewId']
-#         newContent = request.get_json()['content']
-
-#         try :
-#             done = Review.modifyReview(reviewId, newContent)
-#         except Exception as ex :
-#             print("에러 이유 : " + str(ex))
-#             done = 0
-
-#         return jsonify({
-#             'done' : done
-#         })
-
-#     else : # 후기 삭제
-
-#         reviewId = request.get_json()['reviewId']
-
-#         try :
-#             done = Review.removeReview(reviewId)
-#         except Exception as ex :
-#             print("에러 이유 : " + str(ex))
-#             done = 0
-
-#         return jsonify({
-#             'done' : done
-#         })
-
-        
 
 @mento_bp.route('/<id>', methods = ['PATCH'])
 def modifyPortfolio(id) :
@@ -226,3 +154,80 @@ def deletePortfolio(id) :
     return {
         'data' : None
     }
+
+@mento_bp.route('/<id>', methods=['POST'])
+def applyMentoring(id) :
+    
+    # 1. 룸 생성
+    mentiId = current_user.get_id()
+    mentoId = Portfolio.findMentoById(id)
+
+    mentiNick = Member.findById(mentiId).nickname
+    mentoNick = Member.findById(mentoId).nickname
+
+    roomName = f"멘토 {mentiNick}와 멘티 {mentoNick}의 공부방"
+
+    roomId = MentoringRoom.save(roomName, mentoId, mentiId)
+
+    # 2. 멘토링룸 링크 생성
+    url = "http://localhost:3000/mentoringroom/" + str(roomId)
+
+    # 3. 쪽지 전송
+    menticontent = f"{url}\n다음 스터디룸으로 입장해주세요."
+    mentocontent = f"[{mentiNick}]님이 멘토링을 신청하셨습니다.\n수락하시겠습니까?"
+    
+    done = chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
+    done = chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
+
+    return {
+        'data' : None
+    }
+
+''' 후기 관련 파트
+@mento_bp.route('/<mentoId>/review', methods = ['POST', 'PUT', 'DELETE'])
+def review(mentoId) :
+    if request.method == 'POST' : # 후기 작성
+
+        cnt = request.get_json()['content']
+
+        writer = current_user.get_id()
+
+        try :
+            pk = Review.writeReview(writer, cnt, mentoId)
+        except Exception as ex:
+            print("에러 이유 : " + str(ex))
+            pk = 0
+
+        return jsonify({
+            'reviewId' : pk # 0 is fail
+        })
+
+    elif request.method == 'PUT' : # 후기 수정
+
+        reviewId = request.get_json()['reviewId']
+        newContent = request.get_json()['content']
+
+        try :
+            done = Review.modifyReview(reviewId, newContent)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return jsonify({
+            'done' : done
+        })
+
+    else : # 후기 삭제
+
+        reviewId = request.get_json()['reviewId']
+
+        try :
+            done = Review.removeReview(reviewId)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return jsonify({
+            'done' : done
+        })
+'''

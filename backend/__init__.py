@@ -63,4 +63,8 @@ def loadUser(id) : # 로그인 되어있는지 판단하기 전 사용자 정보
 @login_manager.unauthorized_handler
 def unauthorized() : # login_required로 요청된 기능에서 로그인되어 있지 않은 경우
     # login_manager.login_view = "users.login"
-    return redirect('/')
+    return {
+        'status' : 401,
+        'message' : '로그인 필요',
+        'data' : None
+    }

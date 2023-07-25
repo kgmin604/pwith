@@ -93,6 +93,18 @@ class Portfolio() :
         return result
 
     @staticmethod
+    def findMentoById(id) :
+
+        sql = f'SELECT mento FROM portfolio WHERE id = {id}'
+
+        result = selectOne(sql)
+
+        if not result :
+            return None
+        
+        return result[0]
+
+    @staticmethod
     def update(id, newImg, newBrf, newCnt, subjects) :
 
         sql = f"UPDATE portfolio SET mentoPic = '{newImg}', brief = '{newBrf}', content = '{newCnt}' WHERE id = {id}"
