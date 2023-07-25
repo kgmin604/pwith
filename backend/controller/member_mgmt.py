@@ -18,16 +18,16 @@ class Member(UserMixin):
         return str(self.__id)
 
     @property
-    def memberId(self):
+    def memId(self):
         return self.__memId
 
     @property
     def nickname(self):
-        return str(self.__nickname)
+        return self.__nickname
 
     @property
     def email(self):
-        return str(self.__email)
+        return self.__email
     
     @property
     def password(self):
