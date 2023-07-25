@@ -39,8 +39,7 @@
     border-radius: 5px;
     width: 300px;
     height: 40px;
-    margin: 0 auto;
-    margin-top: 30px;
+    margin: 15px auto;
     border: solid 1px;
     font-family: 'TmoneyRoundWind';
     line-height: 40px;
@@ -712,5 +711,47 @@ div.social-logo-list
     height: 40px;
     margin: 0 10px;
     border-radius: 5px;
+    cursor: pointer;
+}
+
+.join-item{
+    margin: 0 auto;
+    text-align: left;
+    width: 300px;
+    height: 90px;
+}
+
+div.join-item
+.join-input{
+    width: 100%;
+    margin: 0 0;
+    display: flex;
+    justify-content: center;
+}
+
+div.join-item div.join-input
+input{
+    border-radius: 5px;
+    width: 300px;
+    height: 40px;
+    margin: 0 auto;
+    border: solid 1px;
+    border-color: #98AFCA;
+    background-color: white;
+    padding-left: 5px;
+}
+
+div.join-item div.join-input
+.auth-btn{
+    width: 55px;
+    margin-left: 5px;
+    height: 40px;
+    border-radius: 5px;
+    border-color: white;
+    background-color: #98AFCA;
+    text-align: center;
+    line-height: 40px;
+    color:white;
+    font-family: 'TmoneyRoundWind';
     cursor: pointer;
 }

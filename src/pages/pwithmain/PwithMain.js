@@ -18,7 +18,7 @@ function PwithMain(){
     let [mentorList, setMentorList] = useState(dummylist3);
     let [contentList, setContentList] = useState(dummylist2);
 
-    
+    /* 
     useEffect(()=>{
         axios({
             method: "POST",
@@ -36,6 +36,7 @@ function PwithMain(){
               console.log(error);
           });
     },[])
+    */
 
     return(
         <>
@@ -66,6 +67,7 @@ function PwithMain(){
                     <span className="posting-plus" onClick={()=>{navigate("/community/IT")}}>(+)</span></h5>
                     <ul className="posting-list">
                     {
+                        newsList === [] ? null :
                         newsList.map((a,i)=>{
                             return(
                                 <li 
@@ -83,6 +85,7 @@ function PwithMain(){
                     <span className="posting-plus" onClick={()=>{navigate("/mentoring")}}>(+)</span></h5>
                     <ul className="posting-list">
                     {
+                        mentorList === [] ? null :
                         mentorList.map((a,i)=>{
                             return(
                                 <li 

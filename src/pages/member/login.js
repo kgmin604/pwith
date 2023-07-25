@@ -28,34 +28,31 @@ function Login(){
     function postLogin() {
         axios({
           method: "POST",
-          url: "/login",
+          url: "/member/login",
           data: {
-            memberId: `${userinput['memId']}`,
-            memberPw: `${userinput['memPw']}`
+            id: `${userinput['memId']}`,
+            password: `${userinput['memPw']}`
           },
         })
           .then(function (response) {
-            console.log(response);
-            if(response.data.code===400){
-              alert("아이디 또는 비밀번호를 잘못 입력했습니다.");
-            }
-            if(response.data.code===401){
+            console.log(response.data)
+            if(response.data.status===200){
               dispatch(
                 loginUser({
-                  id: response.data.id,
-                  name: response.data.name,
-                  email: response.data.email
+                  id: response.data.data.id,
+                  name: response.data.data.nickname
                 })
               );
-              //localStorage.setItem("id", response.data.id);
-              //localStorage.setItem("name", response.data.name);
-              //localStorage.setItem("email", response.data.email);
               navigate("/");
-              //window.location.href = "/";
             }
           })
           .catch(function (error) {
-            console.log(error);
+            if(error.response.data.status==404){
+              alert("없는 아이디입니다.");
+            }
+            else if(error.response.data.status==400){
+              alert("잘못된 비밀번호입니다.");
+            }
           });
       }
     
@@ -84,7 +81,11 @@ function Login(){
                       onChange={e=>inputChange(e)}
                       onKeyDown={(e) => { if (e.key === "Enter") checkLogin(); }}
                     ></input>
-                    <div className="box-design2 mybtn" onClick={checkLogin}>로그인</div>
+                    <div 
+                      className="box-design2 mybtn" 
+                      onClick={checkLogin}
+                      style={{'margin-top':'30px'}}
+                    >로그인</div>
                 </form>
 
                 <div style={{'width':'300px','height':'30px', 'margin':'0 auto','margin-top':'20px'}}>

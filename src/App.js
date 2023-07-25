@@ -92,18 +92,10 @@ function App() {
   function logout() {
     axios({
       method: "GET",
-      url: "/logout",
-      data: {
-        requestType: "logout",
-      },
+      url: "member/logout"
     })
       .then(function (response) {
-        console.log(response);
         dispatch(clearUser());
-
-        //localStorage.removeItem("id");
-        //localStorage.removeItem("name");
-        //localStorage.removeItem("email");
         navigate("/");
       })
       .catch(function (error) {
@@ -279,7 +271,7 @@ function App() {
                 <div
                   className="mem-btn"
                   style={{ width: "70px" }}
-                  onClick={() => navigate("./login")}
+                  onClick={() => navigate("./member/login")}
                 >
                   로그인
                 </div>
@@ -290,7 +282,7 @@ function App() {
                     color: "white",
                     "background-color": "#98afca",
                   }}
-                  onClick={() => navigate("./join")}
+                  onClick={() => navigate("./member/join")}
                 >
                   회원가입
                 </div>
@@ -381,8 +373,8 @@ function App() {
           <Route path="/mentoring/main" element={<MentoringMain />} />
           <Route path="/mentoring/create" element={<MentoringCreate />} />
           <Route path="/mentoring/:id" element={<MentoringPost />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/join" element={<Join />} />
+          <Route path="member/login" element={<Login />} />
+          <Route path="member/join" element={<Join />} />
           <Route path="/help" element={<Help />} />
           <Route path="/mypage" element={<Mypage />}>
             <Route path="account/changepw" element={<PwChange />} />

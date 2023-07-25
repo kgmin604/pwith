@@ -4,19 +4,16 @@ let user = createSlice({
     name : 'user',
     initialState : {
       id: null,
-      name: null,
-      email: null
+      name: null
     },
     reducers :{
       loginUser: (state, action) => {
         state.id = action.payload.id;
         state.name = action.payload.name;
-        state.email = action.payload.email;
       },
       clearUser: (state) => {
         state.id = null;
         state.name = null;
-        state.email = null;
       }
     }
 });
