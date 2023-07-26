@@ -3,7 +3,7 @@ from datetime import datetime
 
 def getFormattedDate(curDate):      # 날짜 포맷 상세시간까지
     date_object = datetime.strptime(curDate, "%Y-%m-%d %H:%M:%S")
-    formatted_datetime = date_object.strftime("%Y-%m-%d %H:%M:%S")
+    formatted_datetime = date_object.strftime("%y-%m-%d %H:%M")
     
     return formatted_datetime
 
