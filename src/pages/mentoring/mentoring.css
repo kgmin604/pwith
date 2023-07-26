@@ -1,14 +1,111 @@
-.MentoringMain{
+.MentoringMain {
     /* font-family: "TmoneyRoundWind"; */
     text-align: center;
 }
-.MentoringCreate{
-    text-align: center;
-}
-.MentoringPost{
+
+.MentoringCreate {
     text-align: center;
 }
 
-.child{
+.MentoringPost {
+    text-align: center;
+}
+
+.child {
     margin: 5px auto;
+}
+
+.modal-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-view {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    bottom: 0;
+    overflow: hidden;
+    padding: 32px;
+    min-width: 500px;
+    width: 500px;
+    height: 700px;
+    max-height: 700px;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.modal-backdrop {
+    z-index: 1;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.scroll-box {
+    width: '100%';
+    height: 500px;
+    overflow: scroll;
+}
+
+.mento {
+    text-align: start;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 5px 0px;
+}
+
+.brief {
+    text-align: start;
+    font-size: 25px;
+    font-weight: 700;
+    margin: 5px 0px;
+}
+
+.subjectWrapper {
+    display: flex;
+    flex-direction: row;
+    margin: 5px 0px;
+}
+
+.subject {
+    margin: 5px;
+    background-color: #D0D1D9;
+    padding: 2px 4px;
+    border-radius: 5px;
+}
+
+.subject>div {
+    color: rgba(77, 78, 84, 1);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 20px;
+    letter-spacing: -0.32px;
+}
+
+.bottom {
+    padding: 15px 0px;
+}
+
+.price {
+    color: rgba(77, 78, 84, 1);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: -0.32px;
+    text-align: start;
+}
+
+.joinBtn {
+    margin-top: 20px;
 }
