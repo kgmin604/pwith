@@ -33,11 +33,11 @@ function StudyCreate() {
             url: "/study/create"
         })
             .then(function (response) {
-                if (response.data.length === 0) {
+                if (response.data.data.length === 0) {
                     alert('개설된 스터디룸이 없습니다. 스터디룸을 먼저 만들어주세요.');
                     navigate('../studyroom');
                 }
-                setRooms(response.data);
+                setRooms(response.data.data);
             })
             .catch(function (error) {
                 console.log(error);

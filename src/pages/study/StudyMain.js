@@ -25,8 +25,7 @@ function StudyMain() {
       }
     })
       .then(function (response) {
-        setRecStudy(response.data.rec);
-        console.log(response.data);
+        setRecStudy(response.data.data.rec);
       })
       .catch(function (error) {
         console.log(error);
