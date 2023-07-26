@@ -28,8 +28,8 @@ function StudyPost(props) {
             url: `/study/${id}`
         })
             .then(function (response) {
-                setPost(response.data.post);
-                setReply(response.data.reply);
+                setPost(response.data.data.post);
+                setReply(response.data.data.reply);
                 console.log(response.data)
             })
             .catch(function (error) {
@@ -82,13 +82,13 @@ function StudyPost(props) {
                 postId: `${id}`
             }
         })
-            .then(function (response) {
-                navigate(`../main`);
-                alert("글 삭제 성공");
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
+        .then(function (response) {
+            navigate(`../main`);
+            alert("글 삭제 성공");
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
     }
 
     function checkDelete() {

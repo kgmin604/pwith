@@ -723,23 +723,17 @@ function Withdraw(){
             
             axios({
                 method: "POST",
-                url: "/mypage/account/withdraw",
+                url: "/mypage/withdraw",
                 data: {
-                    pw : `${pw}`,
+                    password : `${pw}`,
                 }
             })
             .then(function (response) {
-                if(response.data.type===1){
-                    alert("탈퇴가 완료되었습니다.")
-                }
-                else if(response.data.type===0){
-                    setMsg('잘못된 비밀번호입니다.');
-                }
+                
             })
             .catch(function (error) {
                 console.log(error);
             });
-            
         }
     }
 

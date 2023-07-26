@@ -92,7 +92,7 @@ function App() {
   function logout() {
     axios({
       method: "GET",
-      url: "member/logout"
+      url: "/member/logout"
     })
       .then(function (response) {
         dispatch(clearUser());
@@ -375,7 +375,7 @@ function App() {
           <Route path="/mentoring/:id" element={<MentoringPost />} />
           <Route path="member/login" element={<Login />} />
           <Route path="member/join" element={<Join />} />
-          <Route path="/help" element={<Help />} />
+          <Route path="member/help" element={<Help />} />
           <Route path="/mypage" element={<Mypage />}>
             <Route path="account/changepw" element={<PwChange />} />
             <Route path="account/changename" element={<NameChange />} />

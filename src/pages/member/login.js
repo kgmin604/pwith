@@ -91,14 +91,14 @@ function Login(){
                 <div style={{'width':'300px','height':'30px', 'margin':'0 auto','margin-top':'20px'}}>
                     <div 
                         className='mybtn'
-                        onClick = {()=>navigate('../help')}
+                        onClick = {()=>navigate('../member/help')}
                         style={{'float':'right','margin':'5px','fontSize':'7px' }}
                         
                     >아이디 · 비밀번호 찾기</div>
                     <div style={{'float':'right','margin':'5px','fontSize':'8px'}}>|</div>
                     <div 
                         className='mybtn' 
-                        onClick = {()=>navigate('../join')}
+                        onClick = {()=>navigate('../member/join')}
                         style={{'float':'right','margin':'5px','fontSize':'7px'}}
                     >회원가입</div>
                 </div>
