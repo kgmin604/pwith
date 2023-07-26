@@ -193,27 +193,27 @@ class studyPost() :
     
     @property
     def title(self) :
-        return self.__title
+        return self._title
 
     @property
     def content(self) :
-        return self.__content
+        return self._content
 
     @property
     def curDate(self) :
-        return self.__curDate
+        return self._curDate
     
     @property
     def writer(self):
-        return self.__writer
+        return self._writer
     
     @property
     def likes(self):
-        return self.__likes
+        return self._likes
     
     @property
     def views(self):
-        return self.__views
+        return self._views
     
     # def getLiked(memId, postId):      # 좋아요 여부 받아오기
     #    sql = f"SELECT liked from liked where memberId = '{str(memId)}' and postId = '{str(postId)}'"
