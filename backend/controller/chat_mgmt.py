@@ -11,7 +11,9 @@ class chat():
         self._curDate = curDate
         
     def insertChat(sender, receiver, content, curDate):
-        sql = f"INSERT INTO chat ( sender, receiver, content, curDate ) VALUES ('{str(sender)}', '{str(receiver)}', '{str(content)}', '{str(curDate)}' )"
+
+        sql = f"INSERT INTO chat(sender, receiver, content, curDate) VALUES ({sender}, {receiver}, '{content}', '{curDate}')"
+
         done = commit(sql)
         
         return done

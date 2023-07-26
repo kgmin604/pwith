@@ -1,4 +1,5 @@
 from backend.controller import commit, commitAndGetId, selectAll, selectOne
+import pymysql
 
 class Portfolio() :
     
@@ -10,34 +11,41 @@ class Portfolio() :
         self.__content = content
         self.__date = date
         # 끌어올리기 구현 시 ON/OFF or date 추가 - DB에도
-    
-    @property # getter 함수를 다음과 같이 정의 for 은닉
-    def writer(self) :
-        return str(self.__writer)
-
+    @property
+    def mento(self) :
+        return self.__mento
     @property
     def brief(self) :
-        return str(self.__brief)
-
+        return self.__brief
+    # @property
+    # def subject(self) :
+    #     return self.__subject
     @property
-    def subject(self) :
-        return str(self.__subject)
-
-    @property
-    def image(self) :
-        return self.__image
-
+    def mentoPic(self) :
+        return self.__mentoPic
     @property
     def content(self) :
-        return str(self.__content)
-
+        return self.__content
 
     @staticmethod
-    def create(mentoId, mentoPic, brief, content, date, subjects) :
+    def existsById(id) :
+        sql = f"SELECT EXISTS (SELECT id FROM portfolio WHERE id = {id})"
+
+        result = selectOne(sql)[0]
+        print(result)
+
+        return True if result == 1 else False
+
+    @staticmethod
+    def save(mentoId, mentoPic, brief, content, date, subjects) :
 
         sql1 = f"INSERT INTO portfolio(mento, mentoPic, brief, content, curDate) VALUES ({mentoId}, '{mentoPic}', '{brief}', '{content}', '{date}')"
 
-        portfolioId = commitAndGetId(sql1)
+        try :
+            portfolioId = commitAndGetId(sql1)
+        except pymysql.err.IntegrityError as ex:
+            # print(f"SQL 예외 발생: {ex}")
+            return 0
 
         for subject in subjects :
 
@@ -48,63 +56,94 @@ class Portfolio() :
         return done
 
     @staticmethod
-    def loadAll() :
+    def findAll() : # 전체 목록 조회
 
-        sql = "SELECT * FROM portfolio"
+        sql = '''
+            SELECT p.id, m.memId, m.nickname, p.mentoPic, p.brief, p.score, group_concat(subject)
+            FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id
+            GROUP BY m.memId
+            '''
 
         allP = selectAll(sql)
 
         return allP
 
     @staticmethod
-    def findByMento(mentoId) :
+    def searchByMento(value) : # 닉네임으로 검색
 
-        sql = f"SELECT * FROM portfolio WHERE mento = '{mentoId}'"
+        sql =  f'''
+            SELECT p.id, m.memId, m.nickname, p.mentoPic, p.brief, p.score, group_concat(subject)
+            FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id 
+            WHERE m.nickname LIKE '%{value}%'
+            GROUP BY m.memId
+            '''
 
-        port = selectOne(sql)
-
-        if not port :
-            return None
-            
-        result = Portfolio(port[0], port[1], port[2], port[3], port[4], port[5])
-
-        return result
-
-    @staticmethod
-    def update(mentoId, newImg, newBrf, newCnt, subjects) :
-
-        sql = f"UPDATE portfolio SET mentoPic = {newImg}, brief = {newBrf}, content = {newCnt} WHERE mento = {mentoId}"
-
-        portfolioId = commitAndGetId(sql)
-
-        for subject in subjects :
-
-            sql2 = f"INSERT INTO portfolioSubject(portfolio, subject) VALUES({portfolioId}, {subject})"
-
-            done = commit(sql2)
-
-        return done
-
-    @staticmethod
-    def delete(mentoId) : # TODO test
-
-        sql = f"DELETE FROM portfolio WHERE mento = '{mentoId}'"
-
-        done = commit(sql)
-
-        return done
-
-    @staticmethod
-    def search(mentoId) : # 멘토 아이디로 검색
-
-        sql = f"SELECT * FROM portfolio WHERE mento LIKE '%{mentoId}%'"
-
-        result = selectAll(sql)        
+        result = selectAll(sql)
 
         if not result :
             return None
         
         return result
+
+    @staticmethod
+    def findById(id) : # 상세 조회
+
+        sql = f'''
+            SELECT m.memId, m.nickname, p.mentoPic, p.brief, p.content, p.score, group_concat(subject)
+            FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id
+            WHERE p.id = {id}
+            '''
+
+        result = selectOne(sql)
+
+        if not result[0] :
+            return None
+
+        return result
+
+    @staticmethod
+    def findMentoById(id) :
+
+        sql = f'SELECT mento FROM portfolio WHERE id = {id}'
+
+        result = selectOne(sql)
+
+        if not result :
+            return None
+        
+        return result[0]
+
+    @staticmethod
+    def update(id, newImg, newBrf, newCnt, subjects) :
+
+        sql = f"UPDATE portfolio SET mentoPic = '{newImg}', brief = '{newBrf}', content = '{newCnt}' WHERE id = {id}"
+
+        commit(sql)
+
+        sql2 = f"DELETE FROM portfolioSubject WHERE portfolio = {id}"
+
+        commit(sql2)
+
+        for subject in subjects :
+
+            sql3 = f"INSERT INTO portfolioSubject(portfolio, subject) VALUES({id}, {subject})"
+
+            done = commit(sql3)
+
+        return done
+
+    @staticmethod
+    def delete(id) :
+
+        sql = f"DELETE FROM portfolio WHERE id = {id}"
+
+        commit(sql)
+
+        sql2 = f"DELETE FROM portfolioSubject WHERE portfolio = {id}"
+
+        done = commit(sql2)
+
+        return done
 
     @staticmethod
     def getNmentoring() :

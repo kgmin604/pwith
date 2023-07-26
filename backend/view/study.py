@@ -28,11 +28,67 @@ def show():
                     'title' : study[1]
                 }
                 recStudy.append(rec)
-            return jsonify({
+            return {
                 'rec' : recStudy # by. 경민
-            })
+            }
                 
+        posts = []
+        result = []
+        page = 0
 
+        page = request.args.get('page')
+
+        # 전체 글 출력
+        posts = studyPost.getStudy()
+        requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
+
+        for i in range(int(page)):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
+            studyList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
+
+        for row in studyList:
+            post = {
+                'id': row[0],
+                'title': row[1],
+                'writer': findNickName(row[2]),
+                'curDate': row[3],
+                'likes': row[5],
+                'views': row[6]
+            }
+            post['curDate'] = mainFormattedDate(row[3])
+
+            result.append(post)
+
+        return{
+            'posts': result,
+            'num': requiredPage,
+            #'rec' : recStudy
+        }
+
+            
+@study_bp.route('/search', methods=['GET'])   # 글 검색
+def search():
+    if request.method == 'GET':
+        # 추천 스터디 3개
+        recommend = request.args.get('recommend')
+        print("recommend")
+        print(recommend)
+        print("recommend")
+        if recommend is not None:
+            print("recommend")
+            recStudy=[]
+            recommendStudy = studyPost.getNStudy(3)
+            for study in recommendStudy:
+                rec = {
+                    'id' : study[0],
+                    'title' : study[1]
+                }
+                recStudy.append(rec)
+            return {
+               'rec' : recStudy # by. 경민
+            }
+                
+        posts = []
+        
         searchType = request.args.get('type')
         searchValue = request.args.get('value')
         
@@ -40,75 +96,49 @@ def show():
         page = 0
 
         page = request.args.get('page')
+        print(page)
 
         if not page :
-            return jsonify(result)
+            page = 0
+        #     return jsonify(result)
 
         page = int(page)
 
+        if int(searchType) == 0: # 제목으로 검색
+            posts = studyPost.findByTitle(searchValue)
+        else: # 글쓴이로 검색
+            posts = studyPost.findByWriter(searchValue)
+            
+        print("posts")
 
-        if (searchType is None) or (searchValue is None) : # 전체 글 출력
-            posts = studyPost.getStudy()
-            requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
+        result = []
+        print(posts)
 
+        if posts is None :
+            pass # 결과 없을 시 empty list
+        else :
             for i in range(page):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
+                requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
                 studyList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
-
-            for row in studyList:
+                
+            for i in range(len(posts)) :
                 post = {
-                    'id': row[0],
-                    'title': row[1],
-                    'writer': findNickName(row[2]),
-                    'curDate': row[3],
-                    'likes': row[5],
-                    'views': row[6]
+                    'id' : posts[i][0],
+                    'title' : posts[i][1],
+                    'writer' : findNickName(posts[i][2]),
+                    'curDate' : posts[i][3],
+                    'likes' : posts[i][5],
+                    'views' : posts[i][6]
                 }
-                post['curDate'] = mainFormattedDate(row[3])
-
+                post['curDate'] = mainFormattedDate(formatDateToString(posts[i][3]))
+                
                 result.append(post)
 
-            return jsonify({
-                'posts': result,
-                'num': requiredPage,
-                #'rec' : recStudy
-            })
-
-
-        else : # 글 검색
-            posts = []
-
-            if int(searchType) == 0: # 제목으로 검색
-                posts = studyPost.findByTitle(searchValue, 0)
-            else: # 글쓴이로 검색
-                posts = studyPost.findByWriter(searchValue, 0)
-
-            result = []
-
-            if posts is None :
-                pass # 결과 없을 시 empty list
-            else :
-                for i in range(page):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
-                    requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
-                    studyList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
-                    
-                for i in range(len(posts)) :
-                    post = {
-                        'id' : posts[i][0],
-                        'title' : posts[i][1],
-                        'writer' : findNickName(posts[i][2]),
-                        'curDate' : posts[i][3],
-                        'likes' : posts[i][5],
-                        'views' : posts[i][6]
-                    }
-                    post['curDate'] = mainFormattedDate(posts[i][5])
-                    
-                    result.append(post)
-
-            return jsonify({
-                'posts' : result,
-                'num': page
-                #'rec' : recStudy
-                })
+        return {
+            'posts' : result,
+            'num': requiredPage,
+            # 'rec' : recStudy
+            }
             
 
 @study_bp.route('/<int:id>', methods=['GET'])
@@ -141,7 +171,7 @@ def showDetail(id) :
 
         post = studyPost.findById(id)
 
-        postDate = getFormattedDate(formatDateToString(post._curDate))
+        postDate = getFormattedDate(formatDateToString(post.curDate))
         
         roomId= studyPost.findRoomId(id) #roomName 조회위해서 미리 변수로 리턴받음
 
@@ -159,15 +189,18 @@ def showDetail(id) :
         except Exception as ex :
             liked = False
 
+        print("curDAte : ")
+        print(post.curDate)
+        print(getFormattedDate(formatDateToString(post.curDate)))
         result = {
             'isApplied' : isApplied,
-            'title': post._title,
-            'writer' : findNickName(post._writer),
-            'content': post._content,
-            'curDate' : postDate,
-            'likes' : post._likes,
+            'title': post.title,
+            'writer' : findNickName(post.writer),
+            'content': post.content,
+            'curDate' : getFormattedDate(formatDateToString(post.curDate)),
+            'likes' : post.likes,
             'liked' : liked,
-            'views': post._views,
+            'views': post.views,
             'roomId' : roomId,
             'roomTitle' : studyPost.getRoomName(roomId),
             'totalP': studyPost.getTotalP(roomId),
@@ -189,13 +222,13 @@ def showDetail(id) :
                 'id' : reply[0],
                 'writer' : findNickName(reply[1]),
                 'content' : reply[2],
-                'date' : date
+                'date' : getFormattedDate(date)
             })
 
-        return jsonify({
+        return {
             'post' : result,
             'reply' : replyResult
-        })
+        }
         
 @study_bp.route('/update/<int:id>', methods = ['PUT'])
 def updatePost(id):
@@ -209,11 +242,11 @@ def updatePost(id):
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return jsonify({
+        return {
             'done' : done
-        })
+        }
          
-@study_bp.route('/delete/<int:id>', methods = ['POST', 'PUT', 'DELETE'])
+@study_bp.route('/delete/<int:id>', methods = ['DELETE'])
 def deletePost(id):
     if request.method == 'DELETE':      # 게시글 삭제
         id = request.get_json()['postId']
@@ -224,9 +257,9 @@ def deletePost(id):
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return jsonify({
+        return {
             'done' : done
-        })
+        }
 
 
 @study_bp.route('/<int:studyId>', methods = ['POST', 'PUT', 'DELETE'])
@@ -245,10 +278,10 @@ def reply(studyId) :
             print("에러 이유 : " + str(ex))
             replyId = 0
 
-        return jsonify({
+        return {
             'id' : replyId, # 0 is fail
             'date' : formatDateToString(date)
-        })
+        }
 
     elif request.method == 'PUT' : # 댓글 수정
 
@@ -262,9 +295,9 @@ def reply(studyId) :
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return jsonify({
+        return {
             'done' : done
-        })
+        }
 
     else : # 댓글 삭제
 
@@ -276,9 +309,9 @@ def reply(studyId) :
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return jsonify({
+        return {
             'done' : done
-        })
+        }
 
 @login_required
 @study_bp.route("/create", methods=['GET', 'POST'])
@@ -296,7 +329,9 @@ def write():
             })
 
         # print(result)
-        return jsonify(result)
+        return {
+            'result' : result
+        }
 
     else :
 
@@ -313,9 +348,9 @@ def write():
         
         done =studyPost.insertStudy(title, writer, curDate, content, likes, views, roomId)
         
-        return jsonify({
+        return {
             'done' : done
-        })
+        }
     
 @login_required
 @study_bp.route('/<int:id>/like', methods=['GET', 'POST'])
@@ -328,15 +363,23 @@ def like(id):
         
         print(memId, postId)
         studyPost.Like(memId, id)
-     
         
-    if request.method == 'GET':
-        likes = post._likes
+        likes = post.likes
         liked = studyPost.findLike(memId, id)
-        return jsonify({
+        
+        return {
             'likes' : likes,
             'liked' : liked
-        })
-    return jsonify({'message': 'Invalid request method'})   # 추가: POST 요청 이외의 다른 요청에 대한 처리 로직
+        }
+
+        
+    # if request.method == 'GET':
+    #    likes = post.likes
+    #    liked = studyPost.findLike(memId, id)
+    #    return jsonify({
+    #        'likes' : likes,
+    #        'liked' : liked
+    #    })
+    return {'message': 'Invalid request method'}   # 추가: POST 요청 이외의 다른 요청에 대한 처리 로직
         
 

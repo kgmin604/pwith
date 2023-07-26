@@ -6,14 +6,14 @@ from flask import Flask, jsonify
 class studyPost() :
     
     def __init__(self, id, title, writer, curDate, content, likes, views, roomId):
-        self._id = id
-        self._title = title
-        self._writer = writer
-        self._curDate = curDate
-        self._content = content
-        self._likes = likes
-        self._views = views
-        self._roomId = roomId
+        self.__id = id
+        self.__title = title
+        self.__writer = writer
+        self.__curDate = curDate
+        self.__content = content
+        self.__likes = likes
+        self.__views = views
+        self.__roomId = roomId
 
     @staticmethod
     def insertStudy(title, writer, curDate, content, likes, views, roomId):     #스터디 글 생성

@@ -68,11 +68,11 @@ def communityMain() :
         })
         # dummmmmmmmmmmmmmmy
 
-        return jsonify({
+        return {
             'news' : news,
             'qna' : qna,
             'contents' : conts
-        })
+        }
  
 @community_bp.route('/it', methods=['GET', 'POST'])
 def listNews() :
@@ -85,7 +85,7 @@ def listNews() :
         date = request.args.get('date')
 
         if not page or not date :
-            return jsonify(result)
+            return {'result' : result}
 
         page = int(page)
         formatted_date = f'{date[:4]}년 {date[4:6]}월 {date[6:]}일'
@@ -105,65 +105,66 @@ def listNews() :
                 'url' : news['url']
             })
         
-        return jsonify({
+        return {
             'page' : requiredPage,
             'news' : result
-        })
+        }
     # 추후 검색 구현할 때 POST 방식 추가
 
-@community_bp.route('/qna/main', methods=['GET', 'POST'])
+@community_bp.route('/qna/main', methods=['GET'])
 def show():
+    if request.method =='GET':   # 전체 글 출력
+        posts = []
+        result = []
+        posts = QNAPost.getQNA()
+        for i in range(len(posts)):
+            post = {
+                    'id' : posts[i][0],
+                    'title' : posts[i][1],
+                    'writer' : findNickName(posts[i][2]),
+                    'curDate' : posts[i][3],
+                    # 'category' : posts[i][5],
+                    'likes' : posts[i][6],
+                    'views' : posts[i][7]
+                    }
+            post['curDate'] = mainFormattedDate(posts[i][3])
+            result.append(post)
+        return { 'posts' : result}
+
+@community_bp.route('/qna/search', methods=['GET']) # 글 검색
+def search():
     if request.method =='GET':
         
         searchType = request.args.get('type')
         searchValue = request.args.get('value')
+        posts = []
 
-        if (searchType is None) or (searchValue is None) : # 전체 글 출력
-            result = []
-            posts = QNAPost.getQNA()
-            for i in range(len(posts)):
+        if int(searchType) == 0: # 제목으로 검색
+            posts = QNAPost.findByTitle(searchValue, 1)
+        else: # 글쓴이로 검색
+            posts = QNAPost.findByWriter(searchValue, 1)
+
+        result = []
+
+        if posts is None :
+            pass # 결과 없을 시 empty list
+        else :
+            for i in range(len(posts)) :
                 post = {
-                        'id' : posts[i][0],
-                        'title' : posts[i][1],
-                        'writer' : findNickName(posts[i][2]),
-                        'curDate' : posts[i][3],
-                        # 'category' : posts[i][5],
-                        'likes' : posts[i][6],
-                        'views' : posts[i][7]
-                        }
+                    'id' : posts[i][0],
+                    'title' : posts[i][1],
+                    'writer' : findNickName(posts[i][2]),
+                    # 'content' : posts[i][4],
+                    'curDate' : posts[i][3],
+                    # 'category' : posts[i][5],
+                    'likes' : posts[i][6],
+                    'views' : posts[i][7]
+                }
                 post['curDate'] = mainFormattedDate(posts[i][3])
+                
                 result.append(post)
-            return jsonify(result)
 
-        else : # 글 검색
-            posts = []
-
-            if int(searchType) == 0: # 제목으로 검색
-                posts = QNAPost.findByTitle(searchValue, 1)
-            else: # 글쓴이로 검색
-                posts = QNAPost.findByWriter(searchValue, 1)
-
-            result = []
-
-            if posts is None :
-                pass # 결과 없을 시 empty list
-            else :
-                for i in range(len(posts)) :
-                    post = {
-                        'id' : posts[i][0],
-                        'title' : posts[i][1],
-                        'writer' : findNickName(posts[i][2]),
-                        # 'content' : posts[i][4],
-                        'curDate' : posts[i][3],
-                        # 'category' : posts[i][5],
-                        'likes' : posts[i][6],
-                        'views' : posts[i][7]
-                    }
-                    post['curDate'] = mainFormattedDate(posts[i][3])
-                    
-                    result.append(post)
-
-            return jsonify(result)
+        return {'posts' : result}
     
 @community_bp.route('/qna/<int:id>', methods=['GET']) # 글 조회
 def showDetail(id) :
@@ -179,13 +180,13 @@ def showDetail(id) :
         viewresult = QNAPost.updateViews(id)
 
         result = {
-            'title': post._title,
-            'writer' : findNickName(post._writer),
-            'content': post._content,
-            'curDate' : getFormattedDate(formatDateToString(post._curDate)),
-            'likes' : post._likes,
+            'title': post.title,
+            'writer' : findNickName(post.writer),
+            'content': post.content,
+            'curDate' : getFormattedDate(formatDateToString(post.curDate)),
+            'likes' : post.likes,
             'liked' : QNAPost.findLike(current_user.get_id(), id),
-            'views': post._views
+            'views': post.views
         }
         
         # toFront['curDate'] = QNAPost.getFormattedDate(toFront['curDate'])
@@ -202,13 +203,13 @@ def showDetail(id) :
                 'id' : reply[0],
                 'writer' : findNickName(reply[1]),
                 'content' : reply[2],
-                'date' : date
+                'date' : getFormattedDate(date)
             })
         
-        return jsonify({
+        return {
             'post' : result,
             'reply' : replyResult
-        })
+        }
         
 @community_bp.route('/qna/update/<int:id>', methods = ['PUT'])
 def updatePost(id):
@@ -222,9 +223,9 @@ def updatePost(id):
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return jsonify({
+        return {
             'done' : done
-        })
+        }
         
 @community_bp.route('/qna/delete/<int:id>', methods = ['DELETE'])
 def deletePost(id):
@@ -237,9 +238,9 @@ def deletePost(id):
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return jsonify({
+        return {
             'done' : done
-        })
+        }
 
 @community_bp.route('/qna/<int:id>', methods = ['POST', 'PUT', 'DELETE'])
 def reply(id) :
@@ -257,10 +258,10 @@ def reply(id) :
             print("에러 이유 : " + str(ex))
             pk = 0
 
-        return jsonify({
+        return {
             'id' : pk, # 0 is fail
             'date' : formatDateToString(date)
-        })
+        }
 
     elif request.method == 'PUT' : # 댓글 수정
 
@@ -273,9 +274,9 @@ def reply(id) :
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return jsonify({
+        return {
             'done' : done
-        })
+        }
 
     else : # 댓글 삭제
 
@@ -287,13 +288,13 @@ def reply(id) :
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return jsonify({
+        return {
             'done' : done
-        })
+        }
     
 
 @login_required
-@community_bp.route("/qna/create", methods=['GET', 'POST'])
+@community_bp.route("/qna/create", methods=['POST'])
 def write():
     if request.method == 'POST':
         # print("post\n")
@@ -311,29 +312,26 @@ def write():
         # print(postType, title, writer, curDate, content, category, likes, views)
         done = QNAPost.insertQNA(title, writer, curDate, content, category, likes, views)
         
-        return jsonify({
+        return {
             'done' : done
-        })
+        }
         
 @login_required
-@community_bp.route('/qna/<int:id>/like', methods=['GET', 'POST'])
+@community_bp.route('/qna/<int:id>/like', methods=['POST'])
 def like(id):
     memId = current_user.get_id()
     post = studyPost.findById(id)
+    
     if request.method=='POST':
         postId = request.get_json()['postId']
         
         print(memId, postId)
-        liked = QNAPost.Like(memId, postId)
+        QNAPost.Like(memId, postId)
         print("liked")
-        
-        
-    if request.method == 'GET':
-        likes = post._likes
+        likes = post.likes
         liked = QNAPost.findLike(memId, id)
-        return jsonify({
+        return {
             'likes' : likes,
             'liked' : liked
-        })
-    return jsonify({'message': 'Invalid request method'})   # 추가: POST 요청 이외의 다른 요청에 대한 처리 로직
-      
+        }
+   
