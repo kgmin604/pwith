@@ -6,14 +6,14 @@ from flask import Flask, jsonify
 class studyPost() :
     
     def __init__(self, id, title, writer, curDate, content, likes, views, roomId):
-        self._id = id
-        self._title = title
-        self._writer = writer
-        self._curDate = curDate
-        self._content = content
-        self._likes = likes
-        self._views = views
-        self._roomId = roomId
+        self.__id = id
+        self.__title = title
+        self.__writer = writer
+        self.__curDate = curDate
+        self.__content = content
+        self.__likes = likes
+        self.__views = views
+        self.__roomId = roomId
 
     @staticmethod
     def insertStudy(title, writer, curDate, content, likes, views, roomId):     #스터디 글 생성
@@ -193,27 +193,27 @@ class studyPost() :
     
     @property
     def title(self) :
-        return self._title
+        return self.__title
 
     @property
     def content(self) :
-        return self._content
+        return self.__content
 
     @property
     def curDate(self) :
-        return self._curDate
+        return self.__curDate
     
     @property
     def writer(self):
-        return self._writer
+        return self.__writer
     
     @property
     def likes(self):
-        return self._likes
+        return self.__likes
     
     @property
     def views(self):
-        return self._views
+        return self.__views
     
     # def getLiked(memId, postId):      # 좋아요 여부 받아오기
     #    sql = f"SELECT liked from liked where memberId = '{str(memId)}' and postId = '{str(postId)}'"

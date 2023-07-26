@@ -4,14 +4,14 @@ from datetime import datetime
 
 class QNAPost() :
     def __init__(self, id, title, writer, content, curDate, category, likes, views):
-        self._id = id
-        self._title = title
-        self._writer = writer
-        self._content = content
-        self._curDate = curDate
-        self._category = category
-        self._likes = likes
-        self._views = views
+        self.__id = id
+        self.__title = title
+        self.__writer = writer
+        self.__content = content
+        self.__curDate = curDate
+        self.__category = category
+        self.__likes = likes
+        self.__views = views
         
     @staticmethod
     def insertQNA(title, writer, curDate, content, category, likes, views):     # qna 글 생성
@@ -154,25 +154,25 @@ class QNAPost() :
     
     @property
     def title(self) :
-        return str(self._title)
+        return str(self.__title)
     @property
     def content(self) :
-        return self._content
+        return self.__content
     @property
     def views(self) :
-        return self._views
+        return self.__views
     @property
     def curDate(self) :
-        return self._curDate
+        return self.__curDate
     @property
     def writer(self):
-        return self._writer
+        return self.__writer
     @property
     def category(self):
-        return self._category
+        return self.__category
     @property
     def likes(self):
-        return self._likes
+        return self.__likes
     
    # @staticmethod
    # def getLiked(memId, postId):

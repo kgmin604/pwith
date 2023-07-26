@@ -28,9 +28,9 @@ def show():
                     'title' : study[1]
                 }
                 recStudy.append(rec)
-            return jsonify({
+            return {
                 'rec' : recStudy # by. 경민
-            })
+            }
                 
         posts = []
         result = []
@@ -58,11 +58,11 @@ def show():
 
             result.append(post)
 
-        return jsonify({
+        return{
             'posts': result,
             'num': requiredPage,
             #'rec' : recStudy
-        })
+        }
 
             
 @study_bp.route('/search', methods=['GET'])   # 글 검색
@@ -83,9 +83,9 @@ def search():
                     'title' : study[1]
                 }
                 recStudy.append(rec)
-            return jsonify({
+            return {
                'rec' : recStudy # by. 경민
-            })
+            }
                 
         posts = []
         
@@ -134,11 +134,11 @@ def search():
                 
                 result.append(post)
 
-        return jsonify({
+        return {
             'posts' : result,
             'num': requiredPage,
             # 'rec' : recStudy
-            })
+            }
             
 
 @study_bp.route('/<int:id>', methods=['GET'])
@@ -171,7 +171,7 @@ def showDetail(id) :
 
         post = studyPost.findById(id)
 
-        postDate = getFormattedDate(formatDateToString(post._curDate))
+        postDate = getFormattedDate(formatDateToString(post.curDate))
         
         roomId= studyPost.findRoomId(id) #roomName 조회위해서 미리 변수로 리턴받음
 
@@ -190,17 +190,17 @@ def showDetail(id) :
             liked = False
 
         print("curDAte : ")
-        print(post._curDate)
-        print(getFormattedDate(formatDateToString(post._curDate)))
+        print(post.curDate)
+        print(getFormattedDate(formatDateToString(post.curDate)))
         result = {
             'isApplied' : isApplied,
-            'title': post._title,
-            'writer' : findNickName(post._writer),
-            'content': post._content,
-            'curDate' : getFormattedDate(formatDateToString(post._curDate)),
-            'likes' : post._likes,
+            'title': post.title,
+            'writer' : findNickName(post.writer),
+            'content': post.content,
+            'curDate' : getFormattedDate(formatDateToString(post.curDate)),
+            'likes' : post.likes,
             'liked' : liked,
-            'views': post._views,
+            'views': post.views,
             'roomId' : roomId,
             'roomTitle' : studyPost.getRoomName(roomId),
             'totalP': studyPost.getTotalP(roomId),
@@ -225,10 +225,10 @@ def showDetail(id) :
                 'date' : getFormattedDate(date)
             })
 
-        return jsonify({
+        return {
             'post' : result,
             'reply' : replyResult
-        })
+        }
         
 @study_bp.route('/update/<int:id>', methods = ['PUT'])
 def updatePost(id):
@@ -242,9 +242,9 @@ def updatePost(id):
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return jsonify({
+        return {
             'done' : done
-        })
+        }
          
 @study_bp.route('/delete/<int:id>', methods = ['DELETE'])
 def deletePost(id):
@@ -257,9 +257,9 @@ def deletePost(id):
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return jsonify({
+        return {
             'done' : done
-        })
+        }
 
 
 @study_bp.route('/<int:studyId>', methods = ['POST', 'PUT', 'DELETE'])
@@ -278,10 +278,10 @@ def reply(studyId) :
             print("에러 이유 : " + str(ex))
             replyId = 0
 
-        return jsonify({
+        return {
             'id' : replyId, # 0 is fail
             'date' : formatDateToString(date)
-        })
+        }
 
     elif request.method == 'PUT' : # 댓글 수정
 
@@ -295,9 +295,9 @@ def reply(studyId) :
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return jsonify({
+        return {
             'done' : done
-        })
+        }
 
     else : # 댓글 삭제
 
@@ -309,9 +309,9 @@ def reply(studyId) :
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return jsonify({
+        return {
             'done' : done
-        })
+        }
 
 @login_required
 @study_bp.route("/create", methods=['GET', 'POST'])
@@ -329,7 +329,9 @@ def write():
             })
 
         # print(result)
-        return jsonify(result)
+        return {
+            'result' : result
+        }
 
     else :
 
@@ -346,9 +348,9 @@ def write():
         
         done =studyPost.insertStudy(title, writer, curDate, content, likes, views, roomId)
         
-        return jsonify({
+        return {
             'done' : done
-        })
+        }
     
 @login_required
 @study_bp.route('/<int:id>/like', methods=['GET', 'POST'])
@@ -362,22 +364,22 @@ def like(id):
         print(memId, postId)
         studyPost.Like(memId, id)
         
-        likes = post._likes
+        likes = post.likes
         liked = studyPost.findLike(memId, id)
         
-        return jsonify({
+        return {
             'likes' : likes,
             'liked' : liked
-        })
+        }
 
         
     # if request.method == 'GET':
-    #    likes = post._likes
+    #    likes = post.likes
     #    liked = studyPost.findLike(memId, id)
     #    return jsonify({
     #        'likes' : likes,
     #        'liked' : liked
     #    })
-    return jsonify({'message': 'Invalid request method'})   # 추가: POST 요청 이외의 다른 요청에 대한 처리 로직
+    return {'message': 'Invalid request method'}   # 추가: POST 요청 이외의 다른 요청에 대한 처리 로직
         
 
