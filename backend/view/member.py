@@ -56,12 +56,11 @@ def sendEmail() :
         'auth' : str(auth_number)
     }
 
-    
-def isDuplicated(memId) :
-    if not Member.findByMemberId(memId) :
-        return False
-    else :
-        return True
+# def isDuplicated(memId) :
+#     if not Member.findByMemberId(memId) :
+#         return False
+#     else :
+#         return True
 
 @member_bp.route('/join', methods=['POST'])
 def join() :
@@ -156,5 +155,5 @@ def hashPassword(pw):
     hashed_pw = bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt())
     return hashed_pw.decode('utf-8')
 
-def verifyPassword(pw, hashed_pw) :
+def verifyPassword(pw, hashed_pw) : # return boolean
     return bcrypt.checkpw(pw.encode('utf-8'), hashed_pw.encode('utf-8'))

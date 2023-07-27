@@ -1,10 +1,10 @@
-# __init__.py : 초기화 코드 실행 또는 __all__ 변수 설정
-
 # __name__ = "backend"
 
-from flask import Flask, redirect, jsonify, Response
+from flask import Flask, jsonify, Response, request
 from flask_mail import Mail
 from flask_login import LoginManager
+from botocore.client import Config
+import boto3 
 import json
 
 from backend.controller.member_mgmt import Member
@@ -51,6 +51,13 @@ def create_app() :
 app = create_app()
 
 mail = Mail(app)
+
+s3 = boto3.client(
+    's3',
+    aws_access_key_id = config.S3_ACCESS_KEY,
+    aws_secret_access_key = config.S3_SECRET_KEY,
+    config = Config(signature_version = 's3v4')
+)
 
 login_manager = LoginManager()
 login_manager.init_app(app)

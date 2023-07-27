@@ -22,6 +22,10 @@ class Member(UserMixin):
         return self.__memId
 
     @property
+    def password(self):
+        return self.__password
+
+    @property
     def nickname(self):
         return self.__nickname
 
@@ -30,9 +34,8 @@ class Member(UserMixin):
         return self.__email
     
     @property
-    def password(self):
-        return self.__password
-
+    def image(self):
+        return self.__image
 
     @staticmethod
     def existsByEmail(email) : # for 이메일 중복 체크
@@ -99,18 +102,27 @@ class Member(UserMixin):
         return done
 
     @staticmethod
-    def changePw(memId, oldPw, newPw):
+    def updatePassword(id, newPw):
 
-        sql = f"UPDATE member SET password = '{newPw}' WHERE memId = '{memId}' and password = '{oldPw}'"
+        sql = f"UPDATE member SET password = '{newPw}' WHERE id = {id}"
 
         done = commit(sql)
 
         return done
 
     @staticmethod
-    def changeEmail(memId, newEmail):
+    def updateNickname(id, newNick):
 
-        sql = f"UPDATE member SET email = '{newEmail}' WHERE memId = '{memId}'"
+        sql = f"UPDATE member SET nickname = '{newNick}' WHERE id = {id}"
+
+        done = commit(sql)
+
+        return done
+
+    @staticmethod
+    def updateImage(id, newImage):
+
+        sql = f"UPDATE member SET image = '{newImage}' WHERE id = {id}"
 
         done = commit(sql)
 
