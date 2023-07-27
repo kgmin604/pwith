@@ -129,9 +129,9 @@ class Member(UserMixin):
         return done
 
     @staticmethod
-    def delete(memId):
+    def deleteById(id):
 
-        sql = f"DELETE FROM member WHERE memId = '{str(memId)}'"
+        sql = f"DELETE FROM member WHERE id = {id}"
 
         done = commit(sql)
 

@@ -75,13 +75,39 @@ def changeNickname() :
     }
 
 @login_required
-@mypage_bp.route('/account/image', methods = ['PATCH']) # TODO
+@mypage_bp.route('/account/image', methods = ['PATCH'])
 def changeImage() :
 
     id = current_user.get_id()
 
     result = Member.updateImage(id, newNick)
     
+    return {
+        'data' : None
+    }
+
+@login_required
+@mypage_bp.route('/account', methods = ['DELETE'])
+def deleteAccount() :
+
+    password = request.get_json()['password']
+
+    id = current_user.get_id()
+
+    loginMember = Member.findById(id)
+
+    hashed_pw = loginMember.password
+    isVerified = verifyPassword(password, hashed_pw)
+
+    if isVerified == False :
+        return {
+            'status' : 400,
+            'message' : '잘못된 비밀번호',
+            'data' : None
+        }
+    
+    result = Member.deleteById(id)
+
     return {
         'data' : None
     }
