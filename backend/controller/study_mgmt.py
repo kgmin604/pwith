@@ -14,6 +14,30 @@ class studyPost() :
         self.__likes = likes
         self.__views = views
         self.__roomId = roomId
+    @property
+    def id(self) :
+        return self.__id
+    @property
+    def title(self) :
+        return self.__title
+    @property
+    def writer(self):
+        return self.__writer
+    @property
+    def curDate(self) :
+        return self.__curDate
+    @property
+    def content(self) :
+        return self.__content
+    @property
+    def likes(self):
+        return self.__likes
+    @property
+    def views(self):
+        return self.__views
+    @property
+    def roomId(self):
+        return self.__roomId
 
     @staticmethod
     def insertStudy(title, writer, curDate, content, likes, views, roomId):     #스터디 글 생성
@@ -71,12 +95,11 @@ class studyPost() :
         return roomId
 
     @staticmethod
-    def findByWriter(writer) : # 글쓴이로 검색 & 내 글 목록
-
+    def findByWriter(writer) : # 글쓴이로 검색
 
         sql = f"SELECT * FROM study WHERE writer LIKE '%{writer}%' "
         
-        posts = selectAll(sql) # tuple의 tuple
+        posts = selectAll(sql)
         
         if not posts :
             return None
@@ -84,16 +107,30 @@ class studyPost() :
         return posts
 
     @staticmethod
-    def findByTitle(title) : # 제목으로 검색
+    def findByTitle(title) :
+
         sql = f"SELECT * FROM study WHERE title LIKE '%{title}%' "
 
-        posts = selectAll(sql) # page 만들 시 fetchmany() 사용
+        posts = selectAll(sql)
         
-        print(posts)
         if not posts :
             return None
         
         return posts
+
+    @staticmethod
+    def findByWriterId(writer_id) :
+
+        sql = f"SELECT * FROM study WHERE writer = {writer_id} ORDER BY curDate DESC"
+
+        posts = selectAll(sql)
+
+        result = []
+
+        for p in posts :
+            result.append(studyPost(p[0], p[1], p[2], p[3], p[4], p[5], [6], p[7]))
+
+        return result
     
     @staticmethod
     def updateStudy(postId, content):   # study 게시글 내용 수정
@@ -191,29 +228,6 @@ class studyPost() :
         
         return int(joinP[0])
     
-    @property
-    def title(self) :
-        return self.__title
-
-    @property
-    def content(self) :
-        return self.__content
-
-    @property
-    def curDate(self) :
-        return self.__curDate
-    
-    @property
-    def writer(self):
-        return self.__writer
-    
-    @property
-    def likes(self):
-        return self.__likes
-    
-    @property
-    def views(self):
-        return self.__views
     
     # def getLiked(memId, postId):      # 좋아요 여부 받아오기
     #    sql = f"SELECT liked from liked where memberId = '{str(memId)}' and postId = '{str(postId)}'"

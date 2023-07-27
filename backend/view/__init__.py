@@ -18,6 +18,14 @@ def mainFormattedDate(curDate):     # 날짜 포맷 월/일 만
     formatted_date = curDate.strftime("%m-%d")
     
     return formatted_date
+    
+def formatYMD(curDate): # 날짜 포맷 년-월-일
+    if isinstance(curDate, str):        
+        curDate = datetime.strptime(curDate, "%Y-%m-%d %H:%M:%S")
+        
+    formatted_date = curDate.strftime("%Y-%m-%d")
+    
+    return formatted_date
 
 
 def nicknameToId(memId):

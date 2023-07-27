@@ -62,6 +62,15 @@ class QNAPost() :
             return None
         
         return posts
+
+    @staticmethod
+    def findByWriterId(writer_id) :
+
+        sql = f"SELECT * FROM qna WHERE writer = {writer_id} ORDER BY curDate DESC"
+
+        posts = selectAll(sql)
+
+        return posts
     
     @staticmethod
     def findByTitle(title) : # 제목으로 검색
