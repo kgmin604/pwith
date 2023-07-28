@@ -111,9 +111,9 @@ class Portfolio() :
 
         sql = f'SELECT mento FROM portfolio WHERE id = {id}'
 
-        result = selectOne(sql)
+        result = selectOne(sql)[0]
 
-        if not result[0] :
+        if not result :
             return None
         
         return result

@@ -1,43 +1,51 @@
 from backend.controller import commit, commitAndGetId, selectAll, selectOne
 
 class MentoringRoom() :
-    
-    def __init__(self, id, name, mentoId, mentiId):
+    def __init__(self, id, name, mentoId, mentiId, mentoPic):
         self.__id = id
         self.__name = name
         self.__mento = mentoId
         self.__menti = mentiId
-    
+        self.__mentoPic = mentoPic
     @property
-    def roomName(self) :
-        return str(self.__roomName)
-
+    def id(self) :
+        return self.__id
     @property
-    def mentoId(self) :
-        return str(self.__mentoId)
-
+    def name(self) :
+        return self.__name
     @property
-    def mentiId(self) :
-        return str(self.__mentiId)
+    def mento(self) :
+        return self.__mento
+    @property
+    def menti(self) :
+        return self.__menti
+    @property
+    def mentoPic(self) :
+        return self.__mentoPic
 
     @staticmethod
-    def save(roomName, mentoId, mentiId) :
+    def save(roomName, date, mentoId, mentiId) :
 
-        sql = f"INSERT INTO mentoringRoom(name, mento, menti) VALUES('{roomName}', {mentoId}, {mentiId})"
+        sql = f"INSERT INTO mentoringRoom(name, curDate, mento, menti) VALUES('{roomName}', '{date}', {mentoId}, {mentiId})"
 
         roomId = commitAndGetId(sql)
-
-        # if done == 0 :
-        #     mysql_db.rollback()
 
         return roomId
 
     @staticmethod
-    def show(logUser) :
+    def findByMemberId(member_id) :
 
-        sql = f"SELECT * FROM mentoringRoom WHERE mento = {logUser} or menti = {logUser}"
+        sql = f'''
+        SELECT mr.id, mr.name, mr.mento, mr.menti, p.mentoPic
+        FROM mentoringRoom mr JOIN portfolio p ON mr.mento = p.mento
+        WHERE mr.mento = {member_id} OR mr.menti = {member_id}
+        ORDER BY mr.curDate DESC
+        '''
+        rooms = selectAll(sql)
 
-        result = selectAll(sql)
+        result = []
+        for r in rooms :
+            result.append(MentoringRoom(r[0],r[1],r[2],r[3],r[4]))
 
         return result
 

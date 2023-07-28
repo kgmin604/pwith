@@ -73,6 +73,7 @@ CREATE TABLE review
 CREATE TABLE studyRoom (
 	id BIGINT AUTO_INCREMENT,
     name VARCHAR(20) NOT NULL,
+    curDate DATETIME NOT NULL,
     category INT NOT NULL,
     leader BIGINT NOT NULL,
     image VARCHAR(2048) NOT NULL DEFAULT "https://cdn.discordapp.com/attachments/1120631568311009360/1130188761989386412/image.png",
@@ -87,9 +88,11 @@ CREATE TABLE studyRoom (
 CREATE TABLE mentoringRoom (
     id BIGINT AUTO_INCREMENT,
     name VARCHAR(20) NOT NULL,
+    curDate DATETIME NOT NULL,
     mento BIGINT NOT NULL,
     menti BIGINT NOT NULL,
     PRIMARY KEY(id),
+    UNIQUE KEY (mento, menti),
     FOREIGN KEY(mento) REFERENCES member(id) on delete cascade on update cascade,
     FOREIGN KEY(menti) REFERENCES member(id) on delete cascade on update cascade
 )
@@ -99,6 +102,7 @@ CREATE TABLE studyMember (
     member BIGINT NOT NULL,
     room BIGINT NOT NULL,
     PRIMARY KEY(id),
+    UNIQUE KEY (member, room),
     FOREIGN KEY(member) REFERENCES member(id) on delete cascade on update cascade,
     FOREIGN KEY(room) REFERENCES studyRoom(id) on delete cascade on update cascade
 )
@@ -119,8 +123,6 @@ CREATE TABLE study
     FOREIGN KEY(writer) REFERENCES member(id),
     FOREIGN KEY(roomId) REFERENCES studyRoom(id)
 );
-
-
 
 CREATE TABLE qna
 (
