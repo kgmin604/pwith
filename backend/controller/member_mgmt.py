@@ -1,10 +1,7 @@
 from flask_login import UserMixin
-
-from backend.controller import commit
-from backend.controller import selectOne
+from backend.controller import commit, selectOne
 
 class Member(UserMixin):
-
     def __init__(self, id, memId, pw, nickname, email, image, isAdmin):
         self.__id = id
         self.__memId = memId
@@ -13,29 +10,27 @@ class Member(UserMixin):
         self.__email = email
         self.__image = image
         self.__isAdmin = isAdmin
-
-    def get_id(self): # UserMixin's get_id() override
-        return str(self.__id)
-
+    @property
+    def id(self):
+        return self.__id
     @property
     def memId(self):
         return self.__memId
-
     @property
     def password(self):
         return self.__password
-
     @property
     def nickname(self):
         return self.__nickname
-
     @property
     def email(self):
         return self.__email
-    
     @property
     def image(self):
         return self.__image
+
+    def get_id(self): # UserMixin's get_id()
+        return self.__id
 
     @staticmethod
     def existsByEmail(email) : # for 이메일 중복 체크
