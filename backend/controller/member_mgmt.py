@@ -91,6 +91,15 @@ class Member(UserMixin):
         member = Member(mem[0], mem[1], mem[2], mem[3], mem[4], mem[5], mem[6])
 
         return member
+
+    @staticmethod
+    def findIdByEmail(email):
+
+        sql = f"SELECT memId FROM member WHERE email = '{email}'"
+
+        memId = selectOne(sql)[0]
+
+        return memId
     
     @staticmethod
     def save(memId, pw, nickname, email):
