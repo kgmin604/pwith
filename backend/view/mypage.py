@@ -7,7 +7,7 @@ from backend.controller.study_mgmt import studyPost
 from backend.controller.community_mgmt import QNAPost
 from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.replyQna_mgmt import ReplyQna
-from backend.view import formatYMD
+from backend.view import formatYMD, uploadFileS3
 
 mypage_bp = Blueprint('mypage', __name__, url_prefix='/mypage')
 
@@ -81,9 +81,12 @@ def changeNickname() :
 @mypage_bp.route('/account/image', methods = ['PATCH'])
 def changeImage() :
 
+    image = request.files['newImage']
+    newImage = uploadFileS3(image)
+
     id = current_user.get_id()
 
-    result = Member.updateImage(id, newNick)
+    result = Member.updateImage(id, newImage)
     
     return {
         'data' : None
