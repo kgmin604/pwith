@@ -52,13 +52,6 @@ app = create_app()
 
 mail = Mail(app)
 
-s3 = boto3.client(
-    's3',
-    aws_access_key_id = config.S3_ACCESS_KEY,
-    aws_secret_access_key = config.S3_SECRET_KEY,
-    config = Config(signature_version = 's3v4')
-)
-
 login_manager = LoginManager()
 login_manager.init_app(app)
 

@@ -1,30 +1,37 @@
 from flask import Blueprint, request
 from flask_login import login_required, current_user
 from datetime import datetime
+import json
 
 from backend.controller.member_mgmt import Member
 from backend.controller.mentor_mgmt import Portfolio
 from backend.controller.mentoringroom_mgmt import MentoringRoom
 from backend.controller.chat_mgmt import chat
+from backend.view import uploadFileS3
 
 mento_bp = Blueprint('mentoring', __name__, url_prefix='/mentoring')
 
 @login_required
 @mento_bp.route('', methods=['POST'])
 def writePortfolio():
-    
-    data = request.get_json()
 
-    subjects = data['subject']
+    image = request.files['mentoPic']
+    mentoPic = uploadFileS3(image)
+
+    data_str = request.form['data']
+    data = json.loads(data_str)
+
     brief = data['brief']
     content = data['content']
-    mentoPic = data['mentoPic']
+    tuition = data['tuition']
+    duration = data['duration']
+    subjects = data['subject']
 
     mento = current_user.get_id()
 
     date = datetime.now()
 
-    done = Portfolio.save(mento, mentoPic, brief, content, date, subjects)
+    done = Portfolio.save(mento, mentoPic, brief, content, date, tuition, duration, subjects)
 
     if done == 1 :
         return {
@@ -42,55 +49,32 @@ def listPortfolio() :
 
     searchWord = request.args.get('search')
 
-    if searchWord is None : # 전체 글 출력
+    if searchWord is None :
+        portfolios = Portfolio.findAll()
+    else :
+        portfolios = Portfolio.searchByMento(searchWord)
 
-        allP = Portfolio.findAll()
+    result = []
 
-        result = []
+    for p in portfolios :
 
-        for p in allP :
+        subjects = list(map(int, p[8].split(',')))
 
-            subjects = list(map(int, p[6].split(',')))
+        result.append({
+            'id' : p[0],
+            'mentoId' : p[1],
+            'mentoNick' : p[2],
+            'mentoPic' : p[3],
+            'brief' : p[4],
+            'tuition' : p[5],
+            'duration' : p[6],
+            'score' : p[7],
+            'subject' : subjects
+        })
 
-            result.append({
-                'id' : p[0],
-                'mentoId' : p[1],
-                'mentoNick' : p[2],
-                'mentoPic' : p[3],
-                'brief' : p[4],
-                'score' : p[5],
-                'subject' : subjects
-            })
-
-        return {
-            'data' : result
-        }
-
-    else : # 검색
-
-        searchResults = Portfolio.searchByMento(searchWord)
-
-        result = []
-
-        if searchResults is not None :
-
-            for sr in searchResults :
-
-                subjects = list(map(int, sr[6].split(',')))
-
-                result.append({
-                    'id' : sr[0],
-                    'mentoId' : sr[1],
-                    'mentoNick' : sr[2],
-                    'mentoPic' : sr[3],
-                    'brief' : sr[4],
-                    'score' : sr[5],
-                    'subject' : subjects
-                })
-
-        return {
-            'data' : result
-        }
+    return {
+        'data' : result
+    }
 
 @login_required
 @mento_bp.route('/<id>', methods = ['GET'])
@@ -111,8 +95,10 @@ def showPortfolio(id) :
         'mentoPic' : portfolio[2],
         'brief' : portfolio[3],
         'content' : portfolio[4],
-        'score' : portfolio[5],
-        'subject' : list(map(int, portfolio[6].split(',')))
+        'tuition' : portfolio[5],
+        'duration' : portfolio[6],
+        'score' : portfolio[7],
+        'subject' : list(map(int, portfolio[8].split(',')))
     }
 
     return result
@@ -144,14 +130,19 @@ def modifyPortfolio(id) :
             'data' : None
         }
 
-    data = request.get_json()
+    image = request.files['mentoPic']
+    mentoPic = uploadFileS3(image)
 
-    mentoPic = data['mentoPic']
+    data_str = request.form['data']
+    data = json.loads(data_str)
+
     brief = data['brief']
     content = data['content']
+    tuition = data['tuition']
+    duration = data['duration']
     subjects = data['subject']
     
-    Portfolio.update(id, mentoPic, brief, content, subjects)
+    Portfolio.update(id, mentoPic, brief, content, tuition, duration, subjects)
 
     return {
         'data' : None
@@ -175,7 +166,24 @@ def deletePortfolio(id) :
     }
 
 @login_required
-@mento_bp.route('/<id>', methods=['POST'])
+@mento_bp.route('/<id>/state', methods = ['PATCH']) # ON/OFF
+def changeState(id) :
+
+    if Portfolio.existsById(id) == False:
+        return {
+            'status' : 400,
+            'message' : '없는 포트폴리오',
+            'data' : None
+        }
+
+    done = Portfolio.updateState(id)
+
+    return {
+        'data' : None
+    }
+
+@login_required
+@mento_bp.route('/<id>/apply', methods=['POST'])
 def applyMentoring(id) :
 
     if Portfolio.existsById(id) == False:

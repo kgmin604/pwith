@@ -1,5 +1,34 @@
-from backend.controller import selectAll, selectOne, commit
 from datetime import datetime
+from werkzeug.utils import secure_filename
+from botocore.client import Config
+import boto3
+
+from backend.controller import selectAll, selectOne, commit
+from backend import config
+
+s3 = boto3.client(
+    's3',
+    aws_access_key_id = config.S3_ACCESS_KEY,
+    aws_secret_access_key = config.S3_SECRET_KEY,
+    config = Config(signature_version = 's3v4')
+)
+
+def uploadFileS3(file):
+
+    image_url = ""
+
+    if file:
+
+        filename = secure_filename(file.filename)
+
+        s3.upload_fileobj(file, config.S3_BUCKET_NAME, filename)
+
+        location = s3.get_bucket_location(Bucket=config.S3_BUCKET_NAME)["LocationConstraint"]
+
+        image_url = f"https://{config.S3_BUCKET_NAME}.s3.{location}.amazonaws.com/{filename}.jpg"
+
+    return image_url
+
 
 def getFormattedDate(curDate):      # 날짜 포맷 상세시간까지
     date_object = datetime.strptime(curDate, "%Y-%m-%d %H:%M:%S")

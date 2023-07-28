@@ -3,13 +3,15 @@ import pymysql
 
 class Portfolio() :
     
-    def __init__(self, id, mento, brief, mentoPic, content, date):
+    def __init__(self, id, mento, brief, mentoPic, content, date, tuition, duration):
         self.__id = id
         self.__mento = mento
         self.__brief = brief
         self.__mentoPic = mentoPic
         self.__content = content
-        self.__date = date
+        self.__curDate = date
+        self.__tuition = tuition
+        self.__duration = duration
         # 끌어올리기 구현 시 ON/OFF or date 추가 - DB에도
     @property
     def mento(self) :
@@ -17,29 +19,34 @@ class Portfolio() :
     @property
     def brief(self) :
         return self.__brief
-    # @property
-    # def subject(self) :
-    #     return self.__subject
     @property
     def mentoPic(self) :
         return self.__mentoPic
     @property
     def content(self) :
         return self.__content
+    @property
+    def curDate(self) :
+        return self.__curDate
+    @property
+    def tuition(self) :
+        return self.__tuition
+    @property
+    def duration(self) :
+        return self.__duration
 
     @staticmethod
     def existsById(id) :
         sql = f"SELECT EXISTS (SELECT id FROM portfolio WHERE id = {id})"
 
         result = selectOne(sql)[0]
-        print(result)
 
         return True if result == 1 else False
 
     @staticmethod
-    def save(mentoId, mentoPic, brief, content, date, subjects) :
+    def save(mentoId, mentoPic, brief, content, date, tuition, duration, subjects) :
 
-        sql1 = f"INSERT INTO portfolio(mento, mentoPic, brief, content, curDate) VALUES ({mentoId}, '{mentoPic}', '{brief}', '{content}', '{date}')"
+        sql1 = f"INSERT INTO portfolio(mento, mentoPic, brief, content, curDate, tuition, duration) VALUES ({mentoId}, '{mentoPic}', '{brief}', '{content}', '{date}', {tuition}, {duration})"
 
         try :
             portfolioId = commitAndGetId(sql1)
@@ -59,29 +66,27 @@ class Portfolio() :
     def findAll() : # 전체 목록 조회
 
         sql = '''
-            SELECT p.id, m.memId, m.nickname, p.mentoPic, p.brief, p.score, group_concat(subject)
+            SELECT p.id, m.memId, m.nickname, p.mentoPic, p.brief, p.tuition, p.duration, p.score, group_concat(subject)
             FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id
-            GROUP BY m.memId
+            WHERE p.isOpen = true
+            GROUP BY p.id
             '''
 
-        allP = selectAll(sql)
+        result = selectAll(sql)
 
-        return allP
+        return result
 
     @staticmethod
     def searchByMento(value) : # 닉네임으로 검색
 
         sql =  f'''
-            SELECT p.id, m.memId, m.nickname, p.mentoPic, p.brief, p.score, group_concat(subject)
+            SELECT p.id, m.memId, m.nickname, p.mentoPic, p.brief, p.tuition, p.duration, p.score, group_concat(subject)
             FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id 
-            WHERE m.nickname LIKE '%{value}%'
-            GROUP BY m.memId
+            WHERE p.isOpen = true AND m.nickname LIKE '%{value}%'
+            GROUP BY p.id
             '''
 
         result = selectAll(sql)
-
-        if not result :
-            return None
         
         return result
 
@@ -89,7 +94,7 @@ class Portfolio() :
     def findById(id) : # 상세 조회
 
         sql = f'''
-            SELECT m.memId, m.nickname, p.mentoPic, p.brief, p.content, p.score, group_concat(subject)
+            SELECT m.memId, m.nickname, p.mentoPic, p.brief, p.content, p.tuition, p.duration, p.score, group_concat(subject)
             FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id
             WHERE p.id = {id}
             '''
@@ -108,15 +113,24 @@ class Portfolio() :
 
         result = selectOne(sql)
 
-        if not result :
+        if not result[0] :
             return None
         
-        return result[0]
+        return result
 
     @staticmethod
-    def update(id, newImg, newBrf, newCnt, subjects) :
+    def updateState(id) :
 
-        sql = f"UPDATE portfolio SET mentoPic = '{newImg}', brief = '{newBrf}', content = '{newCnt}' WHERE id = {id}"
+        sql = f'UPDATE portfolio SET isOpen = !isOpen WHERE id = {id}'
+
+        done = commit(sql)
+        
+        return done
+
+    @staticmethod
+    def update(id, newImg, newBrf, newCnt, newTuit, newDur, subjects) :
+
+        sql = f"UPDATE portfolio SET mentoPic = '{newImg}', brief = '{newBrf}', content = '{newCnt}', tuition = '{newTuit}', duration = '{newDur}' WHERE id = {id}"
 
         commit(sql)
 

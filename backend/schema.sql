@@ -37,11 +37,15 @@ CREATE TABLE replyQna
 CREATE TABLE portfolio
 (
     id BIGINT AUTO_INCREMENT,
-    mento BIGINT NOT NULL,
+    mento BIGINT NOT NULL UNIQUE,
     brief VARCHAR(50) NOT NULL,
     mentoPic VARCHAR(2048) NOT NULL,
     content VARCHAR(500) NOT NULL,
     curDate DATETIME NOT NULL,
+    tuition INT NOT NULL,
+    duration INT NOT NULL,
+    isOpen BOOLEAN NOT NULL DEFAULT true,
+    score INT NOT NULL DEFAULT -1,
     PRIMARY KEY(id),
     FOREIGN KEY(mento) REFERENCES member(id) on delete cascade on update cascade
 )
