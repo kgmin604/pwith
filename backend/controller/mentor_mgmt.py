@@ -70,6 +70,7 @@ class Portfolio() :
             FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id
             WHERE p.isOpen = true
             GROUP BY p.id
+            ORDER BY p.curDate DESC
             '''
 
         result = selectAll(sql)
@@ -84,6 +85,7 @@ class Portfolio() :
             FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id 
             WHERE p.isOpen = true AND m.nickname LIKE '%{value}%'
             GROUP BY p.id
+            ORDER BY p.curDate DESC
             '''
 
         result = selectAll(sql)
@@ -119,9 +121,9 @@ class Portfolio() :
         return result
 
     @staticmethod
-    def updateState(id) :
+    def updateState(id, date) :
 
-        sql = f'UPDATE portfolio SET isOpen = !isOpen WHERE id = {id}'
+        sql = f"UPDATE portfolio SET isOpen = !isOpen, curDate = '{date}' WHERE id = {id}"
 
         done = commit(sql)
         

@@ -176,7 +176,7 @@ def changeState(id) :
             'data' : None
         }
 
-    done = Portfolio.updateState(id)
+    done = Portfolio.updateState(id, datetime.now())
 
     return {
         'data' : None
