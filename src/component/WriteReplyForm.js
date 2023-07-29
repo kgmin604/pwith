@@ -1,15 +1,14 @@
-import React,{useState} from "react";
-import {useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import axios from "axios";
-import { Form,Button } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 
 function WriteReplyForm(props) {
     const user = useSelector((state) => state.user);
-    const {id,reply,setReply,replyNum,setReplyNum,baseUrl}=props;
+    const { id, reply, setReply, replyNum, setReplyNum, baseUrl } = props;
     const [inputValue, setInputValue] = useState('');
-    console.log(id,baseUrl)
     function createComment(content) {
-        if(baseUrl===undefined||id===undefined)return
+        if (baseUrl === undefined || id === undefined) return
         axios
             .post(`${baseUrl}/${id}`, {
                 content: `${content}`

@@ -21,9 +21,8 @@ function QnaPost(props) {
     useEffect(() => {
         axios.get(`/community/qna/${id}`)
             .then((response) => {
-                setPost(response.data.post);
-                setReply(response.data.reply);
-                console.log(response.data)
+                setPost(response.data.data.post);
+                setReply(response.data.data.reply);
             })
             .catch();
     }, []);
@@ -90,7 +89,7 @@ function QnaPost(props) {
                                     <span className="line">|</span>
                                     <strong>등록일</strong> <span className="info-content">{post.curDate}</span>
                                     {
-                                        user.id === post.writer ?
+                                        user.name === post.writer ?
                                             <span className="control-part">
                                                 <button className="control-btn" onClick={() => setIsUpdating(true)}>수정</button>
                                                 <button className="control-btn" onClick={() => checkDelete()}>삭제</button>
@@ -110,7 +109,7 @@ function QnaPost(props) {
                                     />
                                 </div>
                             </div>
-                            <LikeAndComment id={id} liked={post.liked} likes={post.likes} reply={reply} type={'qna'}/>
+                            <LikeAndComment id={id} liked={post.liked} likes={post.likes} reply={reply} type={'qna'} />
 
                             <div class="col-md-3"></div>
                         </div>
