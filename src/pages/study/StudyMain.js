@@ -2,26 +2,22 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./study.css";
 import "../../App.css";
 import React, { useState, useEffect } from 'react';
-import { Form, Nav, Stack, Button, Table, Accordion } from "react-bootstrap";
-import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { Nav } from "react-bootstrap";
+import { useNavigate, Outlet } from "react-router-dom";
 import axios from "axios";
-import { updateStudyPostList } from "../../store.js";
 
 
 function StudyMain() {
-  let studyPostList = useSelector((state) => state.studyPostList);
-  let dispatch = useDispatch();
-  let navigate = useNavigate();
+  const navigate = useNavigate();
 
-  let [recStudy, setRecStudy] = useState([]);
+  const [recStudy, setRecStudy] = useState([]);
 
   useEffect(() => {
     axios({
       method: "GET",
       url: "/study/main",
-      params : {
-        'recommend' : 1
+      params: {
+        'recommend': 1
       }
     })
       .then(function (response) {
@@ -47,35 +43,35 @@ function StudyMain() {
           <h5>추천 스터디</h5>
           <hr style={{ width: '60%', margin: '0 auto', marginBottom: '10px' }} />
           <div className="rec-items">
-          {
-            recStudy === [] ? null :
-            recStudy.map((study,i)=>{
-              return(
-                <div className="rec-item" key={i}>
-                  <img 
-                    src='/rec_img.png'
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate("./main");
-                      setTimeout(() => {
-                        navigate(`./${study.id}`);
-                      }, 10);
-                  }}
-                  ></img>
-                  <p 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate("./main");
-                      setTimeout(() => {
-                        navigate(`./${study.id}`);
-                      }, 10);
-                  }}>
-                    {study.title}
-                  </p>
-                </div>
-              );
-            })
-          }
+            {
+              recStudy === [] ? null :
+                recStudy.map((study, i) => {
+                  return (
+                    <div className="rec-item" key={i}>
+                      <img
+                        src='/rec_img.png'
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate("./main");
+                          setTimeout(() => {
+                            navigate(`./${study.id}`);
+                          }, 10);
+                        }}
+                      ></img>
+                      <p
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate("./main");
+                          setTimeout(() => {
+                            navigate(`./${study.id}`);
+                          }, 10);
+                        }}>
+                        {study.title}
+                      </p>
+                    </div>
+                  );
+                })
+            }
           </div>
         </div>
       </div>
@@ -86,21 +82,21 @@ function StudyMain() {
 
 function Category() {//카테고리
   return <>
-    
+
     <h5>Study</h5>
     <hr style={{ width: '60%', margin: '0 auto' }} />
     <Nav defaultActiveKey="#" className="flex-column">
-    <Nav.Link href="#"><div style={{ color: '#282c34' }}>웹개발</div></Nav.Link>
-    <Nav.Link href="#"><div style={{ color: '#282c34' }}>모바일 앱 개발</div></Nav.Link>
-    <Nav.Link href="#"><div style={{ color: '#282c34' }}>게임 개발</div></Nav.Link>
-    <Nav.Link href="#"><div style={{ color: '#282c34' }}>프로그래밍 언어</div></Nav.Link>
-    <Nav.Link href="#"><div style={{ color: '#282c34' }}>알고리즘 · 자료구조</div></Nav.Link>
-    <Nav.Link href="#"><div style={{ color: '#282c34' }}>데이터베이스</div></Nav.Link>
-    <Nav.Link href="#"><div style={{ color: '#282c34' }}>자격증</div></Nav.Link>
-    <Nav.Link href="#"><div style={{ color: '#282c34' }}>개발 도구</div></Nav.Link>
-    <Nav.Link href="#"><div style={{ color: '#282c34' }}>데이터 사이언스</div></Nav.Link>
-    <Nav.Link href="#"><div style={{ color: '#282c34' }}>데스크톱 앱 개발</div></Nav.Link>
-    <Nav.Link href="#"><div style={{ color: '#282c34' }}>교양 · 기타</div></Nav.Link>
+      <Nav.Link href="#"><div style={{ color: '#282c34' }}>웹개발</div></Nav.Link>
+      <Nav.Link href="#"><div style={{ color: '#282c34' }}>모바일 앱 개발</div></Nav.Link>
+      <Nav.Link href="#"><div style={{ color: '#282c34' }}>게임 개발</div></Nav.Link>
+      <Nav.Link href="#"><div style={{ color: '#282c34' }}>프로그래밍 언어</div></Nav.Link>
+      <Nav.Link href="#"><div style={{ color: '#282c34' }}>알고리즘 · 자료구조</div></Nav.Link>
+      <Nav.Link href="#"><div style={{ color: '#282c34' }}>데이터베이스</div></Nav.Link>
+      <Nav.Link href="#"><div style={{ color: '#282c34' }}>자격증</div></Nav.Link>
+      <Nav.Link href="#"><div style={{ color: '#282c34' }}>개발 도구</div></Nav.Link>
+      <Nav.Link href="#"><div style={{ color: '#282c34' }}>데이터 사이언스</div></Nav.Link>
+      <Nav.Link href="#"><div style={{ color: '#282c34' }}>데스크톱 앱 개발</div></Nav.Link>
+      <Nav.Link href="#"><div style={{ color: '#282c34' }}>교양 · 기타</div></Nav.Link>
     </Nav>
   </>
 

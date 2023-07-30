@@ -22,7 +22,7 @@ function CommunityIT() {
     let [inputPage, setInputPage] = useState(0);
 
     const [itList, setItList] = useState([]);
-        
+
     useEffect(() => {
 
         /* Date 객체 -> 문자열 변환 */
@@ -31,32 +31,30 @@ function CommunityIT() {
         const d = String(selectDate.getDate()).padStart(2, '0');
 
         const updateITNews = () => {
-          axios({
-            method: "GET",
-            url: "/community/it",
-            params: {
-              'page': `${selectPage}`,
-              'date': `${y}${m}${d}`
-            }
-          })
-            .then(function (response) {
-                console.log(response.data)
-                console.log(response.data.page);
-                setTotalPage(response.data.page);
-                setItList(response.data.news);
+            axios({
+                method: "GET",
+                url: "/community/it",
+                params: {
+                    'page': `${selectPage}`,
+                    'date': `${y}${m}${d}`
+                }
             })
-            .catch(function (error) {
-                console.log("IT 뉴스 요청 에러");
-                console.log(error);
-              });
-          };
-      
+                .then(function (response) {
+                    setTotalPage(response.data.page);
+                    setItList(response.data.news);
+                })
+                .catch(function (error) {
+                    console.log("IT 뉴스 요청 에러");
+                    console.log(error);
+                });
+        };
+
         updateITNews();
     }, [selectDate, selectPage]);
 
-    function controlDate(event,type){
+    function controlDate(event, type) {
         event.stopPropagation();
-        if(type===-1){ // < 버튼
+        if (type === -1) { // < 버튼
             const previousDate = new Date(selectDate.getTime() - (24 * 60 * 60 * 1000));
             setSelectDate(previousDate);
             setItList([]);
@@ -65,9 +63,9 @@ function CommunityIT() {
             );
             setSelectPage(1);
         }
-        else if(type===1){ // > 버튼
+        else if (type === 1) { // > 버튼
             const nextDate = new Date(selectDate.getTime() + (24 * 60 * 60 * 1000));
-            if(nextDate<=currentDate){
+            if (nextDate <= currentDate) {
                 setSelectDate(nextDate);
                 setItList([]);
                 setStringDate(
@@ -78,57 +76,57 @@ function CommunityIT() {
         }
     }
 
-    function changePage(event){
+    function changePage(event) {
         event.stopPropagation();
-        if(1<=inputPage&&inputPage<=totalPage){
+        if (1 <= inputPage && inputPage <= totalPage) {
             setSelectPage(inputPage);
         }
     }
 
-    function inputChange(event){
+    function inputChange(event) {
         event.stopPropagation();
         setInputPage(event.target.value);
     }
 
     return (
         <div className="CommunityIT">
-            
+
             <div className="selected-date">
-                <span onClick={(e)=>controlDate(e,-1)}>{'<'}</span>
-                    {stringDate}
-                <span onClick={(e)=>controlDate(e,1)}>{'>'}</span>
+                <span onClick={(e) => controlDate(e, -1)}>{'<'}</span>
+                {stringDate}
+                <span onClick={(e) => controlDate(e, 1)}>{'>'}</span>
             </div>
-            <hr/>
+            <hr />
             <div className="itnews-list">
-            {
-                itList.map((it,i) => {
-                    return (
-                        <div 
-                            className="item"
-                            key={i} 
-                            onClick={() => window.open(it.url, '_blank')}
-                        >
-                            <div className="it-textarea">
-                                <div className="it-title">{it.title}</div>
-                                <div className="it-brief">{it.brief}</div>
+                {
+                    itList.map((it, i) => {
+                        return (
+                            <div
+                                className="item"
+                                key={i}
+                                onClick={() => window.open(it.url, '_blank')}
+                            >
+                                <div className="it-textarea">
+                                    <div className="it-title">{it.title}</div>
+                                    <div className="it-brief">{it.brief}</div>
+                                </div>
+                                <img src={it.img}></img>
                             </div>
-                            <img src={it.img}></img>
-                        </div>
-                    );
-                }) 
-            }
+                        );
+                    })
+                }
 
             </div>
             <div className="control-page">
-                <input 
-                    type='number' 
+                <input
+                    type='number'
                     className='page-num'
-                    onChange={ e=>inputChange(e) }
+                    onChange={e => inputChange(e)}
                     onKeyDown={(e) => { if (e.key === "Enter") changePage(e); }}
                     defaultValue={selectPage}
                 ></input>
-                /{totalPage +" "}page
-                <button onClick={(e)=>{changePage(e);}}>이동</button>
+                /{totalPage + " "}page
+                <button onClick={(e) => { changePage(e); }}>이동</button>
             </div>
         </div>
     );

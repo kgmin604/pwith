@@ -10,13 +10,13 @@ function LikeNumAndReplyNum(props) {
     const { id, liked, setLiked, likes, setLikes, replyNum, baseUrl } = props;
     const user = useSelector((state) => state.user);
     const sendLikeSignal = () => {
-        if(baseUrl===undefined||id===undefined)return
+        if (baseUrl === undefined || id === undefined) return
         axios.post(`${baseUrl}/${id}/like`, {
             postId: id
         })
             .then(function (response) {
-                setLiked(response.data.liked)
-                setLikes(response.data.likes)
+                setLiked(response.data.data.liked)
+                setLikes(response.data.data.likes)
             })
             .catch(function (error) {
                 // 요청 실패 시 처리할 로직

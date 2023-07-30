@@ -7,7 +7,7 @@ import { Button } from "react-bootstrap";
 function PortfolioModal(props) {
     const setShowModal = props.setShowModal
     const portfolio = props.portfolio
-
+    console.log(portfolio)
     const onClickExit = () => {
         setShowModal(false)
     }
@@ -25,8 +25,7 @@ function PortfolioModal(props) {
                         <div className="subject">
                             <div>{item}</div>
                         </div>
-                    ))
-                    }
+                    ))}
                 </div>
                 <hr />
                 <div>{portfolio.content}</div>

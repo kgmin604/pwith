@@ -16,7 +16,6 @@ import RoomCreate from "./pages/studyroom/RoomCreate.js";
 import CommunityMain from "./pages/community/CommunityMain.js";
 import MentoringMain from "./pages/mentoring/MentoringMain.js";
 import MentoringCreate from "./pages/mentoring/MetoringCreate";
-import MentoringPost from "./pages/mentoring/MentoringPost";
 import Login from "./pages/member/login.js";
 import Join from "./pages/member/join.js";
 import Help from "./pages/member/help.js";
@@ -130,126 +129,126 @@ function App() {
               className="btn pwith-logo"
               onClick={(e) => {
                 e.stopPropagation();
-                  navigate("/");
+                navigate("/");
               }}
             ></div>
             <ul className="navbar-menu" style={{ "margin-right": "40px" }}>
               <div className="parent-container">
-              <li
-                className="navbar-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate("/study/main");
-                  setIsNav(0);
-                }}
-                onMouseEnter={() => setIsNav(1)}
-                onMouseLeave={() => setIsNav(0)}
-              >
-                스터디
-                {
-                  isNav===1?
-                  <div className='navbar-modal' onClick={(e)=>{e.stopPropagation();}}>
-                    <ul className='lst'>
-                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/study/main"); setIsNav(0);}}>
-                        스터디
-                      </li>
-                    </ul>
-                  </div>
-                  : null
-                }             
-              </li>
+                <li
+                  className="navbar-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate("/study/main");
+                    setIsNav(0);
+                  }}
+                  onMouseEnter={() => setIsNav(1)}
+                  onMouseLeave={() => setIsNav(0)}
+                >
+                  스터디
+                  {
+                    isNav === 1 ?
+                      <div className='navbar-modal' onClick={(e) => { e.stopPropagation(); }}>
+                        <ul className='lst'>
+                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/study/main"); setIsNav(0); }}>
+                            스터디
+                          </li>
+                        </ul>
+                      </div>
+                      : null
+                  }
+                </li>
               </div>
               <div className="parent-container">
-              <li
-                className="navbar-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate("/studyroom");
-                  setIsNav(0);
-                }}
-                onMouseEnter={() => setIsNav(2)}
-                onMouseLeave={() => setIsNav(0)}
-              >
-                스터디룸
-                {
-                  isNav===2?
-                  <div
-                    className='navbar-modal' 
-                    onClick={(e)=>{e.stopPropagation();}}
-                    onMouseEnter={() => setIsNav(2)}
-                    onMouseLeave={() => setIsNav(0)}
-                  >
-                    <ul className='lst'>
-                    <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/studyroom"); setIsNav(0);}}>
-                      스터디룸
-                      </li>
-                    </ul>
-                  </div>
-                  : null
-                }  
-              </li>
+                <li
+                  className="navbar-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate("/studyroom");
+                    setIsNav(0);
+                  }}
+                  onMouseEnter={() => setIsNav(2)}
+                  onMouseLeave={() => setIsNav(0)}
+                >
+                  스터디룸
+                  {
+                    isNav === 2 ?
+                      <div
+                        className='navbar-modal'
+                        onClick={(e) => { e.stopPropagation(); }}
+                        onMouseEnter={() => setIsNav(2)}
+                        onMouseLeave={() => setIsNav(0)}
+                      >
+                        <ul className='lst'>
+                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/studyroom"); setIsNav(0); }}>
+                            스터디룸
+                          </li>
+                        </ul>
+                      </div>
+                      : null
+                  }
+                </li>
               </div>
               <div className="parent-container">
-              <li
-                className="navbar-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate("/community/main");
-                  setIsNav(0);
-                }}
-                onMouseEnter={() => setIsNav(3)}
-                onMouseLeave={() => setIsNav(0)}
-              >
-                커뮤니티
-                {
-                  isNav===3?
-                  <div className='navbar-modal' onClick={(e)=>{e.stopPropagation();}}>
-                    <ul className='lst'>
-                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/community/it"); setIsNav(0);}}>
-                        IT뉴스
-                      </li>
-                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/community/qna/main"); setIsNav(0);}}>
-                        QnA
-                      </li>
-                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/community/contents/book"); setIsNav(0);}}>
-                        학습콘텐츠
-                      </li>
-                    </ul>
-                  </div>
-                  : null
-                }             
-              </li>
+                <li
+                  className="navbar-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate("/community/main");
+                    setIsNav(0);
+                  }}
+                  onMouseEnter={() => setIsNav(3)}
+                  onMouseLeave={() => setIsNav(0)}
+                >
+                  커뮤니티
+                  {
+                    isNav === 3 ?
+                      <div className='navbar-modal' onClick={(e) => { e.stopPropagation(); }}>
+                        <ul className='lst'>
+                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/it"); setIsNav(0); }}>
+                            IT뉴스
+                          </li>
+                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/qna/main"); setIsNav(0); }}>
+                            QnA
+                          </li>
+                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/contents/book"); setIsNav(0); }}>
+                            학습콘텐츠
+                          </li>
+                        </ul>
+                      </div>
+                      : null
+                  }
+                </li>
               </div>
               <div className="parent-container">
-              <li
-                className="navbar-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate("/mentoring/main");
-                  setIsNav(0);
-                }}
-                onMouseEnter={() => setIsNav(4)}
-                onMouseLeave={() => setIsNav(0)}
-              >
-                멘토링
-                {
-                  isNav===4?
-                  <div className='navbar-modal' onClick={(e)=>{e.stopPropagation();}}>
-                    <ul className='lst'>
-                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/mentoring/main"); setIsNav(0);}}>
-                        멘토링
-                      </li>
-                      <li className='lst-item' onClick={(e)=>{e.stopPropagation(); navigate("/mentoring/create"); setIsNav(0);}}>
-                        포트폴리오 작성
-                      </li>
-                    </ul>
-                  </div>
-                  : null
-                }             
-              </li>
+                <li
+                  className="navbar-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate("/mentoring/main");
+                    setIsNav(0);
+                  }}
+                  onMouseEnter={() => setIsNav(4)}
+                  onMouseLeave={() => setIsNav(0)}
+                >
+                  멘토링
+                  {
+                    isNav === 4 ?
+                      <div className='navbar-modal' onClick={(e) => { e.stopPropagation(); }}>
+                        <ul className='lst'>
+                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/mentoring/main"); setIsNav(0); }}>
+                            멘토링
+                          </li>
+                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/mentoring/create"); setIsNav(0); }}>
+                            포트폴리오 작성
+                          </li>
+                        </ul>
+                      </div>
+                      : null
+                  }
+                </li>
               </div>
             </ul>
-           
+
 
             <Form
               className="d-flex"
@@ -300,49 +299,49 @@ function App() {
                   <div
                     className="mem-btn"
                     style={{ width: "70px" }}
-                    onClick={(e) => {e.stopPropagation(); setIsModal(!isModal); }}
+                    onClick={(e) => { e.stopPropagation(); setIsModal(!isModal); }}
                   >
                     알림함
-                  { // 조건 추가 필요
-                    <>
-                    <div className='notice_new'>N</div>
-                    </>
-                  }
-                  {
-                    !isModal ? null :
-                    <>
-                      <div className='drop-down' onClick={(e)=>{e.stopPropagation();}}>
-                        <div className='item'>
-                          <h5>{"댓글이 달렸습니다."}</h5>
-                          <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
-                        </div>
-                        <div className='item'>
-                          <h5>{"댓글이 달렸습니다."}</h5>
-                          <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
-                        </div>
-                        <div className='item'>
-                          <h5>{"댓글이 달렸습니다."}</h5>
-                          <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
-                        </div>
-                        <div className='item'>
-                          <h5>{"댓글이 달렸습니다."}</h5>
-                          <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
-                        </div>
-                        <div className='item'>
-                          <h5>{"댓글이 달렸습니다."}</h5>
-                          <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
-                        </div>
-                        <div className='item'>
-                          <h5>{"댓글이 달렸습니다."}</h5>
-                          <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
-                        </div>
-                        <div className='item'>
-                          <h5>{"댓글이 달렸습니다."}</h5>
-                          <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
-                        </div>
-                      </div>
-                    </>
-                  }
+                    { // 조건 추가 필요
+                      <>
+                        <div className='notice_new'>N</div>
+                      </>
+                    }
+                    {
+                      !isModal ? null :
+                        <>
+                          <div className='drop-down' onClick={(e) => { e.stopPropagation(); }}>
+                            <div className='item'>
+                              <h5>{"댓글이 달렸습니다."}</h5>
+                              <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                            </div>
+                            <div className='item'>
+                              <h5>{"댓글이 달렸습니다."}</h5>
+                              <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                            </div>
+                            <div className='item'>
+                              <h5>{"댓글이 달렸습니다."}</h5>
+                              <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                            </div>
+                            <div className='item'>
+                              <h5>{"댓글이 달렸습니다."}</h5>
+                              <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                            </div>
+                            <div className='item'>
+                              <h5>{"댓글이 달렸습니다."}</h5>
+                              <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                            </div>
+                            <div className='item'>
+                              <h5>{"댓글이 달렸습니다."}</h5>
+                              <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                            </div>
+                            <div className='item'>
+                              <h5>{"댓글이 달렸습니다."}</h5>
+                              <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                            </div>
+                          </div>
+                        </>
+                    }
                   </div>
                 </div>
                 <div
@@ -379,7 +378,6 @@ function App() {
           <Route path="/community/qna/:id" element={<QnaPost />} />
           <Route path="/mentoring/main" element={<MentoringMain />} />
           <Route path="/mentoring/create" element={<MentoringCreate />} />
-          <Route path="/mentoring/:id" element={<MentoringPost />} />
           <Route path="member/login" element={<Login />} />
           <Route path="member/join" element={<Join />} />
           <Route path="member/id" element={<HelpId />} />
@@ -394,7 +392,7 @@ function App() {
             <Route path="chat" element={<Chat />} />
             <Route path="withdraw" element={<Withdraw />} />
           </Route>
-          <Route path="*" element={ 
+          <Route path="*" element={
             <div className="img-error">
               <img src='/error_404.png'></img>
               <div>잘못된 주소입니다.</div>

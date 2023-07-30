@@ -29,9 +29,8 @@ function CommunityQna(props) {
             }
         })
             .then(function (response) {
-                setPostList(response.data);
-                setTotalPage(response.data.num);
-
+                setPostList(response.data.data.posts);
+                setTotalPage(response.data.data.num);
                 if (!isLoad) { // 맨 처음 한번만 실행
                     if (response.data.num > 5) {
                         const tmp = Array.from({ length: 5 }, (_, index) => index + 1);

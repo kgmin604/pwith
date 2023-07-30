@@ -176,7 +176,7 @@ def changeState(id) :
             'data' : None
         }
 
-    done = Portfolio.updateState(id)
+    done = Portfolio.updateState(id, datetime.now())
 
     return {
         'data' : None
@@ -200,9 +200,9 @@ def applyMentoring(id) :
     mentiNick = Member.findById(mentiId).nickname
     mentoNick = Member.findById(mentoId).nickname
 
-    roomName = f"멘토 {mentiNick}와 멘티 {mentoNick}의 공부방"
+    roomName = f"멘토 {mentoNick}와 멘티 {mentiNick}의 공부방"
 
-    roomId = MentoringRoom.save(roomName, mentoId, mentiId)
+    roomId = MentoringRoom.save(roomName, datetime.now(), mentoId, mentiId)
 
     # 2. 멘토링룸 링크 생성
     url = "http://localhost:3000/mentoringroom/" + str(roomId)
