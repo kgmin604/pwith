@@ -213,17 +213,15 @@ def sendResetPage(email, url) :
     title = '[Pwith] 비밀번호 재설정 페이지'
     content = '''
     <div style="width: 800px; height: 400px; background-color:#98afca; padding: 50px 0; margin: 0 auto">
-      <div style="width: 90%; height: 350px; background-color:white; margin:0 auto; padding:10px 0;">
-        <h3 style="text-align:center; font-size:30px;">인증번호</h3>
-        <hr style="width: 90%; border-color:#98afca"></hr>
-        <div style="padding: 20px 0; text-align:center;">
-        <p>비밀번호 변경을 위한 링크입니다. </p>
-        <p>해당 페이지에서 비밀번호를 변경해주세요.</p>
-          <div style="font-weight:600; letter-spacing: 10px; background-color:#ededed; width:90%; margin: 30px auto;">
-            <a href="http://localhost:5000/member/password/''' + url + '''">비밀번호 변경하기</a>
-          </div>
+        <div style="width: 90%; height: 350px; background-color:white; margin:0 auto; padding:10px 0;">
+            <h3 style="text-align:center; font-size:30px;">비밀번호 재설정</h3>
+            <hr style="width: 90%; border-color:#98afca"></hr>
+            <div style="padding: 20px 0; text-align:center;">
+            <p>비밀번호 변경을 위한 링크입니다. </p>
+            <p>아래 페이지를 클릭한 뒤 비밀번호를 재설정해주세요.</p>
+            <div style="font-weight:600; background-color:#ededed; width:90%; height: 60px; margin: 30px auto; padding-top: 29px;">
+            <a href="http://localhost:3000/member/password/''' + url + '''">비밀번호 변경하기</a>
         </div>
-      </div>
     </div>
     '''
     sendEmail(email, title, content)
@@ -240,7 +238,7 @@ def sendAuthCode(email) :
         <hr style="width: 90%; border-color:#98afca"></hr>
         <div style="padding: 20px 0; text-align:center;">
         <p>이메일 인증을 위한 인증 번호가 발급되었습니다. </p>
-        <p>인증 번호를 홈페이지 가입 페이지의 입력창에 입력해주세요.</p>
+        <p>인증 번호를 홈페이지의 입력창에 입력해주세요.</p>
           <div style="font-weight:600; font-size:40px; letter-spacing: 10px; background-color:#ededed; width:90%; margin: 30px auto;">
     ''' + auth_number + '''
           </div>
