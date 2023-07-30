@@ -30,6 +30,11 @@ import {
   Withdraw,
   NameChange,
 } from "./pages/member/mypageComp.js";
+import {
+  HelpId,
+  HelpPw,
+  ResetPw
+} from "./pages/member/help.js";
 import { loginUser, clearUser } from "./store.js";
 import StudyCreate from "./pages/study/StudyCreate.js";
 import StudyPost from "./pages/study/StudyPost.js";
@@ -95,8 +100,10 @@ function App() {
       url: "/member/logout"
     })
       .then(function (response) {
-        dispatch(clearUser());
-        navigate("/");
+        if(response.data.status==200){
+          dispatch(clearUser());
+          navigate("/");
+        }
       })
       .catch(function (error) {
         console.log(error);
@@ -375,7 +382,9 @@ function App() {
           <Route path="/mentoring/:id" element={<MentoringPost />} />
           <Route path="member/login" element={<Login />} />
           <Route path="member/join" element={<Join />} />
-          <Route path="member/help" element={<Help />} />
+          <Route path="member/id" element={<HelpId />} />
+          <Route path="member/password" element={<HelpPw />} />
+          <Route path="member/password/*" element={<ResetPw />} />
           <Route path="/mypage" element={<Mypage />}>
             <Route path="account/changepw" element={<PwChange />} />
             <Route path="account/changename" element={<NameChange />} />

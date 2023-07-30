@@ -755,3 +755,26 @@ div.join-item div.join-input
     font-family: 'TmoneyRoundWind';
     cursor: pointer;
 }
+
+.login-bottom{
+    width: 300px;
+    height: 30px;
+    margin: 0 auto;
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+div.login-bottom
+.item{
+    margin: 0px;
+    font-size: 10px;
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+div.login-bottom
+.partition{
+    font-size: 8px;
+    color: gray;
+}

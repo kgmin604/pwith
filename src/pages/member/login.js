@@ -88,19 +88,24 @@ function Login(){
                     >로그인</div>
                 </form>
 
-                <div style={{'width':'300px','height':'30px', 'margin':'0 auto','margin-top':'20px'}}>
-                    <div 
-                        className='mybtn'
-                        onClick = {()=>navigate('../member/help')}
-                        style={{'float':'right','margin':'5px','fontSize':'7px' }}
-                        
-                    >아이디 · 비밀번호 찾기</div>
-                    <div style={{'float':'right','margin':'5px','fontSize':'8px'}}>|</div>
-                    <div 
-                        className='mybtn' 
-                        onClick = {()=>navigate('../member/join')}
-                        style={{'float':'right','margin':'5px','fontSize':'7px'}}
-                    >회원가입</div>
+                <div className="login-bottom">
+                  <span
+                    className="item"
+                    onClick={(e)=>{e.stopPropagation(); navigate('../member/join');}}
+                  >회원가입
+                  </span>
+                  <span className="partition">|</span>
+                  <span
+                    className="item"
+                    onClick={(e)=>{e.stopPropagation(); navigate('../member/id');}}
+                  >아이디 찾기
+                  </span>
+                  <span className="partition">|</span>
+                  <span
+                    className="item"
+                    onClick={(e)=>{e.stopPropagation(); navigate('../member/password');}}
+                  >비밀번호 찾기
+                  </span>
                 </div>
                 
                 <hr style={{'width':'90%', 'margin':'15px auto'}}></hr>
