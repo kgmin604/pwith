@@ -4,7 +4,6 @@ from datetime import datetime
 from flask import Flask, jsonify
 
 class studyPost() :
-    
     def __init__(self, id, title, writer, curDate, content, likes, views, roomId):
         self.__id = id
         self.__title = title
@@ -128,7 +127,7 @@ class studyPost() :
         result = []
 
         for p in posts :
-            result.append(studyPost(p[0], p[1], p[2], p[3], p[4], p[5], [6], p[7]))
+            result.append(studyPost(p[0],p[1],p[2],p[3],p[4],p[5],[6],p[7]))
 
         return result
     

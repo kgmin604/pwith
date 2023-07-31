@@ -316,6 +316,10 @@ div.cropper-area
     border-color: #98AFCA;
 }
 
+.red-border{
+    border-color: red !important;
+}
+
 .pwBtn{
     margin: 20px 47%;
     border: solid 1px;

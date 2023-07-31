@@ -9,7 +9,7 @@ import json
 
 study_bp = Blueprint('study', __name__, url_prefix='/study')
 
-@study_bp.route('/main', methods=['GET'])
+@study_bp.route('/', methods=['GET'])
 def show():
     if request.method == 'GET':
         
@@ -65,10 +65,9 @@ def show():
         }
 
             
-@study_bp.route('/search', methods=['GET'])   # 글 검색
+@study_bp.route('/', methods=['GET'])   # 글 검색
 def search():
-    if request.method == 'GET':
-        # 추천 스터디 3개
+        # 추천 스터디 3개 
         recommend = request.args.get('recommend')
         print("recommend")
         print(recommend)
@@ -142,8 +141,7 @@ def search():
             
 
 @study_bp.route('/<int:id>', methods=['GET'])
-def showDetail(id) :
-    if request.method == 'GET' :    # 글 조회
+def showDetail(id) :     # 글 조회
 
         apply = request.args.get('apply')
 
@@ -230,9 +228,8 @@ def showDetail(id) :
             'reply' : replyResult
         }
         
-@study_bp.route('/update/<int:id>', methods = ['PUT'])
-def updatePost(id):
-    if request.method == 'PUT':     # 게시글 수정
+@study_bp.route('/update/<int:id>', methods = ['PATCH'])
+def updatePost(id):   # 게시글 수정
         id = request.get_json()['postId']
         postContent = request.get_json()['content']
         
@@ -243,47 +240,45 @@ def updatePost(id):
             done = 0
 
         return {
-            'done' : done
+            'data': None
         }
          
-@study_bp.route('/delete/<int:id>', methods = ['DELETE'])
-def deletePost(id):
-    if request.method == 'DELETE':      # 게시글 삭제
-        id = request.get_json()['postId']
-        
-        try :
-            done = studyPost.deleteStudy(id)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
+@study_bp.route('/<int:id>', methods = ['DELETE'])
+def deletePost(id): # 게시글 삭제
+    id = request.get_json()['postId']
+    # print(id)
+    
+    try :
+        done = studyPost.deleteStudy(id)
+    except Exception as ex :
+        # print("에러 이유 : " + str(ex))
+        done = 0
 
-        return {
-            'done' : done
-        }
+    return {
+        'data': None
+    }
 
+@study_bp.route('/<int:studyId>', methods = ['POST'])
+def replyPost(studyId) :        # 댓글 작성
+    cnt = request.get_json()['content']
 
-@study_bp.route('/<int:studyId>', methods = ['POST', 'PUT', 'DELETE'])
-def reply(studyId) :
-    if request.method == 'POST' : # 댓글 작성
+    writer = current_user.get_id()
 
-        cnt = request.get_json()['content']
+    date = datetime.now()
 
-        writer = current_user.get_id()
+    try :
+        replyId = ReplyStudy.writeReply(writer, cnt, date, studyId)
+    except Exception as ex:
+        print("에러 이유 : " + str(ex))
+        replyId = 0
 
-        date = datetime.now()
+    return {
+        'id' : replyId, # 0 is fail
+        'date' : formatDateToString(date)
+    }
 
-        try :
-            replyId = ReplyStudy.writeReply(writer, cnt, date, studyId)
-        except Exception as ex:
-            print("에러 이유 : " + str(ex))
-            replyId = 0
-
-        return {
-            'id' : replyId, # 0 is fail
-            'date' : formatDateToString(date)
-        }
-
-    elif request.method == 'PUT' : # 댓글 수정
+@study_bp.route('/<int:studyId>/<int:replyId>', methods = ['PATCH'])
+def replyPatch(studyId) :    # 댓글 수정
 
         replyId = request.get_json()['id']
         # print(replyId)
@@ -296,10 +291,11 @@ def reply(studyId) :
             done = 0
 
         return {
-            'done' : done
+            'data': None
         }
 
-    else : # 댓글 삭제
+@study_bp.route('/<int:studyId>/<int:replyId>', methods = ['DELETE'])
+def replyDelete(studyId) :     # 댓글 삭제
 
         replyId = request.get_json()['id']
 
@@ -310,12 +306,12 @@ def reply(studyId) :
             done = 0
 
         return {
-            'done' : done
+            'data': None
         }
 
 @login_required
 @study_bp.route("/create", methods=['GET', 'POST'])
-def write():
+def write():        # 글 작성
     if request.method == 'GET' :
         result = []
 
@@ -349,7 +345,7 @@ def write():
         done =studyPost.insertStudy(title, writer, curDate, content, likes, views, roomId)
         
         return {
-            'done' : done
+            'data': None
         }
     
 @login_required

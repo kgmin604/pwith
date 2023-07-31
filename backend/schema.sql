@@ -5,7 +5,7 @@ CREATE TABLE member
     password VARBINARY(100) NOT NULL,
     nickname VARCHAR(10) NOT NULL UNIQUE,
     email VARCHAR(20) NOT NULL,
-    image VARCHAR(2048) NOT NULL DEFAULT "https://cdn.discordapp.com/attachments/1119199513693933598/1130131200774779011/defalut_user.png",
+    image VARCHAR(2048) NOT NULL DEFAULT "https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/default_user.jpg",
     isAdmin BOOLEAN NOT NULL DEFAULT false,
     PRIMARY KEY(id)
 );
@@ -187,9 +187,9 @@ create table studyLike
     id BIGINT AUTO_INCREMENT,
     memberId BIGINT NOT NULL,
     studyId BIGINT NOT NULL,
-    PRIMARY KEY(id),
+    PRIMARY KEY(id), 
     FOREIGN KEY(memberId) REFERENCES member(id),
-    FOREIGN KEY(studyId) REFERENCES study(id)
+    FOREIGN KEY(studyId) REFERENCES study(id) ON DELETE CASCADE
 );
 
 create table qnaLike
@@ -199,5 +199,5 @@ create table qnaLike
     qnaId BIGINT NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY(memberId) REFERENCES member(id),
-    FOREIGN KEY(qnaId) REFERENCES qna(id)
+    FOREIGN KEY(qnaId) REFERENCES qna(id) ON DELETE CASCADE
 );

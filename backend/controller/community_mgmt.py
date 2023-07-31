@@ -3,15 +3,39 @@ from backend.controller import commit, selectAll, selectOne, rollback
 from datetime import datetime
 
 class QNAPost() :
-    def __init__(self, id, title, writer, content, curDate, category, likes, views):
+    def __init__(self, id, title, writer, curDate, content, category, likes, views):
         self.__id = id
         self.__title = title
         self.__writer = writer
-        self.__content = content
         self.__curDate = curDate
-        self.__category = category
+        self.__content = content
         self.__likes = likes
         self.__views = views
+        self.__category = category
+    @property
+    def id(self) :
+        return self.__id
+    @property
+    def title(self) :
+        return self.__title
+    @property
+    def writer(self):
+        return self.__writer
+    @property
+    def content(self) :
+        return self.__content
+    @property
+    def curDate(self) :
+        return self.__curDate
+    @property
+    def category(self):
+        return self.__category
+    @property
+    def likes(self):
+        return self.__likes
+    @property
+    def views(self) :
+        return self.__views
         
     @staticmethod
     def insertQNA(title, writer, curDate, content, category, likes, views):     # qna 글 생성
@@ -69,9 +93,13 @@ class QNAPost() :
         sql = f"SELECT * FROM qna WHERE writer = {writer_id} ORDER BY curDate DESC"
 
         posts = selectAll(sql)
+        
+        result = []
+        for p in posts :
+            result.append(QNAPost(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7]))
+        
+        return result
 
-        return posts
-    
     @staticmethod
     def findByTitle(title) : # 제목으로 검색
        
@@ -160,28 +188,7 @@ class QNAPost() :
         rows = selectAll(sql)
        
         return rows
-    
-    @property
-    def title(self) :
-        return str(self.__title)
-    @property
-    def content(self) :
-        return self.__content
-    @property
-    def views(self) :
-        return self.__views
-    @property
-    def curDate(self) :
-        return self.__curDate
-    @property
-    def writer(self):
-        return self.__writer
-    @property
-    def category(self):
-        return self.__category
-    @property
-    def likes(self):
-        return self.__likes
+
     
    # @staticmethod
    # def getLiked(memId, postId):

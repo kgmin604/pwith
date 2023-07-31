@@ -111,9 +111,8 @@ def listNews() :
         }
     # 추후 검색 구현할 때 POST 방식 추가
 
-@community_bp.route('/qna/main', methods=['GET'])
-def show():
-    if request.method =='GET':   # 전체 글 출력
+@community_bp.route('/qna', methods=['GET'])
+def show():     # 전체 글 출력
         posts = []
         result = []
         posts = QNAPost.getQNA()
@@ -131,10 +130,9 @@ def show():
             result.append(post)
         return { 'posts' : result}
 
-@community_bp.route('/qna/search', methods=['GET']) # 글 검색
+@community_bp.route('/qna', methods=['GET']) # 글 검색
 def search():
-    if request.method =='GET':
-        
+
         searchType = request.args.get('type')
         searchValue = request.args.get('value')
         posts = []
@@ -191,7 +189,7 @@ def showDetail(id) :
         
         # toFront['curDate'] = QNAPost.getFormattedDate(toFront['curDate'])
 
-        replyList = ReplyQna.showReplies(id) # 댓글 조회
+        replyList = ReplyQna.showReplies(id) # 댓글 조회 
 
         replyResult = []
 
@@ -211,9 +209,9 @@ def showDetail(id) :
             'reply' : replyResult
         }
         
-@community_bp.route('/qna/update/<int:id>', methods = ['PUT'])
+@community_bp.route('/qna/update/<int:id>', methods = ['PATCH'])
 def updatePost(id):
-    if request.method == 'PUT':     # 게시글 수정
+    if request.method == 'PATCH':     # 게시글 수정
         id = request.get_json()['postId']
         postContent = request.get_json()['content']
         
@@ -224,7 +222,7 @@ def updatePost(id):
             done = 0
 
         return {
-            'done' : done
+            'data': None
         }
         
 @community_bp.route('/qna/delete/<int:id>', methods = ['DELETE'])
@@ -239,12 +237,11 @@ def deletePost(id):
             done = 0
 
         return {
-            'done' : done
+            'done' : None
         }
 
-@community_bp.route('/qna/<int:id>', methods = ['POST', 'PUT', 'DELETE'])
-def reply(id) :
-    if request.method == 'POST' : # 댓글 작성
+@community_bp.route('/qna/<int:id>', methods = ['POST'])
+def replyPost(id) :      # 댓글 작성
 
         cnt = request.get_json()['content']
 
@@ -263,8 +260,8 @@ def reply(id) :
             'date' : formatDateToString(date)
         }
 
-    elif request.method == 'PUT' : # 댓글 수정
-
+@community_bp.route('/qna/<int:id>/<int:replyId>', methods = ['PATCH'])
+def replyPatch(id) :  # 댓글 수정
         replyId = request.get_json()['id']
         newContent = request.get_json()['content']
 
@@ -275,10 +272,11 @@ def reply(id) :
             done = 0
 
         return {
-            'done' : done
+            'done' : None
         }
 
-    else : # 댓글 삭제
+@community_bp.route('/qna/<int:id>/<int:replyId>', methods = ['DELETE'])
+def replyDelete(id) : # 댓글 삭제
 
         replyId = request.get_json()['id']
 
@@ -289,7 +287,7 @@ def reply(id) :
             done = 0
 
         return {
-            'done' : done
+            'done' : None
         }
     
 
@@ -313,7 +311,7 @@ def write():
         done = QNAPost.insertQNA(title, writer, curDate, content, category, likes, views)
         
         return {
-            'done' : done
+            'done' : None
         }
         
 @login_required
