@@ -187,7 +187,7 @@ create table studyLike
     id BIGINT AUTO_INCREMENT,
     memberId BIGINT NOT NULL,
     studyId BIGINT NOT NULL,
-    PRIMARY KEY(id),
+    PRIMARY KEY(id), 
     FOREIGN KEY(memberId) REFERENCES member(id),
     FOREIGN KEY(studyId) REFERENCES study(id) ON DELETE CASCADE
 );
