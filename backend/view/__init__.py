@@ -25,7 +25,7 @@ def uploadFileS3(file):
 
         location = s3.get_bucket_location(Bucket=config.S3_BUCKET_NAME)["LocationConstraint"]
 
-        image_url = f"https://{config.S3_BUCKET_NAME}.s3.{location}.amazonaws.com/{filename}.jpg"
+        image_url = f"https://{config.S3_BUCKET_NAME}.s3.{location}.amazonaws.com/{filename}"
 
     return image_url
 

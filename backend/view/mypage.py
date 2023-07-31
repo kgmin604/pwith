@@ -83,7 +83,7 @@ def changeImage() :
 
     image = request.files['newImage']
     newImage = uploadFileS3(image)
-
+    
     id = current_user.get_id()
 
     result = Member.updateImage(id, newImage)

@@ -15,13 +15,19 @@ import Cropper from "react-cropper";
 import 'cropperjs/dist/cropper.css';
 
 function Account(){
-    let user = useSelector((state) => state.user);
     let navigate = useNavigate();
+
+    /* 개인정보 */
+    let [user, setUser] = useState({
+        'name': '',
+        'id':'',
+        'email':'',
+        'image':''
+    })
 
     /* 이미지 업로드 */
     const cropperRef = useRef(null); // react-cropper 컴포넌트를 참조
     const [inputImage, setInputImage] = useState(null); // 유저가 첨부한 이미지
-    const [croppedImage, setCroppedImage] = useState(null); // 유저가 선택한 영역만큼 크롭된 이미지
 
     let [isCrop, setIsCrop] = useState(false);
 
@@ -29,19 +35,59 @@ function Account(){
         const imageElement = cropperRef?.current;
         const cropper = imageElement?.cropper;
         if (cropper) {
-            setCroppedImage(cropper.getCroppedCanvas().toDataURL());
-            setIsCrop(false);
-            console.log(croppedImage);
+          let copy = { ...user };
+          copy['image'] = '/change.png'; // 변경 상태 알림용
+          setUser(copy);
+          setIsCrop(false);
+      
+          // 이미지를 Blob으로 변환
+          cropper.getCroppedCanvas().toBlob((blob) => {
+            // Blob을 FormData로 감싸기
+            const formData = new FormData();
+            formData.append('newImage', blob, `${user.id}.jpg`);
+      
+            // 서버로 업로드하기 위한 API 요청
+            axios({
+              method: "PATCH",
+              url: "/mypage/account/image",
+              data: formData, // FormData 전달
+            })
+            .then(function (response) {
+              let copy = { ...user };
+              copy['image'] = cropper.getCroppedCanvas().toDataURL(); // response의 결과로 바꾸기
+              setUser(copy);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+          }, 'image/jpeg');
         }
-    };
-    
+      };
+
+    useEffect(()=>{
+        axios({
+            method: "GET",
+            url: "/mypage/account"
+        })
+        .then(function (response) {
+            let copy={...user};
+            copy['name']=response.data.data.nickname;
+            copy['id']=response.data.data.id;
+            copy['email']=response.data.data.email;
+            copy['image']=response.data.data.image;
+            setUser(copy);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    },[])
+
     return(
         <>
             <h3 className="my-header">회원정보 관리</h3>
             <div className="acc-wrap">
                 <div className="img-area">
-                    <img src={croppedImage || '/default_user.png'} alt="Cropped" />
-                    {/*<img src='/default_user.png'></img>*/}
+                <img src={ user.image } alt="프로필사진"/>
                     <form>
                         <label 
                             htmlFor="imageUpload" 
@@ -137,34 +183,15 @@ function WritingList(){
     let [mypost, setMypost] = useState([]);
     const parse = require('html-react-parser');//html 파싱
 
-
-    function loadWritingList(){
-        axios({
-          method: "GET",
-          url: "/mypage/writinglist",
-          params: {
-            type: "study"
-          }
-        })
-        .then(function (response) {
-            setMypost(response.data);
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-    }
-
     function getWritingList(type){
         let type_text = (type === 0 ? 'study' : 'community');
+        setMypost([]);
         axios({
             method: "GET",
-            url: "/mypage/writinglist",
-            params: {
-              type: `${type_text}`
-            }
+            url: `/mypage/writing-list/${type_text}`
         })
         .then(function (response) {
-            setMypost(response.data);
+            setMypost(response.data.data);
         })
         .catch(function (error) {
             console.log(error);
@@ -172,7 +199,7 @@ function WritingList(){
     }
 
     useEffect(() => {
-        loadWritingList();
+        getWritingList(0);
     }, []); 
 
     function movePage(event, id){
@@ -224,41 +251,21 @@ function WritingList(){
 }
 
 function CommentList(){
-    // 수정해야하는 컴포넌트
 
     let navigate = useNavigate();
-    let [sel, setSel] = useState(0); // 0: 스터디 글 목록 1: 커뮤니티 글 목록
-    let [mypost, setMypost] = useState([]);
+    let [sel, setSel] = useState(0); // 0: 스터디 댓글 목록 1: 커뮤니티 댓글 목록
+    let [mycomment, setMycomment] = useState([]);
     const parse = require('html-react-parser');//html 파싱
 
-
-    function loadWritingList(){
-        axios({
-          method: "GET",
-          url: "/mypage/writinglist",
-          params: {
-            type: "study"
-          }
-        })
-        .then(function (response) {
-            setMypost(response.data);
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
-    }
-
-    function getWritingList(type){
+    function getCommentList(type){
+        setMycomment([]);
         let type_text = (type === 0 ? 'study' : 'community');
         axios({
             method: "GET",
-            url: "/mypage/writinglist",
-            params: {
-              type: `${type_text}`
-            }
+            url: `/mypage/comment-list/${type_text}`
         })
         .then(function (response) {
-            setMypost(response.data);
+            setMycomment(response.data.data);
         })
         .catch(function (error) {
             console.log(error);
@@ -266,7 +273,7 @@ function CommentList(){
     }
 
     useEffect(() => {
-        loadWritingList();
+        getCommentList(0);
     }, []); 
 
     function movePage(event, id){
@@ -287,27 +294,27 @@ function CommentList(){
                 <ul style={{ padding: '0 0' }}>
                     <li 
                         className={sel === 0 ? "type-btn-click" : "type-btn"} 
-                        onClick={(event) => { event.stopPropagation(); setSel(0); getWritingList(0); }}
+                        onClick={(event) => { event.stopPropagation(); setSel(0); getCommentList(0); }}
                     >스터디</li>
                     <li 
                         className={sel === 1 ? "type-btn-click" : "type-btn"} 
-                        onClick={(event) => { event.stopPropagation(); setSel(1); getWritingList(1);}}
+                        onClick={(event) => { event.stopPropagation(); setSel(1); getCommentList(1);}}
                     >커뮤니티</li>
                 </ul>
                 </div>
                 <div className="writinglist-bottom scroll-area">
                 {
-                    mypost === [] ? null : 
-                    mypost.map((post, index) => {
+                    mycomment === [] ? null : 
+                    mycomment.map((comm, index) => {
                     return (
                         <div 
                             className="item" 
                             key={index}
-                            onClick = { e => movePage(e, post.id) }
+                            onClick = { e => movePage(e, comm.id) }
                         >
-                            <time>{post.curDate}</time>
-                            <h3 className="header">{post.title}</h3>
-                            <p className="content">{parse(post.content)}</p>
+                            <time>{comm.curDate}</time>
+                            <h3 className="header">{comm.title}</h3>
+                            <p className="content">{parse(comm.content)}</p>
                         </div>
                     );})
                 }
@@ -576,11 +583,8 @@ function PwChange(){ // 컴포넌트
         'newPw': false,
         'newPwChk': false
     });
-    let [msg,setMsg] = useState({
-        'curPw': '',
-        'newPw': '',
-        'newPwChk': ''
-    })
+
+    let [red, setRed] = useState(0);
 
     function inputChange(e){
         let copyUserinput = {...userinput};
@@ -616,48 +620,41 @@ function PwChange(){ // 컴포넌트
     }
 
     function changePassword() { // axios 요청
-        let copyMsg ={
-            'curPw': '',
-            'newPw': '',
-            'newPwChk': ''
-        }
         axios({
-            method: "POST",
-            url: "/mypage/account/changepw",
+            method: "PATCH",
+            url: "/mypage/account/password",
             data: {
               oldPw: `${userinput['curPw']}`,
               newPw: `${userinput['newPw']}`,
             },
           })
             .then(function (response) {
-                if(response.data.result===1){ // 성공
+                if(response.data.status===200){ // 성공
                     console.log(response);
                     alert('비밀번호가 변경되었습니다.');
                     navigate("/");
                 }
-                else if(response.data.result===0){ // 실패
-                    copyMsg['curPw']='비밀번호를 잘못 입력했습니다.';
-                    setMsg(copyMsg);
-                }
+                setRed(0);
             })
             .catch(function (error) {
               console.log(error);
+              if(error.response.data.status===400){ // 실패
+                alert('현재 비밀번호를 잘못 입력했습니다.');
+                setRed(1);
+            }
             });
     }
 
     function clickBtn(){
-        let copyMsg ={
-            'curPw': '',
-            'newPw': '',
-            'newPwChk': ''
-        }
         if(!is['newPw']){
-            copyMsg['newPw']='조건에 맞는 비밀번호를 입력해주세요.';
-            setMsg(copyMsg);
+            alert('비밀번호는 하나 이상의 문자,숫자,특수문자를 포함한 8글자 이상이여야 합니다.');
+            setRed(2);
+            return;
         }
         else if(!is['newPwChk']){
-            copyMsg['newPwChk']='새 비밀번호와 일치하지 않습니다.';
-            setMsg(copyMsg);
+            alert('비밀번호 확인란을 다시 입력해주세요.')
+            setRed(3);
+            return;
         }
         else{
             changePassword();
@@ -672,23 +669,20 @@ function PwChange(){ // 컴포넌트
                 <div className="acc-box" style={{'width':'100%'}}> 
                     <div className="acc-header" style={{'width':'200px'}}>현재 비밀번호</div>
                     <div className="pwc-box-wrap">
-                        <input type="password" className="pwc-box" id="curPw" onChange={e=>inputChange(e)}/>
+                        <input type="password" className={`pwc-box ${red === 1 ? 'red-border' : ''}`} id="curPw" onChange={e=>inputChange(e)}/>
                     </div>
-                    <div className="err-msg">{msg['curPw']}</div>
                 </div>
                 <div className="acc-box" style={{'width':'100%'}}> 
                     <div className="acc-header" style={{'width':'200px'}}>새 비밀번호</div>
                     <div className="pwc-box-wrap">
-                        <input type="password" className="pwc-box" id="newPw" onChange={e=>inputChange(e)}/>
+                        <input type="password" className={`pwc-box ${red === 2 ? 'red-border' : ''}`} id="newPw" onChange={e=>inputChange(e)}/>
                     </div>
-                    <div className="err-msg">{msg['newPw']}</div>
                 </div>
                 <div className="acc-box" style={{'width':'100%'}}> 
                     <div className="acc-header" style={{'width':'200px'}}>새 비밀번호 확인</div>
                     <div className="pwc-box-wrap">
-                        <input type="password" className="pwc-box" id="newPwChk" onChange={e=>inputChange(e)}/>
+                        <input type="password" className={`pwc-box ${red === 3 ? 'red-border' : ''}`} id="newPwChk" onChange={e=>inputChange(e)}/>
                     </div>
-                    <div className="err-msg">{msg['newPwChk']}</div>
                 </div>
             </form>
             </div>
@@ -719,20 +713,20 @@ function Withdraw(){
         }
 
         if(confirm_withdraw){
-            alert("탈퇴 요청");
-            
             axios({
-                method: "POST",
-                url: "/mypage/withdraw",
+                method: "DELETE",
+                url: "/mypage/account",
                 data: {
                     password : `${pw}`,
                 }
             })
             .then(function (response) {
-                
+                alert("회원 탈퇴가 완료되었습니다.");
+                navigate("./../..");
             })
             .catch(function (error) {
                 console.log(error);
+                alert("잘못된 비밀번호입니다.");
             });
         }
     }
@@ -745,10 +739,13 @@ function Withdraw(){
                 <div className="witdraw-box" style={{'width':'100%'}}> 
                     <div className="witdraw-header" style={{'width':'200px'}}>현재 비밀번호</div>
                     <div className="witdraw-box-wrap">
-                        <input className="witdraw-box" type="password" onChange={e=>{
-                            e.stopPropagation();
-                            setPw(e.target.value);
-                        }}/>
+                        <input 
+                            className="witdraw-box" 
+                            type="password" 
+                            onChange={e=>{ e.stopPropagation(); setPw(e.target.value);}}
+                            onKeyDown={(e) => { if (e.key === "Enter") requestWithdraw(e) }}
+                        />
+
                     </div>
                     {
                     msg==='' ? null :
@@ -769,6 +766,7 @@ function Withdraw(){
 function NameChange(){
     let user = useSelector((state) => state.user);
     let navigate = useNavigate();
+    let dispatch = useDispatch();
     
     let [newName,setNewName] = useState('');
     let [msg, setMsg] = useState('')
@@ -786,23 +784,22 @@ function NameChange(){
         }
 
         axios({
-            method: "POST",
-            url: "/mypage/account/changename",
+            method: "PATCH",
+            url: "/mypage/account/nickname",
             data: {
-                name : `${newName}`,
+                newNick : `${newName}`,
             }
         })
         .then(function (response) {
-            if(response.data.type===1){
-                alert("닉네임이 변경되었습니다.");
-                navigate('./..');
-            }
-            else if(response.data.type===0){
-                setMsg("이미 있는 닉네임입니다.");
-            }
+            alert("닉네임이 변경되었습니다.");
+            dispatch(
+                loginUser({ name: newName })
+            );
+            navigate('./..');
         })
         .catch(function (error) {
             console.log(error);
+            setMsg("이미 있는 닉네임입니다.");
         });
     }
 
@@ -814,7 +811,7 @@ function NameChange(){
                 <div className="witdraw-box" style={{'width':'100%'}}> 
                     <div className="witdraw-header" style={{'width':'200px'}}>변경할 닉네임</div>
                     <div className="witdraw-box-wrap">
-                        <input className="witdraw-box" type="password" onChange={e=>{
+                        <input className="witdraw-box" onChange={e=>{
                             e.stopPropagation();
                             setNewName(e.target.value);
                         }}/>
