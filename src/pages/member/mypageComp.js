@@ -15,13 +15,19 @@ import Cropper from "react-cropper";
 import 'cropperjs/dist/cropper.css';
 
 function Account(){
-    let user = useSelector((state) => state.user);
     let navigate = useNavigate();
+
+    /* 개인정보 */
+    let [user, setUser] = useState({
+        'name': '',
+        'id':'',
+        'email':'',
+        'image':''
+    })
 
     /* 이미지 업로드 */
     const cropperRef = useRef(null); // react-cropper 컴포넌트를 참조
     const [inputImage, setInputImage] = useState(null); // 유저가 첨부한 이미지
-    const [croppedImage, setCroppedImage] = useState(null); // 유저가 선택한 영역만큼 크롭된 이미지
 
     let [isCrop, setIsCrop] = useState(false);
 
@@ -29,19 +35,59 @@ function Account(){
         const imageElement = cropperRef?.current;
         const cropper = imageElement?.cropper;
         if (cropper) {
-            setCroppedImage(cropper.getCroppedCanvas().toDataURL());
-            setIsCrop(false);
-            console.log(croppedImage);
+          let copy = { ...user };
+          copy['image'] = '/change.png'; // 변경 상태 알림용
+          setUser(copy);
+          setIsCrop(false);
+      
+          // 이미지를 Blob으로 변환
+          cropper.getCroppedCanvas().toBlob((blob) => {
+            // Blob을 FormData로 감싸기
+            const formData = new FormData();
+            formData.append('newImage', blob, `${user.id}.jpg`);
+      
+            // 서버로 업로드하기 위한 API 요청
+            axios({
+              method: "PATCH",
+              url: "/mypage/account/image",
+              data: formData, // FormData 전달
+            })
+            .then(function (response) {
+              let copy = { ...user };
+              copy['image'] = cropper.getCroppedCanvas().toDataURL(); // response의 결과로 바꾸기
+              setUser(copy);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+          }, 'image/jpeg'); // S3에 객체 유형 설정
         }
-    };
-    
+      };
+
+    useEffect(()=>{
+        axios({
+            method: "GET",
+            url: "/mypage/account"
+        })
+        .then(function (response) {
+            let copy={...user};
+            copy['name']=response.data.data.nickname;
+            copy['id']=response.data.data.id;
+            copy['email']=response.data.data.email;
+            copy['image']=response.data.data.image;
+            setUser(copy);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    },[])
+
     return(
         <>
             <h3 className="my-header">회원정보 관리</h3>
             <div className="acc-wrap">
                 <div className="img-area">
-                    <img src={croppedImage || '/default_user.png'} alt="Cropped" />
-                    {/*<img src='/default_user.png'></img>*/}
+                <img src={user.image}/>
                     <form>
                         <label 
                             htmlFor="imageUpload" 
@@ -719,20 +765,20 @@ function Withdraw(){
         }
 
         if(confirm_withdraw){
-            alert("탈퇴 요청");
-            
             axios({
-                method: "POST",
-                url: "/mypage/withdraw",
+                method: "DELETE",
+                url: "/mypage/account",
                 data: {
                     password : `${pw}`,
                 }
             })
             .then(function (response) {
-                
+                alert("회원 탈퇴가 완료되었습니다.");
+                navigate("./../..");
             })
             .catch(function (error) {
                 console.log(error);
+                alert("잘못된 비밀번호입니다.");
             });
         }
     }
@@ -745,10 +791,13 @@ function Withdraw(){
                 <div className="witdraw-box" style={{'width':'100%'}}> 
                     <div className="witdraw-header" style={{'width':'200px'}}>현재 비밀번호</div>
                     <div className="witdraw-box-wrap">
-                        <input className="witdraw-box" type="password" onChange={e=>{
-                            e.stopPropagation();
-                            setPw(e.target.value);
-                        }}/>
+                        <input 
+                            className="witdraw-box" 
+                            type="password" 
+                            onChange={e=>{ e.stopPropagation(); setPw(e.target.value);}}
+                            onKeyDown={(e) => { if (e.key === "Enter") requestWithdraw(e) }}
+                        />
+
                     </div>
                     {
                     msg==='' ? null :

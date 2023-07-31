@@ -83,7 +83,11 @@ def changeImage() :
 
     image = request.files['newImage']
     newImage = uploadFileS3(image)
-
+    
+    # newImage에 [이름].jpg.jpg 저장
+    # 임시 뒤의 '.' 기준으로 문자열 삭제
+    newImage = newImage.rsplit(".", 1)[0]
+    
     id = current_user.get_id()
 
     result = Member.updateImage(id, newImage)
