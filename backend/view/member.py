@@ -117,7 +117,7 @@ def logout() :
             'message' : '로그아웃 불가'
         }
 
-@member_bp.route('id', methods = ['POST'])
+@member_bp.route('/id', methods = ['POST'])
 def findId() :
 
     email = request.get_json()['email']
@@ -138,7 +138,7 @@ def findId() :
     }
 
 url_cache = {}
-@member_bp.route('password', methods = ['POST'])
+@member_bp.route('/password', methods = ['POST'])
 def findPassword() :
 
     data = request.get_json()
@@ -169,10 +169,10 @@ def findPassword() :
     sendResetPage(email, url)
     
     return {
-        'url' : url
+        'data' : None
     }
 
-@member_bp.route('password/<url>', methods = ['PATCH'])
+@member_bp.route('/password/<url>', methods = ['PATCH'])
 def resetPassword(url) :
     
     data = request.get_json()
