@@ -29,7 +29,7 @@ function StudyBoard(props) {
     useEffect(() => {
         axios({
             method: "GET",
-            url: "/study/main",
+            url: "/study",
             params: {
                 type: searchType, // 0: 제목 1: 글쓴이
                 value: inputValue,
@@ -60,7 +60,7 @@ function StudyBoard(props) {
     const searchStudy = () => {
         axios({
             method: "GET",
-            url: `/study/main`,
+            url: `/study`,
             params: {
                 type: searchType, // 0: 제목 1: 글쓴이
                 value: inputValue,

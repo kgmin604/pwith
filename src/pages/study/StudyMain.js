@@ -15,7 +15,7 @@ function StudyMain() {
   useEffect(() => {
     axios({
       method: "GET",
-      url: "/study/main",
+      url: "/study",
       params: {
         'recommend': 1
       }
