@@ -9,7 +9,7 @@ function MentoCard(props) {
     const { mento } = props
     const [showModal, setShowModal] = useState(false);
     return <>
-        {showModal && <PortfolioModal portfolio={mento} setShowModal={setShowModal} />}
+        {showModal && mento && <PortfolioModal id={mento.id} setShowModal={setShowModal} />}
         <Col key={mento.writer} xs={12} sm={6} md={4} className="mb-2" onClick={() => setShowModal(true)}>
             <Card style={{ width: '15rem', height: '20rem' }}>
                 <Card.Img variant="top" src={mento.mentoPic} style={{ width: '100%', height: '50%', objectFit: 'cover' }} />
