@@ -189,7 +189,7 @@ create table studyLike
     studyId BIGINT NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY(memberId) REFERENCES member(id),
-    FOREIGN KEY(studyId) REFERENCES study(id)
+    FOREIGN KEY(studyId) REFERENCES study(id) ON DELETE CASCADE
 );
 
 create table qnaLike
@@ -199,5 +199,5 @@ create table qnaLike
     qnaId BIGINT NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY(memberId) REFERENCES member(id),
-    FOREIGN KEY(qnaId) REFERENCES qna(id)
+    FOREIGN KEY(qnaId) REFERENCES qna(id) ON DELETE CASCADE
 );
