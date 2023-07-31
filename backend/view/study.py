@@ -67,7 +67,7 @@ def show():
             
 @study_bp.route('/', methods=['GET'])   # 글 검색
 def search():
-        # 추천 스터디 3개
+        # 추천 스터디 3개 
         recommend = request.args.get('recommend')
         print("recommend")
         print(recommend)

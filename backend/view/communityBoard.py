@@ -189,7 +189,7 @@ def showDetail(id) :
         
         # toFront['curDate'] = QNAPost.getFormattedDate(toFront['curDate'])
 
-        replyList = ReplyQna.showReplies(id) # 댓글 조회
+        replyList = ReplyQna.showReplies(id) # 댓글 조회 
 
         replyResult = []
 
