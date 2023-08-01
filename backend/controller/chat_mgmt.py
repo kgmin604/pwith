@@ -25,26 +25,33 @@ class chat():
         print(rows)
         
         return rows
+    
+    # rows 리스트의 각 요소들에 있는 "date" 키를 기준으로 정렬하는 함수
         
     def getAllChat(memId):
-        sql = f"select  * from chat where sender = '{str(memId)}' or receiver = '{str(memId)}' group by receiver order by curDate desc"
+        sql = f"select  id, receiver, content, curDate from chat where sender = '{str(memId)}' group by receiver"
+        sql2 = f"select id, sender, content, curDate from chat where receiver = '{str(memId)}' group by sender" 
 
-        rows = selectAll(sql)
+        rows1 = selectAll(sql)
+        rows2 = selectAll(sql2)
         
-        return rows
+        rows = rows1+rows2
+        print(rows)
+        
+        def get_datetime_key(row):
+            return row[3]
+        
+        sorted_rows = sorted(rows, key=get_datetime_key, reverse=True)
+        return sorted_rows
+    
     
     def chkOppId(oppId):
-        sql = f"select id from member"
+        sql = f"select id from member where nickname = '{str(oppId)}'"
         
-        memIdList = selectAll(sql)
+        memId = selectOne(sql)
         
-        for memId in memIdList:
-            memId = memId[0]  # 튜플의 첫 번째 요소만 가져옴
-            print(memId)
-        
-            if oppId == memId:
-                #print("oppId =", oppId)
-                return True
+        if memId is not None:
+            return True
                 
         return False
             
