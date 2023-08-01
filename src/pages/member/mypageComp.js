@@ -87,7 +87,7 @@ function Account(){
             <h3 className="my-header">회원정보 관리</h3>
             <div className="acc-wrap">
                 <div className="img-area">
-                <img src={ user.image } alt="프로필사진"/>
+                    <img src={ user.image } alt="프로필사진"/>
                     <form>
                         <label 
                             htmlFor="imageUpload" 

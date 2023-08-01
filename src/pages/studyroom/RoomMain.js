@@ -7,6 +7,9 @@ import { useState, useEffect  } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+
 
 function RoomMain(){
     let user = useSelector((state) => state.user);
@@ -17,14 +20,17 @@ function RoomMain(){
 
     let [chkAxios, setChkAxios] = useState(false);
 
+    let [type,setType] = useState('study'); // 'study' or 'mentoring'
+
     useEffect(()=>{
         axios({
             method: "GET",
-            url: "/studyroom"
+            url: "/study-room"
         })
         .then(function (response) {
-            setRooms(response.data.studyRoom);
-            setRooms2(response.data.mentoringRoom);
+            console.log(response.data);
+            setRooms(response.data.data.studyRoom);
+            setRooms2(response.data.data.mentoringRoom);
             setChkAxios(true);
         })
         .catch(function (error) {
@@ -61,48 +67,92 @@ function RoomMain(){
                     </div>
                     <div class="col-md-9">
                         <div className="list-area">
-                            <h2><span style={{'color':'#98afca'}}>▶</span>스터디</h2>
+                            <div className="header">
+                                <h2 
+                                    className={(type)==='study'?'sel':''}
+                                    onClick={e=>{e.stopPropagation(); setType('study');}}
+                                >스터디</h2>
+                                <h2>/</h2>
+                                <h2 
+                                    className={(type)==='mentoring'?'sel':''}
+                                    onClick={e=>{e.stopPropagation(); setType('mentoring');}}
+                                >멘토링</h2>
+                            </div>
+                            <br></br>
                             {
-                                chkAxios && rooms.length === 0 ? 
+                                type==='study'?
                                 <>
-                                    <div className="img-notice">
-                                        <img src='/img_study.png'></img>
-                                        <div>참여한 스터디가 없네요! {" "}
-                                            <span onClick={(e)=>{e.stopPropagation(); navigate('../study/main'); }}>
-                                                스터디 둘러보기
-                                            </span>
+                                    {
+                                    chkAxios && rooms.length === 0 ? 
+                                    <>
+                                        <div className="img-notice">
+                                            <img src='/img_study.png'></img>
+                                            <div>참여한 스터디가 없네요! {" "}
+                                                <span onClick={(e)=>{e.stopPropagation(); navigate('../study/main'); }}>
+                                                    스터디 둘러보기
+                                                </span>
+                                            </div>
                                         </div>
+                                    </>
+                                    :
+                                    <div className="items">
+                                    {
+                                        rooms.map((room, index) => (
+                                            <div className="item" key={index} onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/studyroom/${room.id}`);
+                                            }}>
+                                                <div className="img-area">
+                                                    <img src={room.image}/>
+                                                    <div className="join-area">
+                                                        <FontAwesomeIcon icon={faUser} />
+                                                        <span>4명</span>
+                                                    </div>
+                                                </div>
+                                                <h3>{room.name}</h3>
+                                            </div>
+                                        ))
+                                    }
                                     </div>
+                                }
                                 </>
                                 :
-                                <div className="items">
+                                <>
                                 {
-                                    rooms.map((room, index) => (
-                                        <a className="item" key={index} onClick={(e) => {
-                                            e.stopPropagation();
-                                            navigate(`/studyroom/${room.roomId}`);
-                                        }}>
-                                        <h3>{room.title}{room.leader===user.id?' 👑':''}</h3>
-                                        </a>
-                                    ))
+                                    chkAxios && rooms2.length === 0 ? 
+                                    <>
+                                        <div className="img-notice">
+                                            <img src='/img_study.png'></img>
+                                            <div>참여한 멘토링이 없네요! {" "}
+                                                <span onClick={(e)=>{e.stopPropagation(); navigate('../mentoring/main'); }}>
+                                                    멘토링 둘러보기
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </>
+                                    :
+                                    <div className="items">
+                                    {
+                                        rooms2.map((room, index) => (
+                                            <div className="item" key={index} onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/studyroom/${room.id}`);
+                                            }}>
+                                                <div className="img-area">
+                                                    <img src={room.image}/>
+                                                    <div className="join-area">
+                                                        <FontAwesomeIcon icon={faUser} />
+                                                        <span>4명</span>
+                                                    </div>
+                                                </div>
+                                                <h3>{room.name}</h3>
+                                            </div>
+                                        ))
+                                    }
+                                    </div>
                                 }
-                                </div>
+                                </>
                             }
-                        </div>
-                        <div className="list-area">
-                            <h2><span style={{'color':'#98afca'}}>▶</span>멘토링</h2>
-                            <div className="items">
-                            {
-                                rooms2.map((room, index) => (
-                                    <a className="item" key={index} onClick={(e) => {
-                                        e.stopPropagation();
-                                        navigate(`/mentoring/${room.roomId}`);
-                                    }}>
-                                    <h3>{room.title}</h3>
-                                    </a>
-                                ))
-                            }
-                            </div>
                         </div>
                     </div>
                 </div>
