@@ -43,7 +43,7 @@ function RoomMain(){
             user.id === null ?
             <div className="img-error">
                 <img src='/error_login.png'></img>
-                <div><span onClick={()=>navigate('../login')}>로그인</span> 후 사용해주세요!</div>
+                <div><span onClick={()=>navigate('../member/login')}>로그인</span> 후 사용해주세요!</div>
             </div>
             :
             <div className="room-part">
