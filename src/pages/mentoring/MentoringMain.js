@@ -19,7 +19,6 @@ function MentoringMain() {
             url: "/mentoring",
         })
             .then(function (response) {
-                console.log(response.data.data)
                 setMentoList(response.data.data);
             })
             .catch(function (error) {

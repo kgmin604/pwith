@@ -24,7 +24,7 @@ function CommunityBoard() {
     useEffect(() => {
         axios({
             method: "GET",
-            url: "/community/main"
+            url: "/community"
         })
             .then(function (response) {
                 setItList(response.data.data.news);

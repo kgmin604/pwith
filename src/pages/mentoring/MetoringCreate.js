@@ -13,7 +13,7 @@ function MentoringCreate() {
     const navigate = useNavigate();
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
-    const [selectedFile, setSelectedFile] = useState(null); // ㅊㅇ 추가
+    const [selectedFile, setSelectedFile] = useState(null); 
 
     const words = ['웹개발', '모바일 앱 개발', '게임 개발', '프로그래밍 언어', '알고리즘 · 자료구조', '데이터베이스', '자격증', '개발 도구', '데이터 사이언스', '데스크톱 앱 개발', '교양 · 기타'];
     const [selectedWords, setSelectedWords] = useState([]); // 클릭한 단어 배열
@@ -39,9 +39,8 @@ function MentoringCreate() {
         console.log(formData.get('brief'))
         console.log(formData.get('content'))
 
-        axios.post('/mentoring/create', formData)
+        axios.post('/mentoring', formData)
         .then((response) => {
-          console.log(response.data);
           alert("새 글이 등록되었습니다.");
           navigate("../mentoring/main");
         })

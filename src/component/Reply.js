@@ -43,7 +43,7 @@ function Reply(props) {
     }
     function updateComment(replyId, content) {
         if (baseUrl === undefined || id === undefined) return
-        axios.put(`${baseUrl}/${id}`, {
+        axios.patch(`${baseUrl}/${id}`, {
             id: `${replyId}`,
             content: `${content}`
         })

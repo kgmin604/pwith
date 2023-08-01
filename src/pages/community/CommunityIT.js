@@ -40,8 +40,8 @@ function CommunityIT() {
                 }
             })
                 .then(function (response) {
-                    setTotalPage(response.data.page);
-                    setItList(response.data.news);
+                    setTotalPage(response.data.data.page);
+                    setItList(response.data.data.news);
                 })
                 .catch(function (error) {
                     console.log("IT 뉴스 요청 에러");

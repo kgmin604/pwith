@@ -32,7 +32,7 @@ function QnaPost(props) {
     }
 
     function updatePost(content) {
-        axios.put(`/community/qna/update/${id}`, {
+        axios.patch(`/community/qna/${id}`, {
             postId: `${id}`,
             content: `${content}`
         })
@@ -46,7 +46,7 @@ function QnaPost(props) {
     }
 
     function deletePost() {
-        axios.delete(`/community/qna/delete/${id}`, {
+        axios.delete(`/community/qna/${id}`, {
             data: {
                 postId: `${id}`
             }

@@ -7,11 +7,15 @@ import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+
 
 function CommunityQna(props) {
     const navigate = useNavigate();
     const user = useSelector((state) => state.user);
     const [postList, setPostList] = useState([]);
+    const [searchType, setSearchType] = useState(0);
     const [totalPage, setTotalPage] = useState(1);
     const [selectPage, setSelectPage] = useState(1);
     const [pages, setPages] = useState([]); // 임시
@@ -23,8 +27,10 @@ function CommunityQna(props) {
     useEffect(() => {
         axios({
             method: "GET",
-            url: "/community/qna/main",
+            url: "/community/qna",
             params: {
+                type: searchType, // 0: 제목 1: 글쓴이
+                value: inputValue,
                 page: selectPage
             }
         })
@@ -47,6 +53,48 @@ function CommunityQna(props) {
             .catch(function (error) {
             });
     }, [selectPage]);
+
+    const searchPost = () => {
+        axios({
+            method: "GET",
+            url: `/community/qna`,
+            params: {
+                type: searchType, // 0: 제목 1: 글쓴이
+                value: inputValue,
+                page: 1
+            }
+        })
+            .then(function (response) {
+                console.log(response.data)
+                setPostList(response.data.data.posts);
+
+                if (response.data.data.num > 5) {
+                    const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
+                    setPages(tmp);
+                    setDisabled2(false); // 페이지 이동 가능
+                }
+                else {
+                    const tmp = Array.from({ length: response.data.data.num }, (_, index) => index + 1);
+                    setPages(tmp);
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    };
+    const [inputValue, setInputValue] = useState('');
+
+    const handleInputChange = (event) => {
+        event.stopPropagation();
+        setInputValue(event.target.value);
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        console.log(inputValue);
+        searchPost();
+    };
 
     function controlPages(type) {
         if (type === -1) {
@@ -88,16 +136,47 @@ function CommunityQna(props) {
                 </div>
                 <div class="col-md-6 Board">
                     <Stack direction="horizontal" gap={3} style={{ padding: "5px" }}>
-                        <Form.Control className="me-auto" placeholder="궁금한 것이 무엇인가요?" />
-                        <Button variant="blue">🔍</Button>
-                        <div className="vr" />
-                        <Button
-                            variant="blue"
-                            disabled={isDisabled}
-                            onClick={() => { navigate("../community/qna/create"); }}
-                        >
-                            New
-                        </Button>
+                        <div className="study-top">
+                            {
+                                searchType === 0 ?
+                                    <DropdownButton
+                                        id="dropdown-button-dark-example2"
+                                        variant="blue"
+                                        title="글제목"
+                                        className="mt-2 setting"
+                                    >
+                                        <Dropdown.Item>글제목</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => { setSearchType(1) }}>글쓴이</Dropdown.Item>
+                                    </DropdownButton> :
+                                    <DropdownButton
+                                        id="dropdown-button-dark-example2"
+                                        variant="blue"
+                                        title="글쓴이"
+                                        className="mt-2 setting"
+                                    >
+                                        <Dropdown.Item onClick={() => { setSearchType(0) }}>글제목</Dropdown.Item>
+                                        <Dropdown.Item >글쓴이</Dropdown.Item>
+                                    </DropdownButton>
+                            }
+                            <Form onSubmit={handleSubmit} className="setting">
+                                <Form.Control
+                                    className="me-auto"
+                                    placeholder="궁금한 것이 무엇인가요?"
+                                    value={inputValue}
+                                    onChange={(e) => handleInputChange(e)}
+                                    style={{ width: '380px' }}
+                                />
+                            </Form>
+                            <Button variant="blue" type="submit" onClick={() => searchPost()}>🔍</Button>
+                            <div className="vr" />
+                            <Button
+                                variant="blue"
+                                disabled={isDisabled}
+                                onClick={() => { navigate("../community/qna/create"); }}
+                            >
+                                New
+                            </Button>
+                        </div>
 
                     </Stack>
 
