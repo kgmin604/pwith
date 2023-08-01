@@ -96,7 +96,7 @@ class studyPost() :
     @staticmethod
     def findByWriter(writer) : # 글쓴이로 검색
 
-        sql = f"SELECT * FROM study WHERE writer LIKE '%{writer}%' "
+        sql = f"SELECT * FROM study, member WHERE writer = member.id and member.nickname LIKE '%{writer}%' "
         
         posts = selectAll(sql)
         
@@ -111,6 +111,8 @@ class studyPost() :
         sql = f"SELECT * FROM study WHERE title LIKE '%{title}%' "
 
         posts = selectAll(sql)
+        print(posts)
+        print("sql")
         
         if not posts :
             return None
@@ -120,7 +122,7 @@ class studyPost() :
     @staticmethod
     def findByWriterId(writer_id) :
 
-        sql = f"SELECT * FROM study WHERE writer = {writer_id} ORDER BY curDate DESC"
+        sql = f"SELECT * FROM study, member WHERE writer = member.id and member.nickname = '{str(writer_id)}' ORDER BY curDate DESC"
 
         posts = selectAll(sql)
 
@@ -226,6 +228,14 @@ class studyPost() :
         joinP = selectOne(sql)
         
         return int(joinP[0])
+    
+    def getRoomImage(roomId):   # roomImage studyRoom 에서 받아오기
+        sql = f"select image from studyRoom where studyRoom.id = '{str(roomId)}'"
+        
+        roomImage = selectOne(sql)
+        
+        return str(roomImage)
+    
     
     
     # def getLiked(memId, postId):      # 좋아요 여부 받아오기

@@ -8,7 +8,7 @@ from backend.model.db_mysql import conn_mysql
 from backend.controller.community_mgmt import QNAPost
 from backend.controller.study_mgmt import studyPost
 from backend.controller.replyQna_mgmt import ReplyQna
-from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString
+from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage
 
 community_bp = Blueprint('community', __name__, url_prefix='/community')
 
@@ -113,48 +113,75 @@ def listNews() :
 
 @community_bp.route('/qna', methods=['GET'])
 def show():     # 전체 글 출력
+    search = request.args.get('search')
+    print(search)
+    
+    if search is None:
         posts = []
         result = []
+        page = 0
         posts = QNAPost.getQNA()
-        for i in range(len(posts)):
+        
+        page = request.args.get('page')
+
+        requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
+        
+        for i in range(int(page)):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
+            QNAList = QNAPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
+        
+        for row in QNAList:
             post = {
-                    'id' : posts[i][0],
-                    'title' : posts[i][1],
-                    'writer' : findNickName(posts[i][2]),
-                    'curDate' : posts[i][3],
-                    # 'category' : posts[i][5],
-                    'likes' : posts[i][6],
-                    'views' : posts[i][7]
+                    'id' : row[0],
+                    'title' : row[1],
+                    'writer' : findNickName(row[2]),
+                    'curDate' : row[3],
+                    'category' : row[5],
+                    'likes' : row[6],
+                    'views' : row[7]
                     }
-            post['curDate'] = mainFormattedDate(posts[i][3])
+            post['curDate'] = mainFormattedDate(row[3])
             result.append(post)
-        return { 'posts' : result}
-
-@community_bp.route('/qna', methods=['GET']) # 글 검색
-def search():
-
+        return { 
+                'posts' : result,
+                'page': requiredPage
+            }
+    
+    else:
+        print("search")
+        
         searchType = request.args.get('type')
         searchValue = request.args.get('value')
         posts = []
+        result = []
+        page = 0
+        
+        print(searchType, searchValue)
 
         if int(searchType) == 0: # 제목으로 검색
-            posts = QNAPost.findByTitle(searchValue, 1)
-        else: # 글쓴이로 검색
-            posts = QNAPost.findByWriter(searchValue, 1)
-
-        result = []
+            posts = QNAPost.findByTitle(searchValue)
+        elif int(searchType) == 1: # 글쓴이로 검색
+            posts = QNAPost.findByWriter(searchValue)
+            
+        page = request.args.get('page')
 
         if posts is None :
+            requiredPage = 0
             pass # 결과 없을 시 empty list
         else :
+            requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
+            
+            for i in range(int(page)):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
+                requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
+                QNAList = QNAPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
+            
             for i in range(len(posts)) :
                 post = {
                     'id' : posts[i][0],
                     'title' : posts[i][1],
                     'writer' : findNickName(posts[i][2]),
-                    # 'content' : posts[i][4],
+                    'content' : posts[i][4],
                     'curDate' : posts[i][3],
-                    # 'category' : posts[i][5],
+                    'category' : posts[i][5],
                     'likes' : posts[i][6],
                     'views' : posts[i][7]
                 }
@@ -162,8 +189,12 @@ def search():
                 
                 result.append(post)
 
-        return {'posts' : result}
-    
+        return {
+            'posts' : result,
+            'num': requiredPage
+            }
+
+
 @community_bp.route('/qna/<int:id>', methods=['GET']) # 글 조회
 def showDetail(id) :
     if request.method == 'GET' :
@@ -180,6 +211,7 @@ def showDetail(id) :
         result = {
             'title': post.title,
             'writer' : findNickName(post.writer),
+            'writerImage' : getProfileImage(current_user.get_id()),
             'content': post.content,
             'curDate' : getFormattedDate(formatDateToString(post.curDate)),
             'likes' : post.likes,
@@ -201,7 +233,8 @@ def showDetail(id) :
                 'id' : reply[0],
                 'writer' : findNickName(reply[1]),
                 'content' : reply[2],
-                'date' : getFormattedDate(date)
+                'date' : getFormattedDate(date),
+                'image' : getProfileImage(current_user.get_id())
             })
         
         return {

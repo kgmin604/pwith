@@ -74,3 +74,10 @@ def findNickName(id):
     nickname = selectOne(sql)
     
     return nickname[0]
+
+def getProfileImage(memId):   # profileImage member 에서 받아오기
+        sql = f"select image from member where member.id = '{str(memId)}'"
+        
+        profileImage = selectOne(sql)
+        
+        return str(profileImage)

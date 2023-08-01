@@ -3,35 +3,40 @@ from flask_login import login_required, current_user
 from backend.controller.study_mgmt import studyPost
 from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.studyroom_mgmt import StudyRoom
-from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString
+from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage
 from datetime import datetime
 import json
 
 study_bp = Blueprint('study', __name__, url_prefix='/study')
 
-@study_bp.route('/', methods=['GET'])
+@study_bp.route('', methods=['GET'])
 def show():
-    if request.method == 'GET':
+    # 추천 스터디 3개
+    recommend = request.args.get('recommend')
+    print("recommend")
+    print(recommend)
+    print("recommend")
+    if recommend is not None:
+        print("recommend")
+        recStudy=[]
+        recommendStudy = studyPost.getNStudy(3)
         
-        # 추천 스터디 3개
-        recommend = request.args.get('recommend')
-        print("recommend")
-        print(recommend)
-        print("recommend")
-        if recommend is not None:
-            print("recommend")
-            recStudy=[]
-            recommendStudy = studyPost.getNStudy(3)
-            for study in recommendStudy:
-                rec = {
-                    'id' : study[0],
-                    'title' : study[1]
-                }
-                recStudy.append(rec)
-            return {
-                'rec' : recStudy # by. 경민
+        for study in recommendStudy:
+            roomId = studyPost.findRoomId(study[0])
+            rec = {
+                'id' : study[0],
+                'title' : study[1],
+                'image' : studyPost.getRoomImage(roomId)
             }
-                
+            recStudy.append(rec)
+        #return {
+        #    'rec' : recStudy # by. 경민
+        #}
+        
+    search = request.args.get('search')
+    print("search")     
+    print(search)       
+    if search is None:
         posts = []
         result = []
         page = 0
@@ -49,7 +54,9 @@ def show():
             post = {
                 'id': row[0],
                 'title': row[1],
-                'writer': findNickName(row[2]),
+                'writerId': row[2],
+                'writerNick': findNickName(row[2]),
+                # 'image' : getProfileImage(current_user.get_id()),
                 'curDate': row[3],
                 'likes': row[5],
                 'views': row[6]
@@ -61,31 +68,11 @@ def show():
         return{
             'posts': result,
             'num': requiredPage,
-            #'rec' : recStudy
+            'rec' : recStudy
         }
-
-            
-@study_bp.route('/', methods=['GET'])   # 글 검색
-def search():
-        # 추천 스터디 3개 
-        recommend = request.args.get('recommend')
-        print("recommend")
-        print(recommend)
-        print("recommend")
-        if recommend is not None:
-            print("recommend")
-            recStudy=[]
-            recommendStudy = studyPost.getNStudy(3)
-            for study in recommendStudy:
-                rec = {
-                    'id' : study[0],
-                    'title' : study[1]
-                }
-                recStudy.append(rec)
-            return {
-               'rec' : recStudy # by. 경민
-            }
-                
+        
+    else:
+        
         posts = []
         
         searchType = request.args.get('type')
@@ -96,6 +83,7 @@ def search():
 
         page = request.args.get('page')
         print(page)
+        
 
         if not page :
             page = 0
@@ -105,11 +93,13 @@ def search():
 
         if int(searchType) == 0: # 제목으로 검색
             posts = studyPost.findByTitle(searchValue)
-        else: # 글쓴이로 검색
+        elif int(searchType) == 1 : # 글쓴이로 검색
             posts = studyPost.findByWriter(searchValue)
             
-        print("posts")
-
+        if posts is None:   
+            requiredPage = 0
+        else:
+            requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
         result = []
         print(posts)
 
@@ -124,7 +114,9 @@ def search():
                 post = {
                     'id' : posts[i][0],
                     'title' : posts[i][1],
-                    'writer' : findNickName(posts[i][2]),
+                    'writerId': posts[i][2],
+                    'writerNick': findNickName(posts[i][2]),
+                    # 'image' : getProfileImage(current_user.get_id()),
                     'curDate' : posts[i][3],
                     'likes' : posts[i][5],
                     'views' : posts[i][6]
@@ -136,13 +128,14 @@ def search():
         return {
             'posts' : result,
             'num': requiredPage,
-            # 'rec' : recStudy
+            'rec' : recStudy
             }
-            
+
 
 @study_bp.route('/<int:id>', methods=['GET'])
 def showDetail(id) :     # 글 조회
 
+        memId = current_user.get_id()
         apply = request.args.get('apply')
 
         if apply == 'go' : # 스터디 신청
@@ -194,6 +187,7 @@ def showDetail(id) :     # 글 조회
             'isApplied' : isApplied,
             'title': post.title,
             'writer' : findNickName(post.writer),
+            'writerImage': getProfileImage(current_user.get_id()),
             'content': post.content,
             'curDate' : getFormattedDate(formatDateToString(post.curDate)),
             'likes' : post.likes,
@@ -202,7 +196,8 @@ def showDetail(id) :     # 글 조회
             'roomId' : roomId,
             'roomTitle' : studyPost.getRoomName(roomId),
             'totalP': studyPost.getTotalP(roomId),
-            'joinP' : studyPost.getJoinP(roomId)
+            'joinP' : studyPost.getJoinP(roomId),
+            'roomImage' : studyPost.getRoomImage(roomId)
             }
         
         viewresult = studyPost.updateViews(id)
@@ -220,7 +215,8 @@ def showDetail(id) :     # 글 조회
                 'id' : reply[0],
                 'writer' : findNickName(reply[1]),
                 'content' : reply[2],
-                'date' : getFormattedDate(date)
+                'date' : getFormattedDate(date),
+                'profileImage': getProfileImage(memId)
             })
 
         return {

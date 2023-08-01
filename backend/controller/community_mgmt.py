@@ -78,7 +78,7 @@ class QNAPost() :
     
     @staticmethod
     def findByWriter(writer) : # 글쓴이로 검색 & 내 글 목록
-        sql = f"SELECT * FROM qna WHERE writer = '{writer}' order by curDate desc"
+        sql = f"SELECT * FROM qna, member WHERE qna.writer = member.id and member.nickname LIKE '%{writer}%' order by curDate desc"
 
         posts = selectAll(sql) # tuple의 tuple
      
@@ -90,7 +90,7 @@ class QNAPost() :
     @staticmethod
     def findByWriterId(writer_id) :
 
-        sql = f"SELECT * FROM qna WHERE writer = {writer_id} ORDER BY curDate DESC"
+        sql = f"SELECT * FROM qna, member WHERE writer= membr.id and member.nickname = '{str(writer_id)}' ORDER BY curDate DESC"
 
         posts = selectAll(sql)
         
@@ -103,11 +103,10 @@ class QNAPost() :
     @staticmethod
     def findByTitle(title) : # 제목으로 검색
        
-        sql = f"SELECT * FROM qna WHERE title = '{title}' order by curDate desc"
+        sql = f"SELECT * FROM qna WHERE title LIKE '%{title}%' order by curDate desc"
 
         posts = selectAll(sql) # page 만들 시 fetchmany() 사용
-   
-        print(posts)
+        
         if not posts :
             return None
         
@@ -121,7 +120,7 @@ class QNAPost() :
         if not res :
             return None
 
-        post = QNAPost(res[0],res[1], res[2], res[4], res[3], res[5], res[6], res[7])
+        post = QNAPost(res[0],res[1], res[2], res[3], res[4], res[5], res[6], res[7])
         return post
     
     @staticmethod
