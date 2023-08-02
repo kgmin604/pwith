@@ -195,6 +195,7 @@ function WritingList(){
             url: `/mypage/writing-list/${type_text}`
         })
         .then(function (response) {
+            console.log(response.data);
             setMypost(response.data.data);
         })
         .catch(function (error) {
