@@ -2,15 +2,15 @@ from flask import Flask, session, Blueprint, render_template, redirect, request,
 from flask_login import login_required, current_user
 from backend.controller.study_mgmt import studyPost
 from backend.controller.mentor_mgmt import Portfolio
+from backend.controller.alarm_mgmt import alarm
 from backend.model.db_mongo import conn_mongodb
+from backend.view import findNickName
 
 main_bp = Blueprint('pwithmain', __name__, url_prefix='')
 
-@main_bp.route('/', methods = ['POST'])
+@main_bp.route('/', methods = ['GET'])
 def showStudy():
-    chk = request.get_json()['chkSession']
     
-    if chk == 0:
         studyList = []
         newsList = []
         mentoringList = []
@@ -45,9 +45,51 @@ def showStudy():
             'mentoring' : mentoringList
         }
         
-@main_bp.route('/', methods = ['GET', 'POST'])
-def alarm():
+@main_bp.route('/alarm', methods = ['GET'])
+def showalarm():
     # 알림창
-    return{
-        'data':None
-    }
+    
+    #chatAlarm 에서 memId = current_user.get_id() 인 것 select
+    #studyReplyAlarm 에서 memId = current_user.get_id() 인 것 select
+    #qnaReplyAlarm 에서 memId = current_user.get_id() 인 것 select
+    #studyAlarm 에서 memId = current_user.get_id() 인 것 select
+    
+    memId = current_user.get_id()
+    
+    chat = alarm.getChatAlarm(memId)
+    studyReply = alarm.getStudyReplyAlarm(memId)
+    qnaReply = alarm.getQnaReplyAlarm(memId)
+    study = alarm.getStudyAlarm(memId)
+    
+    totalAlarm = chat+studyReply+qnaReply+study
+    post = []
+    alarmList = []
+    
+    print(totalAlarm)
+    print(chat)
+    print(studyReply)
+    
+    
+    
+    for row in totalAlarm:
+        print(row)
+        post = {
+            'id' : row['id'],
+            'type' : row['type'],
+            'memId': row['memId'],
+            'memNick' : findNickName(row['memId']),
+            'oppId': row['oppId'],
+            'oppNick' : findNickName(row['oppId']),
+            'contentId' : row['contentId'],
+            'content' : row['content'],
+            'reading' : row['reading']
+        }
+        
+        alarmList.append(post)
+        
+        
+    
+    
+    #return{
+    #    'alarmList': alarmList
+    #}
