@@ -8,31 +8,26 @@ from datetime import datetime
 import json
 
 study_bp = Blueprint('study', __name__, url_prefix='/study')
-
+@study_bp.route('/recommend', methods=['GET'])
+def recommend():
+    print("recommend")
+    recStudy=[]
+    recommendStudy = studyPost.getNStudy(3)
+    
+    for study in recommendStudy:
+        roomId = studyPost.findRoomId(study[0])
+        rec = {
+            'id' : study[0],
+            'title' : study[1],
+            'image' : studyPost.getRoomImage(roomId)
+        }
+        recStudy.append(rec)
+    return {
+        'rec' : recStudy # by. 경민
+    }
+    
 @study_bp.route('', methods=['GET'])
-def show():
-    # 추천 스터디 3개
-    recommend = request.args.get('recommend')
-    print("recommend")
-    print(recommend)
-    print("recommend")
-    if recommend is not None:
-        print("recommend")
-        recStudy=[]
-        recommendStudy = studyPost.getNStudy(3)
-        
-        for study in recommendStudy:
-            roomId = studyPost.findRoomId(study[0])
-            rec = {
-                'id' : study[0],
-                'title' : study[1],
-                'image' : studyPost.getRoomImage(roomId)
-            }
-            recStudy.append(rec)
-        #return {
-        #    'rec' : recStudy # by. 경민
-        #}
-        
+def show(): 
     search = request.args.get('search')
     print("search")     
     print(search)       
@@ -69,7 +64,7 @@ def show():
         return{
             'posts': result,
             'num': requiredPage,
-            'rec' : recStudy
+            #'rec' : recStudy
         }
         
     else:
