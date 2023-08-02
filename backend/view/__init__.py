@@ -80,4 +80,4 @@ def getProfileImage(memId):   # profileImage member 에서 받아오기
         
         profileImage = selectOne(sql)
         
-        return str(profileImage)
+        return str(profileImage[0])
