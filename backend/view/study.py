@@ -50,18 +50,19 @@ def show():
         for i in range(int(page)):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
             studyList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
 
-        for row in studyList:
+        for i in range(len(posts)):
             post = {
-                'id': row[0],
-                'title': row[1],
-                'writerId': row[2],
-                'writerNick': findNickName(row[2]),
+                'id': i+1,
+                'studyId': posts[i][0],
+                'title': posts[i][1],
+                'writerId': posts[i][2],
+                'writerNick': findNickName(posts[i][2]),
                 # 'image' : getProfileImage(current_user.get_id()),
-                'curDate': row[3],
-                'likes': row[5],
-                'views': row[6]
+                'curDate': posts[i][3],
+                'likes': posts[i][5],
+                'views': posts[i][6]
             }
-            post['curDate'] = mainFormattedDate(row[3])
+            post['curDate'] = mainFormattedDate(posts[i][3])
 
             result.append(post)
 
@@ -112,7 +113,8 @@ def show():
                 
             for i in range(len(posts)) :
                 post = {
-                    'id' : posts[i][0],
+                    'id' : i+1,
+                    'studyId' : posts[i][0],
                     'title' : posts[i][1],
                     'writerId': posts[i][2],
                     'writerNick': findNickName(posts[i][2]),
