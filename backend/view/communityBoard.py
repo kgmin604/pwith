@@ -12,67 +12,65 @@ from backend.view import findNickName, getFormattedDate, mainFormattedDate, form
 
 community_bp = Blueprint('community', __name__, url_prefix='/community')
 
-@community_bp.route('/main', methods = ['GET'])
+@community_bp.route('', methods = ['GET'])
 def communityMain() :
-    if request.method == 'GET' :
+    news = []
+    conts = []
+    qna = []
 
-        news = []
-        conts = []
-        qna = []
+    news_db = conn_mongodb().ITnews_crawling.find().sort('_id', -1).limit(3)
+    for n in news_db :
 
-        news_db = conn_mongodb().ITnews_crawling.find().sort('_id', -1).limit(3)
-        for n in news_db :
+        title = n['title']
+        date = n['date']
+        url = n['url']
 
-            title = n['title']
-            date = n['date']
-            url = n['url']
+        formatted_date = datetime.strptime(date, '%Y년 %m월 %d일').strftime('%Y-%m-%d')
 
-            formatted_date = datetime.strptime(date, '%Y년 %m월 %d일').strftime('%Y-%m-%d')
-
-            news.append({
-                'title' : title,
-                'date' : formatted_date,
-                'url' : url
-            })
-        
-        qna_db = QNAPost.get3QNA()
-        for q in qna_db :
-
-            postId = q[0]
-            title = q[1]
-
-            date = q[3]
-            formatted_date = date.strftime("%Y-%m-%d")
-
-            qna.append({
-                'postId' : postId,
-                'title' : title,
-                'date' : formatted_date
-            })
-
-        # dummmmmmmmmmmmmmmy
-        conts.append({
-            'title' : '자바 ORM 표준 JPA 프로그래밍 - 기본편',
-            'type' : 'lecture',
-            'url' : 'https://www.inflearn.com/course/ORM-JPA-Basic/dashboard'
+        news.append({
+            'title' : title,
+            'date' : formatted_date,
+            'url' : url
         })
-        conts.append({
-            'title' : '윤성우의 열혈 C++ 프로그래밍',
-            'type' : 'book',
-            'url' : 'https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=6960708'
-        })
-        conts.append({
-            'title' : '스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술',
-            'type' : 'lecture',
-            'url' : 'https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-1/dashboard'
-        })
-        # dummmmmmmmmmmmmmmy
+    
+    qna_db = QNAPost.get3QNA()
+    for q in qna_db :
 
-        return {
-            'news' : news,
-            'qna' : qna,
-            'contents' : conts
-        }
+        postId = q[0]
+        title = q[1]
+
+        date = q[3]
+        formatted_date = date.strftime("%Y-%m-%d")
+
+        qna.append({
+            'postId' : postId,
+            'title' : title,
+            'date' : formatted_date
+        })
+
+    # dummmmmmmmmmmmmmmy
+    conts.append({
+        'title' : '자바 ORM 표준 JPA 프로그래밍 - 기본편',
+        'type' : 'lecture',
+        'url' : 'https://www.inflearn.com/course/ORM-JPA-Basic/dashboard'
+    })
+    conts.append({
+        'title' : '윤성우의 열혈 C++ 프로그래밍',
+        'type' : 'book',
+        'url' : 'https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=6960708'
+    })
+    conts.append({
+        'title' : '스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술',
+        'type' : 'lecture',
+        'url' : 'https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-1/dashboard'
+    })
+    # dummmmmmmmmmmmmmmy
+
+    return {
+        'news' : news,
+        'qna' : qna,
+        'contents' : conts
+    }
  
 @community_bp.route('/it', methods=['GET', 'POST'])
 def listNews() :
