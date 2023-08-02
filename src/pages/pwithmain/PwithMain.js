@@ -18,7 +18,7 @@ function PwithMain(){
     let [mentorList, setMentorList] = useState(dummylist3);
     let [contentList, setContentList] = useState(dummylist2);
 
-    /* 
+    
     useEffect(()=>{
         axios({
             method: "POST",
@@ -28,15 +28,14 @@ function PwithMain(){
             }
           })
           .then(function (response) {
-            setStudyList(response.data.study);
-            setNewsList(response.data.news);
-            setMentorList(response.data.mentoring);
+            setStudyList(response.data.data.study);
+            setNewsList(response.data.data.news);
+            setMentorList(response.data.data.mentoring);
           })
           .catch(function (error) {
               console.log(error);
           });
     },[])
-    */
 
     return(
         <>

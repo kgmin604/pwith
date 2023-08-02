@@ -104,6 +104,10 @@ function Account(){
                                 setInputImage(URL.createObjectURL(e.target.files[0]));
                                 setIsCrop(true);
                             }}
+                            onCancel={() => {
+                                // 파일 선택 취소 시 실행되는 함수
+                                setIsCrop(false);
+                            }}
                             style={{'display':'none'}}
                         />
                     </form>
@@ -347,14 +351,13 @@ function Chat(){
     function getMsgList(){
         axios({
             method: "POST",
-            url: "/mypage/chat",
+            url: "/mypage/chat/list",
             data: {
-                type: 0,
-                oppId : `${chatList[selectedItem]['oppId']}`,
+                oppId : `${chatList[selectedItem]['oppId']}`
             },
           })
           .then(function (response) {
-              setMsgList(response.data); // msgList는 딕셔너리 리스트
+              setMsgList(response.data.data); // msgList는 딕셔너리 리스트
           })
           .catch(function (error) {
               console.log(error);
@@ -390,7 +393,7 @@ function Chat(){
             url: "/mypage/chat"
           })
         .then(function (response) {
-            setChatList(response.data); // chatList는 딕셔너리 리스트
+            setChatList(response.data.data); // chatList는 딕셔너리 리스트
         })
         .catch(function (error) {
               console.log(error);
@@ -404,67 +407,36 @@ function Chat(){
             method: "POST",
             url: "/mypage/chat",
             data: {
-                type: 1,
                 oppId : `${oppId}`,
                 content : `${content}`
             },
-          })
-          .then(function (response) {
+        })
+        .then(function (response) {
                 alert("쪽지 전송 완료");
                 setOpen(!open);
                 setMsg('');
                 setContent('');
 
-                setUpdate(update+1);
+                setUpdate(update+1); // 쪽지 리스트 재로딩용
                 getMsgList();
           })
-          .catch(function (error) {
-                console.log(error);
+        .catch(function (error) {
+            if(error.response.data.status===400){
+                alert("없는 수신자 아이디입니다.");
+            }
         });
     }
 
-    function checkOppId(callback) {
-        axios({
-          method: "POST",
-          url: "/mypage/chat",
-          data: {
-            type: 2,
-            oppId: `${oppId}`
-          },
-        })
-          .then(function (response) {
-            console.log("쪽지 수신자 아이디 확인");
-            console.log(response.data.result);
-            if (response.data.result === 1) {
-              callback(true);
-            } else {
-              callback(false);
-            }
-          })
-          .catch(function (error) {
-            console.log("쪽지 수신자 아이디 확인 에러");
-            console.log(error);
-            callback(false);
-          });
-    }
-      
       function checkRequest(event) {
         event.stopPropagation();
         if (oppId === "") {
-          setMsg("! 수신자 아이디를 입력해주세요.");
-          return;
+            setMsg("! 수신자 아이디를 입력해주세요.");
+            return;
         } else if (content === "") {
-          setMsg("! 내용을 입력해주세요.");
-          return;
+            setMsg("! 내용을 입력해주세요.");
+            return;
         } else {
-          checkOppId(function (isValid) {
-            if (isValid) {
-              setMsg("");
-              sendRequest();
-            } else {
-              setMsg("! 없는 수신자 아이디입니다.");
-            }
-          });
+            sendRequest();
         }
       }
 

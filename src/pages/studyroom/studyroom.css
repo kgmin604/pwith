@@ -329,6 +329,7 @@ div.create-wrap div.item div.room-img
     background-color:#98AFCA;   
 }
 
+
 div.create-wrap
 .create-btn{
     border-radius: 5px;
@@ -404,6 +405,23 @@ span{
     color: gray;
     font-size: small;
 }
+
+div.room-cropper-area
+.btn-area{
+    margin: 13px 0;
+    padding: 0 10px;
+}
+
+div.room-cropper-area div.btn-area
+.room-crop-btn{
+    width: 100px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #98AFCA;
+    color: white;
+    float: right;
+}
+
 
 
 /* 스터디룸 0개 시 안내 */

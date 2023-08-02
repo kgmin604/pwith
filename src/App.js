@@ -79,20 +79,6 @@ function App() {
   //     });
   // },[])
 
-
-  // db 리팩토링 임시 로그인
-  /* **************************************
-  useEffect(()=>{
-    dispatch(
-      loginUser({
-        id: 'kgm604',
-        name: '경민',
-        email: 'kgmin604@hongik.ac.kr'
-      })
-    )
-  },[]);
-  ************************************** */
-
   function logout() {
     axios({
       method: "GET",

@@ -225,29 +225,29 @@ function RoomCreate(){
                         <div className="x-btn" onClick={(e)=>{e.stopPropagation(); setIsCrop(false);}}>X</div>
                     </h3>
                             
-                            <Cropper
-                                ref={cropperRef}
-                                style={{ height: 400, width: "100%"}}
-                                zoomTo={0.5}
-                                initialAspectRatio={1}
-                                preview=".img-preview"
-                                src={inputImage}
-                                viewMode={1}
-                                minCropBoxHeight={10}
-                                minCropBoxWidth={10}
-                                background={false}
-                                responsive={true}
-                                autoCropArea={1}
-                                checkOrientation={false}
-                                guides={true}
-                                aspectRatio={360/240} // 비율 1:1
-                            />
-                            <div className="btn-area">
-                                <button
-                                    onClick={e=>{e.stopPropagation(); onCrop();}}
-                                    className="crop-btn"
-                                >적용하기</button>
-                            </div>
+                    <Cropper
+                        ref={cropperRef}
+                        style={{ height: 400, width: "100%"}}
+                        zoomTo={0.5}
+                        initialAspectRatio={1}
+                        preview=".img-preview"
+                        src={inputImage}
+                        viewMode={1}
+                        minCropBoxHeight={10}
+                        minCropBoxWidth={10}
+                        background={false}
+                        responsive={true}
+                        autoCropArea={1}
+                        checkOrientation={false}
+                        guides={true}
+                        aspectRatio={360/240} 
+                    />
+                    <div className="btn-area">
+                        <button
+                            onClick={e=>{e.stopPropagation(); onCrop();}}
+                            className="room-crop-btn"
+                        >적용하기</button>
+                    </div>
                 </div>
                 </>
             }
