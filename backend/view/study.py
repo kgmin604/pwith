@@ -125,7 +125,7 @@ def show():
         return {
             'posts' : result,
             'num': requiredPage,
-            'rec' : recStudy
+            # 'rec' : recStudy
             }
 
 
@@ -193,7 +193,7 @@ def showDetail(id) :     # 글 조회
             'writer' : findNickName(post.writer),
             'writerImage': getProfileImage(current_user.get_id()),
             'content': post.content,
-            'curDate' : getFormattedDate(formatDateToString(post.curDate)),
+            'curDate' : postDate,
             'likes' : post.likes,
             'liked' : liked,
             'views': post.views,
