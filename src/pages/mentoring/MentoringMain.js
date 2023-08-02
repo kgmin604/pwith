@@ -19,7 +19,6 @@ function MentoringMain() {
             url: "/mentoring",
         })
             .then(function (response) {
-                console.log(response.data.data)
                 setMentoList(response.data.data);
             })
             .catch(function (error) {
@@ -68,7 +67,7 @@ function MentoringMain() {
                     </Stack>
                     <hr />
                     <Row className="row-cols-1 row-cols-md-4 g-2" style={{ padding: '10px' }}>
-                        {mentoList.map((mento) => {
+                        {mentoList?.map((mento) => {
                             return (<MentoCard mento={mento} />
                             )
                         })}
@@ -89,7 +88,8 @@ function Category() {
         <hr style={{ width: '60%', margin: '0 auto' }} />
         <Nav defaultActiveKey="#" className="flex-column">
             <Link to="#"><div style={{ color: '#282c34' }}>멘토링</div></Link>
-            <Link to="../mentoring/create"><div style={{ color: '#282c34' }}>포트폴리오 업로드</div></Link>
+            <Link to="../mentoring/create"><div style={{ color: '#282c34' }}>포트폴리오 작성</div></Link>
+            <Link to="../mentoring/5"><div style={{ color: '#282c34' }}>포트폴리오 관리</div></Link>
         </Nav>
     </>
 }

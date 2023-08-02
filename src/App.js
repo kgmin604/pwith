@@ -44,6 +44,7 @@ import CommunityBoard from "./pages/community/CommunityBoard";
 import CommunityContent from "./pages/community/CommunityContent";
 import QnaCreate from "./pages/community/QnaCreate";
 import QnaPost from "./pages/community/QnaPost";
+import PortfolioManage from "./pages/mentoring/PortfolioManage";
 
 function App() {
   let navigate = useNavigate();
@@ -378,6 +379,7 @@ function App() {
           <Route path="/community/qna/:id" element={<QnaPost />} />
           <Route path="/mentoring/main" element={<MentoringMain />} />
           <Route path="/mentoring/create" element={<MentoringCreate />} />
+          <Route path="/mentoring/:id" element={<PortfolioManage />} />
           <Route path="member/login" element={<Login />} />
           <Route path="member/join" element={<Join />} />
           <Route path="member/id" element={<HelpId />} />
