@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from backend.controller.study_mgmt import studyPost
 from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.studyroom_mgmt import StudyRoom
-from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage
+from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage, nicknameToId
 from datetime import datetime
 import json
 
@@ -143,21 +143,28 @@ def showDetail(id) :     # 글 조회
         if apply == 'go' : # 스터디 신청
             roomId = studyPost.findRoomId(id)
 
-            studentsList_string = StudyRoom.getStudentList(roomId)
+            # studentsList_string = StudyRoom.getStudentList(roomId)
 
-            newStudentList = ''
+            # newStudentList = ''
 
-            if not studentsList_string :
-                newStudentList = f'["{current_user.get_id()}"]'
+            #if not studentsList_string :
+            #    newStudentList = f'["{current_user.get_id()}"]'
                 # newStudentList = f'["a"]' # dummmmmmmmmmmmmmy
-            else :
-                studentsList = json.loads(studentsList_string) # list
-                studentsList.append(current_user.get_id())
-                # studentsList.append("a") # dummmmmmmmmmmmmmy
-                newStudentList = str(studentsList)
-                newStudentList = newStudentList.replace("\'", "\"")
+            #else :
+            #    studentsList = json.loads(studentsList_string) # list
+            #    studentsList.append(current_user.get_id())
+            #    # studentsList.append("a") # dummmmmmmmmmmmmmy
+            #    newStudentList = str(studentsList)
+            #    newStudentList = newStudentList.replace("\'", "\"")
 
-            done = StudyRoom.addStudent(roomId, newStudentList)
+            done = StudyRoom.addStudent(current_user.get_id(), roomId)
+            print(done)
+            
+            print("apply")
+            # studyAlarm 에 추가
+            
+            post = studyPost.findById(id)
+            studyPost.insertStudyAlarm(post.writer, current_user.get_id(), roomId)
 
 
         result = {}
@@ -266,12 +273,22 @@ def replyPost(studyId) :        # 댓글 작성
 
     try :
         replyId = ReplyStudy.writeReply(writer, cnt, date, studyId)
+        # studyReplyAlarm 에 추가
+        post = studyPost.findById(studyId)
+        studyPost.insertReplyAlarm(post.writer, writer, replyId)
+        print("insert alarm")
+        
     except Exception as ex:
         print("에러 이유 : " + str(ex))
         replyId = 0
-
+        
+        return{
+            'status': 400,
+            'data' : None,
+            'message' : "댓글을 달 수 없습니다."
+        }
     return {
-        'id' : replyId, # 0 is fail
+        'id' : replyId, 
         'date' : formatDateToString(date)
     }
 
@@ -288,9 +305,17 @@ def replyPatch(studyId) :    # 댓글 수정
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return {
-            'data': None
-        }
+        if done == 0:
+            return{
+                'status': 400,
+                'data' : None,
+                'message' : "댓글을 수정할 수 없습니다."
+            }
+        else:
+            return {
+                'id' : replyId, 
+                'date' : formatDateToString(date)
+            }
 
 @study_bp.route('/<int:studyId>/<int:replyId>', methods = ['DELETE'])
 def replyDelete(studyId) :     # 댓글 삭제

@@ -60,7 +60,11 @@ def send():     # 쪽지 보내기
         oppNickId = nicknameToId(oppId)
         print(str(oppId), memId)
         chat.insertChat(memId, str(oppNickId), content, curDate)
-        print("insert 완.")
+        chatId = chat.getOneChat(memId, str(oppNickId))
+        print(chatId)
+        # chatAlarm 에 추가
+        chat.insertChatAlarm(oppNickId, memId, chatId)
+        
         return {
             'data': None
         }

@@ -201,3 +201,55 @@ create table qnaLike
     FOREIGN KEY(memberId) REFERENCES member(id),
     FOREIGN KEY(qnaId) REFERENCES qna(id) ON DELETE CASCADE
 );
+
+create table chatAlarm
+(
+    id BIGINT AUTO_INCREMENT,
+    memId BIGINT NOT NULL,
+    oppId BIGINT NOT NULL,
+    contentId BIGINT NOT NULL,
+    reading BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY(id),
+    FOREIGN KEY(memId) REFERENCES member(id),
+    FOREIGN KEY(oppId) REFERENCES member(id),
+    FOREIGN KEY(contentId) REFERENCES chat(id)
+);
+
+create table replyStudyAlarm
+(
+    id BIGINT AUTO_INCREMENT,
+    memId BIGINT NOT NULL,
+    oppId BIGINT NOT NULL,
+    contentId BIGINT NOT NULL,
+    reading BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY(id),
+    FOREIGN KEY(memId) REFERENCES member(id),
+    FOREIGN KEY(oppId) REFERENCES member(id),
+    FOREIGN KEY(contentId) REFERENCES replyStudy(id)
+);
+
+create table replyQnaAlarm
+(
+    id BIGINT AUTO_INCREMENT,
+    memId BIGINT NOT NULL,
+    oppId BIGINT NOT NULL,
+    contentId BIGINT NOT NULL,
+    reading BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY(id),
+    FOREIGN KEY(memId) REFERENCES member(id),
+    FOREIGN KEY(oppId) REFERENCES member(id),
+    FOREIGN KEY(contentId) REFERENCES replyQna(id)
+);
+
+create table studyAlarm
+(
+    id BIGINT AUTO_INCREMENT,
+    memId BIGINT NOT NULL,
+    oppId BIGINT NOT NULL,
+    contentId BIGINT NOT NULL,
+    reading BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY(id),
+    FOREIGN KEY(memId) REFERENCES member(id),
+    FOREIGN KEY(oppId) REFERENCES member(id),
+    FOREIGN KEY(contentId) REFERENCES studyRoom(id)
+);

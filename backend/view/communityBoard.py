@@ -286,6 +286,11 @@ def replyPost(id) :      # 댓글 작성
 
         try :
             pk = ReplyQna.writeReply(writer, cnt, date, id)
+            # qnaReplyAlarm 에 추가
+            post = QNAPost.findById(id)
+            
+            QNAPost.insertReplyAlarm(post.__writer, writer, pk)
+            
         except Exception as ex:
             print("에러 이유 : " + str(ex))
             pk = 0
