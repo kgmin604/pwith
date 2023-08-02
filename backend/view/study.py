@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from backend.controller.study_mgmt import studyPost
 from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.studyroom_mgmt import StudyRoom
-from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage
+from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage, nicknameToId
 from datetime import datetime
 import json
 
@@ -50,18 +50,19 @@ def show():
         for i in range(int(page)):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
             studyList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
 
-        for row in studyList:
+        for i in range(len(posts)):
             post = {
-                'id': row[0],
-                'title': row[1],
-                'writerId': row[2],
-                'writerNick': findNickName(row[2]),
+                'id': i+1,
+                'studyId': posts[i][0],
+                'title': posts[i][1],
+                'writerId': posts[i][2],
+                'writerNick': findNickName(posts[i][2]),
                 # 'image' : getProfileImage(current_user.get_id()),
-                'curDate': row[3],
-                'likes': row[5],
-                'views': row[6]
+                'curDate': posts[i][3],
+                'likes': posts[i][5],
+                'views': posts[i][6]
             }
-            post['curDate'] = mainFormattedDate(row[3])
+            post['curDate'] = mainFormattedDate(posts[i][3])
 
             result.append(post)
 
@@ -112,7 +113,8 @@ def show():
                 
             for i in range(len(posts)) :
                 post = {
-                    'id' : posts[i][0],
+                    'id' : i+1,
+                    'studyId' : posts[i][0],
                     'title' : posts[i][1],
                     'writerId': posts[i][2],
                     'writerNick': findNickName(posts[i][2]),
@@ -141,21 +143,28 @@ def showDetail(id) :     # 글 조회
         if apply == 'go' : # 스터디 신청
             roomId = studyPost.findRoomId(id)
 
-            studentsList_string = StudyRoom.getStudentList(roomId)
+            # studentsList_string = StudyRoom.getStudentList(roomId)
 
-            newStudentList = ''
+            # newStudentList = ''
 
-            if not studentsList_string :
-                newStudentList = f'["{current_user.get_id()}"]'
+            #if not studentsList_string :
+            #    newStudentList = f'["{current_user.get_id()}"]'
                 # newStudentList = f'["a"]' # dummmmmmmmmmmmmmy
-            else :
-                studentsList = json.loads(studentsList_string) # list
-                studentsList.append(current_user.get_id())
-                # studentsList.append("a") # dummmmmmmmmmmmmmy
-                newStudentList = str(studentsList)
-                newStudentList = newStudentList.replace("\'", "\"")
+            #else :
+            #    studentsList = json.loads(studentsList_string) # list
+            #    studentsList.append(current_user.get_id())
+            #    # studentsList.append("a") # dummmmmmmmmmmmmmy
+            #    newStudentList = str(studentsList)
+            #    newStudentList = newStudentList.replace("\'", "\"")
 
-            done = StudyRoom.addStudent(roomId, newStudentList)
+            done = StudyRoom.addStudent(current_user.get_id(), roomId)
+            print(done)
+            
+            print("apply")
+            # studyAlarm 에 추가
+            
+            post = studyPost.findById(id)
+            studyPost.insertStudyAlarm(post.writer, current_user.get_id(), roomId)
 
 
         result = {}
@@ -264,12 +273,22 @@ def replyPost(studyId) :        # 댓글 작성
 
     try :
         replyId = ReplyStudy.writeReply(writer, cnt, date, studyId)
+        # studyReplyAlarm 에 추가
+        post = studyPost.findById(studyId)
+        studyPost.insertReplyAlarm(post.writer, writer, replyId)
+        print("insert alarm")
+        
     except Exception as ex:
         print("에러 이유 : " + str(ex))
         replyId = 0
-
+        
+        return{
+            'status': 400,
+            'data' : None,
+            'message' : "댓글을 달 수 없습니다."
+        }
     return {
-        'id' : replyId, # 0 is fail
+        'id' : replyId, 
         'date' : formatDateToString(date)
     }
 
@@ -286,9 +305,17 @@ def replyPatch(studyId) :    # 댓글 수정
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return {
-            'data': None
-        }
+        if done == 0:
+            return{
+                'status': 400,
+                'data' : None,
+                'message' : "댓글을 수정할 수 없습니다."
+            }
+        else:
+            return {
+                'id' : replyId, 
+                'date' : formatDateToString(date)
+            }
 
 @study_bp.route('/<int:studyId>/<int:replyId>', methods = ['DELETE'])
 def replyDelete(studyId) :     # 댓글 삭제

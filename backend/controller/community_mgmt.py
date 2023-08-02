@@ -188,8 +188,16 @@ class QNAPost() :
        
         return rows
 
+    @staticmethod
+    def insertReplyAlarm(memId, oppId, id):
+            sql = f"insert into replyQnaAlarm (memId, oppId, contentId) values ('{memId}', '{oppId}', '{id}')"
+            
+            done = commit(sql)
+            
+            return done
     
    # @staticmethod
    # def getLiked(memId, postId):
    #     sql = f"SELECT liked from liked where memberId = '{str(memId)}' and postId = '{str(postId)}'"
     
+        

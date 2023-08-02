@@ -129,17 +129,18 @@ def show():     # 전체 글 출력
         for i in range(int(page)):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
             QNAList = QNAPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
         
-        for row in QNAList:
+        for i in range(len(posts)):
             post = {
-                    'id' : row[0],
-                    'title' : row[1],
-                    'writer' : findNickName(row[2]),
-                    'curDate' : row[3],
-                    'category' : row[5],
-                    'likes' : row[6],
-                    'views' : row[7]
+                    'id' : i+1,
+                    'qnaId' : posts[i][0],
+                    'title' : posts[i][1],
+                    'writer' : findNickName(posts[i][2]),
+                    'curDate' : posts[i][3],
+                    'category' : posts[i][5],
+                    'likes' : posts[i][6],
+                    'views' : posts[i][7]
                     }
-            post['curDate'] = mainFormattedDate(row[3])
+            post['curDate'] = mainFormattedDate(posts[i][3])
             result.append(post)
         return { 
                 'posts' : result,
@@ -176,7 +177,8 @@ def show():     # 전체 글 출력
             
             for i in range(len(posts)) :
                 post = {
-                    'id' : posts[i][0],
+                    'id': i+1,
+                    'qnaId' : posts[i][0],
                     'title' : posts[i][1],
                     'writer' : findNickName(posts[i][2]),
                     'content' : posts[i][4],
@@ -284,6 +286,11 @@ def replyPost(id) :      # 댓글 작성
 
         try :
             pk = ReplyQna.writeReply(writer, cnt, date, id)
+            # qnaReplyAlarm 에 추가
+            post = QNAPost.findById(id)
+            
+            QNAPost.insertReplyAlarm(post.__writer, writer, pk)
+            
         except Exception as ex:
             print("에러 이유 : " + str(ex))
             pk = 0

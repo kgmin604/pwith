@@ -13,6 +13,7 @@ class studyPost() :
         self.__likes = likes
         self.__views = views
         self.__roomId = roomId
+        
     @property
     def id(self) :
         return self.__id
@@ -251,5 +252,18 @@ class studyPost() :
         roomName = row[0]
         return str(roomName)
         
+    def insertReplyAlarm(memId, oppId, id):
+        sql = f"insert into replyStudyAlarm (memId, oppId, contentId) values ('{memId}', '{oppId}', '{id}')"
+        
+        done = commit(sql)
+        
+        return done
+        
+    def insertStudyAlarm(memId, oppId, id):
+        sql = f"insert into studyAlarm (memId, oppId, contentId) values ('{memId}', '{oppId}', '{id}')"
+        
+        done = commit(sql)
+        
+        return done
         
         

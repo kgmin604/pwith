@@ -4,11 +4,28 @@ from datetime import datetime
 from flask import Flask, jsonify
 
 class chat(): 
-    def __init__(self, sender, receiver, content, curDate):
-        self._sender = sender
-        self._receiver = receiver
-        self._content = content
-        self._curDate = curDate
+    def __init__(self, id, sender, receiver, content, curDate):
+        self.__id = id
+        self.__sender = sender
+        self.__receiver = receiver
+        self.__content = content
+        self.__curDate = curDate
+        
+    @property
+    def id(self):
+        return self.__id
+    @property
+    def sender(self):
+        return self.__sender
+    @property
+    def receiver(self):
+        return self.__receiver
+    @property
+    def content(self):
+        return self.__content
+    @property
+    def curDate(self):
+        return self.__curDate
         
     def insertChat(sender, receiver, content, curDate):
 
@@ -17,6 +34,15 @@ class chat():
         done = commit(sql)
         
         return done
+    
+    def getOneChat(sender, receiver):
+        
+        print(sender, receiver)
+        sql = f"select * from chat where sender = '{int(sender)}' and receiver = '{int(receiver)}' order by curDate desc "
+        
+        chatId = selectOne(sql)
+        print(chatId[0])
+        return chatId[0]
     
     def getMyChat(memId, oppId):
         sql = f"select distinct * from chat where (sender = '{str(memId)}' and receiver = '{str(oppId)}') or (sender = '{str(oppId)}' and receiver = '{str(memId)}') order by curDate desc"
@@ -60,16 +86,11 @@ class chat():
         now = datetime.now()
         return str(now)
     
-    @property
-    def sender(self):
-        return self._sender
-    @property
-    def receiver(self):
-        return self._receiver
-    @property
-    def content(self):
-        return self._content
-    @property
-    def curDate(self):
-        return self._curDate
+    
+    def insertChatAlarm(memId, oppId, id):
+            sql = f"insert into chatAlarm (memId, oppId, contentId) values ('{memId}', '{oppId}', '{id}')"
+            
+            done = commit(sql)
+            
+            return done
     
