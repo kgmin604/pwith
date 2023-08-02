@@ -18,8 +18,8 @@ function WriteReplyForm(props) {
                     ...reply,
                     {
                         "content": `${content}`,
-                        "id": response.data.id,
-                        "date": response.data.date,
+                        "id": response.data.data.id,
+                        "date": response.data.data.date,
                         "writer": `${user.id}`
                     }
                 ];
