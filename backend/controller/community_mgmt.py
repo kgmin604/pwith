@@ -91,6 +91,7 @@ class QNAPost() :
     def findByWriterId(writer_id) :
 
         sql = f"SELECT * FROM qna, member WHERE writer= member.id and member.nickname = '{str(writer_id)}' ORDER BY curDate DESC"
+        sql = f"SELECT * FROM qna WHERE writer = {writer_id} ORDER BY curDate DESC"
 
         posts = selectAll(sql)
         
