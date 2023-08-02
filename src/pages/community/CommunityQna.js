@@ -196,7 +196,7 @@ function CommunityQna(props) {
                                     <div
                                         className="post-item hover-effect"
                                         key={i}
-                                        onClick={(e) => { e.stopPropagation(); navigate(`../community/qna/${post.id}`) }}
+                                        onClick={(e) => { e.stopPropagation(); navigate(`../community/qna/${post.qnaId}`) }}
                                     >
                                         <span className=" post-comm">{post.id}</span>
                                         <span className=" post-title">{post.title}</span>

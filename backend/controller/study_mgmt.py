@@ -123,12 +123,11 @@ class studyPost() :
     @staticmethod
     def findByWriterId(writer_id) :
 
-        sql = f"SELECT * FROM study, member WHERE writer = member.id and member.nickname = '{str(writer_id)}' ORDER BY curDate DESC"
+        sql = f"SELECT * FROM study WHERE writer = {writer_id} ORDER BY curDate DESC"
 
         posts = selectAll(sql)
-
+        
         result = []
-
         for p in posts :
             result.append(studyPost(p[0],p[1],p[2],p[3],p[4],p[5],[6],p[7]))
 
