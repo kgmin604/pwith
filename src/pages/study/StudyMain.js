@@ -15,10 +15,7 @@ function StudyMain() {
   useEffect(() => {
     axios({
       method: "GET",
-      url: "/study",
-      params: {
-        'recommend': 1
-      }
+      url: "/study/recommend"
     })
       .then(function (response) {
         setRecStudy(response.data.data.rec);
