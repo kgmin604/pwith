@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { Form, ListGroup } from "react-bootstrap";
 
 import moreImg from "../assets/img/more.png"
-import defaultUserImage from "../assets/img/default_user.png"
 
 function Reply(props) {
     const { reply, id, item, setReply, replyNum, setReplyNum, baseUrl } = props;
@@ -63,9 +62,13 @@ function Reply(props) {
             })
     }
 
+    useEffect(() => {
+        console.log(reply)
+    }, [reply])
+
     return <div key={item.id}>{/* 댓글하나 */}
         <div className='align-row' style={{ justifyContent: "center", alignItems: "center" }}>
-            <img src={defaultUserImage} className='comment' style={{ width: '45px', height: '45px' }} />
+            <img src={item.image} className='comment' style={{ width: '45px', height: '45px' }} />
             {/* <img src={item.image} className='comment' style={{width:'45px',height:'45px'}}/> */}
             <span style={{ width: '5px' }}></span>
             <div className='align-side'>
