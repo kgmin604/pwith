@@ -195,6 +195,7 @@ function WritingList(){
             url: `/mypage/writing-list/${type_text}`
         })
         .then(function (response) {
+            console.log(response.data);
             setMypost(response.data.data);
         })
         .catch(function (error) {
@@ -353,7 +354,7 @@ function Chat(){
             method: "POST",
             url: "/mypage/chat/list",
             data: {
-                oppId : `${chatList[selectedItem]['oppId']}`
+                nickname : `${chatList[selectedItem]['nickname']}`
             },
           })
           .then(function (response) {
@@ -370,10 +371,10 @@ function Chat(){
         setContent(event.target.value);
     }
 
-    let [oppId, setOppId] = useState('');
-    let changeOppId = (event) =>{
+    let [nickname, setNickname] = useState('');
+    let changeNickname = (event) =>{
         event.stopPropagation();
-        setOppId(event.target.value);
+        setNickname(event.target.value);
     }
 
     let [msg,setMsg] = useState('');
@@ -407,7 +408,7 @@ function Chat(){
             method: "POST",
             url: "/mypage/chat",
             data: {
-                oppId : `${oppId}`,
+                nickname : `${nickname}`,
                 content : `${content}`
             },
         })
@@ -422,15 +423,15 @@ function Chat(){
           })
         .catch(function (error) {
             if(error.response.data.status===400){
-                alert("없는 수신자 아이디입니다.");
+                alert("없는 수신자 닉네임입니다.");
             }
         });
     }
 
       function checkRequest(event) {
         event.stopPropagation();
-        if (oppId === "") {
-            setMsg("! 수신자 아이디를 입력해주세요.");
+        if (nickname === "") {
+            setMsg("! 수신자 닉네임를 입력해주세요.");
             return;
         } else if (content === "") {
             setMsg("! 내용을 입력해주세요.");
@@ -444,7 +445,7 @@ function Chat(){
         <>
             <div className ="mypage-chat" style={{'padding':'0 0', 'margin':'0 0'}}>
                 <h3 className="my-header">쪽지함</h3>
-                <a className="send" title ="쪽지 보내기" onClick={ (event) => {handleModal(event); setOppId('');} }>💌</a>
+                <a className="send" title ="쪽지 보내기" onClick={ (event) => {handleModal(event); setNickname('');} }>💌</a>
                 <div className="chat-bottom">
                     <div className="chat-boxes scroll-area"> {/* 왼쪽구역: 채팅한 계정들*/}
                     {
@@ -459,7 +460,7 @@ function Chat(){
                                     onClick={(event) => handleItemClick(event, i)}
                                 >
                                     <time>{item.date}</time>
-                                    <h3>{item.oppId}</h3>
+                                    <h3>{item.nickname}</h3>
                                     <p>{item.content}</p>
                                 </a>
                             );
@@ -471,11 +472,11 @@ function Chat(){
                         {
                             selectedItem === null ? <></> :
                             <>
-                                <h2>{chatList[selectedItem]['oppId']}</h2>
+                                <h2>{chatList[selectedItem]['nickname']}</h2>
                                 <a 
                                     className="send" 
                                     title ="쪽지 보내기" 
-                                    onClick={ (event) => {handleModal(event); setOppId(chatList[selectedItem]['oppId']);} }
+                                    onClick={ (event) => {handleModal(event); setNickname(chatList[selectedItem]['nickname']);} }
                                 > 💌
                                 </a>
                             </>
@@ -512,9 +513,9 @@ function Chat(){
                                 <p className="receiver">
                                     <input 
                                         type="text"
-                                        onChange={e=>{changeOppId(e);}}
+                                        onChange={e=>{changeNickname(e);}}
                                         placeholder="수신자 아이디 입력"
-                                        defaultValue= {oppId}
+                                        defaultValue= {nickname}
                                     ></input>
                                 </p>
                                 <p>

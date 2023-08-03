@@ -8,7 +8,7 @@ from backend.view import findNickName
 
 main_bp = Blueprint('pwithmain', __name__, url_prefix='')
 
-@main_bp.route('/', methods = ['GET'])
+@main_bp.route('/list', methods = ['GET'])
 def showStudy():
     
         studyList = []

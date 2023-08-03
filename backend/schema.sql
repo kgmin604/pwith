@@ -5,7 +5,7 @@ CREATE TABLE member
     password VARBINARY(100) NOT NULL,
     nickname VARCHAR(10) NOT NULL UNIQUE,
     email VARCHAR(20) NOT NULL,
-    image VARCHAR(2048) NOT NULL DEFAULT "https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/default_user.jpg",
+    image VARCHAR(2048) NOT NULL DEFAULT "https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/profile/default_user.jpg",
     isAdmin BOOLEAN NOT NULL DEFAULT false,
     PRIMARY KEY(id)
 );
