@@ -107,9 +107,16 @@ def showPortfolio(id) :
         'content' : portfolio[4],
         'tuition' : portfolio[5],
         'duration' : portfolio[6],
-        'score' : portfolio[7],
-        'subject' : list(map(int, portfolio[8].split(',')))
+        'isOpen' : portfolio[7],
+        'score' : portfolio[8],
+        'subject' : list(map(int, portfolio[9].split(',')))
     }
+
+    loginId = current_user.get_id()
+
+    isNotFirst = MentoringRoom.existsByMentoMenti(portfolio[10], loginId)
+
+    result.update({'isFirst' : not isNotFirst})
 
     return result
 

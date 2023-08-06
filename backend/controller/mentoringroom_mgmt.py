@@ -49,6 +49,17 @@ class MentoringRoom() :
 
         return result
 
+    @staticmethod
+    def existsByMentoMenti(mento_id, menti_id) :
+
+        sql = f"SELECT EXISTS (SELECT id FROM mentoringRoom WHERE mento = {mento_id} AND menti = {menti_id})"
+
+        result = selectOne(sql)[0]
+        print(result)
+
+        return True if result == 1 else False
+
+
     # @staticmethod
     # def getMentiList(mentoId) : # 멘토링 참가자 조회
 

@@ -82,7 +82,6 @@ class Portfolio() :
             GROUP BY p.id
             ORDER BY p.curDate DESC
             '''
-
         result = selectAll(sql)
 
         return result
@@ -97,7 +96,6 @@ class Portfolio() :
             GROUP BY p.id
             ORDER BY p.curDate DESC
             '''
-
         result = selectAll(sql)
         
         return result
@@ -106,11 +104,10 @@ class Portfolio() :
     def findById(id) : # 상세 조회
 
         sql = f'''
-            SELECT m.memId, m.nickname, p.mentoPic, p.brief, p.content, p.tuition, p.duration, p.score, group_concat(subject)
+            SELECT m.memId, m.nickname, p.mentoPic, p.brief, p.content, p.tuition, p.duration, p.isOpen, p.score, group_concat(subject), m.id
             FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id
             WHERE p.id = {id}
             '''
-
         result = selectOne(sql)
 
         if not result[0] :
