@@ -12,7 +12,7 @@ from backend.view import uploadFileS3
 mento_bp = Blueprint('mentoring', __name__, url_prefix='/mentoring')
 
 @login_required
-@mento_bp.route('', methods=['POST'])
+@mento_bp.route('', methods=['POST']) # 포폴 작성
 def writePortfolio():
 
     image = request.files['mentoPic']
@@ -44,9 +44,14 @@ def writePortfolio():
             'data' : None
         }
 
-@mento_bp.route('', methods = ['GET'])
+@mento_bp.route('', methods = ['GET']) # 포폴 목록
 def listPortfolio() :
 
+    # 1. my portfolio
+    loginId = current_user.get_id()
+    myPortfolioId = Portfolio.findByMentoId(loginId)
+
+    # 2. portfolio list
     searchWord = request.args.get('search')
 
     if searchWord is None :
@@ -54,13 +59,13 @@ def listPortfolio() :
     else :
         portfolios = Portfolio.searchByMento(searchWord)
 
-    result = []
+    portfolioList = []
 
     for p in portfolios :
 
         subjects = list(map(int, p[8].split(',')))
 
-        result.append({
+        portfolioList.append({
             'id' : p[0],
             'mentoId' : p[1],
             'mentoNick' : p[2],
@@ -72,12 +77,17 @@ def listPortfolio() :
             'subject' : subjects
         })
 
+    result = {
+        'myPortfolio' : myPortfolioId,
+        'portfolioList' : portfolioList
+    }
+
     return {
         'data' : result
     }
 
 @login_required
-@mento_bp.route('/<id>', methods = ['GET'])
+@mento_bp.route('/<id>', methods = ['GET']) # 포폴 상세
 def showPortfolio(id) :
 
     portfolio = Portfolio.findById(id)
@@ -120,7 +130,7 @@ def showPortfolio(id) :
     # })
 
 @login_required
-@mento_bp.route('/<id>', methods = ['PATCH'])
+@mento_bp.route('/<id>', methods = ['PATCH']) # 포폴 수정
 def modifyPortfolio(id) :
 
     if Portfolio.existsById(id) == False:
@@ -149,7 +159,7 @@ def modifyPortfolio(id) :
     }
 
 @login_required
-@mento_bp.route('/<id>', methods = ['DELETE'])
+@mento_bp.route('/<id>', methods = ['DELETE']) # 포폴 삭제
 def deletePortfolio(id) :
 
     if Portfolio.existsById(id) == False:

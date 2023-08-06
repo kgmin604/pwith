@@ -3,16 +3,20 @@ import pymysql
 
 class Portfolio() :
     
-    def __init__(self, id, mento, brief, mentoPic, content, date, tuition, duration):
+    def __init__(self, id, mento, brief, mentoPic, content, curDate, tuition, duration, isOpen, score):
         self.__id = id
         self.__mento = mento
         self.__brief = brief
         self.__mentoPic = mentoPic
         self.__content = content
-        self.__curDate = date
+        self.__curDate = curDate
         self.__tuition = tuition
         self.__duration = duration
-        # 끌어올리기 구현 시 ON/OFF or date 추가 - DB에도
+        self.__isOpen = isOpen
+        self.__score = score
+    @property
+    def id(self) :
+        return self.__id
     @property
     def mento(self) :
         return self.__mento
@@ -34,6 +38,12 @@ class Portfolio() :
     @property
     def duration(self) :
         return self.__duration
+    @property
+    def isOpen(self) :
+        return self.__isOpen
+    @property
+    def score(self) :
+        return self.__score
 
     @staticmethod
     def existsById(id) :
@@ -160,6 +170,18 @@ class Portfolio() :
         done = commit(sql2)
 
         return done
+
+    @staticmethod
+    def findByMentoId(mento_id) :
+
+        sql = f"SELECT id FROM portfolio WHERE mento = {mento_id}"
+
+        result = selectOne(sql)
+
+        if not result :
+            return None
+
+        return result[0]
 
     @staticmethod
     def getNmentoring() :
