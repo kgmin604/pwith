@@ -172,14 +172,38 @@ def findPassword() :
         'data' : None
     }
 
+@member_bp.route('/password/<url>', methods = ['GET'])
+def checkValidPage(url) :
+
+    valid_id = url_cache.get(url)
+
+    if valid_id == None :
+        return {
+            'status' : 400,
+            'message' : '유효하지 않은 URL',
+            'data' : None
+        }
+    else :
+        return {
+            'message' : '유효한 URL',
+            'data' : None
+        }
+
 @member_bp.route('/password/<url>', methods = ['PATCH'])
 def resetPassword(url) :
-    
+
     data = request.get_json()
 
     newPw = data['password']
 
-    id = url_cache[url]
+    id = url_cache.get(url)
+
+    if id == None :
+        return {
+            'status' : 400,
+            'message' : '유효하지 않은 URL',
+            'data' : None
+        }
 
     hashed_password = hashPassword(newPw)
 
