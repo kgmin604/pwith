@@ -52,7 +52,7 @@ function RoomCreate(){
                 cropper.getCroppedCanvas().toBlob((blob) => {
                     // Blob을 FormData로 감싸기
                     const formData = new FormData();
-                    formData.append('image', blob, `${"roomtest4"}.jpg`);
+                    formData.append('image', blob, `${"d"}.jpg`);
                     formData.append('data', JSON.stringify({
                         'roomName': userinput.title,
                         'category': userinput.category,

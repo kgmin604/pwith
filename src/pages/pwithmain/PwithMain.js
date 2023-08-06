@@ -21,11 +21,8 @@ function PwithMain(){
     
     useEffect(()=>{
         axios({
-            method: "POST",
-            url: "/",
-            data: {
-                chkSession: 0,
-            }
+            method: "GET",
+            url: "/list"
           })
           .then(function (response) {
             setStudyList(response.data.data.study);
