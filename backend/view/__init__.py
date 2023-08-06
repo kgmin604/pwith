@@ -29,18 +29,17 @@ def uploadFileS3(file):
 
     return image_url
 
+def formatDateToString(date): # 타입 변경 datetime -> string
+    return datetime.strftime(date, "%Y-%m-%d %H:%M:%S")
 
-def getFormattedDate(curDate):      # 날짜 포맷 상세시간까지
+def getFormattedDate(curDate): # 날짜 포맷 년-월-일-상세시간
     date_object = datetime.strptime(curDate, "%Y-%m-%d %H:%M:%S")
+
     formatted_datetime = date_object.strftime("%y-%m-%d %H:%M")
     
     return formatted_datetime
 
-def formatDateToString(date):      # datetime type to string
-    return datetime.strftime(date, "%Y-%m-%d %H:%M:%S")
-
-
-def mainFormattedDate(curDate):     # 날짜 포맷 월/일 만
+def mainFormattedDate(curDate): # 날짜 포맷 월-일
     if isinstance(curDate, str):        
         curDate = datetime.strptime(curDate, "%Y-%m-%d %H:%M:%S")
         
@@ -56,26 +55,28 @@ def formatYMD(curDate): # 날짜 포맷 년-월-일
     
     return formatted_date
 
-
 def nicknameToId(memId):
         sql = f"select id from member where nickname = '{str(memId)}' or memId = '{str(memId)}'"
+        
         id = selectOne(sql)
         
         return id[0]
     
 def IdtoMemId(id):
     sql = f"select memId from member where id = '{str(id)}'"
+
     id = selectOne(sql)
     
     return id[0]
 
 def findNickName(id):
     sql = f"select nickname from member where id = '{str(id)}'"
+
     nickname = selectOne(sql)
     
     return nickname[0]
 
-def getProfileImage(memId):   # profileImage member 에서 받아오기
+def getProfileImage(memId): # profileImage member 에서 받아오기
         sql = f"select image from member where member.id = '{str(memId)}'"
         
         profileImage = selectOne(sql)
