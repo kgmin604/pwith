@@ -4,6 +4,7 @@ from datetime import datetime
 import json
 
 from backend.view import uploadFileS3
+from backend.controller.member_mgmt import Member
 from backend.controller.studyroom_mgmt import StudyRoom
 from backend.controller.mentoringroom_mgmt import MentoringRoom
 
@@ -12,10 +13,11 @@ studyroom_bp = Blueprint('studyRoom', __name__, url_prefix='/study-room')
 @studyroom_bp.route('', methods=['GET'])
 def listRoom() :
 
-    login_member = current_user.get_id()
+    loginId = current_user.get_id()
+    loginMember = Member.findById(loginId)
 
-    studyRooms = StudyRoom.findByMemberId(login_member)
-    mentoringRooms = MentoringRoom.findByMemberId(login_member)
+    studyRooms = StudyRoom.findByMemberId(loginId)
+    mentoringRooms = MentoringRoom.findByMemberId(loginId)
 
     studyRoomList = []
     mentoringRoomList = []
@@ -25,7 +27,8 @@ def listRoom() :
             'id' : room.id,
             'name' : room.name,
             'leader' : room.leader,
-            'image' : room.image
+            'image' : room.image,
+            'joinP' : room.joinP
         })
 
     for room in mentoringRooms :
@@ -37,6 +40,7 @@ def listRoom() :
         })
 
     return {
+        'profileImage' : loginMember.image,
         'studyRoom' : studyRoomList,
         'mentoringRoom' : mentoringRoomList
     }
