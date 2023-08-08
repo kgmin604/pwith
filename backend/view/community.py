@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-# from model.db_mongo import conn_mongodb
 
 import pymongo
 
@@ -20,7 +19,7 @@ def conn_mongodb() :
 header = {'User-Agent':'Mozilla/5.0'}
 
 # date = '20230620'
-daum_url = 'https://news.daum.net/breakingnews/digital?page={}&regDate=20230625'
+daum_url = 'https://news.daum.net/breakingnews/digital?page={}&regDate=20230808'
 
 def connectUrl(url, page=1) :
     response = requests.get(url.format(page), headers=header)
