@@ -48,8 +48,15 @@ def listRoom() :
 @studyroom_bp.route('', methods=['POST'])
 def createRoom() :
 
-    file = request.files['image']
-    image = uploadFileS3(file)
+    default_image = request.args.get('image')
+
+    if not default_image :
+
+        file = request.files['image']
+        image = uploadFileS3(file)
+    else :
+        
+        image = f"https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/studyroom/default_study_image_{str(default_image)}.jpg"
 
     data_str = request.form['data']
     data = json.loads(data_str)
