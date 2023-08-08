@@ -1,10 +1,8 @@
 from flask import Flask, session, Blueprint, render_template, redirect, request, jsonify, url_for
 from flask_login import login_required, current_user
 from datetime import datetime
-# from backend.controller.community_mgmt import bootPost, QNAPost
 from backend.model.db_mongo import conn_mongodb
 from backend.model.db_mysql import conn_mysql
-# from backend.view.community import conn_mongodb
 from backend.controller.community_mgmt import QNAPost
 from backend.controller.study_mgmt import studyPost
 from backend.controller.replyQna_mgmt import ReplyQna
@@ -72,42 +70,40 @@ def communityMain() :
         'contents' : conts
     }
  
-@community_bp.route('/it', methods=['GET', 'POST'])
+@community_bp.route('/it', methods=['GET'])
 def listNews() :
-    if request.method == 'GET' :
+    page = 0
+    result = []
 
-        page = 0
-        result = []
+    page = request.args.get('page')
+    date = request.args.get('date')
 
-        page = request.args.get('page')
-        date = request.args.get('date')
-
-        if not page or not date :
-            return {'result' : result}
-
-        page = int(page)
-        formatted_date = f'{date[:4]}년 {date[4:6]}월 {date[6:]}일'
-
-
-        all_newsList = conn_mongodb().ITnews_crawling.find({'date':formatted_date}).sort('_id', -1)
-        requiredPage = len(list(all_newsList)) // 10 + 1
-
-        newsList = conn_mongodb().ITnews_crawling.find({'date':formatted_date}).sort('_id', -1).skip((page-1)*10).limit(10)
-
-        for news in newsList :
-            result.append({
-                'date': news['date'],
-                'title' : news['title'],
-                'brief' : news['brief'],
-                'img' : news['img'],
-                'url' : news['url']
-            })
-        
+    if not page or not date :
         return {
-            'page' : requiredPage,
-            'news' : result
+            'result' : result
         }
-    # 추후 검색 구현할 때 POST 방식 추가
+
+    page = int(page)
+    formatted_date = f'{date[:4]}년 {date[4:6]}월 {date[6:]}일'
+
+    all_newsList = conn_mongodb().ITnews_crawling.find({'date':formatted_date}).sort('_id', -1)
+    requiredPage = len(list(all_newsList)) // 10 + 1
+
+    newsList = conn_mongodb().ITnews_crawling.find({'date':formatted_date}).sort('_id', -1).skip((page-1)*10).limit(10)
+
+    for news in newsList :
+        result.append({
+            'date': news['date'],
+            'title' : news['title'],
+            'brief' : news['brief'],
+            'img' : news['img'],
+            'url' : news['url']
+        })
+    
+    return {
+        'page' : requiredPage,
+        'news' : result
+    }
 
 @community_bp.route('/qna', methods=['GET'])
 def show():     # 전체 글 출력
