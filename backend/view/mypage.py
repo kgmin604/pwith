@@ -89,7 +89,7 @@ def changeImage() :
     result = Member.updateImage(id, newImage)
     
     return {
-        'data' : None
+        'data' : newImage
     }
 
 @login_required
