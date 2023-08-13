@@ -86,7 +86,7 @@ function App() {
       url: "/member/logout"
     })
       .then(function (response) {
-        if(response.data.status==200){
+        if (response.data.status == 200) {
           dispatch(clearUser());
           navigate("/");
         }
@@ -365,7 +365,7 @@ function App() {
           <Route path="/community/qna/:id" element={<QnaPost />} />
           <Route path="/mentoring/main" element={<MentoringMain />} />
           <Route path="/mentoring/create" element={<MentoringCreate />} />
-          <Route path="/mentoring/:id" element={<PortfolioManage />} />
+          <Route path="/mentoring/:myPortfolio" element={<PortfolioManage />} />
           <Route path="member/login" element={<Login />} />
           <Route path="member/join" element={<Join />} />
           <Route path="member/id" element={<HelpId />} />

@@ -7,11 +7,12 @@ import axios from 'axios';
 import { Link, useNavigate } from "react-router-dom";
 import MentoCard from './MentoCard';
 
+
 function MentoringMain() {
     const navigate = useNavigate();
     const [mentoList, setMentoList] = useState([]);
     const [userinput, setUserinput] = useState('');
-
+    const [myPortfolio, setMyPortfolio] = useState();
 
     useEffect(() => {
         axios({
@@ -20,6 +21,7 @@ function MentoringMain() {
         })
             .then(function (response) {
                 setMentoList(response.data.data.portfolioList);
+                setMyPortfolio(response.data.data.myPortfolio);
             })
             .catch(function (error) {
                 console.log(error);
@@ -36,7 +38,7 @@ function MentoringMain() {
             }
         })
             .then(function (response) {
-                setMentoList(response.data.data);
+                setMentoList(response.data.data.portfolioList);
             })
             .catch(function (error) {
                 console.log(error);
@@ -47,7 +49,7 @@ function MentoringMain() {
         <div className="MentoringMain">
             <div className="row">
                 <div className="col-md-3">
-                    {Category()}
+                    <Category myPortfolio={myPortfolio} />
                 </div>
 
                 <div className="col-md-8">
@@ -82,14 +84,16 @@ function MentoringMain() {
 
 
 
-function Category() {
+function Category({ myPortfolio }) {
     return <>
         <h5>Mentoring</h5>
         <hr style={{ width: '60%', margin: '0 auto' }} />
         <Nav defaultActiveKey="#" className="flex-column">
             <Link to="#"><div style={{ color: '#282c34' }}>멘토링</div></Link>
-            <Link to="../mentoring/create"><div style={{ color: '#282c34' }}>포트폴리오 작성</div></Link>
-            <Link to="../mentoring/5"><div style={{ color: '#282c34' }}>포트폴리오 관리</div></Link>
+            {myPortfolio === null ? <Link to="../mentoring/create"><div style={{ color: '#282c34' }}>포트폴리오 작성</div></Link> :
+                <Link to={`../mentoring/${myPortfolio}`}><div style={{ color: '#282c34' }}>포트폴리오 관리</div></Link>
+            }
+
         </Nav>
     </>
 }
