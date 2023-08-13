@@ -11,7 +11,7 @@ def showList():     # 1:1 채팅 목록 가져오기
 
     data = request.get_json(silent=True)  # silent: parsing fail 에러 방지
     memId = current_user.get_id()
-    oppId = nicknameToId(data.get('oppId'))
+    nickname = nicknameToId(data.get('nickname'))
     
     
     #print('postType = ' + str(postType)) # 형변환 추가-kgm
@@ -20,7 +20,7 @@ def showList():     # 1:1 채팅 목록 가져오기
 # 상대방과의 채팅목록 가져오기
     #print("post msglist")
     print(memId)
-    chatlist = chat.getMyChat(memId, oppId)
+    chatlist = chat.getMyChat(memId, nickname)
     msgList =[]
     
     for chats in chatlist:
@@ -48,17 +48,17 @@ def send():     # 쪽지 보내기
     # postType = data.get('type')
     memId = current_user.get_id()
     print(memId)
-    oppId = data.get('oppId')
-    print(oppId)
+    nickname = data.get('nickname')
+    print(nickname)
     
-    oppChk = chat.chkOppId(oppId)
+    oppChk = chat.chkOppId(nickname)
     if oppChk == True:  #oppId가 유효한 경우 result = 1
         
         content = data['content']
         curDate = chat.curdate()
-        oppId = data['oppId']
-        oppNickId = nicknameToId(oppId)
-        print(str(oppId), memId)
+        nickname = data['nickname']
+        oppNickId = nicknameToId(nickname)
+        print(str(nickname), memId)
         chat.insertChat(memId, str(oppNickId), content, curDate)
         chatId = chat.getOneChat(memId, str(oppNickId))
         print(chatId)
@@ -86,7 +86,7 @@ def showAllChat():     #전체 채팅목록 가져오기 (current_user id와 관
     print(chattings)
     for chatting in chattings:
         chatting_data = {
-            'oppId': findNickName((chatting[1])),
+            'nickname': findNickName((chatting[1])),
             'content': chatting[2],
             'date': chatting[3]
         }

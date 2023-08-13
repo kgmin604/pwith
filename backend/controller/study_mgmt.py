@@ -264,5 +264,11 @@ class studyPost() :
         done = commit(sql)
         
         return done
+    
+    def getLikes(id):
+        sql = f"select likes from study where id = '{id}'"
+        row = selectOne(sql)
+        likes = row[0]
         
+        return likes
         

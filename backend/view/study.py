@@ -26,7 +26,7 @@ def recommend():
         'rec' : recStudy # by. 경민
     }
     
-@study_bp.route('', methods=['GET'])
+@study_bp.route('/', methods=['GET'])
 def show(): 
     search = request.args.get('search')
     print("search")     
@@ -228,7 +228,7 @@ def showDetail(id) :     # 글 조회
             'reply' : replyResult
         }
         
-@study_bp.route('/update/<int:id>', methods = ['PATCH'])
+@study_bp.route('/<int:id>', methods = ['PATCH'])
 def updatePost(id):   # 게시글 수정
         id = request.get_json()['postId']
         postContent = request.get_json()['content']
@@ -251,7 +251,7 @@ def deletePost(id): # 게시글 삭제
     try :
         done = studyPost.deleteStudy(id)
     except Exception as ex :
-        # print("에러 이유 : " + str(ex))
+        print("에러 이유 : " + str(ex))
         done = 0
 
     return {
@@ -290,7 +290,7 @@ def replyPost(studyId) :        # 댓글 작성
 @study_bp.route('/<int:studyId>/<int:replyId>', methods = ['PATCH'])
 def replyPatch(studyId) :    # 댓글 수정
 
-        replyId = request.get_json()['id']
+        replyId = request.get_json()['replyId']
         # print(replyId)
         newContent = request.get_json()['content']
 
@@ -308,14 +308,13 @@ def replyPatch(studyId) :    # 댓글 수정
             }
         else:
             return {
-                'id' : replyId, 
-                'date' : formatDateToString(date)
+                'data':None
             }
 
 @study_bp.route('/<int:studyId>/<int:replyId>', methods = ['DELETE'])
 def replyDelete(studyId) :     # 댓글 삭제
 
-        replyId = request.get_json()['id']
+        replyId = request.get_json()['replyId']
 
         try :
             done = ReplyStudy.removeReply(replyId)
@@ -328,7 +327,7 @@ def replyDelete(studyId) :     # 댓글 삭제
         }
 
 @login_required
-@study_bp.route("/create", methods=['GET', 'POST'])
+@study_bp.route("/", methods=['GET', 'POST'])
 def write():        # 글 작성
     if request.method == 'GET' :
         result = []
@@ -378,8 +377,10 @@ def like(id):
         print(memId, postId)
         studyPost.Like(memId, id)
         
-        likes = post.likes
+        likes = studyPost.getLikes(id)
         liked = studyPost.findLike(memId, id)
+        print(likes)
+        print(liked)
         
         return {
             'likes' : likes,

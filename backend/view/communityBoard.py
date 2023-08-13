@@ -230,7 +230,7 @@ def showDetail(id) :
                 'writer' : findNickName(reply[1]),
                 'content' : reply[2],
                 'date' : getFormattedDate(date),
-                'image' : getProfileImage(current_user.get_id())
+                'profileImage' : getProfileImage(current_user.get_id())
             })
         
         return {
@@ -238,14 +238,14 @@ def showDetail(id) :
             'reply' : replyResult
         }
         
-@community_bp.route('/qna/update/<int:id>', methods = ['PATCH'])
+@community_bp.route('/qna/<int:id>', methods = ['PATCH'])
 def updatePost(id):
     if request.method == 'PATCH':     # 게시글 수정
         id = request.get_json()['postId']
         postContent = request.get_json()['content']
         
         try :
-            done = QNAPost.updateQNA(id, postContent)
+            done = QNAPost.updateQna(id, postContent)
         except Exception as ex :
             print("에러 이유 : " + str(ex))
             done = 0
@@ -254,13 +254,13 @@ def updatePost(id):
             'data': None
         }
         
-@community_bp.route('/qna/delete/<int:id>', methods = ['DELETE'])
+@community_bp.route('/qna/<int:id>', methods = ['DELETE'])
 def deletePost(id):
     if request.method == 'DELETE':      # 게시글 삭제
         id = request.get_json()['postId']
         
         try :
-            done = QNAPost.deleteQNA(id)
+            done = QNAPost.deleteQna(id)
         except Exception as ex :
             print("에러 이유 : " + str(ex))
             done = 0
@@ -296,7 +296,7 @@ def replyPost(id) :      # 댓글 작성
 
 @community_bp.route('/qna/<int:id>/<int:replyId>', methods = ['PATCH'])
 def replyPatch(id) :  # 댓글 수정
-        replyId = request.get_json()['id']
+        replyId = request.get_json()['replyId']
         newContent = request.get_json()['content']
 
         try :
@@ -312,7 +312,7 @@ def replyPatch(id) :  # 댓글 수정
 @community_bp.route('/qna/<int:id>/<int:replyId>', methods = ['DELETE'])
 def replyDelete(id) : # 댓글 삭제
 
-        replyId = request.get_json()['id']
+        replyId = request.get_json()['replyId']
 
         try :
             done = ReplyQna.removeReply(replyId)
@@ -326,7 +326,7 @@ def replyDelete(id) : # 댓글 삭제
     
 
 @login_required
-@community_bp.route("/qna/create", methods=['POST'])
+@community_bp.route("/qna", methods=['POST'])
 def write():
     if request.method == 'POST':
         # print("post\n")
@@ -360,8 +360,12 @@ def like(id):
         print(memId, postId)
         QNAPost.Like(memId, postId)
         print("liked")
-        likes = post.likes
+        likes = QNAPost.getLikes(id)
         liked = QNAPost.findLike(memId, id)
+        
+        print(likes)
+        print(liked)
+        
         return {
             'likes' : likes,
             'liked' : liked

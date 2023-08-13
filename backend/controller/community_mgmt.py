@@ -202,3 +202,9 @@ class QNAPost() :
    #     sql = f"SELECT liked from liked where memberId = '{str(memId)}' and postId = '{str(postId)}'"
     
         
+    def getLikes(id):
+        sql = f"select likes from qna where id = '{id}'"
+        row = selectOne(sql)
+        likes = row[0]
+        
+        return likes
