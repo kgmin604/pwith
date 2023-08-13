@@ -32,7 +32,7 @@ function MentoringMain() {
             method: "GET",
             url: "/mentoring",
             params: {
-                value: `${userinput}`
+                search: `${userinput}`
             }
         })
             .then(function (response) {

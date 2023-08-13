@@ -59,6 +59,7 @@ function CommunityQna(props) {
             method: "GET",
             url: `/community/qna`,
             params: {
+                search: 1,
                 type: searchType, // 0: 제목 1: 글쓴이
                 value: inputValue,
                 page: 1

@@ -22,9 +22,9 @@ function Reply(props) {
 
     function deleteComment(replyId) {
         if (baseUrl === undefined || id === undefined) return
-        axios.delete(`${baseUrl}/${id}`, {
+        axios.delete(`${baseUrl}/${replyId}`, {
             data: {
-                id: `${replyId}`
+                replyId: `${replyId}`
             }
         })
             .then(function (response) {
@@ -42,8 +42,8 @@ function Reply(props) {
     }
     function updateComment(replyId, content) {
         if (baseUrl === undefined || id === undefined) return
-        axios.patch(`${baseUrl}/${id}`, {
-            id: `${replyId}`,
+        axios.patch(`${baseUrl}/${replyId}`, {
+            replyId: `${replyId}`,
             content: `${content}`
         })
             .then(function (response) {
