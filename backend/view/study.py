@@ -26,7 +26,7 @@ def recommend():
         'rec' : recStudy # by. 경민
     }
     
-@study_bp.route('/', methods=['GET'])
+@study_bp.route('', methods=['GET'])
 def show(): 
     search = request.args.get('search')
     print("search")     
@@ -327,7 +327,7 @@ def replyDelete(studyId) :     # 댓글 삭제
         }
 
 @login_required
-@study_bp.route("/", methods=['GET', 'POST'])
+@study_bp.route("", methods=['GET', 'POST'])
 def write():        # 글 작성
     if request.method == 'GET' :
         result = []
