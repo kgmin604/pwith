@@ -157,8 +157,6 @@ function Category() {
         <hr style={{ width: '60%', margin: '0 auto' }} />
         <Nav defaultActiveKey="#" className="flex-column">
             <Link to="#"><div style={{ color: '#282c34' }}>멘토링</div></Link>
-            <Link to="../mentoring/create"><div style={{ color: '#282c34' }}>포트폴리오 작성</div></Link>
-            <Link to="../mentoring/5"><div style={{ color: '#282c34' }}>포트폴리오 관리</div></Link>
         </Nav>
     </>
 }

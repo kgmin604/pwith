@@ -10,14 +10,13 @@ import LikeAndComment from '../../component/likeAndComment';
 import MDEditor from '@uiw/react-md-editor';
 
 function StudyPost(props) {
-
     let navigate = useNavigate();
 
     let user = useSelector((state) => state.user);
     let { id } = useParams();
 
-    const [post, setPost] = useState(null);
-    const [reply, setReply] = useState(null);
+    const [post, setPost] = useState({});
+    const [reply, setReply] = useState([]);
 
     const [isUpdating, setIsUpdating] = useState(false);
 
@@ -59,6 +58,7 @@ function StudyPost(props) {
 
     function updatePost(content) {
         axios.patch(`/study/${id}`, {
+            title: `${post.title}`,
             postId: `${id}`,
             content: `${content}`
         })
@@ -158,7 +158,13 @@ function StudyPost(props) {
                 <div>
                     <div className='StudyCreate' style={{ textAlign: 'start', width: '100%' }}>
                         <h5>스터디 모집글 수정하기</h5>
-                        <h3>{post.title}</h3>
+                        <input className="title-input" type='text' value={post.title} onChange={(event) => {
+                            const updatedTitle = event.target.value;
+                            setPost({
+                                ...post,
+                                title: updatedTitle
+                            });
+                        }} />
                         <hr style={{ width: '100%', margin: '0 auto', marginBottom: '10px' }} />
                         <div className='form-wrapper' style={{ width: '100%' }}>
                             <div style={{ width: '100%' }}>

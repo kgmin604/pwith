@@ -2,16 +2,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./study.css";
 import "../../App.css";
 import React, { useState, useEffect } from 'react';
-import { Form, Nav, Stack, Button, Table, Accordion } from "react-bootstrap";
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import { Form, Stack, Button } from "react-bootstrap";
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
-import SplitButton from 'react-bootstrap/SplitButton';
 
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import axios from "axios";
-import { loginUser } from "../../store";
 
 function StudyBoard(props) {
     let navigate = useNavigate();
@@ -206,7 +203,7 @@ function StudyBoard(props) {
                                             >
                                                 <span className=" post-comm">{post.id}</span>
                                                 <span className=" post-title">{post.title}</span>
-                                                <span className=" post-writer">{post.writer}</span>
+                                                <span className=" post-writer">{post.writerNick}</span>
                                                 <span className=" post-comm">{post.curDate}</span>
                                                 <span className=" post-comm">{post.likes}</span>
                                                 <span className=" post-comm">{post.views}</span>
