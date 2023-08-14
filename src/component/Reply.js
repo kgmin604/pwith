@@ -68,8 +68,7 @@ function Reply(props) {
 
     return <div key={item.id}>{/* 댓글하나 */}
         <div className='align-row' style={{ justifyContent: "center", alignItems: "center" }}>
-            <img src={item.image} className='comment' style={{ width: '45px', height: '45px' }} />
-            {/* <img src={item.image} className='comment' style={{width:'45px',height:'45px'}}/> */}
+            <img src={item.profileImage} className='comment' style={{ width: '45px', height: '45px' }} />
             <span style={{ width: '5px' }}></span>
             <div className='align-side'>
                 <div style={{ textAlign: 'start' }}>
