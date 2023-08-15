@@ -230,7 +230,7 @@ def showDetail(id) :
                 'writer' : findNickName(reply[1]),
                 'content' : reply[2],
                 'date' : getFormattedDate(date),
-                'profileImage' : getProfileImage(current_user.get_id())
+                'profileImage' : getProfileImage(reply[1])
             })
         
         return {
@@ -371,3 +371,35 @@ def like(id):
             'liked' : liked
         }
    
+@community_bp.route('/contents', methods=['GET'])
+def listContents() :
+    page = 0
+    result = []
+
+    page = request.args.get('page')
+
+    if not page :
+        return {
+            'result' : result
+        }
+
+    page = int(page)
+    
+    all_newsList = conn_mongodb().ITnews_crawling.find().sort('_id', -1)
+    requiredPage = len(list(all_newsList)) // 10 + 1
+
+    newsList = conn_mongodb().ITnews_crawling.find().sort('_id', -1).skip((page-1)*10).limit(10)
+
+    for news in newsList :
+        result.append({
+            'date': news['date'],
+            'title' : news['title'],
+            'brief' : news['brief'],
+            'img' : news['img'],
+            'url' : news['url']
+        })
+    
+    return {
+        'page' : requiredPage,
+        'news' : result
+    }
