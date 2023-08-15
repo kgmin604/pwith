@@ -6,6 +6,8 @@ import { Form, Nav, Stack, Button, Row } from "react-bootstrap";
 import axios from 'axios';
 import { Link, useNavigate } from "react-router-dom";
 import MentoCard from './MentoCard';
+import { useSelector } from "react-redux";
+
 
 
 function MentoringMain() {
@@ -51,7 +53,6 @@ function MentoringMain() {
                 <div className="col-md-3">
                     <Category myPortfolio={myPortfolio} />
                 </div>
-
                 <div className="col-md-8">
                     <Stack direction="horizontal" gap={3} style={{ padding: "5px" }}>
                         <Form.Control
@@ -85,15 +86,14 @@ function MentoringMain() {
 
 
 function Category({ myPortfolio }) {
+    const user = useSelector((state) => state.user);
     return <>
         <h5>Mentoring</h5>
         <hr style={{ width: '60%', margin: '0 auto' }} />
         <Nav defaultActiveKey="#" className="flex-column">
             <Link to="#"><div style={{ color: '#282c34' }}>멘토링</div></Link>
-            {myPortfolio === null ? <Link to="../mentoring/create"><div style={{ color: '#282c34' }}>포트폴리오 작성</div></Link> :
-                <Link to={`../mentoring/${myPortfolio}`}><div style={{ color: '#282c34' }}>포트폴리오 관리</div></Link>
-            }
-
+            <Link to={user.id === null ? '#' : `../mentoring/create`} ><div className={user.id === null ? 'disabled' : 'category'}>포트폴리오 작성</div></Link>
+            <Link to={user.id === null ? '#' : `../mentoring/${myPortfolio}`}><div className={user.id === null ? 'disabled' : 'category'}>포트폴리오 관리</div></Link>
         </Nav>
     </>
 }

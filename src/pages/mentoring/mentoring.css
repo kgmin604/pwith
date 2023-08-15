@@ -151,3 +151,48 @@
     text-align: left;
     color: gray;
 }
+
+.disabled {
+    color: #D0D1D9 !important;
+}
+
+.category {
+    color: #282c34;
+}
+
+.cardBrief {
+    color: #1D1D29;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.noScore {
+    color: #4D4E54;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.score {
+    color: #FFD800;
+}
+
+.card-subjectWrapper {
+    display: flex;
+    flex-direction: row;
+}
+
+.card-subject {
+    margin: 5px;
+    background-color: #D0D1D9;
+    padding: 2px 4px;
+    border-radius: 5px;
+}
+
+.card-subject>div {
+    color: rgba(77, 78, 84, 1);
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 20px;
+    letter-spacing: -0.32px;
+}
