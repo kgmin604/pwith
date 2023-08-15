@@ -46,7 +46,7 @@ function StudyMain() {
                   return (
                     <div className="rec-item" key={i}>
                       <img
-                        src='/rec_img.png'
+                        src={study.image}
                         onClick={(e) => {
                           e.stopPropagation();
                           navigate("./main");

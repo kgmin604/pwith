@@ -27,6 +27,7 @@ function StudyPost(props) {
             url: `/study/${id}`
         })
             .then(function (response) {
+                console.log(response.data.data.post);
                 setPost(response.data.data.post);
                 setReply(response.data.data.reply);
             })
@@ -129,7 +130,7 @@ function StudyPost(props) {
                 </div>
 
                 <div className="studyroom-join">
-                    <img src='/img_notebook.png'></img>
+                    <img src={post.roomImage}></img>
                     <span className="room-title">
                         {post.roomTitle}
                         <span className="room-p">({post.joinP}명/{post.totalP}명)</span>

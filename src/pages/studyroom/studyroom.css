@@ -150,11 +150,16 @@ div.room-part div.row div.col-md-9 div.list-area div.items
     position: relative;
     margin: 0 auto;
     overflow: hidden;
+    width: 230px;
+    height: 200px;
 }
 
 div.room-part div.row div.col-md-9 div.list-area div.items div.item div.img-area 
 img{
     transition: transform 0.3s ease;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 div.room-part div.row div.col-md-9 div.list-area div.items div.item

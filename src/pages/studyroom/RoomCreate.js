@@ -52,7 +52,16 @@ function RoomCreate(){
                 cropper.getCroppedCanvas().toBlob((blob) => {
                     // Blob을 FormData로 감싸기
                     const formData = new FormData();
-                    formData.append('image', blob, `${"d"}.jpg`);
+
+                    // 랜덤 문자열 생성 - 임시
+                    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                    let result = '';
+                    for (let i = 0; i < 10; i++) {
+                        const randomIndex = Math.floor(Math.random() * characters.length);
+                        result += characters.charAt(randomIndex);
+                    }
+
+                    formData.append('image', blob, `studyroom/${result}.jpg`);
                     formData.append('data', JSON.stringify({
                         'roomName': userinput.title,
                         'category': userinput.category,
@@ -74,6 +83,30 @@ function RoomCreate(){
                     });
                   }, 'image/jpeg');
             }
+        }
+        else {
+            const formData = new FormData();
+            formData.append('data', JSON.stringify({
+                'roomName': userinput.title,
+                'category': userinput.category,
+                'totalP': userinput.totalP
+            }));
+            axios({
+                method: "POST",
+                url: "/study-room",
+                params:{
+                    image: `${sel}`
+                },
+                data: formData, // FormData 전달
+            })
+            .then(function (response) {
+                alert("스터디룸이 개설되었습니다.");
+                navigate("../studyroom");
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
         }
     }
 

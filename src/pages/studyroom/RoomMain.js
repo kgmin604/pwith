@@ -18,6 +18,8 @@ function RoomMain(){
     let [rooms, setRooms] = useState([]);
     let [rooms2, setRooms2] = useState([]);
 
+    let [profileImg, setProfileImg] = useState(null);
+
     let [chkAxios, setChkAxios] = useState(false);
 
     let [type,setType] = useState('study'); // 'study' or 'mentoring'
@@ -31,6 +33,7 @@ function RoomMain(){
             console.log(response.data);
             setRooms(response.data.data.studyRoom);
             setRooms2(response.data.data.mentoringRoom);
+            setProfileImg(response.data.data.profileImage);
             setChkAxios(true);
         })
         .catch(function (error) {
@@ -50,7 +53,7 @@ function RoomMain(){
                 <div className="row">
                     <div className="col-md-3">
                         <div className="profile">
-                            <img src="/user.png" alt="User" />
+                            <img src={`${profileImg}?version=${Math.random()}`} alt="User" />
                             <h2 className="name"><span>{user.name}</span>님</h2>
                             <div className="info">
                                 <div className="area" style={{'border-right':'solid 1px lightgray'}}>
@@ -106,7 +109,7 @@ function RoomMain(){
                                                     <img src={room.image}/>
                                                     <div className="join-area">
                                                         <FontAwesomeIcon icon={faUser} />
-                                                        <span>4명</span>
+                                                        <span>{room.joinP}명</span>
                                                     </div>
                                                 </div>
                                                 <h3>{room.name}</h3>
