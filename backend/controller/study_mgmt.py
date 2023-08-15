@@ -234,7 +234,7 @@ class studyPost() :
         
         roomImage = selectOne(sql)
         
-        return str(roomImage)
+        return roomImage[0]
     
     
     
