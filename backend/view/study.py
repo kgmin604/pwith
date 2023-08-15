@@ -184,9 +184,6 @@ def showDetail(id) :     # 글 조회
         except Exception as ex :
             liked = False
 
-        print("curDAte : ")
-        print(post.curDate)
-        print(getFormattedDate(formatDateToString(post.curDate)))
         result = {
             'isApplied' : isApplied,
             'title': post.title,
@@ -220,7 +217,7 @@ def showDetail(id) :     # 글 조회
                 'writer' : findNickName(reply[1]),
                 'content' : reply[2],
                 'date' : getFormattedDate(date),
-                'profileImage': getProfileImage(memId)
+                'profileImage': getProfileImage(reply[1])
             })
 
         return {
