@@ -52,7 +52,7 @@ function MentoringCreate() {
             const updatedSubject = JSON.stringify(selectedWords);
             formData.append('mentoPic', blob, `${"aa"}.jpg`);
             formData.append('data', JSON.stringify({
-                'subject': [0, 1, 2],
+                'subject': selectedWords,
                 'brief': portfolio.brief,
                 'content': portfolio.content,
                 'tuition': portfolio.tuition,
