@@ -3,7 +3,8 @@ from flask_login import login_required, current_user
 from datetime import datetime
 import json
 
-from backend.view import uploadFileS3
+from backend import config
+from backend.view import uploadFileS3, s3
 from backend.controller.member_mgmt import Member
 from backend.controller.studyroom_mgmt import StudyRoom
 from backend.controller.mentoringroom_mgmt import MentoringRoom
@@ -53,10 +54,12 @@ def createRoom() :
     if not default_image :
 
         file = request.files['image']
-        image = uploadFileS3(file)
+        image = uploadFileS3(file, "studyroom")
     else :
+
+        location = s3.get_bucket_location(Bucket=config.S3_BUCKET_NAME)["LocationConstraint"]
         
-        image = f"https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/studyroom/default_study_image_{str(default_image)}.jpg"
+        image = f"https://{config.S3_BUCKET_NAME}.s3.{location}.amazonaws.com/studyroom/default_study_image_{str(default_image)}.jpg"
 
     data_str = request.form['data']
     data = json.loads(data_str)

@@ -13,13 +13,13 @@ s3 = boto3.client(
     config = Config(signature_version = 's3v4')
 )
 
-def uploadFileS3(file):
+def uploadFileS3(file, dir="image"):
 
     image_url = ""
 
     if file:
 
-        filename = secure_filename(file.filename)
+        filename = dir + "/" + secure_filename(file.filename)
 
         s3.upload_fileobj(file, config.S3_BUCKET_NAME, filename)
 

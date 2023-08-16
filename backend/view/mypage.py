@@ -82,7 +82,7 @@ def changeNickname() :
 def changeImage() :
 
     image = request.files['newImage']
-    newImage = uploadFileS3(image)
+    newImage = uploadFileS3(image, "profile")
     
     id = current_user.get_id()
 
