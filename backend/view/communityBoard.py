@@ -4,7 +4,6 @@ from datetime import datetime
 from backend.model.db_mongo import conn_mongodb
 from backend.model.db_mysql import conn_mysql
 from backend.controller.community_mgmt import QNAPost
-from backend.controller.study_mgmt import studyPost
 from backend.controller.replyQna_mgmt import ReplyQna
 from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage
 
@@ -203,15 +202,20 @@ def showDetail(id) :
             return result
         
         viewresult = QNAPost.updateViews(id)
+        liked = 0
+        try : # 익명의 경우
+            liked = QNAPost.findLike(current_user.get_id(), id)
+        except Exception as ex :
+            liked = False
 
         result = {
             'title': post.title,
             'writer' : findNickName(post.writer),
-            'writerImage' : getProfileImage(current_user.get_id()),
+            'writerImage' : getProfileImage(post.writer),
             'content': post.content,
             'curDate' : getFormattedDate(formatDateToString(post.curDate)),
             'likes' : post.likes,
-            'liked' : QNAPost.findLike(current_user.get_id(), id),
+            'liked' : liked,
             'views': post.views
         }
         
@@ -352,7 +356,7 @@ def write():
 @community_bp.route('/qna/<int:id>/like', methods=['POST'])
 def like(id):
     memId = current_user.get_id()
-    post = studyPost.findById(id)
+    post = QNAPost.findById(id)
     
     if request.method=='POST':
         postId = request.get_json()['postId']
@@ -371,8 +375,8 @@ def like(id):
             'liked' : liked
         }
    
-@community_bp.route('/contents', methods=['GET'])
-def listContents() :
+@community_bp.route('/contents/lecture', methods=['GET'])
+def listLectures() :
     page = 0
     result = []
 
@@ -385,21 +389,58 @@ def listContents() :
 
     page = int(page)
     
-    all_newsList = conn_mongodb().ITnews_crawling.find().sort('_id', -1)
-    requiredPage = len(list(all_newsList)) // 10 + 1
+    all_lectureList = conn_mongodb().lecture_crawling.find().sort('_id', -1)
+    requiredPage = len(list(all_lectureList)) // 10 + 1
 
-    newsList = conn_mongodb().ITnews_crawling.find().sort('_id', -1).skip((page-1)*10).limit(10)
+    lectureList = conn_mongodb().lecture_crawling.find().sort('_id', -1).skip((page-1)*10).limit(10)
 
-    for news in newsList :
+    for lecture in lectureList :
         result.append({
-            'date': news['date'],
-            'title' : news['title'],
-            'brief' : news['brief'],
-            'img' : news['img'],
-            'url' : news['url']
+            'title' : lecture['title'],
+            'instructor' : lecture['instructor'],
+            'first_category' : lecture['first_category'],
+            'second_category' : lecture['second_category'],
+            'tags' : lecture['tags'],
+            'link' : lecture['link'],
+            'type' : 'lecture'
         })
     
     return {
         'page' : requiredPage,
-        'news' : result
+        'lecture' : result
+    }
+    
+@community_bp.route('/contents/book', methods=['GET'])
+def listBooks() :
+    page = 0
+    result = []
+
+    page = request.args.get('page')
+
+    if not page :
+        return {
+            'result' : result
+        }
+
+    page = int(page)
+    
+    all_bookList = conn_mongodb().book_crawling.find().sort('_id', -1)
+    requiredPage = len(list(all_bookList)) // 10 + 1
+
+    bookList = conn_mongodb().book_crawling.find().sort('_id', -1).skip((page-1)*10).limit(10)
+
+    for book in bookList :
+        result.append({
+            'title' : book['title'],
+            'writer' : book['writer'],
+            #'first_category' : book['first_category'],
+            #'second_category' : book['second_category'],
+            #'tags' : book['tags'],
+            #'link' : book['url'],
+            'type' : 'book'
+        })
+    
+    return {
+        'page' : requiredPage,
+        'book' : result
     }
