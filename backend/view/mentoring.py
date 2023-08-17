@@ -16,7 +16,7 @@ mento_bp = Blueprint('mentoring', __name__, url_prefix='/mentoring')
 def writePortfolio():
 
     image = request.files['mentoPic']
-    mentoPic = uploadFileS3(image)
+    mentoPic = uploadFileS3(image, "mentoring")
 
     data_str = request.form['data']
     data = json.loads(data_str)
@@ -48,8 +48,12 @@ def writePortfolio():
 def listPortfolio() :
 
     # 1. my portfolio
+    myPortfolioId = None
+
     loginId = current_user.get_id()
-    myPortfolioId = Portfolio.findByMentoId(loginId)
+
+    if loginId != None :
+        myPortfolioId = Portfolio.findByMentoId(loginId)
 
     # 2. portfolio list
     searchWord = request.args.get('search')
@@ -148,7 +152,7 @@ def modifyPortfolio(id) :
         }
 
     image = request.files['mentoPic']
-    mentoPic = uploadFileS3(image)
+    mentoPic = uploadFileS3(image, "mentoring")
 
     data_str = request.form['data']
     data = json.loads(data_str)

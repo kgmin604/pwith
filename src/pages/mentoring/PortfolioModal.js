@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./mentoring.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
 import { Button } from "react-bootstrap";
 import axios from "axios";
 import { useSelector } from "react-redux";
