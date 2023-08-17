@@ -197,7 +197,7 @@ function App() {
                           <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/qna/main"); setIsNav(0); }}>
                             QnA
                           </li>
-                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/contents/book"); setIsNav(0); }}>
+                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/content"); setIsNav(0); }}>
                             학습콘텐츠
                           </li>
                         </ul>
@@ -358,8 +358,8 @@ function App() {
           <Route path="/community" element={<CommunityMain />}>
             <Route path="main" element={<CommunityBoard />} />
             <Route path="it" element={<CommunityIT />} />
-            <Route path="content" element={<CommunityContent />} />
           </Route>
+          <Route path="/community/content" element={<CommunityContent />} />
           <Route path="/community/qna/main" element={<CommunityQna />} />
           <Route path="/community/qna/create" element={<QnaCreate />} />
           <Route path="/community/qna/:id" element={<QnaPost />} />
