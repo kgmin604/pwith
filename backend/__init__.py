@@ -1,6 +1,6 @@
 # __name__ = "backend"
 
-from flask import Flask, jsonify, Response, request
+from flask import Flask, jsonify, Response, request, redirect
 from flask_mail import Mail
 from flask_login import LoginManager
 from botocore.client import Config
@@ -8,7 +8,7 @@ import boto3
 import json
 
 from backend.controller.member_mgmt import Member
-from backend.view import member, study, studyroom, mypage, communityBoard, mentoring, pwithmain, chat
+from backend.view import member, study, studyroom, mypage, communityBoard, mentoring, pwithmain, chat, oauth
 from backend import config
 
 def create_app() :
@@ -32,9 +32,14 @@ def create_app() :
     app.register_blueprint(mentoring.mento_bp)
     app.register_blueprint(pwithmain.main_bp)
     app.register_blueprint(chat.chat_bp)
+    app.register_blueprint(oauth.oauth_bp)
 
     @app.after_request
     def final_return(response) :
+        
+        if response.json.get('message') == 'redirect' :
+            return redirect(response.json.get('data'))
+
         response = app.response_class(
             response = json.dumps({
                 'status' : response.json.get('status', 200),
