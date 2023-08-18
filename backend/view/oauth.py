@@ -5,36 +5,9 @@ import json
 
 from backend import config
 
-oauth_bp = Blueprint('oauth', __name__, url_prefix='')
+oauth_bp = Blueprint('oauth', __name__, url_prefix = '')
 
-@oauth_bp.route('/login/auth/<target>', methods=['GET'])
-def authorize(target): # authorization code 받아오기
-
-    if target not in ['google', 'kakao']:
-        return abort(404)
-
-    # target = str.upper(target)
-    authorize_endpoint = config.GOOGLE_AUTHORIZE_ENDPOINT
-    client_id = config.GOOGLE_CLIENT_ID
-    redirect_uri = config.GOOGLE_REDIRECT_URI
-    scope = config.GOOGLE_SCOPE
-    response_type = 'code'
-
-    query_param = urlencode(dict(
-        redirect_uri = redirect_uri,
-        client_id = client_id,
-        scope = scope,
-        response_type = response_type
-    ))
-
-    authorize_redirect = f'{authorize_endpoint}?{query_param}'
-
-    return {
-        'message' : 'redirect',
-        'data' : authorize_redirect
-    }
-
-@oauth_bp.route('/oauth/callback/google', methods=['GET'])
+@oauth_bp.route('/oauth/callback/google', methods = ['GET'])
 def google_callback(): # access token 받기
     
     code = request.args.get('code')

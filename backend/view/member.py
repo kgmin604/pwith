@@ -101,6 +101,33 @@ def login() :
         'nickname' : member.nickname
     }
 
+@member_bp.route('/login/auth/<target>', methods = ['GET'])
+def login_oauth(target): # authorization code 받기
+
+    if target not in ['google', 'kakao', 'naver']:
+        return abort(404)
+
+    # target = str.upper(target)
+    authorize_endpoint = config.GOOGLE_AUTHORIZE_ENDPOINT
+    client_id = config.GOOGLE_CLIENT_ID
+    redirect_uri = config.GOOGLE_REDIRECT_URI
+    scope = config.GOOGLE_SCOPE
+    response_type = 'code'
+
+    query_param = urlencode(dict(
+        redirect_uri = redirect_uri,
+        client_id = client_id,
+        scope = scope,
+        response_type = response_type
+    ))
+
+    authorize_redirect = f'{authorize_endpoint}?{query_param}'
+
+    return {
+        'message' : 'redirect',
+        'data' : authorize_redirect
+    }
+
 @login_required
 @member_bp.route('/logout', methods=['GET'])
 def logout() :
