@@ -1,14 +1,19 @@
-CREATE TABLE member
-(
-    id BIGINT AUTO_INCREMENT,
-    memId VARCHAR(10) NOT NULL UNIQUE,
-    password VARBINARY(100) NOT NULL,
-    nickname VARCHAR(10) NOT NULL UNIQUE,
-    email VARCHAR(20) NOT NULL,
-    image VARCHAR(2048) NOT NULL DEFAULT "https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/profile/default_user.jpg",
-    isAdmin BOOLEAN NOT NULL DEFAULT false,
-    PRIMARY KEY(id)
-);
+CREATE TABLE `member` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `memId` varchar(10) DEFAULT NULL,
+  `password` varchar(300) DEFAULT NULL,
+  `nickname` varchar(10) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `image` varchar(300) NOT NULL DEFAULT 'https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/profile/default_user.jpg',
+  `sns_id` varchar(300) DEFAULT NULL,
+  `sns_type` varchar(10) DEFAULT NULL,
+  `isAdmin` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nickname` (`nickname`),
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `memId` (`memId`),
+  UNIQUE KEY `sns_id` (`sns_id`,`sns_type`)
+)
 
 CREATE TABLE replyStudy
 (
