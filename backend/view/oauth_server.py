@@ -63,14 +63,21 @@ def naver_callback():
     )
     info = info_response.json()
 
+    status = 200
+    message = '성공'
+    data = None
+
     if info.get('resultcode') == '00' :
 
         status, message = join_naver(info.get('response'))
 
         if status == 200 :
             login_user(message)
-            message = '로그인 성공'
-
+            data = {
+                'id' : message.email.split('@')[0],
+                'nickname' : message.nickname
+            }
+            message = '성공'
     else :
         status = 401
         message = '인증 실패'
@@ -78,7 +85,7 @@ def naver_callback():
     return {
         'status' : status,
         'message' : message,
-        'data' : None
+        'data' : data
     }
 
 
@@ -99,6 +106,7 @@ def join_naver(data) :
     if image is None :
         image = 'https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/profile/default_user.jpg'
 
-    Member.save_oauth(nickname, email, image, sns_id)
+    member_id = Member.save_oauth(nickname, email, image, sns_id)
+    member = Member.findById(member_id)
 
-    return 201, '회원가입 성공'
+    return 200, member

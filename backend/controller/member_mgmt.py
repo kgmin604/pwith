@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from backend.controller import commit, selectOne
+from backend.controller import commit, commitAndGetId, selectOne
 
 class Member(UserMixin):
     def __init__(self, id, memId, pw, nickname, email, image, isAdmin):
@@ -124,9 +124,9 @@ class Member(UserMixin):
 
         sql = f"INSERT INTO member(nickname, email, image, sns_id) VALUES ('{nickname}', '{email}', '{image}', '{sns_id}')"
 
-        done = commit(sql)
+        mem_id = commitAndGetId(sql)
 
-        return done
+        return mem_id
 
     @staticmethod
     def updatePassword(id, newPw):
