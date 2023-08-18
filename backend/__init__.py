@@ -8,7 +8,7 @@ import boto3
 import json
 
 from backend.controller.member_mgmt import Member
-from backend.view import member, study, studyroom, mypage, communityBoard, mentoring, pwithmain, chat, oauth
+from backend.view import member, study, studyroom, mypage, communityBoard, mentoring, pwithmain, chat, oauth_server, oauth_member
 from backend import config
 
 def create_app() :
@@ -32,7 +32,8 @@ def create_app() :
     app.register_blueprint(mentoring.mento_bp)
     app.register_blueprint(pwithmain.main_bp)
     app.register_blueprint(chat.chat_bp)
-    app.register_blueprint(oauth.oauth_bp)
+    app.register_blueprint(oauth_server.oauth_bp)
+    app.register_blueprint(oauth_member.oauth_member_bp)
 
     @app.after_request
     def final_return(response) :

@@ -1,6 +1,5 @@
 from flask import Flask, Blueprint, request, jsonify, session, current_app
 from flask_login import login_user, current_user, logout_user, login_required
-from urllib.parse import urlencode
 from flask_mail import Message
 import bcrypt
 import random
@@ -100,54 +99,6 @@ def login() :
     return {
         'id' : member.memId,
         'nickname' : member.nickname
-    }
-
-@member_bp.route('/login/auth/google', methods = ['GET'])
-def login_oauth(): # authorization code
-
-    # if target not in ['google', 'kakao']:
-    #     return abort(404)
-
-    # target = str.upper(target)
-    authorize_endpoint = config.GOOGLE_AUTHORIZE_ENDPOINT
-    client_id = config.GOOGLE_CLIENT_ID
-    redirect_uri = config.GOOGLE_REDIRECT_URI
-    scope = config.GOOGLE_SCOPE
-    response_type = 'code'
-
-    query_param = urlencode(dict(
-        redirect_uri = redirect_uri,
-        client_id = client_id,
-        scope = scope,
-        response_type = response_type
-    ))
-
-    authorize_redirect = f'{authorize_endpoint}?{query_param}'
-
-    return {
-        'message' : 'redirect',
-        'data' : authorize_redirect
-    }
-
-@member_bp.route('/login/auth/naver', methods = ['GET'])
-def login_naver():
-
-    authorize_endpoint = config.NAVER_AUTHORIZE_ENDPOINT
-    client_id = config.NAVER_CLIENT_ID
-    redirect_uri = config.NAVER_REDIRECT_URI
-    response_type = 'code'
-
-    query_param = urlencode(dict(
-        redirect_uri = redirect_uri,
-        client_id = client_id,
-        response_type = response_type
-    ))
-
-    authorize_redirect = f'{authorize_endpoint}?{query_param}'
-
-    return {
-        'message' : 'redirect',
-        'data' : authorize_redirect
     }
 
 @login_required

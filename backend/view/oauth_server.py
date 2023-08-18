@@ -3,6 +3,7 @@ import requests
 import json
 
 from backend import config
+from backend.controller.member_mgmt import Member
 
 oauth_bp = Blueprint('oauth', __name__, url_prefix = '')
 
@@ -28,7 +29,7 @@ def google_callback(): # access token
     # json.loads(resp.text).get_json
     # token = json.loads(resp.text).get('access_token')
 
-    # login_user()
+    # login_user() TODO
 
     return json.loads(resp.text) # str to json
 
@@ -62,12 +63,36 @@ def naver_callback():
     info = info_response.json()
 
     if info.get('resultcode') == '00' :
-        status = 200
+
+        status, message = join_naver(info.get('response'))
+
     else :
         status = 401
+        message = '인증 실패'
 
     return {
         'status' : status,
-        'message' : info.get('message'),
-        'data' : info.get('response')
+        'message' : message,
+        'data' : None
     }
+
+
+def join_naver(data) :
+
+    sns_id = data.get('id')
+    if Member.existsBySnsId(sns_id) :
+        return 400, '소셜 키 중복'
+
+    email = data.get('email')
+    if Member.existsByEmail(email) :
+        return 400, '이메일 중복'
+
+    nickname = data.get('nickname')
+        
+    image = data.get('profile_image')
+    if image is None :
+        image = 'https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/profile/default_user.jpg'
+
+    Member.save_oauth(nickname, email, image, sns_id)
+
+    return 200, '성공'

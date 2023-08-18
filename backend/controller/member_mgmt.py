@@ -33,6 +33,15 @@ class Member(UserMixin):
         return self.__id
 
     @staticmethod
+    def existsBySnsId(sns_id) : # for sns_id 중복 체크
+
+        sql = f"SELECT EXISTS (SELECT id FROM member WHERE sns_id = '{sns_id}')"
+
+        result = selectOne(sql)[0]
+
+        return True if result == 1 else False
+
+    @staticmethod
     def existsByEmail(email) : # for 이메일 중복 체크
 
         sql = f"SELECT EXISTS (SELECT id FROM member WHERE email = '{email}')"
@@ -100,6 +109,15 @@ class Member(UserMixin):
     def save(memId, pw, nickname, email):
 
         sql = f"INSERT INTO member(memId, password, nickname, email) VALUES ('{memId}', '{pw}', '{nickname}', '{email}')"
+
+        done = commit(sql)
+
+        return done
+
+    @staticmethod
+    def save_oauth(nickname, email, image, sns_id):
+
+        sql = f"INSERT INTO member(nickname, email, image, sns_id) VALUES ('{nickname}', '{email}', '{image}', '{sns_id}')"
 
         done = commit(sql)
 
