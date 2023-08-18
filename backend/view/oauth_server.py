@@ -1,4 +1,5 @@
 from flask import Blueprint, request, redirect
+from flask_login import login_user
 import requests
 import json
 
@@ -66,6 +67,10 @@ def naver_callback():
 
         status, message = join_naver(info.get('response'))
 
+        if status == 200 :
+            login_user(message)
+            message = '로그인 성공'
+
     else :
         status = 401
         message = '인증 실패'
@@ -80,12 +85,13 @@ def naver_callback():
 def join_naver(data) :
 
     sns_id = data.get('id')
-    if Member.existsBySnsId(sns_id) :
-        return 400, '소셜 키 중복'
+    member = Member.findBySnsId(sns_id)
+    if member is not None :
+        return 200, member
 
     email = data.get('email')
     if Member.existsByEmail(email) :
-        return 400, '이메일 중복'
+        return 409, '이메일 중복'
 
     nickname = data.get('nickname')
         
@@ -95,4 +101,4 @@ def join_naver(data) :
 
     Member.save_oauth(nickname, email, image, sns_id)
 
-    return 200, '성공'
+    return 201, '회원가입 성공'

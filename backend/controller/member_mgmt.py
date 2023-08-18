@@ -33,15 +33,6 @@ class Member(UserMixin):
         return self.__id
 
     @staticmethod
-    def existsBySnsId(sns_id) : # for sns_id 중복 체크
-
-        sql = f"SELECT EXISTS (SELECT id FROM member WHERE sns_id = '{sns_id}')"
-
-        result = selectOne(sql)[0]
-
-        return True if result == 1 else False
-
-    @staticmethod
     def existsByEmail(email) : # for 이메일 중복 체크
 
         sql = f"SELECT EXISTS (SELECT id FROM member WHERE email = '{email}')"
@@ -69,6 +60,20 @@ class Member(UserMixin):
         return True if result == 1 else False
 
     @staticmethod
+    def findBySnsId(sns_id) : # for sns_id 중복 체크 and get
+
+        sql = f"SELECT * FROM member WHERE sns_id = '{sns_id}'"
+
+        mem = selectOne(sql)
+
+        if not mem:
+            return None
+
+        member = Member(mem[0], None, None, mem[3], mem[4], mem[5], mem[8])
+
+        return member
+
+    @staticmethod
     def findById(id):
 
         sql = f"SELECT * FROM member WHERE id = {id}"
@@ -78,7 +83,7 @@ class Member(UserMixin):
         if not mem:
             return None
 
-        member = Member(mem[0], mem[1], mem[2], mem[3], mem[4], mem[5], mem[6])
+        member = Member(mem[0], mem[1], mem[2], mem[3], mem[4], mem[5], mem[8])
 
         return member
 
@@ -92,7 +97,7 @@ class Member(UserMixin):
         if not mem:
             return None
 
-        member = Member(mem[0], mem[1], mem[2], mem[3], mem[4], mem[5], mem[6])
+        member = Member(mem[0], mem[1], mem[2], mem[3], mem[4], mem[5], mem[8])
 
         return member
 
