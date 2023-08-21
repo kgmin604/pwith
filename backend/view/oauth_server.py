@@ -91,6 +91,8 @@ def naver_callback():
 
 def join_naver(data) :
 
+    sns_type = 'naver'
+    
     sns_id = data.get('id')
     member = Member.findBySnsId(sns_id)
     if member is not None :
@@ -106,7 +108,7 @@ def join_naver(data) :
     if image is None :
         image = 'https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/profile/default_user.jpg'
 
-    member_id = Member.save_oauth(nickname, email, image, sns_id)
+    member_id = Member.save_oauth(nickname, email, image, sns_id, sns_type)
     member = Member.findById(member_id)
 
     return 200, member
