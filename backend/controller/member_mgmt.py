@@ -60,9 +60,9 @@ class Member(UserMixin):
         return True if result == 1 else False
 
     @staticmethod
-    def findBySnsId(sns_id) : # for sns_id 중복 체크 and get
+    def findBySns(sns_id, sns_type) : # for sns_id 중복 체크 and get
 
-        sql = f"SELECT * FROM member WHERE sns_id = '{sns_id}'"
+        sql = f"SELECT * FROM member WHERE sns_id = '{sns_id}' AND sns_type = '{sns_type}'"
 
         mem = selectOne(sql)
 
@@ -120,7 +120,7 @@ class Member(UserMixin):
         return done
 
     @staticmethod
-    def save_oauth(nickname, email, image, sns_id, sns_type):
+    def saveOauth(nickname, email, image, sns_id, sns_type):
 
         sql = f"INSERT INTO member(nickname, email, image, sns_id, sns_type) VALUES ('{nickname}', '{email}', '{image}', '{sns_id}', '{sns_type}')"
 
