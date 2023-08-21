@@ -36,18 +36,32 @@ def create_app() :
     app.register_blueprint(oauth_member.oauth_member_bp)
 
     @app.after_request
-    def final_return(response) :
+    def final_return(resp) :
         
-        if response.json.get('message') == 'redirect' :
-            return redirect(response.json.get('data'))
+        if resp.json.get('message') == 'redirect' :
+            return redirect(resp.json.get('data'))
+
+        if resp.json.get('token') is not None :
+
+            response = app.response_class(
+                response = json.dumps({
+                    'status' : resp.json.get('status', 200),
+                    'message' : resp.json.get('message', '성공'),
+                    'data' : resp.json.get('data', resp.json),
+                    'token' : resp.json.get('token')
+                }),
+                status = resp.json.get('status', 200),
+                mimetype='application/json'
+            )
+            return response
 
         response = app.response_class(
             response = json.dumps({
-                'status' : response.json.get('status', 200),
-                'message' : response.json.get('message', '성공'),
-                'data' : response.json.get('data', response.json)
+                'status' : resp.json.get('status', 200),
+                'message' : resp.json.get('message', '성공'),
+                'data' : resp.json.get('data', resp.json)
             }),
-            status = response.json.get('status', 200),
+            status = resp.json.get('status', 200),
             mimetype='application/json'
         )
         return response
