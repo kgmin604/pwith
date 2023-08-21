@@ -1,9 +1,14 @@
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from botocore.client import Config
+from functools import wraps
+from flask import request
+import requests
 import boto3
 
 from backend.controller import selectAll, selectOne, commit
+from backend.controller.member_mgmt import Member
+from backend.controller.refreshToken_mgmt import RefreshToken
 from backend import config
 
 s3 = boto3.client(
@@ -28,6 +33,62 @@ def uploadFileS3(file, dir="image"):
         image_url = f"https://{config.S3_BUCKET_NAME}.s3.{location}.amazonaws.com/{filename}"
 
     return image_url
+
+def login_required_naver(func) :
+
+    @wraps(func)
+    def checkHeader(*args, **kwargs) :
+
+        tokens = request.headers.get('Authorization').split(' ')[1]
+        access_token = tokens.split('.')[0]
+        refresh_token = tokens.split('.')[1]
+
+        loginMember = None
+        new_token = None
+
+        if access_token is not None :
+
+            resp = requests.get(
+                config.NAVER_INFO_ENDPOINT,
+                headers = {
+                    'Authorization' : f'Bearer {access_token}'
+                }
+            )
+
+            result = resp.json()
+            
+            if result.get('resultcode') == '00' : # access 유효
+
+                sns_id = result.get('response').get('id')
+
+                loginMember = Member.findBySns(sns_id, 'NAVER') ## TODO sns_Type 수정
+
+            elif result.get('resultcode') == '024' : # access 만료 / refresh 오류
+
+                new_token = updateAccessToken(refresh_token)
+
+                member_id = RefreshToken.findMemberByToken(refresh_token)
+
+                if member_id is not None :
+                    loginMember = Member.findById(member_id)
+
+        kwargs['loginMember'] = loginMember
+        kwargs['new_token'] = new_token
+
+        return func(*args, **kwargs)
+
+    return checkHeader
+
+def updateAccessToken(refresh_token) :
+
+    resp = requests.get(config.NAVER_TOKEN_ENDPOINT, params = dict(
+        client_id = config.NAVER_CLIENT_ID,
+        client_secret = config.NAVER_CLIENT_SECRET,
+        refresh_token = refresh_token,
+        grant_type = 'refresh_token'
+    ))
+
+    return resp.json().get('access_token')
 
 def formatDateToString(date): # 타입 변경 datetime -> string
     return datetime.strftime(date, "%Y-%m-%d %H:%M:%S")
