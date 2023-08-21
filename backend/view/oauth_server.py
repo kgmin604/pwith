@@ -80,9 +80,7 @@ def naver_callback():
             RefreshToken.save(message.id, refresh_token, datetime.now())
             data = {
                 'id' : message.email.split('@')[0],
-                'nickname' : message.nickname,
-                'access_token' : access_token,
-                'refresh_token' : refresh_token
+                'nickname' : message.nickname
             }
             message = '성공'
     else :
@@ -93,7 +91,9 @@ def naver_callback():
     return {
         'status' : status,
         'message' : message,
-        'data' : data
+        'data' : data,
+        'access_token' : access_token,
+        'refresh_token' : refresh_token
     }
 
 def checkJoin(data, refresh_token) :
@@ -132,19 +132,26 @@ def login_require_test(loginMember, new_token) :
             'data' : None
         }
 
-    return {
-        'data' : {
-            'writer' : loginMember.nickname,
-            'content' : '로그인 권한 테스트'
-        },
-        'token' : new_token
-    }
+    if new_token is not None :
+        return {
+            'data' : {
+                'writer' : loginMember.nickname,
+                'content' : '로그인 권한 테스트'
+            },
+            'access_token' : new_token
+        }
 
+    return {
+        'writer' : loginMember.nickname,
+        'content' : '로그인 권한 테스트'
+    }
 
 @oauth_bp.route('/logout/oauth')
 @login_required_naver
 def logoutOauth(loginMember, new_token) :
     RefreshToken.deleteByMember(loginMember.id)
+    # TODO sns 토큰 삭제
+    # TODO header 삭제
     return {
         'message' : '로그아웃 성공'
     }

@@ -39,9 +39,14 @@ def login_required_naver(func) :
     @wraps(func)
     def checkHeader(*args, **kwargs) :
 
-        tokens = request.headers.get('Authorization').split(' ')[1]
-        access_token = tokens.split('.')[0]
-        refresh_token = tokens.split('.')[1]
+        try :
+            tokens = request.headers.get('Authorization').split(' ')[1]
+            access_token = tokens.split('.')[0]
+            refresh_token = tokens.split('.')[1]
+        except :
+            kwargs['loginMember'] = None
+            kwargs['new_token'] = None
+            return func(*args, **kwargs)
 
         loginMember = None
         new_token = None

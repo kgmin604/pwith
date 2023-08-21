@@ -41,17 +41,23 @@ def create_app() :
         if resp.json.get('message') == 'redirect' :
             return redirect(resp.json.get('data'))
 
-        if resp.json.get('token') is not None :
+        if resp.json.get('access_token') is not None :
+
+            access_token = resp.json.get('access_token')
+            refresh_token = resp.json.get('refresh_token')
+
+            if refresh_token is None :
+                refresh_token = request.headers.get('Authorization').split('.')[1]
 
             response = app.response_class(
+                headers = {'Authorization' : f'Bearer {access_token}.{refresh_token}'},
                 response = json.dumps({
                     'status' : resp.json.get('status', 200),
                     'message' : resp.json.get('message', '성공'),
-                    'data' : resp.json.get('data', resp.json),
-                    'token' : resp.json.get('token')
+                    'data' : resp.json.get('data', resp.json)
                 }),
                 status = resp.json.get('status', 200),
-                mimetype='application/json'
+                mimetype = 'application/json'
             )
             return response
 
@@ -62,7 +68,7 @@ def create_app() :
                 'data' : resp.json.get('data', resp.json)
             }),
             status = resp.json.get('status', 200),
-            mimetype='application/json'
+            mimetype = 'application/json'
         )
         return response
 
