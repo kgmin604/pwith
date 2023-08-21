@@ -1,10 +1,13 @@
-from flask import Blueprint, request, redirect
+from flask import Blueprint, request, redirect, session
 from flask_login import login_user
 import requests
 import json
+from datetime import datetime
 
 from backend import config
+from backend.view import login_required_naver
 from backend.controller.member_mgmt import Member
+from backend.controller.refreshToken_mgmt import RefreshToken
 
 oauth_bp = Blueprint('oauth', __name__, url_prefix = '')
 
@@ -54,6 +57,7 @@ def naver_callback():
     ))
 
     access_token = token_response.json().get("access_token")
+    refresh_token = token_response.json().get("refresh_token")
 
     info_response = requests.get(
         info_endpoint,
@@ -67,18 +71,22 @@ def naver_callback():
     message = '성공'
     data = None
 
-    if info.get('resultcode') == '00' :
+    if info.get('resultcode') == '00' : # valid access token
 
-        status, message = join_naver(info.get('response'))
+        status, message = checkJoin(info.get('response'), refresh_token)
 
         if status == 200 :
-            login_user(message)
+            # login
+            RefreshToken.save(message.id, refresh_token, datetime.now())
             data = {
                 'id' : message.email.split('@')[0],
-                'nickname' : message.nickname
+                'nickname' : message.nickname,
+                'access_token' : access_token,
+                'refresh_token' : refresh_token
             }
             message = '성공'
     else :
+
         status = 401
         message = '인증 실패'
 
@@ -88,13 +96,12 @@ def naver_callback():
         'data' : data
     }
 
+def checkJoin(data, refresh_token) :
 
-def join_naver(data) :
+    sns_type = 'NAVER'
 
-    sns_type = 'naver'
-    
     sns_id = data.get('id')
-    member = Member.findBySnsId(sns_id)
+    member = Member.findBySns(sns_id, sns_type)
     if member is not None :
         return 200, member
 
@@ -108,7 +115,36 @@ def join_naver(data) :
     if image is None :
         image = 'https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/profile/default_user.jpg'
 
-    member_id = Member.save_oauth(nickname, email, image, sns_id, sns_type)
+    member_id = Member.saveOauth(nickname, email, image, sns_id, sns_type)
+
     member = Member.findById(member_id)
 
     return 200, member
+
+@oauth_bp.route('/login-require-test')
+@login_required_naver
+def login_require_test(loginMember, new_token) :
+    
+    if loginMember is None :
+        return {
+            'status' : '401',
+            'message' : '로그인이 필요합니다,',
+            'data' : None
+        }
+
+    return {
+        'data' : {
+            'writer' : loginMember.nickname,
+            'content' : '로그인 권한 테스트'
+        },
+        'token' : new_token
+    }
+
+
+@oauth_bp.route('/logout/oauth')
+@login_required_naver
+def logoutOauth(loginMember, new_token) :
+    RefreshToken.deleteByMember(loginMember.id)
+    return {
+        'message' : '로그아웃 성공'
+    }
