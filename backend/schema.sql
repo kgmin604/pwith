@@ -1,18 +1,23 @@
-CREATE TABLE `member` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `memId` varchar(10) DEFAULT NULL,
-  `password` varchar(300) DEFAULT NULL,
-  `nickname` varchar(10) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `image` varchar(300) NOT NULL DEFAULT 'https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/profile/default_user.jpg',
-  `sns_id` varchar(300) DEFAULT NULL,
-  `sns_type` varchar(10) DEFAULT NULL,
-  `isAdmin` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `nickname` (`nickname`),
-  UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `memId` (`memId`),
-  UNIQUE KEY `sns_id` (`sns_id`,`sns_type`)
+CREATE TABLE member (
+  id bigint NOT NULL AUTO_INCREMENT,
+  memId varchar(10) DEFAULT NULL UNIQUE,
+  password varchar(300) DEFAULT NULL,
+  nickname varchar(10) NOT NULL,
+  email varchar(50) NOT NULL UNIQUE,
+  image varchar(300) NOT NULL DEFAULT 'https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/profile/default_user.jpg',
+  sns_id varchar(300) DEFAULT NULL,
+  sns_type varchar(10) DEFAULT NULL,
+  isAdmin boolean NOT NULL DEFAULT false,
+  PRIMARY KEY (id)
+) -- (sns_id, sns_type) UNIQUE
+
+CREATE TABLE refreshToken (
+    id BIGINT AUTO_INCREMENT,
+    member BIGINT NOT NULL UNIQUE,
+    token VARCHAR(300) NOT NULL UNIQUE,
+    create_at DATETIME NOT NULL,
+    PRIMARY KEY(id),
+    FOREIGN KEY(member) REFERENCES member(id) on delete cascade on update cascade
 )
 
 CREATE TABLE replyStudy
