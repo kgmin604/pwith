@@ -29,9 +29,9 @@ def recommend():
 @study_bp.route('', methods=['GET'])
 def show(): 
     search = request.args.get('search')
-    print("search")     
-    print(search)       
-    if search is None:
+      
+    if int(search) == 0:
+        print(search)
         posts = []
         result = []
         page = 0
