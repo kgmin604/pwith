@@ -45,22 +45,20 @@ def communityMain() :
             'date' : formatted_date
         })
 
-    # dummmmmmmmmmmmmmmy
-    conts.append({
-        'title' : '자바 ORM 표준 JPA 프로그래밍 - 기본편',
-        'type' : 'lecture',
-        'url' : 'https://www.inflearn.com/course/ORM-JPA-Basic/dashboard'
-    })
-    conts.append({
-        'title' : '윤성우의 열혈 C++ 프로그래밍',
-        'type' : 'book',
-        'url' : 'https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=6960708'
-    })
-    conts.append({
-        'title' : '스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술',
-        'type' : 'lecture',
-        'url' : 'https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-1/dashboard'
-    })
+    conts_db = conn_mongodb().lecture_crawling.find().sort('_id', -1).limit(3)
+    for n in conts_db :
+
+        title = n['title']
+        # date = n['date']
+        url = n['link']
+
+        # formatted_date = datetime.strptime(date, '%Y년 %m월 %d일').strftime('%Y-%m-%d')
+
+        conts.append({
+            'title' : title,
+            # 'date' : formatted_date,
+            'url' : url
+        })
     # dummmmmmmmmmmmmmmy
 
     return {
