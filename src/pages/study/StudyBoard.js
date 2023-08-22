@@ -28,30 +28,29 @@ function StudyBoard(props) {
             method: "GET",
             url: "/study",
             params: {
-                type: searchType, // 0: 제목 1: 글쓴이
-                value: inputValue,
-                page: selectPage
+                search: 0,
+                page: selectPage,
+            }
+        })//TODO: category
+        .then(function (response) {
+            setStudyPostList(response.data.data.posts);
+            setTotalPage(response.data.data.num);
+            if (!isLoad) { // 맨 처음 한번만 실행
+                if (response.data.data.num > 5) {
+                    const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
+                    setPages(tmp);
+                    setDisabled2(false); // 페이지 이동 가능
+                }
+                else {
+                    const tmp = Array.from({ length: response.data.data.num }, (_, index) => index + 1);
+                    setPages(tmp);
+                }
+                setIsLoad(true);
             }
         })
-            .then(function (response) {
-                setStudyPostList(response.data.data.posts);
-                setTotalPage(response.data.data.num);
-                if (!isLoad) { // 맨 처음 한번만 실행
-                    if (response.data.data.num > 5) {
-                        const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
-                        setPages(tmp);
-                        setDisabled2(false); // 페이지 이동 가능
-                    }
-                    else {
-                        const tmp = Array.from({ length: response.data.data.num }, (_, index) => index + 1);
-                        setPages(tmp);
-                    }
-                    setIsLoad(true);
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        .catch(function (error) {
+            console.log(error);
+        });
     }, [selectPage]);
 
     const searchStudy = () => {

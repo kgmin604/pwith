@@ -29,7 +29,7 @@ function StudyMain() {
     <div className="StudyMain">
       <div class="row">
         <div class="col-md-3">
-          {Category()}
+          <Category />
         </div>
 
         <div class="col-md-6">
@@ -83,7 +83,7 @@ function Category() {//카테고리
     <h5>Study</h5>
     <hr style={{ width: '60%', margin: '0 auto' }} />
     <Nav defaultActiveKey="#" className="flex-column">
-      <Nav.Link href="#"><div style={{ color: '#282c34' }}>웹개발</div></Nav.Link>
+      <Nav.Link href="#" onClick={() => { }}><div style={{ color: '#282c34' }}>웹개발</div></Nav.Link>
       <Nav.Link href="#"><div style={{ color: '#282c34' }}>모바일 앱 개발</div></Nav.Link>
       <Nav.Link href="#"><div style={{ color: '#282c34' }}>게임 개발</div></Nav.Link>
       <Nav.Link href="#"><div style={{ color: '#282c34' }}>프로그래밍 언어</div></Nav.Link>
