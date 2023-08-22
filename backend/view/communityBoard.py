@@ -245,9 +245,10 @@ def updatePost(id):
     if request.method == 'PATCH':     # 게시글 수정
         id = request.get_json()['postId']
         postContent = request.get_json()['content']
+        title = request.get_json()['title']
         
         try :
-            done = QNAPost.updateQna(id, postContent)
+            done = QNAPost.updateQna(id, postContent, title)
         except Exception as ex :
             print("에러 이유 : " + str(ex))
             done = 0
