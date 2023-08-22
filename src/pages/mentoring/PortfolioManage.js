@@ -101,7 +101,7 @@ function PortfolioManage() {
             // Blob을 FormData로 감싸기
             const formData = new FormData();
             const updatedSubject = JSON.stringify(selectedWords);
-            formData.append('mentoPic', blob, `${"aa"}.jpg`);
+            formData.append('mentoPic', blob, `${user.id}.jpg`);
             formData.append('data', JSON.stringify({
                 'subject': selectedWords,
                 'brief': portfolio.brief,
