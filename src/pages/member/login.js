@@ -19,6 +19,28 @@ function Login(){
       'memPw': '',
     });
 
+    function SocialLogin(name){
+      axios({
+        method: "GET",
+        url: `/member/login/auth/${name}`
+      })
+        .then(function (response) {
+          console.log(response.data)
+          if(response.data.status===200){
+            dispatch(
+              loginUser({
+                id: response.data.data.id,
+                name: response.data.data.nickname
+              })
+            );
+            navigate("/");
+          }
+        })
+        .catch(function (error) {
+          
+        });
+    }
+
     function inputChange(e){
       let copyUserinput = {...userinput};
       copyUserinput[e.target.id] = e.target.value;
@@ -112,7 +134,11 @@ function Login(){
                 <span className="small-msg-center">소셜 계정으로 로그인하기</span>
                 <div className="social-logo-list">
                   <img className="social-logo" src={kakaoLogo}></img>
-                  <img className="social-logo" src={naverLogo}></img>
+                  <img 
+                    className="social-logo" 
+                    src={naverLogo}
+                    onClick={e=>{e.stopPropagation(); SocialLogin('naver');}}
+                  ></img>
                   <img className="social-logo" src={googleLogo}></img>
                 </div>
 
