@@ -25,7 +25,7 @@ function Login(){
         url: `/member/login/auth/${name}`
       })
         .then(function (response) {
-          console.log(response.data)
+          console.log(response.request.responseURL);
           if(response.data.status===200){
             dispatch(
               loginUser({
@@ -33,7 +33,7 @@ function Login(){
                 name: response.data.data.nickname
               })
             );
-            navigate("/");
+            navigate(`${response.request.responseURL}`);
           }
         })
         .catch(function (error) {
