@@ -1,11 +1,13 @@
 from backend.model.db_mysql import conn_mysql
-import json
 from backend.controller import commit, selectAll, selectOne, commitAndGetId
+from backend.controller.member_mgmt import Member
+import json
 
 class StudyRoom() :
-    def __init__(self, id, name, category, leader, image, joinP, totalP, notice):
+    def __init__(self, id, name, date, category, leader, image, joinP, totalP, notice):
         self.__id = id
         self.__name = name
+        self.__date = date
         self.__category = category
         self.__leader = leader
         self.__image = image
@@ -18,6 +20,9 @@ class StudyRoom() :
     @property
     def name(self) :
         return self.__name
+    @property
+    def date(self) :
+        return self.__date
     @property
     def category(self) :
         return self.__category
@@ -66,7 +71,7 @@ class StudyRoom() :
     def findByMemberId(member_id) :
 
         sql = f'''
-        SELECT sr.id, sr.name, sr.category, sr.leader, sr.image, sr.joinP, sr.totalP, sr.notice
+        SELECT sr.id, sr.name, sr.curDate, sr.category, sr.leader, sr.image, sr.joinP, sr.totalP, sr.notice
         FROM studyRoom sr JOIN studyMember sm ON sr.id=sm.room
         WHERE sm.member = {member_id}
         ORDER BY sr.curDate DESC
@@ -75,12 +80,39 @@ class StudyRoom() :
 
         result = []
         for r in rooms :
-            result.append(StudyRoom(r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7]))
+            result.append(StudyRoom(r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8]))
         
         return result
 
     @staticmethod
-    def getStudentList(roomId) : # 스터디룸 참가자 조회
+    def findById(id) :
+
+        sql = f'SELECT * FROM studyRoom WHERE id = {id}'
+
+        res = selectOne(sql)
+
+        if not res :
+            return None
+
+        room = StudyRoom(res[0],res[1],res[2],res[3],res[4],res[5],res[6],res[7],res[8])
+
+        return room
+
+    @staticmethod
+    def findMemberByRoomId(roomId) :
+
+        sql = f"SELECT m.id, m.memId, m.password, m.nickname, m.email, m.image, m.isAdmin FROM studyMember sm, member m WHERE sm.member = m.id AND sm.room = {roomId}"
+
+        res = selectAll(sql)
+
+        result = []
+        for r in res :
+            result.append(Member(r[0],r[1],r[2],r[3],r[4],r[5],r[6]))
+
+        return result
+
+    @staticmethod
+    def getStudentList(roomId) : # 스터디룸 참가자 조회 TODO 수정
 
         sql = f"SELECT studentsList FROM studyRoom WHERE roomId = {roomId}"
 

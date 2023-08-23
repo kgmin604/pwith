@@ -29,6 +29,8 @@ def recommend():
 @study_bp.route('', methods=['GET'])
 def show(): 
     search = request.args.get('search')
+    if search == None : # 임시 예외 처리 (프론트 수정 완료되면 지우면 됩니다) - 채영
+        search = 0      # (PS. 주석 정리도 부탁해요) 😘
       
     if int(search) == 0:
         print(search)
@@ -128,38 +130,39 @@ def show():
             # 'rec' : recStudy
             }
 
+@study_bp.route('/<int:id>/apply', methods=['POST']) # 스터디 신청
+def applyStudy(id) :
+
+    loginMember = current_user.get_id()
+
+    roomId = studyPost.findRoomId(id)
+    done = StudyRoom.addStudent(loginMember, roomId)
+    print(done)
+    
+    post = studyPost.findById(id)
+    studyPost.insertStudyAlarm(post.writer, loginMember, roomId)
+
+    return {
+        'data' : None
+    }
 
 @study_bp.route('/<int:id>', methods=['GET'])
 def showDetail(id) :     # 글 조회
 
         memId = current_user.get_id()
-        apply = request.args.get('apply')
+        # apply = request.args.get('apply')
 
-        if apply == 'go' : # 스터디 신청
-            roomId = studyPost.findRoomId(id)
+        # if apply == 'go' : # 스터디 신청
+        #     roomId = studyPost.findRoomId(id)
 
-            # studentsList_string = StudyRoom.getStudentList(roomId)
-
-            # newStudentList = ''
-
-            #if not studentsList_string :
-            #    newStudentList = f'["{current_user.get_id()}"]'
-                # newStudentList = f'["a"]' # dummmmmmmmmmmmmmy
-            #else :
-            #    studentsList = json.loads(studentsList_string) # list
-            #    studentsList.append(current_user.get_id())
-            #    # studentsList.append("a") # dummmmmmmmmmmmmmy
-            #    newStudentList = str(studentsList)
-            #    newStudentList = newStudentList.replace("\'", "\"")
-
-            done = StudyRoom.addStudent(current_user.get_id(), roomId)
-            print(done)
+        #     done = StudyRoom.addStudent(current_user.get_id(), roomId)
+        #     print(done)
             
-            print("apply")
-            # studyAlarm 에 추가
+        #     print("apply")
+        #     # studyAlarm 에 추가
             
-            post = studyPost.findById(id)
-            studyPost.insertStudyAlarm(post.writer, current_user.get_id(), roomId)
+        #     post = studyPost.findById(id)
+        #     studyPost.insertStudyAlarm(post.writer, current_user.get_id(), roomId)
 
 
         result = {}
