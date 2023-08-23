@@ -84,18 +84,18 @@ function App() {
 
   function logout() {
     
-    if(localStorage.getItem('access_token')){ // access token이 존재하는 경우
+    if(localStorage.getItem('Authorization')){ // access token이 존재하는 경우
       axios({
         method: "GET",
         url: "/logout/oauth", // 임시 경로
         headers: {
-          Authorization: `${localStorage.getItem('access_token')}` // Access Token을 Authorization 헤더에 추가
+          Authorization: `${localStorage.getItem('Authorization')}` // Access Token을 Authorization 헤더에 추가
         }
       })
         .then(function (response) {
           if (response.data.status == 200) {
             dispatch(clearUser());
-            localStorage.removeItem('access_token');
+            localStorage.removeItem('Authorization');
             navigate("/");
           }
         })
@@ -118,6 +118,26 @@ function App() {
           console.log(error);
         });
     }
+  }
+
+  // access 만료 테스트
+  function test(){
+    axios({
+      method: "GET",
+      url: "/login-require-test",
+      headers: {
+        Authorization: `${localStorage.getItem('Authorization')}` // Access Token을 Authorization 헤더에 추가
+      }
+    })
+      .then(function (response) {
+        if (response.data.status == 200) {
+          localStorage.removeItem('Authorization');
+          localStorage.setItem('Authorization', response.headers['authorization']);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   return (
@@ -279,6 +299,7 @@ function App() {
                   "background-color": "white",
                   height: "40px",
                 }}
+                onClick={(e)=>{ e.stopPropagation(); logout(); }} // 소셜 로그인 오류시 임시 로그아웃
               >
                 🔍{" "}
               </div>
