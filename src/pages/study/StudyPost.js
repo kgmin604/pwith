@@ -42,7 +42,7 @@ function StudyPost(props) {
 
     function joinStudyRoom() {
         axios({
-            method: "GET",
+            method: "POST",
             url: `/study/${id}/apply`
         })
             .then(function (response) {

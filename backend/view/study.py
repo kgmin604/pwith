@@ -130,7 +130,7 @@ def show():
             # 'rec' : recStudy
             }
 
-@study_bp.route('/<int:id>/apply', methods=['GET']) # 스터디 신청
+@study_bp.route('/<int:id>/apply', methods=['POST']) # 스터디 신청
 def applyStudy(id) :
 
     loginMember = current_user.get_id()
