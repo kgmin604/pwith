@@ -43,10 +43,7 @@ function StudyPost(props) {
     function joinStudyRoom() {
         axios({
             method: "GET",
-            url: `/study/${id}`,
-            params: {
-                apply: 'go'
-            }
+            url: `/study/${id}/apply`
         })
             .then(function (response) {
                 alert("스터디 참여 완료!");
