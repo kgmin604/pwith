@@ -48,11 +48,14 @@ def login_naver():
     ))
 
     authorize_redirect = f'{authorize_endpoint}?{query_param}'
-
-    # return {
-    #     'message' : 'redirect',
-    #     'data' : authorize_redirect
-    # }
+    
+    """
+     return {
+         'message' : 'redirect',
+         'data' : authorize_redirect
+     }
+    """
+    
     return {
         'auth_url' : authorize_redirect
     }

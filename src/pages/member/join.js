@@ -206,6 +206,8 @@ function Join() {
     })
       .then(function (response) {
         console.log(response.data)
+        window.location.href = response.data.data.auth_url;
+        /*
         if(response.data.status===200){
           dispatch(
             loginUser({
@@ -215,6 +217,7 @@ function Join() {
           );
           navigate("/");
         }
+        */
       })
       .catch(function (error) {
         

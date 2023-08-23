@@ -20,6 +20,8 @@ import Login from "./pages/member/login.js";
 import Join from "./pages/member/join.js";
 import Help from "./pages/member/help.js";
 import Mypage from "./pages/member/mypage.js";
+import Auth from "./pages/auth/Auth.js"
+
 import {
   Account,
   WritingList,
@@ -380,6 +382,7 @@ function App() {
             <Route path="chat" element={<Chat />} />
             <Route path="withdraw" element={<Withdraw />} />
           </Route>
+          <Route path="/oauth/callback/naver" element={<Auth />} />
           <Route path="*" element={
             <div className="img-error">
               <img src='/error_404.png'></img>
