@@ -134,8 +134,8 @@ class studyPost() :
         return result
     
     @staticmethod
-    def updateStudy(postId, content):   # study 게시글 내용 수정
-        sql = f"UPDATE study SET content = '{str(content)}' WHERE id = '{str(postId)}'"
+    def updateStudy(postId, content, title):   # study 게시글 내용 수정
+        sql = f"UPDATE study SET content = '{str(content)}', title ='{str(title)}' WHERE id = '{str(postId)}'"
         done = commit(sql)
         if done ==0:
             rollback()

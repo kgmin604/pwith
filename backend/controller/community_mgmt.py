@@ -47,8 +47,8 @@ class QNAPost() :
         return done
     
     @staticmethod
-    def updateQna(postId, content):   # qna 게시글 내용 수정
-        sql = f"UPDATE qna SET content = '{str(content)}' WHERE id = '{str(postId)}'"
+    def updateQna(postId, content, title):   # qna 게시글 내용 수정
+        sql = f"UPDATE qna SET content = '{str(content)}', title = '{str(title)}' WHERE id = '{str(postId)}'"
         done = commit(sql)
         if done ==0:
             rollback()
