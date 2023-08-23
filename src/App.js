@@ -83,19 +83,41 @@ function App() {
   // },[])
 
   function logout() {
-    axios({
-      method: "GET",
-      url: "/member/logout"
-    })
-      .then(function (response) {
-        if (response.data.status == 200) {
-          dispatch(clearUser());
-          navigate("/");
+    
+    if(localStorage.getItem('access_token')){ // access token이 존재하는 경우
+      axios({
+        method: "GET",
+        url: "/logout/oauth", // 임시 경로
+        headers: {
+          Authorization: `${localStorage.getItem('access_token')}` // Access Token을 Authorization 헤더에 추가
         }
       })
-      .catch(function (error) {
-        console.log(error);
-      });
+        .then(function (response) {
+          if (response.data.status == 200) {
+            dispatch(clearUser());
+            localStorage.removeItem('access_token');
+            navigate("/");
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+    else{
+      axios({
+        method: "GET",
+        url: "/member/logout"
+      })
+        .then(function (response) {
+          if (response.data.status == 200) {
+            dispatch(clearUser());
+            navigate("/");
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
   }
 
   return (

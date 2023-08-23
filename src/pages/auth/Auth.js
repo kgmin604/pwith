@@ -25,13 +25,24 @@ function Auth() {
         .then(function(response){
             console.log(response.data);
             if(response.data.status===200){
+                let accessToken = response.headers['authorization']; // 응답헤더에서 토큰 받기
+                //let refreshToken = response.headers['refresh']; // 응답헤더에서 토큰 받기
+
+                localStorage.setItem('access_token', accessToken);
+                //localStorage.setItem('refresh_token', refreshToken);
+
                 dispatch(
                     loginUser({
                       id: response.data.data.id,
                       name: response.data.data.nickname,
                     })
-                  );
-                  navigate("/");
+                );
+                /*
+                axios.defaults.headers.common[
+                    'Authorization'
+                  ] = `${accessToken}`;
+                */
+                navigate("/");
             }
         })
         .catch(function(error){
