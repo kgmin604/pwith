@@ -71,29 +71,37 @@ def naver_callback():
     message = '성공'
     data = None
 
-    if info.get('resultcode') == '00' : # valid access token
+    if info.get('resultcode') != '00' :
+        return {
+            'status' : 401,
+            'message' : '인증 실패'
+        }
 
-        status, message = checkJoin(info.get('response'), refresh_token)
+    # valid access token
 
-        if status == 200 :
-            # login
+    status, message = checkJoin(info.get('response'), refresh_token)
+
+    if status == 200 : # login
+
+        is_exist = RefreshToken.existsByMember(message.id)
+
+        if is_exist == False :
             RefreshToken.save(message.id, refresh_token, datetime.now())
-            data = {
-                'id' : message.email.split('@')[0],
-                'nickname' : message.nickname
-            }
-            message = '성공'
-    else :
 
-        status = 401
-        message = '인증 실패'
+        data = {
+            'id' : message.email.split('@')[0],
+            'nickname' : message.nickname
+        }
+        message = '성공'
+        access_token_return = access_token
+        refresh_token_return = refresh_token
 
     return {
         'status' : status,
         'message' : message,
         'data' : data,
-        'access_token' : access_token,
-        'refresh_token' : refresh_token
+        'access_token' : access_token_return,
+        'refresh_token' : refresh_token_return
     }
 
 def checkJoin(data, refresh_token) :
