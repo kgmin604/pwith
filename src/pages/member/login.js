@@ -151,7 +151,10 @@ function Login() {
         <hr style={{ width: "90%", margin: "15px auto" }}></hr>
         <span className="small-msg-center">소셜 계정으로 로그인하기</span>
         <div className="social-logo-list">
-          <img className="social-logo" src={kakaoLogo}></img>
+          <img className="social-logo" src={kakaoLogo} onClick={(e) => {
+              e.stopPropagation();
+              SocialLogin("kakao");
+            }}></img>
           <img
             className="social-logo"
             src={naverLogo}
@@ -160,7 +163,10 @@ function Login() {
               SocialLogin("naver");
             }}
           ></img>
-          <img className="social-logo" src={googleLogo}></img>
+          <img className="social-logo" src={googleLogo} onClick={(e) => {
+              e.stopPropagation();
+              SocialLogin("google");
+            }}></img>
         </div>
       </div>
     </>
