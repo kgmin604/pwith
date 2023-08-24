@@ -6,7 +6,7 @@ from backend import config
 oauth_member_bp = Blueprint('oauth_member', __name__, url_prefix='/member')
 
 @oauth_member_bp.route('/login/auth/google', methods = ['GET'])
-def login_oauth(): # authorization code
+def login_oauth():
 
     # if target not in ['google', 'kakao']:
     #     return abort(404)
@@ -27,10 +27,15 @@ def login_oauth(): # authorization code
     ))
 
     authorize_redirect = f'{authorize_endpoint}?{query_param}'
-    
+
+    '''
     return {
         'message' : 'redirect',
         'data' : authorize_redirect
+    }
+    '''
+    return {
+        'auth_url' : authorize_redirect
     }
 
 @oauth_member_bp.route('/login/auth/naver', methods = ['GET'])
@@ -49,12 +54,12 @@ def login_naver():
 
     authorize_redirect = f'{authorize_endpoint}?{query_param}'
     
-    """
+    '''
      return {
          'message' : 'redirect',
          'data' : authorize_redirect
      }
-    """
+    '''
     
     return {
         'auth_url' : authorize_redirect
