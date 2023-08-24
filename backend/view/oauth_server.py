@@ -34,7 +34,9 @@ def google_callback():
     ))
 
     access_token = token_response.json().get("access_token")
-    # refresh_token = token_response.json().get("refresh_token")
+    print(access_token)
+    refresh_token = token_response.json().get("refresh_token")
+    print(refresh_token)
 
     info_response = requests.get(
         info_endpoint,
@@ -43,21 +45,22 @@ def google_callback():
         }
     )
     info = info_response.json()
-    print(info) ########### TODO 이거 확인해주면 됨!
+    print(info)
 
     status = 200
     message = '성공'
     data = None
 
-    # if info.get('resultcode') != '00' :
-    #     return {
-    #         'status' : 401,
-    #         'message' : '인증 실패'
-    #     }
+    if info.get('error') is not None :
+        return {
+            'status' : 401,
+            'message' : '인증 실패',
+            'data' : None
+        }
 
     # valid access token
 
-    status, message = checkJoin(info.get('response'), refresh_token)
+    status, message = checkJoin_google(info, refresh_token)
 
     if status == 200 : # login
 
@@ -72,15 +75,15 @@ def google_callback():
         }
         message = '성공'
         access_token_return = access_token
-        # refresh_token_return = refresh_token
+        refresh_token_return = refresh_token
 
-    # return {
-    #     'status' : status,
-    #     'message' : message,
-    #     'data' : data,
-    #     'access_token' : access_token_return,
-    #     'refresh_token' : refresh_token_return
-    # }
+    return {
+        'status' : status,
+        'message' : message,
+        'data' : data,
+        'access_token' : access_token_return,
+        'refresh_token' : refresh_token_return
+    }
 
 
 def checkJoin_google(data, refresh_token) :
@@ -92,13 +95,11 @@ def checkJoin_google(data, refresh_token) :
     if member is not None :
         return 200, member
 
-    # email = data.get('email')
-    # if Member.existsByEmail(email) :
-    #     return 409, '이메일 중복'
+    email = data.get('email')
+    if Member.existsByEmail(email) :
+        return 409, '이메일 중복'
 
-    # nickname = data.get('nickname')
-
-    nickname = data.get('name') # google은 nickname이 없는 듯
+    nickname = data.get('name')
         
     image = data.get('picture')
     if image is None :
@@ -147,7 +148,8 @@ def naver_callback():
     if info.get('resultcode') != '00' :
         return {
             'status' : 401,
-            'message' : '인증 실패'
+            'message' : '인증 실패',
+            'data' : None
         }
 
     # valid access token
