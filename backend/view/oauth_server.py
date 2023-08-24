@@ -207,13 +207,6 @@ def checkJoin(data, refresh_token) :
 @oauth_bp.route('/login-require-test')
 @login_required_naver
 def login_require_test(loginMember, new_token) :
-    
-    if loginMember is None :
-        return {
-            'status' : '401',
-            'message' : '로그인이 필요합니다,',
-            'data' : None
-        }
 
     if new_token is not None :
         return {

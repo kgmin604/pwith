@@ -44,9 +44,11 @@ def login_required_naver(func) :
             access_token = tokens.split('.')[0]
             refresh_token = tokens.split('.')[1]
         except :
-            kwargs['loginMember'] = None
-            kwargs['new_token'] = None
-            return func(*args, **kwargs)
+            return {
+                'status' : 401,
+                'message' : '로그인 필요',
+                'data' : None
+            }
 
         loginMember = None
         new_token = None
