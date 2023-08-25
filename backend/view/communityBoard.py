@@ -49,14 +49,14 @@ def communityMain() :
     for n in conts_db :
 
         title = n['title']
-        # date = n['date']
+        type = n['type']
         url = n['link']
 
         # formatted_date = datetime.strptime(date, '%Y년 %m월 %d일').strftime('%Y-%m-%d')
 
         conts.append({
             'title' : title,
-            # 'date' : formatted_date,
+            'type' : type,
             'url' : url
         })
     # dummmmmmmmmmmmmmmy
@@ -388,12 +388,13 @@ def listLectures() :
 
     page = int(page)
     
-    all_lectureList = conn_mongodb().lecture_crawling.find().sort('_id', -1)
+    all_lectureList = conn_mongodb().lecture_crawling.find()
     requiredPage = len(list(all_lectureList)) // 10 + 1
-
-    lectureList = conn_mongodb().lecture_crawling.find().sort('_id', -1).skip((page-1)*10).limit(10)
+    
+    lectureList = conn_mongodb().lecture_crawling.find().skip((page-1)*10).limit(10)
 
     for lecture in lectureList :
+        print(lecture)
         result.append({
             'title' : lecture['title'],
             'instructor' : lecture['instructor'],
@@ -401,7 +402,8 @@ def listLectures() :
             'second_category' : lecture['second_category'],
             'tags' : lecture['tags'],
             'link' : lecture['link'],
-            'type' : 'lecture'
+            'image': lecture['img'],
+            'type' : lecture['type']
         })
     
     return {
@@ -423,7 +425,7 @@ def listBooks() :
 
     page = int(page)
     
-    all_bookList = conn_mongodb().book_crawling.find().sort('_id', -1)
+    all_bookList = conn_mongodb().book_crawling.find()
     requiredPage = len(list(all_bookList)) // 10 + 1
 
     bookList = conn_mongodb().book_crawling.find().sort('_id', -1).skip((page-1)*10).limit(10)
@@ -432,11 +434,13 @@ def listBooks() :
         result.append({
             'title' : book['title'],
             'writer' : book['writer'],
-            #'first_category' : book['first_category'],
-            #'second_category' : book['second_category'],
-            #'tags' : book['tags'],
-            #'link' : book['url'],
-            'type' : 'book'
+            'publisher' : book['publisher'],
+            'first_category' : book['first_category'],
+            'second_category' : book['second_category'],
+            'category' : book['category'],
+            'link' : book['url'],
+            'image': book['img'],
+            'type' : book['type']
         })
     
     return {

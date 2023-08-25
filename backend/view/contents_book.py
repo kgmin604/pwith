@@ -17,54 +17,75 @@ def conn_mongodb() :
 
 header = {'User-Agent':'Mozilla/5.0'}
 
-kyobo_url = 'https://product.kyobobook.co.kr/category/KOR/33#?page={}&type=best&per=20' # 국내도서-컴퓨터/IT 베스트셀러.
+book_url = 'https://www.yes24.com/24/Category/Display/{}{}?ParamSortTp=05&PageNumber={}' # 국내도서- IT/모바일 - 네트워크/해킹/보안.
 
-def connectUrl(url, page=1) :
-    response = requests.get(url.format(page), headers=header)
+def connectUrl(url, category='', sub_category = '', page = 1) :
+    response = requests.get(url.format(category, sub_category, page), headers=header)
     return BeautifulSoup(response.text, 'html.parser')
 
+# conn_mongodb().book_crawling.delete_many({})
 page = 1
-while page != 63 :
-    soup = connectUrl(kyobo_url, page)
-    print("connect success")
-            
-            
-    prod_items = soup.find_all('div', class_='prod_info_box')
-    prod_link = soup.find_all('div', class_= 'prod_thumb_box')
+sub_category_format = '00'
+sub_category_num = 5
+category = '001001003027'
     
-    if prod_items:
-        for item in prod_items:
-            title = item.select_one('.prod_name').get_text(strip=True)
-            writer = item.select_one('.prod_author').get_text(strip=True)
-            date = item.select_one('.prod_author > .date')
-            
-            data = {
-            'title': title,
-            'writer': writer,
-            'date': date
-            }
-            #print(date)
-            
-            conn_mongodb().book_crawling.insert_one(data)
-            
-    else:
-        print('상품 목록을 찾을 수 없습니다.')
+for i in range(2):
+    soup = connectUrl(book_url, category)
+    print('-------------category_num-----------------')
+    print(sub_category_format+str(sub_category_num))
+    first_category = soup.select_one('#cateSubWrap > .cateSubRgt > .cateTit_sub > .cateTit_txt').get_text(strip=True)
+    
+    page = 1
+    if sub_category_num >= 10 : 
+        sub_category_format = '0'
+    soup = connectUrl(book_url, category, sub_category_format+str(sub_category_num), page)
+    print(sub_category_format+str(sub_category_num))
+    second_category = soup.select_one('.cateSubRgt > .cateTit_sub > .cateTit_txt').get_text(strip=True)
+    print(second_category)
+    
+    while page != 4 :
         
-    if prod_link:
-        for item in prod_link:
-            url = item.select_one('.prod_link').get('href')
-            img = item.select_one('.prod_link > .img_box > img')
             
-            data['url'] = url
-            data['img_url'] = img
-
-            conn_mongodb().book_crawling.insert_one(data)
-        # conn_mongodb().book_crawling.insert_one(book)
+        prod_items = soup.select('.cCont_listArea .clearfix .cCont_goodsSet')
         
-    if not soup.select_one('.btn_page.next') :
-        print("page : " + str(page) + " and break")
-        break
+        if prod_items:
+            for item in prod_items:
+                #print(item)      
+                url = item.select_one('.goods_img > .goods_imgSet > .imgBdr > a').get('href')
+                complete_url = "https://www.yes24.com" + url
+                img = soup.select_one('.goods_img > .goods_imgSet > .imgBdr > a > img').get('src')
+                title = item.select_one('.goods_info > .goods_name > a').get_text(strip=True)
+                comment = item.select_one('div.goods_info > div.goods_name > span.gd_nameE').get_text(strip=True)
+                auth = item.select_one('.goods_info > .goods_pubGrp > .goods_auth > a')
+                if auth is not None:
+                    writer = auth.get_text(strip=True)
+                else:
+                    writer = item.select_one('.goods_info > .goods_pubGrp > .goods_auth').get_text(strip=True)
+                publisher = item.select_one('.goods_info > .goods_pubGrp > .goods_pub').get_text(strip=True)
+            
+                data = {
+                'title': title,
+                'writer': writer,
+                'url' : complete_url,
+                'img' : img,
+                'comment': comment,
+                'publisher' : publisher,
+                'first_category' : first_category,
+                'second_category' : second_category,
+                'type' : 'book'
+                }
+                print(data)
+                # conn_mongodb().book_crawling.insert_one(data)
+                
+        else:
+            
+            print('상품 목록을 찾을 수 없습니다.')
+            
+            
+        sub_category = soup.select('.cateSubListArea.clearfix > dl')
 
-    print("page : " + str(page))
-    page += 1
+        print("page : " + str(page))
+        page += 1
+        
+    sub_category_num +=1
         
