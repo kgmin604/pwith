@@ -6,8 +6,10 @@ import Select from 'react-select'
 import axios from "axios";
 import Cropper from "react-cropper";
 import 'cropperjs/dist/cropper.css';
+import { useDispatch, useSelector } from "react-redux";
 
 function RoomCreate(){
+    let user = useSelector((state) => state.user);
     let navigate = useNavigate();
     let [msg, setMsg] = useState('');
     let [userinput, setUserinput] = useState({
@@ -53,15 +55,19 @@ function RoomCreate(){
                     // Blob을 FormData로 감싸기
                     const formData = new FormData();
 
-                    // 랜덤 문자열 생성 - 임시
-                    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-                    let result = '';
-                    for (let i = 0; i < 10; i++) {
-                        const randomIndex = Math.floor(Math.random() * characters.length);
-                        result += characters.charAt(randomIndex);
-                    }
+                    // 랜덤 문자열 생성
+                    const now = new Date();
+                    const year = now.getFullYear() % 100;
+                    const month = now.getMonth() + 1;
+                    const day = now.getDate();
+                    const hours = now.getHours();
+                    const minutes = now.getMinutes();
+                    const milliseconds = now.getMilliseconds();
 
-                    formData.append('image', blob, `studyroom/${result}.jpg`);
+                    // 위에서 가져온 정보를 문자열로 조합하기
+                    const dateString = `${user.id}@${hours}${minutes}${milliseconds}${year}${month}${day}`;
+
+                    formData.append('image', blob, `${dateString}.jpg`);
                     formData.append('data', JSON.stringify({
                         'roomName': userinput.title,
                         'category': userinput.category,

@@ -41,9 +41,18 @@ class RefreshToken():
         return member_id
 
     @staticmethod
-    def existsByToken(token) :
+    def existsByToken(token) : # for what ?
 
         sql = f"SELECT EXISTS (SELECT id FROM refreshToken WHERE token = '{token}')"
+
+        result = selectOne(sql)[0]
+
+        return True if result == 1 else False
+
+    @staticmethod
+    def existsByMember(member_id) :
+
+        sql = f"SELECT EXISTS (SELECT id FROM refreshToken WHERE member = {member_id})"
 
         result = selectOne(sql)[0]
 
