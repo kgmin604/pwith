@@ -45,22 +45,20 @@ def communityMain() :
             'date' : formatted_date
         })
 
-    # dummmmmmmmmmmmmmmy
-    conts.append({
-        'title' : '자바 ORM 표준 JPA 프로그래밍 - 기본편',
-        'type' : 'lecture',
-        'url' : 'https://www.inflearn.com/course/ORM-JPA-Basic/dashboard'
-    })
-    conts.append({
-        'title' : '윤성우의 열혈 C++ 프로그래밍',
-        'type' : 'book',
-        'url' : 'https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=6960708'
-    })
-    conts.append({
-        'title' : '스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술',
-        'type' : 'lecture',
-        'url' : 'https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-1/dashboard'
-    })
+    conts_db = conn_mongodb().lecture_crawling.find().sort('_id', -1).limit(3)
+    for n in conts_db :
+
+        title = n['title']
+        type = n['type']
+        url = n['link']
+
+        # formatted_date = datetime.strptime(date, '%Y년 %m월 %d일').strftime('%Y-%m-%d')
+
+        conts.append({
+            'title' : title,
+            'type' : type,
+            'url' : url
+        })
     # dummmmmmmmmmmmmmmy
 
     return {
@@ -247,9 +245,10 @@ def updatePost(id):
     if request.method == 'PATCH':     # 게시글 수정
         id = request.get_json()['postId']
         postContent = request.get_json()['content']
+        title = request.get_json()['title']
         
         try :
-            done = QNAPost.updateQna(id, postContent)
+            done = QNAPost.updateQna(id, postContent, title)
         except Exception as ex :
             print("에러 이유 : " + str(ex))
             done = 0
@@ -389,12 +388,13 @@ def listLectures() :
 
     page = int(page)
     
-    all_lectureList = conn_mongodb().lecture_crawling.find().sort('_id', -1)
+    all_lectureList = conn_mongodb().lecture_crawling.find()
     requiredPage = len(list(all_lectureList)) // 10 + 1
-
-    lectureList = conn_mongodb().lecture_crawling.find().sort('_id', -1).skip((page-1)*10).limit(10)
+    
+    lectureList = conn_mongodb().lecture_crawling.find().skip((page-1)*10).limit(10)
 
     for lecture in lectureList :
+        print(lecture)
         result.append({
             'title' : lecture['title'],
             'instructor' : lecture['instructor'],
@@ -402,7 +402,8 @@ def listLectures() :
             'second_category' : lecture['second_category'],
             'tags' : lecture['tags'],
             'link' : lecture['link'],
-            'type' : 'lecture'
+            'image': lecture['img'],
+            'type' : lecture['type']
         })
     
     return {
@@ -424,7 +425,7 @@ def listBooks() :
 
     page = int(page)
     
-    all_bookList = conn_mongodb().book_crawling.find().sort('_id', -1)
+    all_bookList = conn_mongodb().book_crawling.find()
     requiredPage = len(list(all_bookList)) // 10 + 1
 
     bookList = conn_mongodb().book_crawling.find().sort('_id', -1).skip((page-1)*10).limit(10)
@@ -433,11 +434,13 @@ def listBooks() :
         result.append({
             'title' : book['title'],
             'writer' : book['writer'],
-            #'first_category' : book['first_category'],
-            #'second_category' : book['second_category'],
-            #'tags' : book['tags'],
-            #'link' : book['url'],
-            'type' : 'book'
+            'publisher' : book['publisher'],
+            'first_category' : book['first_category'],
+            'second_category' : book['second_category'],
+            'category' : book['category'],
+            'link' : book['url'],
+            'image': book['img'],
+            'type' : book['type']
         })
     
     return {

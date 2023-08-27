@@ -69,7 +69,8 @@ while page != 63 :
             'second_category' : second_category,
             'tags' : tags,
             'link' : link,
-            'img' : img_url
+            'img' : img_url,
+            'type' : 'lecture'
         }
 
         conn_mongodb().lecture_crawling.insert_one(lec)

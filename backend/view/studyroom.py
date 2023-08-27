@@ -84,3 +84,26 @@ def createRoom() :
     return {
         'data' : None
     }
+
+@studyroom_bp.route('/<id>', methods=['GET'])
+def showRoom(id) :
+    
+    room = StudyRoom.findById(id)
+
+    members = StudyRoom.findMemberByRoomId(id)
+
+    join_members = []
+
+    for m in members :
+
+        join_members.append({
+            'memId' : m.memId,
+            'nickname' : m.nickname,
+            'image' : m.image
+        })
+
+    return {
+        'name' : room.name,
+        'notice' : room.notice,
+        'join_members' : join_members
+    }

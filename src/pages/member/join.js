@@ -8,7 +8,7 @@ import naverLogo from "./../../assets/img/naver_logo.png"
 import googleLogo from "./../../assets/img/google_logo.png"
 
 function Join() {
-
+  const dispatch = useDispatch();
   let navigate = useNavigate();
 
   let [userinput, setUserinput] = useState({
@@ -131,7 +131,6 @@ function Join() {
         },
       })
         .then(function (response) {
-          console.log(response.data); // 💥💥💥💥💥💥💥💥💥💥💥💥💥💥 배포시 삭제 💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥
           if(response.data.status===200){
             setAuth(response.data.data.auth);
   
@@ -198,6 +197,31 @@ function Join() {
     else{
       requestJoin()
     }
+  }
+
+  function SocialLogin(name){
+    axios({
+      method: "GET",
+      url: `/member/login/auth/${name}`
+    })
+      .then(function (response) {
+        console.log(response.data)
+        window.location.href = response.data.data.auth_url;
+        /*
+        if(response.data.status===200){
+          dispatch(
+            loginUser({
+              id: response.data.data.id,
+              name: response.data.data.nickname
+            })
+          );
+          navigate("/");
+        }
+        */
+      })
+      .catch(function (error) {
+        
+      });
   }
 
   function requestJoin() {
@@ -332,7 +356,11 @@ function Join() {
           <span className="small-msg-center">소셜 계정으로 가입하기</span>
           <div className="social-logo-list">
             <img className="social-logo" src={kakaoLogo}></img>
-            <img className="social-logo" src={naverLogo}></img>
+            <img 
+              className="social-logo"
+              src={naverLogo}
+              onClick={e=>{e.stopPropagation(); SocialLogin('naver');}}
+            ></img>
             <img className="social-logo" src={googleLogo}></img>
           </div>
         </div>

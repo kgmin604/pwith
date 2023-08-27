@@ -20,6 +20,8 @@ import Login from "./pages/member/login.js";
 import Join from "./pages/member/join.js";
 import Help from "./pages/member/help.js";
 import Mypage from "./pages/member/mypage.js";
+import Auth from "./pages/auth/Auth.js"
+
 import {
   Account,
   WritingList,
@@ -81,14 +83,56 @@ function App() {
   // },[])
 
   function logout() {
+    
+    if(localStorage.getItem('Authorization')){ // access token이 존재하는 경우
+      axios({
+        method: "GET",
+        url: "/logout/oauth", // 임시 경로
+        headers: {
+          Authorization: `${localStorage.getItem('Authorization')}` // Access Token을 Authorization 헤더에 추가
+        }
+      })
+        .then(function (response) {
+          if (response.data.status == 200) {
+            dispatch(clearUser());
+            localStorage.removeItem('Authorization');
+            navigate("/");
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+    else{
+      axios({
+        method: "GET",
+        url: "/member/logout"
+      })
+        .then(function (response) {
+          if (response.data.status == 200) {
+            dispatch(clearUser());
+            navigate("/");
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+  }
+
+  // access 만료 테스트
+  function test(){
     axios({
       method: "GET",
-      url: "/member/logout"
+      url: "/login-require-test",
+      headers: {
+        Authorization: `${localStorage.getItem('Authorization')}` // Access Token을 Authorization 헤더에 추가
+      }
     })
       .then(function (response) {
         if (response.data.status == 200) {
-          dispatch(clearUser());
-          navigate("/");
+          localStorage.removeItem('Authorization');
+          localStorage.setItem('Authorization', response.headers['authorization']);
         }
       })
       .catch(function (error) {
@@ -255,6 +299,7 @@ function App() {
                   "background-color": "white",
                   height: "40px",
                 }}
+                onClick={(e)=>{ e.stopPropagation(); logout(); }} // 소셜 로그인 오류시 임시 로그아웃
               >
                 🔍{" "}
               </div>
@@ -380,6 +425,8 @@ function App() {
             <Route path="chat" element={<Chat />} />
             <Route path="withdraw" element={<Withdraw />} />
           </Route>
+          <Route path="/oauth/callback/naver" element={<Auth />} />
+          <Route path="/oauth/callback/google" element={<Auth />} />
           <Route path="*" element={
             <div className="img-error">
               <img src='/error_404.png'></img>

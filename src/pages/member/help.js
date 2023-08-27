@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { renderHook } from "@testing-library/react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 function HelpId(){
 
@@ -181,7 +182,28 @@ function ResetPw(){
     let [pwchk, setPwchk] = useState('')
     const location = useLocation();
     const currentPath = location.pathname;
-    const randStr = currentPath.split('/').pop();
+    const randStr = currentPath.split('/').pop(); // 랜덤 문자열 추출
+
+    useEffect(()=>{
+        axios({
+            method: "GET",
+            url: `/member/password/${randStr}`,
+            data:{
+                password: newpw
+            }
+        })
+        .then(function(response){
+            if(response.data.status===200){
+                return;
+            }
+        })
+        .catch(function(error){
+            if(error.response.data.status===400){
+                alert("유효하지 않은 페이지입니다.");
+                navigate("/");
+            }
+        })
+    },[]);
 
     function changeInput(e){
         e.stopPropagation();
