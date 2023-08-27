@@ -4,7 +4,7 @@ import "./App.css";
 import { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // bootstrap css 파일 사용
 import { Form } from "react-bootstrap"; // bootstrap의 component 사용
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, Link, useNavigate, useLocation, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 //import Cookies from 'js-cookie';
 // import { useCookies, Cookies } from 'react-cookie';
@@ -13,6 +13,7 @@ import PwithMain from "./pages/pwithmain/PwithMain.js";
 import StudyMain from "./pages/study/StudyMain.js";
 import RoomMain from "./pages/studyroom/RoomMain.js";
 import RoomCreate from "./pages/studyroom/RoomCreate.js";
+import LiveRoom from "./pages/studyroom/LiveRoom";
 import CommunityMain from "./pages/community/CommunityMain.js";
 import MentoringMain from "./pages/mentoring/MentoringMain.js";
 import MentoringCreate from "./pages/mentoring/MetoringCreate";
@@ -53,6 +54,10 @@ function App() {
   let user = useSelector((state) => state.user);
   let dispatch = useDispatch();
 
+  //스터디룸에서는 네브바 숨기기
+  const location = useLocation();
+  const isStudyRoomPath = location.pathname.startsWith(`/studyroom/`) && !location.pathname.includes('main') && !location.pathname.includes('create')
+
   let [isModal, setIsModal] = useState(false); // 알림함
   let [isNav, setIsNav] = useState(0);
 
@@ -83,8 +88,8 @@ function App() {
   // },[])
 
   function logout() {
-    
-    if(localStorage.getItem('Authorization')){ // access token이 존재하는 경우
+
+    if (localStorage.getItem('Authorization')) { // access token이 존재하는 경우
       axios({
         method: "GET",
         url: "/logout/oauth", // 임시 경로
@@ -103,7 +108,7 @@ function App() {
           console.log(error);
         });
     }
-    else{
+    else {
       axios({
         method: "GET",
         url: "/member/logout"
@@ -121,7 +126,7 @@ function App() {
   }
 
   // access 만료 테스트
-  function test(){
+  function test() {
     axios({
       method: "GET",
       url: "/login-require-test",
@@ -143,254 +148,253 @@ function App() {
   return (
     <>
       <div className="wrap">
-        <div className="top-area">
-          {user.id === null ? (
-            <div className="top-msg"></div>
-          ) : (
-            <div className="top-msg">
-              {" "}
-              {user.name}님 안녕하세요!{" "}
-              <u className="mybtn" onClick={logout}>
-                로그아웃
-              </u>
-            </div>
-          )}
-          <nav className="navbar">
-            <div
-              className="btn pwith-logo"
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate("/");
-              }}
-            ></div>
-            <ul className="navbar-menu" style={{ "margin-right": "40px" }}>
-              <div className="parent-container">
-                <li
-                  className="navbar-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate("/study/main");
-                    setIsNav(0);
-                  }}
-                  onMouseEnter={() => setIsNav(1)}
-                  onMouseLeave={() => setIsNav(0)}
-                >
-                  스터디
-                  {
-                    isNav === 1 ?
-                      <div className='navbar-modal' onClick={(e) => { e.stopPropagation(); }}>
-                        <ul className='lst'>
-                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/study/main"); setIsNav(0); }}>
-                            스터디
-                          </li>
-                        </ul>
-                      </div>
-                      : null
-                  }
-                </li>
-              </div>
-              <div className="parent-container">
-                <li
-                  className="navbar-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate("/studyroom");
-                    setIsNav(0);
-                  }}
-                  onMouseEnter={() => setIsNav(2)}
-                  onMouseLeave={() => setIsNav(0)}
-                >
-                  스터디룸
-                  {
-                    isNav === 2 ?
-                      <div
-                        className='navbar-modal'
-                        onClick={(e) => { e.stopPropagation(); }}
-                        onMouseEnter={() => setIsNav(2)}
-                        onMouseLeave={() => setIsNav(0)}
-                      >
-                        <ul className='lst'>
-                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/studyroom"); setIsNav(0); }}>
-                            스터디룸
-                          </li>
-                        </ul>
-                      </div>
-                      : null
-                  }
-                </li>
-              </div>
-              <div className="parent-container">
-                <li
-                  className="navbar-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate("/community/main");
-                    setIsNav(0);
-                  }}
-                  onMouseEnter={() => setIsNav(3)}
-                  onMouseLeave={() => setIsNav(0)}
-                >
-                  커뮤니티
-                  {
-                    isNav === 3 ?
-                      <div className='navbar-modal' onClick={(e) => { e.stopPropagation(); }}>
-                        <ul className='lst'>
-                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/it"); setIsNav(0); }}>
-                            IT뉴스
-                          </li>
-                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/qna/main"); setIsNav(0); }}>
-                            QnA
-                          </li>
-                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/content"); setIsNav(0); }}>
-                            학습콘텐츠
-                          </li>
-                        </ul>
-                      </div>
-                      : null
-                  }
-                </li>
-              </div>
-              <div className="parent-container">
-                <li
-                  className="navbar-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate("/mentoring/main");
-                    setIsNav(0);
-                  }}
-                  onMouseEnter={() => setIsNav(4)}
-                  onMouseLeave={() => setIsNav(0)}
-                >
-                  멘토링
-                  {
-                    isNav === 4 ?
-                      <div className='navbar-modal' onClick={(e) => { e.stopPropagation(); }}>
-                        <ul className='lst'>
-                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/mentoring/main"); setIsNav(0); }}>
-                            멘토링
-                          </li>
-                          <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/mentoring/create"); setIsNav(0); }}>
-                            포트폴리오 작성
-                          </li>
-                        </ul>
-                      </div>
-                      : null
-                  }
-                </li>
-              </div>
-            </ul>
-
-
-            <Form
-              className="d-flex"
-              style={{ width: "280px", height: "40px", "margin-left": "80px" }}
-            >
-              <Form.Control
-                type="search"
-                placeholder="검색"
-                className="me-2"
-                aria-label="Search"
-              />
-              <div
-                className="btn"
-                style={{
-                  border: "solid 1px",
-                  "border-color": "#98AFCA",
-                  "background-color": "white",
-                  height: "40px",
-                }}
-                onClick={(e)=>{ e.stopPropagation(); logout(); }} // 소셜 로그인 오류시 임시 로그아웃
-              >
-                🔍{" "}
-              </div>
-            </Form>
+        {!isStudyRoomPath &&
+          <div className="top-area">
             {user.id === null ? (
-              <div className="mem-area">
-                <div
-                  className="mem-btn"
-                  style={{ width: "70px" }}
-                  onClick={() => navigate("./member/login")}
-                >
-                  로그인
-                </div>
-                <div
-                  className="mem-btn"
-                  style={{
-                    width: "90px",
-                    color: "white",
-                    "background-color": "#98afca",
-                  }}
-                  onClick={() => navigate("./member/join")}
-                >
-                  회원가입
-                </div>
-              </div>
+              <div className="top-msg"></div>
             ) : (
-              <div className="mem-area">
+              <div className="top-msg">
+                {" "}
+                {user.name}님 안녕하세요!{" "}
+                <u className="mybtn" onClick={logout}>
+                  로그아웃
+                </u>
+              </div>
+            )}
+            <nav className="navbar">
+              <div
+                className="btn pwith-logo"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/");
+                }}
+              ></div>
+              <ul className="navbar-menu" style={{ "margin-right": "40px" }}>
                 <div className="parent-container">
+                  <li
+                    className="navbar-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate("/study/main");
+                      setIsNav(0);
+                    }}
+                    onMouseEnter={() => setIsNav(1)}
+                    onMouseLeave={() => setIsNav(0)}
+                  >
+                    스터디
+                    {
+                      isNav === 1 ?
+                        <div className='navbar-modal' onClick={(e) => { e.stopPropagation(); }}>
+                          <ul className='lst'>
+                            <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/study/main"); setIsNav(0); }}>
+                              스터디
+                            </li>
+                          </ul>
+                        </div>
+                        : null
+                    }
+                  </li>
+                </div>
+                <div className="parent-container">
+                  <li
+                    className="navbar-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate("/studyroom");
+                      setIsNav(0);
+                    }}
+                    onMouseEnter={() => setIsNav(2)}
+                    onMouseLeave={() => setIsNav(0)}
+                  >
+                    스터디룸
+                    {
+                      isNav === 2 ?
+                        <div
+                          className='navbar-modal'
+                          onClick={(e) => { e.stopPropagation(); }}
+                          onMouseEnter={() => setIsNav(2)}
+                          onMouseLeave={() => setIsNav(0)}
+                        >
+                          <ul className='lst'>
+                            <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/studyroom"); setIsNav(0); }}>
+                              스터디룸
+                            </li>
+                          </ul>
+                        </div>
+                        : null
+                    }
+                  </li>
+                </div>
+                <div className="parent-container">
+                  <li
+                    className="navbar-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate("/community/main");
+                      setIsNav(0);
+                    }}
+                    onMouseEnter={() => setIsNav(3)}
+                    onMouseLeave={() => setIsNav(0)}
+                  >
+                    커뮤니티
+                    {
+                      isNav === 3 ?
+                        <div className='navbar-modal' onClick={(e) => { e.stopPropagation(); }}>
+                          <ul className='lst'>
+                            <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/it"); setIsNav(0); }}>
+                              IT뉴스
+                            </li>
+                            <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/qna/main"); setIsNav(0); }}>
+                              QnA
+                            </li>
+                            <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/content"); setIsNav(0); }}>
+                              학습콘텐츠
+                            </li>
+                          </ul>
+                        </div>
+                        : null
+                    }
+                  </li>
+                </div>
+                <div className="parent-container">
+                  <li
+                    className="navbar-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate("/mentoring/main");
+                      setIsNav(0);
+                    }}
+                    onMouseEnter={() => setIsNav(4)}
+                    onMouseLeave={() => setIsNav(0)}
+                  >
+                    멘토링
+                    {
+                      isNav === 4 ?
+                        <div className='navbar-modal' onClick={(e) => { e.stopPropagation(); }}>
+                          <ul className='lst'>
+                            <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/mentoring/main"); setIsNav(0); }}>
+                              멘토링
+                            </li>
+                            <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/mentoring/create"); setIsNav(0); }}>
+                              포트폴리오 작성
+                            </li>
+                          </ul>
+                        </div>
+                        : null
+                    }
+                  </li>
+                </div>
+              </ul>
+              <Form
+                className="d-flex"
+                style={{ width: "280px", height: "40px", "margin-left": "80px" }}
+              >
+                <Form.Control
+                  type="search"
+                  placeholder="검색"
+                  className="me-2"
+                  aria-label="Search"
+                />
+                <div
+                  className="btn"
+                  style={{
+                    border: "solid 1px",
+                    "border-color": "#98AFCA",
+                    "background-color": "white",
+                    height: "40px",
+                  }}
+                  onClick={(e) => { e.stopPropagation(); logout(); }} // 소셜 로그인 오류시 임시 로그아웃
+                >
+                  🔍{" "}
+                </div>
+              </Form>
+              {user.id === null ? (
+                <div className="mem-area">
                   <div
                     className="mem-btn"
                     style={{ width: "70px" }}
-                    onClick={(e) => { e.stopPropagation(); setIsModal(!isModal); }}
+                    onClick={() => navigate("./member/login")}
                   >
-                    알림함
-                    { // 조건 추가 필요
-                      <>
-                        <div className='notice_new'>N</div>
-                      </>
-                    }
-                    {
-                      !isModal ? null :
-                        <>
-                          <div className='drop-down' onClick={(e) => { e.stopPropagation(); }}>
-                            <div className='item'>
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
-                            </div>
-                            <div className='item'>
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
-                            </div>
-                            <div className='item'>
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
-                            </div>
-                            <div className='item'>
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
-                            </div>
-                            <div className='item'>
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
-                            </div>
-                            <div className='item'>
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
-                            </div>
-                            <div className='item'>
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
-                            </div>
-                          </div>
-                        </>
-                    }
+                    로그인
+                  </div>
+                  <div
+                    className="mem-btn"
+                    style={{
+                      width: "90px",
+                      color: "white",
+                      "background-color": "#98afca",
+                    }}
+                    onClick={() => navigate("./member/join")}
+                  >
+                    회원가입
                   </div>
                 </div>
-                <div
-                  className="mem-btn"
-                  style={{
-                    width: "90px",
-                    color: "white",
-                    "background-color": "#98afca",
-                  }}
-                  onClick={() => navigate("./mypage/account")}
-                >
-                  MyPage
+              ) : (
+                <div className="mem-area">
+                  <div className="parent-container">
+                    <div
+                      className="mem-btn"
+                      style={{ width: "70px" }}
+                      onClick={(e) => { e.stopPropagation(); setIsModal(!isModal); }}
+                    >
+                      알림함
+                      { // 조건 추가 필요
+                        <>
+                          <div className='notice_new'>N</div>
+                        </>
+                      }
+                      {
+                        !isModal ? null :
+                          <>
+                            <div className='drop-down' onClick={(e) => { e.stopPropagation(); }}>
+                              <div className='item'>
+                                <h5>{"댓글이 달렸습니다."}</h5>
+                                <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                              </div>
+                              <div className='item'>
+                                <h5>{"댓글이 달렸습니다."}</h5>
+                                <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                              </div>
+                              <div className='item'>
+                                <h5>{"댓글이 달렸습니다."}</h5>
+                                <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                              </div>
+                              <div className='item'>
+                                <h5>{"댓글이 달렸습니다."}</h5>
+                                <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                              </div>
+                              <div className='item'>
+                                <h5>{"댓글이 달렸습니다."}</h5>
+                                <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                              </div>
+                              <div className='item'>
+                                <h5>{"댓글이 달렸습니다."}</h5>
+                                <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                              </div>
+                              <div className='item'>
+                                <h5>{"댓글이 달렸습니다."}</h5>
+                                <h6>{"저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"}</h6>
+                              </div>
+                            </div>
+                          </>
+                      }
+                    </div>
+                  </div>
+                  <div
+                    className="mem-btn"
+                    style={{
+                      width: "90px",
+                      color: "white",
+                      "background-color": "#98afca",
+                    }}
+                    onClick={() => navigate("./mypage/account")}
+                  >
+                    MyPage
+                  </div>
                 </div>
-              </div>
-            )}
-          </nav>
-        </div>
+              )}
+            </nav>
+          </div>}
         <Routes>
           <Route path="/" element={<PwithMain />} />
           <Route path="/study" element={<StudyMain />}>
@@ -400,6 +404,7 @@ function App() {
           <Route path="/study/create" element={<StudyCreate />} />
           <Route path="/studyroom" element={<RoomMain />} />
           <Route path="/studyroom/create" element={<RoomCreate />} />
+          <Route path="/studyroom/:id" element={<LiveRoom />} />
           <Route path="/community" element={<CommunityMain />}>
             <Route path="main" element={<CommunityBoard />} />
             <Route path="it" element={<CommunityIT />} />
@@ -435,18 +440,19 @@ function App() {
           } />
         </Routes>
       </div>
-      <div className="bottom-area">
-        <div
-          style={{
-            width: "1200px",
-            margin: "0 auto",
-            "line-height": "80px",
-            "font-size": "small",
-          }}
-        >
-          @Pwith team
-        </div>
-      </div>
+      {!isStudyRoomPath &&
+        <div className="bottom-area">
+          <div
+            style={{
+              width: "1200px",
+              margin: "0 auto",
+              "line-height": "80px",
+              "font-size": "small",
+            }}
+          >
+            @Pwith team
+          </div>
+        </div>}
     </>
   );
 }
