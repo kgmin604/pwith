@@ -191,7 +191,7 @@ def showDetail(id) :     # 글 조회
             'isApplied' : isApplied,
             'title': post.title,
             'writer' : findNickName(post.writer),
-            'writerImage': getProfileImage(current_user.get_id()),
+            # 'writerImage': getProfileImage(current_user.get_id()),
             'content': post.content,
             'curDate' : postDate,
             'likes' : post.likes,

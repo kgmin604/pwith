@@ -209,7 +209,7 @@ def showDetail(id) :
         result = {
             'title': post.title,
             'writer' : findNickName(post.writer),
-            'writerImage' : getProfileImage(post.writer),
+            # 'writerImage' : getProfileImage(post.writer),
             'content': post.content,
             'curDate' : getFormattedDate(formatDateToString(post.curDate)),
             'likes' : post.likes,
