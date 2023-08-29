@@ -2,6 +2,8 @@ from flask import Flask, session, Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime
 import json
+from bardapi import Bard
+import os
 
 from backend import config
 from backend.view import uploadFileS3, s3
@@ -107,3 +109,34 @@ def showRoom(id) :
         'notice' : room.notice,
         'join_members' : join_members
     }
+    
+@studyroom_bp.route('/<id>/code-bard', methods=['POST'])
+def codeBard(id) :
+    
+    token = "aQjidj4C1b8pFHPh7GVcAibKq7XClQeNkQ6AuHuQrnhFKPml0iB1FgL1r_M_GTJqqOjRlQ."
+    
+    data = request.get_json(silent=True)
+    question = data['text']
+    
+
+    bard = Bard(token=token)
+    response = bard.get_answer(question)['content']
+    
+    return{
+       'answer':response
+    }
+    
+@studyroom_bp.route('/<id>/enter', methods=['GET'])
+def studyStart(id):
+    
+    room = StudyRoom.findById(id)
+    members = StudyRoom.findMemberByRoomId(id)
+
+    join_members = []
+
+    for m in members :
+
+        join_members.append({
+            'nickname' : m.nickname,
+        })
+    
