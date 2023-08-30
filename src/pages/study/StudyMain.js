@@ -1,29 +1,15 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./study.css";
 import "../../App.css";
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Nav } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import { useNavigate, Outlet } from "react-router-dom";
-import axios from "axios";
 
 
 function StudyMain() {
   const navigate = useNavigate();
-
-  const [recStudy, setRecStudy] = useState([]);
-
-  useEffect(() => {
-    axios({
-      method: "GET",
-      url: "/study/recommend"
-    })
-      .then(function (response) {
-        setRecStudy(response.data.data.rec);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, []);
+  const recStudyList = useSelector((state) => state.recStudyList);
 
   return (
     <div className="StudyMain">
@@ -41,8 +27,8 @@ function StudyMain() {
           <hr style={{ width: '60%', margin: '0 auto', marginBottom: '10px' }} />
           <div className="rec-items">
             {
-              recStudy === [] ? null :
-                recStudy.map((study, i) => {
+              recStudyList === [] ? null :
+                recStudyList.map((study, i) => {
                   return (
                     <div className="rec-item" key={i}>
                       <img
