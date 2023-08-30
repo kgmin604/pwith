@@ -14,6 +14,7 @@ def showStudy():
         studyList = []
         newsList = []
         mentoringList = []
+        contentsList = []
 
         posts = studyPost.getNStudy(5)
         for post in posts :
@@ -38,11 +39,28 @@ def showStudy():
                 'brief' : portfolio[1]
             }
             mentoringList.append(portfolio)
+            
+        book_db = conn_mongodb().book_crawling.find().sort('_id', -1).limit(2)
+        for book in book_db :
+            contentsList.append({
+                'title' : book['title'],
+                'img' : book['img'],
+                'url' : book['url']
+            })
+            
+        lecture_db = conn_mongodb().lecture_crawling.find().sort('_id', -1).limit(2)
+        for lecture in lecture_db :
+            contentsList.append({
+                'title' : lecture['title'],
+                'img' : lecture['img'],
+                'url' : lecture['link']
+            })
 
         return {
             'study' : studyList,
             'news' : newsList,
-            'mentoring' : mentoringList
+            'mentoring' : mentoringList,
+            'contents' : contentsList
         }
         
 @main_bp.route('/alarm', methods = ['GET'])
