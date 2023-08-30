@@ -5,42 +5,45 @@ import React, { useState, useEffect } from 'react';
 import { Form, Stack, Button } from "react-bootstrap";
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
-
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { updateRecStudyList } from "../../store";
 
 function StudyBoard(props) {
-    let navigate = useNavigate();
-    let user = useSelector((state) => state.user);
-    let [studyPostList, setStudyPostList] = useState([]);
+    const navigate = useNavigate();
+    const user = useSelector((state) => state.user);
+    const dispatch = useDispatch();
+    const [studyPostList, setStudyPostList] = useState([]);
     const [searchType, setSearchType] = useState(0);
-    let [totalPage, setTotalPage] = useState(1);
-    let [selectPage, setSelectPage] = useState(1);
-    let [pages, setPages] = useState([]); // 임시
-    let [disabled1, setDisabled1] = useState(true);
-    let [disabled2, setDisabled2] = useState(true);
-    let [isLoad, setIsLoad] = useState(false);
-    let [isDisabled, setIsDisabled] = useState(user.id === null);
+    const [totalPage, setTotalPage] = useState(1);
+    const [selectPage, setSelectPage] = useState(1);
+    const [pages, setPages] = useState([]); // 임시
+    const [disabled1, setDisabled1] = useState(true);
+    const [disabled2, setDisabled2] = useState(true);
+    const [isLoad, setIsLoad] = useState(false);
+    const [isDisabled, setIsDisabled] = useState(user.id === null);
 
     useEffect(() => {
         axios({
             method: "GET",
             url: "/study",
             params: {
-                type: searchType, // 0: 제목 1: 글쓴이
-                value: inputValue,
-                page: selectPage
+                search: 0,
+                page: selectPage,
             }
-        })
+        })//TODO: category
             .then(function (response) {
                 setStudyPostList(response.data.data.posts);
                 setTotalPage(response.data.data.num);
+                dispatch(updateRecStudyList(response.data.data.rec));
                 if (!isLoad) { // 맨 처음 한번만 실행
                     if (response.data.data.num > 5) {
                         const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
                         setPages(tmp);
                         setDisabled2(false); // 페이지 이동 가능
+
                     }
                     else {
                         const tmp = Array.from({ length: response.data.data.num }, (_, index) => index + 1);

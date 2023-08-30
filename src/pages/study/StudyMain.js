@@ -1,35 +1,21 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./study.css";
 import "../../App.css";
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Nav } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import { useNavigate, Outlet } from "react-router-dom";
-import axios from "axios";
 
 
 function StudyMain() {
   const navigate = useNavigate();
-
-  const [recStudy, setRecStudy] = useState([]);
-
-  useEffect(() => {
-    axios({
-      method: "GET",
-      url: "/study/recommend"
-    })
-      .then(function (response) {
-        setRecStudy(response.data.data.rec);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, []);
+  const recStudyList = useSelector((state) => state.recStudyList);
 
   return (
     <div className="StudyMain">
       <div class="row">
         <div class="col-md-3">
-          {Category()}
+          <Category />
         </div>
 
         <div class="col-md-6">
@@ -41,8 +27,8 @@ function StudyMain() {
           <hr style={{ width: '60%', margin: '0 auto', marginBottom: '10px' }} />
           <div className="rec-items">
             {
-              recStudy === [] ? null :
-                recStudy.map((study, i) => {
+              recStudyList === [] ? null :
+                recStudyList.map((study, i) => {
                   return (
                     <div className="rec-item" key={i}>
                       <img
@@ -83,7 +69,7 @@ function Category() {//카테고리
     <h5>Study</h5>
     <hr style={{ width: '60%', margin: '0 auto' }} />
     <Nav defaultActiveKey="#" className="flex-column">
-      <Nav.Link href="#"><div style={{ color: '#282c34' }}>웹개발</div></Nav.Link>
+      <Nav.Link href="#" onClick={() => { }}><div style={{ color: '#282c34' }}>웹개발</div></Nav.Link>
       <Nav.Link href="#"><div style={{ color: '#282c34' }}>모바일 앱 개발</div></Nav.Link>
       <Nav.Link href="#"><div style={{ color: '#282c34' }}>게임 개발</div></Nav.Link>
       <Nav.Link href="#"><div style={{ color: '#282c34' }}>프로그래밍 언어</div></Nav.Link>

@@ -3,14 +3,17 @@ from flask_login import login_required, current_user
 from backend.controller.study_mgmt import studyPost
 from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.studyroom_mgmt import StudyRoom
+from backend.controller.member_mgmt import Member
 from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage, nicknameToId
 from datetime import datetime
 import json
 
 study_bp = Blueprint('study', __name__, url_prefix='/study')
-@study_bp.route('/recommend', methods=['GET'])
-def recommend():
-    print("recommend")
+
+    
+@study_bp.route('', methods=['GET'])
+def show(): 
+    
     recStudy=[]
     recommendStudy = studyPost.getNStudy(3)
     
@@ -22,12 +25,7 @@ def recommend():
             'image' : studyPost.getRoomImage(roomId)
         }
         recStudy.append(rec)
-    return {
-        'rec' : recStudy # by. 경민
-    }
-    
-@study_bp.route('', methods=['GET'])
-def show(): 
+        
     search = request.args.get('search')
     if search == None : # 임시 예외 처리 (프론트 수정 완료되면 지우면 됩니다) - 채영
         search = 0      # (PS. 주석 정리도 부탁해요) 😘
@@ -66,7 +64,7 @@ def show():
         return{
             'posts': result,
             'num': requiredPage,
-            #'rec' : recStudy
+            'rec' : recStudy
         }
         
     else:
@@ -127,7 +125,7 @@ def show():
         return {
             'posts' : result,
             'num': requiredPage,
-            # 'rec' : recStudy
+            'rec' : recStudy
             }
 
 @study_bp.route('/<int:id>/apply', methods=['POST']) # 스터디 신청
@@ -172,14 +170,20 @@ def showDetail(id) :     # 글 조회
         postDate = getFormattedDate(formatDateToString(post.curDate))
         
         roomId= studyPost.findRoomId(id) #roomName 조회위해서 미리 변수로 리턴받음
-
-        isApplied = None
-        try : # 익명의 경우
-            isApplied = f'"{current_user.get_id()}"' in StudyRoom.getStudentList(roomId)
-            # print("ISAPPLIED" + str(isApplied))
-        except Exception as ex:
-            isApplied = False
-            # print("에러 발생 : " + str(ex))
+        
+        studentList = StudyRoom.findMemberByRoomId(roomId)
+        
+        print(studentList)
+        for member in studentList:
+            if current_user.get_id() is None:
+                isApplied = False
+            elif Member.findById(current_user.get_id()) == member:
+                isApplied = True
+            else:
+                isApplied = False
+                
+        print("isApplied")
+        print(isApplied)
 
         liked = 0
         try : # 익명의 경우
@@ -191,7 +195,7 @@ def showDetail(id) :     # 글 조회
             'isApplied' : isApplied,
             'title': post.title,
             'writer' : findNickName(post.writer),
-            'writerImage': getProfileImage(current_user.get_id()),
+            # 'writerImage': getProfileImage(current_user.get_id()),
             'content': post.content,
             'curDate' : postDate,
             'likes' : post.likes,

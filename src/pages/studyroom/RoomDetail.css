@@ -1,0 +1,239 @@
+.room-detail-wrap{
+    margin: 0 0;
+    padding: 0 0;
+}
+
+div.room-detail-wrap div.row
+.col-md-3
+{
+    width: 20%;
+    margin: 0 0;
+    padding: 0 0;
+}
+
+div.room-detail-wrap div.row
+.col-md-9
+{
+    width: 80%;
+    margin: 0 0;
+}
+
+/* info 영역 */
+
+div.room-detail-wrap
+.info-area{
+    border-radius: 10px;
+    background-color: rgb(241, 241, 241) ;
+    width: 200px;
+    height: 350px;
+    margin: 0 auto;
+    display: flex; /* 플렉스 컨테이너로 설정 */
+    flex-direction: column;
+    align-items: center;
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area
+img{
+    margin: 0 auto;
+    margin-top: 20px;
+    width: 80%;
+    display: block;
+    overflow: hidden;
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area
+.info-header{
+    width: 80%;
+    height: 70px;
+    border-bottom: 1px solid lightgray;
+    margin: 15px 0;
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area div.info-header
+h3{
+    margin: 5px 0;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area div.info-header
+.leader{
+    font-size: 14px;
+    color: rgb(61, 105, 144);
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area
+.setting{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 5px 0;
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area div.setting
+.mike-button {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    border-radius: 50px;
+    background-color: #FF6969;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area div.setting
+.video-button {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    border-radius: 50px;
+    background-color: #83B97A;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area
+.ent-btn{
+    cursor: pointer;
+    text-align: center;
+    line-height: 30px;
+    height: 30px;
+    width: 80%;
+    margin: 10px auto;
+    font-size: 14px;
+    font-weight: 400;
+    color:white;
+    border:solid 1px rgb(61, 105, 144);
+    border-radius: 5px;
+    background-color: rgb(61, 105, 144);
+}
+
+/* content 영역 */
+
+/* top */
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area 
+.top{
+    display: flex;
+    flex-direction: column;
+}
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area div.top
+h2{
+    line-height: 50px;
+    font-size: 24px;
+    font-weight: 600; 
+    margin: 0 5px;
+    display: inline;
+    float: left;
+    color: rgb(61, 61, 61);
+}
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area div.top
+.notice{
+    width: 100%;
+    height: 40px;
+    background-color: rgb(247, 247, 247);
+    padding-left: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area div.top div.notice
+input{
+    width: 90%;
+    height: 30px;
+    border: solid 1px gray;
+}
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area div.top div.notice
+.notice-btn{
+    width: 45px;
+    height: 30px;
+    line-height: 30px;
+    background-color: rgb(61, 105, 144);
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    margin: 5px 0;
+}
+
+
+.fapencil{
+    cursor: pointer;
+}
+
+/* bottom */
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area 
+.bottom{
+    display: flex;
+}
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area div.bottom
+.member-list{
+    width: 30%;
+    border: 1px solid lightgray;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.member-list
+.items{
+    display: flex;
+    float: left;
+    flex-direction: column;
+    align-items: center;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.member-list
+h2{
+    font-family: "Noto Sans KR";
+    font-weight: 700;
+    font-size: 20px;
+    margin: 10px;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.member-list div.items 
+.item{
+    display: flex;
+    align-items: center;
+    width: 90%;
+    height: 30px;
+    margin: 5px 0;
+    padding: 0 0;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.member-list div.items div.item
+h3{
+    display: block;
+    width: 280px;
+    font-size: 16px;
+    font-family: "Noto Sans KR";
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.member-list div.items div.item
+.send-btn{
+    color: #98afca;
+    cursor: pointer;
+    margin-top: 4px;
+}
+div.room-detail-wrap div.content-area div.bottom div.member-list div.items div.item
+.send-btn:hover{
+    color: rgb(61, 105, 144);
+}
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area  div.bottom
+.member-chat{
+    width: 70%;
+    border: 1px solid;
+}
