@@ -14,6 +14,7 @@ import StudyMain from "./pages/study/StudyMain.js";
 import RoomMain from "./pages/studyroom/RoomMain.js";
 import RoomCreate from "./pages/studyroom/RoomCreate.js";
 import LiveRoom from "./pages/studyroom/LiveRoom";
+import RoomDetail from "./pages/studyroom/RoomDetail.js"
 import CommunityMain from "./pages/community/CommunityMain.js";
 import MentoringMain from "./pages/mentoring/MentoringMain.js";
 import MentoringCreate from "./pages/mentoring/MetoringCreate";
@@ -56,7 +57,7 @@ function App() {
 
   //스터디룸에서는 네브바 숨기기
   const location = useLocation();
-  const isStudyRoomPath = location.pathname.startsWith(`/studyroom/`) && !location.pathname.includes('main') && !location.pathname.includes('create')
+  const isStudyRoomPath = location.pathname.startsWith(`/studyroom/live`) && !location.pathname.includes('main') && !location.pathname.includes('create')
 
   let [isModal, setIsModal] = useState(false); // 알림함
   let [isNav, setIsNav] = useState(0);
@@ -404,7 +405,8 @@ function App() {
           <Route path="/study/create" element={<StudyCreate />} />
           <Route path="/studyroom" element={<RoomMain />} />
           <Route path="/studyroom/create" element={<RoomCreate />} />
-          <Route path="/studyroom/:id" element={<LiveRoom />} />
+          <Route path="/studyroom/:id" element={<RoomDetail />} />
+          <Route path="/studyroom/live/:id" element={<LiveRoom />} />
           <Route path="/community" element={<CommunityMain />}>
             <Route path="main" element={<CommunityBoard />} />
             <Route path="it" element={<CommunityIT />} />
