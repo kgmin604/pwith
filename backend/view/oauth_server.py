@@ -267,6 +267,9 @@ def kakao_callback():
 
         if is_exist == False :
             RefreshToken.save(message.id, refresh_token, datetime.now())
+        else :
+            RefreshToken.deleteByMember(message.id) # 매번 갱신
+            RefreshToken.save(message.id, refresh_token, datetime.now())
 
         data = {
             'id' : message.email.split('@')[0],
