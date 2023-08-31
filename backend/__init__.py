@@ -50,15 +50,23 @@ def create_app() :
             mimetype = 'application/json'
         )
 
-        if resp.json.get('message') == 'logout' :
+        if resp.json.get('message') == 'logout' : # logout
             response.set_cookie('access_token', value='', path='/')
             response.set_cookie('refresh_token', value='', path='/')
-
-        if resp.json.get('access_token') is not None : # TODO httponly=True 설정
-
+        
+        if resp.json.get('access_token') is not None : # new access token
             access_token = resp.json.get('access_token')
-            refresh_token = resp.json.get('refresh_token')
+            response.set_cookie('access_token', value=access_token, path='/')
 
+        if resp.json.get('token') is not None : # TODO httponly=True 설정
+
+            token = resp.json.get('token')
+
+            provider = token.get('provider')
+            access_token = token.get('access_token')
+            refresh_token = token.get('refresh_token')
+
+            response.set_cookie('provider', value=provider, path='/')
             response.set_cookie('access_token', value=access_token, path='/')
             response.set_cookie('refresh_token', value=refresh_token, path='/')
 
