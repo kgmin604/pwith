@@ -28,7 +28,7 @@ function MentoCard(props) {
         {showModal && mento && <PortfolioModal id={mento.id} setShowModal={setShowModal} />}
         <Col key={mento.writer} xs={12} sm={6} md={4} className="mb-2" onClick={() => setShowModal(true)}>
             <Card style={{ width: '220px', height: '380px', cursor: 'pointer' }}>
-                <Card.Img variant="top" src={`${mento.mentoPic}?version=${Math.random()}`} style={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover' }} />
+                {mento.mentoPic && <Card.Img variant="top" src={`${mento.mentoPic}?version=${Math.random()}`} style={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover' }} />}
                 <Card.Body>
                     <Card.Title>{mento.writer}</Card.Title>
                     <Card.Text className='cardBrief'>{mento.brief}</Card.Text>
