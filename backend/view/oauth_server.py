@@ -205,6 +205,113 @@ def checkJoin(data) :
 
     return 200, member
 
+
+@oauth_bp.route('/oauth/callback/kakao', methods = ['GET']) # 카카오
+def kakao_callback():
+    
+    code = request.args.get('code')
+
+    token_endpoint = config.KAKAO_TOKEN_ENDPOINT
+    info_endpoint = config.KAKAO_INFO_ENDPOINT
+    client_id = config.KAKAO_CLIENT_ID
+    # client_secret = config.KAKAO_CLIENT_SECRET
+    redirect_uri = config.KAKAO_REDIRECT_URI
+    grant_type = 'authorization_code'
+
+    token_response = requests.post(token_endpoint, 
+        headers = {
+            'Content-type' : 'application/x-www-form-urlencoded;charset=utf-8'
+        },
+        data = dict(
+            code = code,
+            client_id = client_id,
+            # client_secret = client_secret,
+            grant_type = grant_type,
+            redirect_uri = redirect_uri
+        )
+    )
+
+    print(token_response.json()) ###
+
+    access_token = token_response.json().get("access_token")
+    refresh_token = token_response.json().get("refresh_token")
+
+    info_response = requests.get(
+        info_endpoint,
+        headers = {
+            'Authorization' : f'Bearer {access_token}',
+            'Content-type' : 'application/x-www-form-urlencoded;charset=utf-8'
+        }
+    )
+    info = info_response.json()
+    print(info)
+
+    status = 200
+    message = '성공'
+    data = None
+
+    if info.get('code') == '-401' : ######## TODO 여기부터 다시
+        return {
+            'status' : 401,
+            'message' : '인증 실패',
+            'data' : None
+        }
+
+    # valid access token
+
+    status, message = checkJoin_kakao(info)
+
+    if status == 200 : # login
+
+        is_exist = RefreshToken.existsByMember(message.id)
+
+        if is_exist == False :
+            RefreshToken.save(message.id, refresh_token, datetime.now())
+
+        data = {
+            'id' : message.email.split('@')[0],
+            'nickname' : message.nickname
+        }
+        message = '성공'
+        access_token_return = access_token
+        refresh_token_return = refresh_token
+
+    return {
+        'status' : status,
+        'message' : message,
+        'data' : data,
+        'access_token' : access_token_return,
+        'refresh_token' : refresh_token_return
+    }
+
+def checkJoin_kakao(data) :
+
+    sns_type = 'KAKAO'
+
+    sns_id = data.get('id')
+    member = Member.findBySns(sns_id, sns_type)
+    if member is not None :
+        return 200, member
+
+    account = data.get('kakao_account')
+
+    email = account.get('email') ### 이메일 필수 선택 항상 가능 ??
+    if Member.existsByEmail(email) :
+        return 409, '이메일 중복'
+
+    profile = account.get('profile')
+    nickname = profile.get('nickname')
+        
+    image = profile.get('profile_image_url')
+    if image is None :
+        image = 'https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/profile/default_user.jpg'
+
+    member_id = Member.saveOauth(nickname, email, image, sns_id, sns_type)
+
+    member = Member.findById(member_id)
+
+    return 200, member
+
 @oauth_bp.route('/login-require-test') # 테스트 API
 @login_required
 def login_require_test(loginMember, new_token) :
@@ -216,14 +323,3 @@ def login_require_test(loginMember, new_token) :
         },
         'access_token' : new_token
     }
-
-
-# @oauth_bp.route('/logout/oauth')
-# @login_required
-# def logoutOauth(loginMember, new_token) :
-#     RefreshToken.deleteByMember(loginMember.id)
-#     # TODO sns 토큰 삭제
-#     # TODO cookie 삭제
-#     return {
-#         'message' : '로그아웃 성공'
-#     }

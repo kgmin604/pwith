@@ -24,7 +24,7 @@ def login_oauth():
         client_id = client_id,
         scope = scope,
         response_type = response_type,
-        access_type = 'offline',
+        access_type = 'offline'
         # prompt = 'consent' # only for development env
     ))
 
@@ -62,6 +62,27 @@ def login_naver():
          'data' : authorize_redirect
      }
     '''
+    
+    return {
+        'auth_url' : authorize_redirect
+    }
+
+@oauth_member_bp.route('/login/auth/kakao', methods = ['GET'])
+def login_kakao():
+    
+    authorize_endpoint = config.KAKAO_AUTHORIZE_ENDPOINT
+    client_id = config.KAKAO_CLIENT_ID
+    redirect_uri = config.KAKAO_REDIRECT_URI
+    response_type = 'code'
+
+    query_param = urlencode(dict(
+        redirect_uri = redirect_uri,
+        client_id = client_id,
+        response_type = response_type,
+        scope = 'profile_nickname, profile_image, account_email'
+    ))
+
+    authorize_redirect = f'{authorize_endpoint}?{query_param}'
     
     return {
         'auth_url' : authorize_redirect
