@@ -25,7 +25,7 @@ def login_oauth():
         scope = scope,
         response_type = response_type,
         access_type = 'offline',
-        prompt = 'consent' # for development env
+        # prompt = 'consent' # only for development env
     ))
 
     authorize_redirect = f'{authorize_endpoint}?{query_param}'

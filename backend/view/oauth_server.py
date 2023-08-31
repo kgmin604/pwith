@@ -60,14 +60,16 @@ def google_callback():
 
     # valid access token
 
-    status, message = checkJoin_google(info, refresh_token)
+    status, message = checkJoin_google(info)
 
     if status == 200 : # login
 
         is_exist = RefreshToken.existsByMember(message.id)
 
-        if is_exist == False :
-            RefreshToken.save(message.id, refresh_token, datetime.now()) # 첫 요청에서만 저장
+        if is_exist == False : # 첫 요청에서만 저장
+            RefreshToken.save(message.id, refresh_token, datetime.now())
+        else :
+            refresh_token = RefreshToken.findTokenByMemberId(message.id)
 
         data = {
             'id' : message.email.split('@')[0],
@@ -85,8 +87,7 @@ def google_callback():
         'refresh_token' : refresh_token_return
     }
 
-
-def checkJoin_google(data, refresh_token) :
+def checkJoin_google(data) :
 
     sns_type = 'GOOGLE'
 
@@ -154,7 +155,7 @@ def naver_callback():
 
     # valid access token
 
-    status, message = checkJoin(info.get('response'), refresh_token)
+    status, message = checkJoin(info.get('response'))
 
     if status == 200 : # login
 
@@ -179,7 +180,7 @@ def naver_callback():
         'refresh_token' : refresh_token_return
     }
 
-def checkJoin(data, refresh_token) :
+def checkJoin(data) :
 
     sns_type = 'NAVER'
 
@@ -208,26 +209,21 @@ def checkJoin(data, refresh_token) :
 @login_required
 def login_require_test(loginMember, new_token) :
 
-    if new_token is not None :
-        return {
-            'data' : {
-                'writer' : loginMember.nickname,
-                'content' : '로그인 권한 테스트'
-            },
-            'access_token' : new_token
-        }
-
     return {
-        'writer' : loginMember.nickname,
-        'content' : '로그인 권한 테스트'
+        'data' : {
+            'writer' : loginMember.nickname,
+            'content' : '로그인 권한 테스트'
+        },
+        'access_token' : new_token
     }
 
-@oauth_bp.route('/logout/oauth')
-@login_required
-def logoutOauth(loginMember, new_token) :
-    RefreshToken.deleteByMember(loginMember.id)
-    # TODO sns 토큰 삭제
-    # TODO header 삭제
-    return {
-        'message' : '로그아웃 성공'
-    }
+
+# @oauth_bp.route('/logout/oauth')
+# @login_required
+# def logoutOauth(loginMember, new_token) :
+#     RefreshToken.deleteByMember(loginMember.id)
+#     # TODO sns 토큰 삭제
+#     # TODO cookie 삭제
+#     return {
+#         'message' : '로그아웃 성공'
+#     }

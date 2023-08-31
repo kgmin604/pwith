@@ -93,7 +93,7 @@ def changeImage() :
     }
 
 @login_required
-@mypage_bp.route('/account', methods = ['DELETE'])
+@mypage_bp.route('/account', methods = ['DELETE']) # TODO 소셜 탈퇴
 def deleteAccount() :
 
     password = request.get_json()['password']
