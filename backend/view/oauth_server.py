@@ -5,13 +5,13 @@ import json
 from datetime import datetime
 
 from backend import config
-from backend.view import login_required_naver
+from backend.view import login_required
 from backend.controller.member_mgmt import Member
 from backend.controller.refreshToken_mgmt import RefreshToken
 
 oauth_bp = Blueprint('oauth', __name__, url_prefix = '')
 
-@oauth_bp.route('/oauth/callback/google', methods = ['GET'])
+@oauth_bp.route('/oauth/callback/google', methods = ['GET']) # 구글
 def google_callback():
     
     code = request.args.get('code')
@@ -67,7 +67,7 @@ def google_callback():
         is_exist = RefreshToken.existsByMember(message.id)
 
         if is_exist == False :
-            RefreshToken.save(message.id, refresh_token, datetime.now())
+            RefreshToken.save(message.id, refresh_token, datetime.now()) # 첫 요청에서만 저장
 
         data = {
             'id' : message.email.split('@')[0],
@@ -111,7 +111,7 @@ def checkJoin_google(data, refresh_token) :
 
     return 200, member
 
-@oauth_bp.route('/oauth/callback/naver', methods = ['GET'])
+@oauth_bp.route('/oauth/callback/naver', methods = ['GET'])  # 네이버
 def naver_callback():
     
     code = request.args.get('code')
@@ -204,8 +204,8 @@ def checkJoin(data, refresh_token) :
 
     return 200, member
 
-@oauth_bp.route('/login-require-test')
-@login_required_naver
+@oauth_bp.route('/login-require-test') # 테스트 API
+@login_required
 def login_require_test(loginMember, new_token) :
 
     if new_token is not None :
@@ -223,7 +223,7 @@ def login_require_test(loginMember, new_token) :
     }
 
 @oauth_bp.route('/logout/oauth')
-@login_required_naver
+@login_required
 def logoutOauth(loginMember, new_token) :
     RefreshToken.deleteByMember(loginMember.id)
     # TODO sns 토큰 삭제

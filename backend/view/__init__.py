@@ -2,7 +2,8 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 from botocore.client import Config
 from functools import wraps
-from flask import request
+from flask import request, current_app
+from flask_login import current_user
 import requests
 import boto3
 
@@ -34,26 +35,26 @@ def uploadFileS3(file, dir="image"):
 
     return image_url
 
-def login_required_naver(func) :
-
+def custom_login_required(func):
     @wraps(func)
-    def checkHeader(*args, **kwargs) :
-
-        try :
-            tokens = request.headers.get('Authorization').split(' ')[1]
-            access_token = tokens.split('.')[0]
-            refresh_token = tokens.split('.')[1]
-        except :
-            return {
-                'status' : 401,
-                'message' : '로그인 필요',
-                'data' : None
-            }
+    def checkLogin(*args, **kwargs):
 
         loginMember = None
         new_token = None
 
-        if access_token is not None :
+        access_token = request.cookies.get('access_token')
+        refresh_token = request.cookies.get('refresh_token')
+
+        if access_token is None : # session login
+
+            if not current_user.is_authenticated :
+                return current_app.login_manager.unauthorized()
+
+            else :
+                id = current_user.get_id()
+                loginMember = Member.findById(id)
+
+        else : # OAuth Naver
 
             resp = requests.get(
                 config.NAVER_INFO_ENDPOINT,
@@ -68,23 +69,26 @@ def login_required_naver(func) :
 
                 sns_id = result.get('response').get('id')
 
-                loginMember = Member.findBySns(sns_id, 'NAVER') ## TODO sns_Type 수정
+                loginMember = Member.findBySns(sns_id, 'NAVER') ## TODO sns_type 수정
 
             elif result.get('resultcode') == '024' : # access 만료 / refresh 오류
 
-                new_token = updateAccessToken(refresh_token)
-
                 member_id = RefreshToken.findMemberByToken(refresh_token)
 
-                if member_id is not None :
-                    loginMember = Member.findById(member_id)
+                if member_id is None :
+                    return current_app.login_manager.unauthorized()
+
+                loginMember = Member.findById(member_id)
+                new_token = updateAccessToken(refresh_token)
 
         kwargs['loginMember'] = loginMember
         kwargs['new_token'] = new_token
 
         return func(*args, **kwargs)
 
-    return checkHeader
+    return checkLogin
+
+login_required = custom_login_required
 
 def updateAccessToken(refresh_token) :
 
