@@ -434,6 +434,7 @@ function App() {
           </Route>
           <Route path="/oauth/callback/naver" element={<Auth />} />
           <Route path="/oauth/callback/google" element={<Auth />} />
+          <Route path="/oauth/callback/kakao" element={<Auth />} />
           <Route path="*" element={
             <div className="img-error">
               <img src='/error_404.png'></img>

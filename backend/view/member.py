@@ -110,7 +110,8 @@ def logout(loginMember, new_token) :
     access_token = request.cookies.get('access_token')
 
     if access_token is not None :
-        RefreshToken.deleteByMember(loginMember.id)
+        ## TODO 토큰 로그아웃 (카카오,)
+        # RefreshToken.deleteByMember(loginMember.id) # 구글은 지우면 안 되는 듯
         return {
             'status' : 200,
             'message' : 'logout',

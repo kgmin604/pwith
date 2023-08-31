@@ -54,7 +54,7 @@ def create_app() :
             response.set_cookie('access_token', value='', path='/')
             response.set_cookie('refresh_token', value='', path='/')
 
-        if resp.json.get('access_token') is not None :
+        if resp.json.get('access_token') is not None : # TODO httponly=True 설정
 
             access_token = resp.json.get('access_token')
             refresh_token = resp.json.get('refresh_token')

@@ -214,7 +214,7 @@ def kakao_callback():
     token_endpoint = config.KAKAO_TOKEN_ENDPOINT
     info_endpoint = config.KAKAO_INFO_ENDPOINT
     client_id = config.KAKAO_CLIENT_ID
-    # client_secret = config.KAKAO_CLIENT_SECRET
+    client_secret = config.KAKAO_CLIENT_SECRET
     redirect_uri = config.KAKAO_REDIRECT_URI
     grant_type = 'authorization_code'
 
@@ -225,7 +225,7 @@ def kakao_callback():
         data = dict(
             code = code,
             client_id = client_id,
-            # client_secret = client_secret,
+            client_secret = client_secret,
             grant_type = grant_type,
             redirect_uri = redirect_uri
         )
@@ -250,7 +250,7 @@ def kakao_callback():
     message = '성공'
     data = None
 
-    if info.get('code') == '-401' : ######## TODO 여기부터 다시
+    if info.get('code') == '-401' :
         return {
             'status' : 401,
             'message' : '인증 실패',
