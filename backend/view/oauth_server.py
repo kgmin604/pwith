@@ -83,8 +83,11 @@ def google_callback():
         'status' : status,
         'message' : message,
         'data' : data,
-        'access_token' : access_token_return,
-        'refresh_token' : refresh_token_return
+        'token' : {
+            'provider' : 'google',
+            'access_token' : access_token_return,
+            'refresh_token' : refresh_token_return
+        }
     }
 
 def checkJoin_google(data) :
@@ -176,8 +179,11 @@ def naver_callback():
         'status' : status,
         'message' : message,
         'data' : data,
-        'access_token' : access_token_return,
-        'refresh_token' : refresh_token_return
+        'token' : {
+            'provider' : 'naver',
+            'access_token' : access_token_return,
+            'refresh_token' : refresh_token_return
+        }
     }
 
 def checkJoin(data) :
@@ -250,7 +256,7 @@ def kakao_callback():
     message = '성공'
     data = None
 
-    if info.get('code') == '-401' :
+    if info.get('code') is not None :
         return {
             'status' : 401,
             'message' : '인증 실패',
@@ -283,8 +289,11 @@ def kakao_callback():
         'status' : status,
         'message' : message,
         'data' : data,
-        'access_token' : access_token_return,
-        'refresh_token' : refresh_token_return
+        'token' : {
+            'provider' : 'kakao',
+            'access_token' : access_token_return,
+            'refresh_token' : refresh_token_return
+        }
     }
 
 def checkJoin_kakao(data) :
@@ -298,7 +307,7 @@ def checkJoin_kakao(data) :
 
     account = data.get('kakao_account')
 
-    email = account.get('email') ### 이메일 필수 선택 항상 가능 ??
+    email = account.get('email')
     if Member.existsByEmail(email) :
         return 409, '이메일 중복'
 
