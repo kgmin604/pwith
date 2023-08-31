@@ -1,4 +1,4 @@
-from flask_login import current_user, login_required
+from flask_login import current_user
 from flask import Blueprint, request
 import bcrypt
 
@@ -7,27 +7,30 @@ from backend.controller.study_mgmt import studyPost
 from backend.controller.community_mgmt import QNAPost
 from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.replyQna_mgmt import ReplyQna
-from backend.view import formatYMD, uploadFileS3
+from backend.view import formatYMD, uploadFileS3, login_required
 
 mypage_bp = Blueprint('mypage', __name__, url_prefix='/mypage')
 
-@login_required
 @mypage_bp.route('/account', methods=['GET'])
-def showAccount() :
-
-    id = current_user.get_id()
-    loginMember = Member.findById(id)
+@login_required
+def showAccount(loginMember, new_token) :
 
     memId = loginMember.memId
     memNick = loginMember.nickname
     memEmail = loginMember.email
     memImage = loginMember.image
+    
+    if memId is None :
+        memId = memEmail.split('@')[0]
 
     return {
-        'id' : memId,
-        'nickname' : memNick,
-        'email' : memEmail,
-        'image' : memImage
+        'data' : {
+            'id' : memId,
+            'nickname' : memNick,
+            'email' : memEmail,
+            'image' : memImage
+        },
+        'access_token' : new_token
     }
 
 @login_required
