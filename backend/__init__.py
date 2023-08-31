@@ -40,26 +40,6 @@ def create_app() :
     @app.after_request
     def final_return(resp) :
 
-        if resp.json.get('access_token') is not None :
-
-            access_token = resp.json.get('access_token')
-            refresh_token = resp.json.get('refresh_token')
-
-            response = app.response_class(
-                response = json.dumps({
-                    'status' : resp.json.get('status', 200),
-                    'message' : resp.json.get('message', '성공'),
-                    'data' : resp.json.get('data', resp.json)
-                }),
-                status = resp.json.get('status', 200),
-                mimetype = 'application/json'
-            )
-
-            response.set_cookie('access_token', access_token)
-            response.set_cookie('refresh_token', refresh_token)
-
-            return response
-
         response = app.response_class(
             response = json.dumps({
                 'status' : resp.json.get('status', 200),
@@ -69,6 +49,19 @@ def create_app() :
             status = resp.json.get('status', 200),
             mimetype = 'application/json'
         )
+
+        if resp.json.get('message') == 'logout' :
+            response.set_cookie('access_token', value='', path='/')
+            response.set_cookie('refresh_token', value='', path='/')
+
+        if resp.json.get('access_token') is not None :
+
+            access_token = resp.json.get('access_token')
+            refresh_token = resp.json.get('refresh_token')
+
+            response.set_cookie('access_token', value=access_token, path='/')
+            response.set_cookie('refresh_token', value=refresh_token, path='/')
+
         return response
 
     return app

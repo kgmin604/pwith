@@ -93,7 +93,7 @@ function App() {
     if (localStorage.getItem('Authorization')) { // access token이 존재하는 경우
       axios({
         method: "GET",
-        url: "/logout/oauth", // 임시 경로
+        url: "/member/logout", // 임시 경로
         headers: {
           Authorization: `${localStorage.getItem('Authorization')}` // Access Token을 Authorization 헤더에 추가
         }
