@@ -27,9 +27,9 @@ function QnaCategory() {//카테고리
     return <>
         <h5>QnA</h5>
         <hr style={{ width: '60%', margin: '0 auto' }} />
-        <Nav defaultActiveKey="main" className="flex-column">
+        <Nav defaultActiveKey="#" className="flex-column">
             {category.map((item, index) => (
-                <Nav.Link href="main" onClick={() => { dispatch(setQnaCategory(index)) }}><div style={{ color: '#282c34' }}>{item}</div></Nav.Link>
+                <Nav.Link href="#" onClick={() => { dispatch(setQnaCategory(index)) }}><div style={{ color: '#282c34' }}>{item}</div></Nav.Link>
             ))}
         </Nav>
     </>

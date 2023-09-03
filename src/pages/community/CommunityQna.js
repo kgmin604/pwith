@@ -55,7 +55,7 @@ function CommunityQna(props) {
             })
             .catch(function (error) {
             });
-    }, [selectPage]);
+    }, [selectPage, qnaCategory]);
 
     const searchPost = () => {
         axios({
