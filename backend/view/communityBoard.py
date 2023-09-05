@@ -1,11 +1,11 @@
 from flask import Flask, session, Blueprint, render_template, redirect, request, jsonify, url_for
-from flask_login import login_required, current_user
 from datetime import datetime
 from backend.model.db_mongo import conn_mongodb
 from backend.model.db_mysql import conn_mysql
 from backend.controller.community_mgmt import QNAPost
 from backend.controller.replyQna_mgmt import ReplyQna
 from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage
+from backend.view import login_required
 
 community_bp = Blueprint('community', __name__, url_prefix='/community')
 
@@ -189,7 +189,8 @@ def show():     # 전체 글 출력
 
 
 @community_bp.route('/qna/<int:id>', methods=['GET']) # 글 조회
-def showDetail(id) :
+@login_required
+def showDetail(id, loginMember, new_token) :
     if request.method == 'GET' :
 
         result = {}
@@ -202,7 +203,7 @@ def showDetail(id) :
         viewresult = QNAPost.updateViews(id)
         liked = 0
         try : # 익명의 경우
-            liked = QNAPost.findLike(current_user.get_id(), id)
+            liked = QNAPost.findLike(loginMember.id, id)
         except Exception as ex :
             liked = False
 
@@ -236,12 +237,16 @@ def showDetail(id) :
             })
         
         return {
-            'post' : result,
-            'reply' : replyResult
+            'data' : {
+                'post' : result,
+                'reply' : replyResult
+            },
+            'access_token' : new_token
         }
         
 @community_bp.route('/qna/<int:id>', methods = ['PATCH'])
-def updatePost(id):
+@login_required
+def updatePost(id, loginMember, new_token):
     if request.method == 'PATCH':     # 게시글 수정
         id = request.get_json()['postId']
         postContent = request.get_json()['content']
@@ -254,30 +259,34 @@ def updatePost(id):
             done = 0
 
         return {
-            'data': None
+            'data': None,
+            'access_token' : new_token
         }
         
 @community_bp.route('/qna/<int:id>', methods = ['DELETE'])
-def deletePost(id):
-    if request.method == 'DELETE':      # 게시글 삭제
-        id = request.get_json()['postId']
-        
-        try :
-            done = QNAPost.deleteQna(id)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
+@login_required
+def deletePost(id, loginMember, new_token):
+    
+    id = request.get_json()['postId']
+    
+    try :
+        done = QNAPost.deleteQna(id)
+    except Exception as ex :
+        print("에러 이유 : " + str(ex))
+        done = 0
 
-        return {
-            'done' : None
-        }
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
 
 @community_bp.route('/qna/<int:id>', methods = ['POST'])
-def replyPost(id) :      # 댓글 작성
+@login_required
+def replyPost(id, loginMember, new_token) :      # 댓글 작성
 
         cnt = request.get_json()['content']
 
-        writer = current_user.get_id()
+        writer = loginMember.id
 
         date = datetime.now()
 
@@ -293,12 +302,16 @@ def replyPost(id) :      # 댓글 작성
             pk = 0
 
         return {
-            'id' : pk, # 0 is fail
-            'date' : formatDateToString(date)
+            'data' : {
+                'id' : pk, # 0 is fail
+                'date' : formatDateToString(date)
+            },
+            'access_token' : new_token
         }
 
 @community_bp.route('/qna/<int:id>/<int:replyId>', methods = ['PATCH'])
-def replyPatch(id) :  # 댓글 수정
+@login_required
+def replyPatch(id, loginMember, new_token) :  # 댓글 수정
         replyId = request.get_json()['replyId']
         newContent = request.get_json()['content']
 
@@ -309,11 +322,13 @@ def replyPatch(id) :  # 댓글 수정
             done = 0
 
         return {
-            'done' : None
+            'done' : None,
+            'access_token' : new_token
         }
 
 @community_bp.route('/qna/<int:id>/<int:replyId>', methods = ['DELETE'])
-def replyDelete(id) : # 댓글 삭제
+@login_required
+def replyDelete(id, loginMember, new_token) : # 댓글 삭제
 
         replyId = request.get_json()['replyId']
 
@@ -324,55 +339,58 @@ def replyDelete(id) : # 댓글 삭제
             done = 0
 
         return {
-            'done' : None
+            'done' : None,
+            'access_token' : new_token
         }
     
 
-@login_required
+
 @community_bp.route("/qna", methods=['POST'])
-def write():
-    if request.method == 'POST':
-        # print("post\n")
-        data = request.get_json(silent=True)
-        # print(data)
-        
-        title = data['title']
-        writer = current_user.get_id()
-        curDate = QNAPost.curdate()
-        content = data['content']
-        category = data['category']
-        likes = 0
-        views = 0
-        
-        # print(postType, title, writer, curDate, content, category, likes, views)
-        done = QNAPost.insertQNA(title, writer, curDate, content, category, likes, views)
-        
-        return {
-            'done' : None
-        }
-        
 @login_required
+def write(loginMember, new_token):
+
+    data = request.get_json(silent=True)
+    
+    title = data['title']
+    writer = loginMember.id
+    curDate = QNAPost.curdate()
+    content = data['content']
+    category = data['category']
+    likes = 0
+    views = 0
+    
+    # print(postType, title, writer, curDate, content, category, likes, views)
+    done = QNAPost.insertQNA(title, writer, curDate, content, category, likes, views)
+    
+    return {
+        'done' : None,
+        'access_token' : new_token
+    }
+        
 @community_bp.route('/qna/<int:id>/like', methods=['POST'])
-def like(id):
-    memId = current_user.get_id()
+@login_required
+def like(id, loginMember, new_token):
+    memId = loginMember.id
     post = QNAPost.findById(id)
     
-    if request.method=='POST':
-        postId = request.get_json()['postId']
-        
-        print(memId, postId)
-        QNAPost.Like(memId, postId)
-        print("liked")
-        likes = QNAPost.getLikes(id)
-        liked = QNAPost.findLike(memId, id)
-        
-        print(likes)
-        print(liked)
-        
-        return {
+    postId = request.get_json()['postId']
+    
+    print(memId, postId)
+    QNAPost.Like(memId, postId)
+    print("liked")
+    likes = QNAPost.getLikes(id)
+    liked = QNAPost.findLike(memId, id)
+    
+    print(likes)
+    print(liked)
+    
+    return {
+        'data' : {
             'likes' : likes,
             'liked' : liked
-        }
+        },
+        'access_token' : new_token
+    }
    
 @community_bp.route('/contents/lecture', methods=['GET'])
 def listLectures() :
