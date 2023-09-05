@@ -110,7 +110,7 @@ class Portfolio() :
             '''
         result = selectOne(sql)
 
-        if not result[0] :
+        if not result :
             return None
 
         return result
