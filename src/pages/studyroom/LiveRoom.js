@@ -12,14 +12,17 @@ import { faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-
+import io from 'socket.io-client';
 import screenImg from "./screen.png"
 import userImg from "./user.png"
 import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
+
+const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 const LiveRoom = () => {
     const [isMikeOn, setIsMikeOn] = useState(true)
     const [isCameraOn, setIsCameraOn] = useState(true)
-
+    const audioRef = useRef(null);
+    let myStream
     const [showPeople, setShowPeople] = useState(false)
     const [showChat, setShowChat] = useState(false)
 
@@ -27,25 +30,60 @@ const LiveRoom = () => {
     const handleDivClick = () => {
         setIsClicked(true);
     };
-
-    const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    const textRef = useRef();
+    const ref = useRef(null);
+    const handleResizeHeight = useCallback(() => {
+        textRef.current.style.height = textRef.current.scrollHeight + "px";
+    }, []);
     const handleClickOutside = (event) => {
         if (ref.current && !ref.current.contains(event.target)) {
             setIsClicked(false);
         }
     };
 
-    const textRef = useRef();
-    const ref = useRef(null);
-    const handleResizeHeight = useCallback(() => {
-        textRef.current.style.height = textRef.current.scrollHeight + "px";
-    }, []);
+
+    async function getMedia(callback) {
+        const initialConstrains = {
+            'video': false,
+            'audio': true,
+        };
+        try {
+            myStream = await navigator.mediaDevices.getUserMedia(initialConstrains);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
+        getMedia()
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
+    const onClickMike = async () => {
+        if (audioRef.current) {
+            const audio = audioRef.current;
+            if (isMikeOn) {
+                audio.srcObject = null;
+            } else {
+                try {
+                    // 마이크 켜기
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    audio.srcObject = stream;
+                } catch (error) {
+                    console.error("Failed to get audio stream: ", error);
+                }
+            }
+            setIsMikeOn(!isMikeOn);
+        }
+    };
+
+    const onClickContentStream = () => {
+        setIsCameraOn(!isCameraOn)
+    }
+
 
     return (
         <div className="live-room" ref={ref}>
@@ -91,19 +129,18 @@ const LiveRoom = () => {
 
             <div className="control-bar-wrapper">
                 <div className="control-bar">
-                    <div className="mike-button" onClick={() => setIsMikeOn(!isMikeOn)}>
+                    <div className="mike-button" ref={audioRef} autoPlay controls onClick={onClickMike}>
                         {isMikeOn ? <FontAwesomeIcon icon={faMicrophoneSlash} color={'white'} size={'2x'} /> :
                             <FontAwesomeIcon icon={faMicrophone} color={'white'} size={'2x'} />}
                     </div>
-                    <div className="video-button" onClick={() => setIsCameraOn(!isCameraOn)}>
+                    <div className="video-button" onClick={onClickContentStream}>
                         {isCameraOn ? <FontAwesomeIcon icon={faVideoSlash} color={'white'} size={'2x'} /> :
                             <FontAwesomeIcon icon={faVideo} color={'white'} size={'2x'} />}
                     </div>
-                    <div className="share-button" >
+                    {/* <div className="share-button" onClick={onClickContentStream}>
                         <FontAwesomeIcon icon={faArrowUpFromBracket} color={'white'} size={'2x'} />
-                    </div>
+                    </div> */}
                 </div>
-
                 <div className="control-bar" style={{ marginLeft: 180 }}>
                     <div className="people-button" onClick={() => setShowPeople(!showPeople)}>
                         <FontAwesomeIcon icon={faUsers} color={'white'} size={'2x'} />
