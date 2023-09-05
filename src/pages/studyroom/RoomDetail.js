@@ -29,6 +29,12 @@ function RoomDetail(){
         leader: '경민',
         mem: ['경민', '주연', '채영', '정윤']
     });
+
+    let tmp = {
+        sender: '경민',
+        content: '채애팅',
+        date: '23/09/05 14:00'
+    };
     let tmp1 = {
         sender: '경민',
         content: '채팅을 보냈습니다다다다다다다다다다다다다다다다다다다다다다다다다라라라라라라라라라라라라라라라라라라라라라라라라라',
@@ -39,7 +45,18 @@ function RoomDetail(){
         content: '답장을 보냈습니다다다다다다다다다다다다다다다라라라라라라라라라라라라',
         date: '23/09/05 16:00'
     };
-    let [roomChat, setRoomChat] = useState([tmp1,tmp1,tmp2,tmp2,tmp1,tmp1,tmp2,tmp2,tmp1,tmp1,tmp2,tmp2,]);
+    let tmp3 = {
+        sender: '정윤',
+        content: '백엔드 ㅋ',
+        date: '23/09/05 20:00'
+    };
+
+    let tmp4 = {
+        sender: '주연',
+        content: '프론트엔드 ㅎ',
+        date: '23/09/05 19:00'
+    };
+    let [roomChat, setRoomChat] = useState([tmp, tmp1,tmp1,tmp2,tmp2,tmp1,tmp1,tmp2,tmp2,tmp1,tmp1,tmp2,tmp2,tmp3, tmp4]);
 
     let [isModalOpen, setIsModalOpen] = useState(false);
     let [isMikeOn, setIsMikeOn] = useState(false);
