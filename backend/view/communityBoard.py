@@ -335,7 +335,7 @@ def replyDelete(id, loginMember, new_token) : # 댓글 삭제
         try :
             done = ReplyQna.removeReply(replyId)
         except Exception as ex :
-            print("에러 이유 : " + str(ex))
+            print("에러 이유 : " + str(ex)) 
             done = 0
 
         return {

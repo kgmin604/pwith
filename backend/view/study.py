@@ -138,7 +138,7 @@ def applyStudy(id,  loginMember, new_token ) :
     done = StudyRoom.addStudent(loginMember.id, roomId)
     print(done)
     
-    post = studyPost.findById(id)
+    post = studyPost.findById(id) 
     studyPost.insertStudyAlarm(post.writer, loginMember.id, roomId)
 
     return {
@@ -151,20 +151,6 @@ def applyStudy(id,  loginMember, new_token ) :
 def showDetail(id, loginMember, new_token) :     # 글 조회
 
         memId = loginMember.id
-        # apply = request.args.get('apply')
-
-        # if apply == 'go' : # 스터디 신청
-        #     roomId = studyPost.findRoomId(id)
-
-        #     done = StudyRoom.addStudent(current_user.get_id(), roomId)
-        #     print(done)
-            
-        #     print("apply")
-        #     # studyAlarm 에 추가
-            
-        #     post = studyPost.findById(id)
-        #     studyPost.insertStudyAlarm(post.writer, current_user.get_id(), roomId)
-
 
         result = {}
 
