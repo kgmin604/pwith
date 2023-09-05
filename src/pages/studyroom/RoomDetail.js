@@ -1,4 +1,6 @@
 import React from 'react';
+import axios from "axios";
+
 import "./RoomDetail.css";
 import "./liveroom.css";
 import { useState, useEffect  } from "react";
@@ -26,7 +28,18 @@ function RoomDetail(){
         notice: '공지입니다',
         leader: '경민',
         mem: ['경민', '주연', '채영', '정윤']
-    })
+    });
+    let tmp1 = {
+        sender: '경민',
+        content: '채팅을 보냈습니다다다다다다다다다다다다다다다다다다다다다다다다다라라라라라라라라라라라라라라라라라라라라라라라라라',
+        date: '23/09/05 15:00'
+    };
+    let tmp2 = {
+        sender: '채영',
+        content: '답장을 보냈습니다다다다다다다다다다다다다다다라라라라라라라라라라라라',
+        date: '23/09/05 16:00'
+    };
+    let [roomChat, setRoomChat] = useState([tmp1,tmp1,tmp2,tmp2,tmp1,tmp1,tmp2,tmp2,tmp1,tmp1,tmp2,tmp2,]);
 
     let [isModalOpen, setIsModalOpen] = useState(false);
     let [isMikeOn, setIsMikeOn] = useState(false);
@@ -36,8 +49,8 @@ function RoomDetail(){
 
     let [newNotice, setNewNotice] = useState('공지입니다');
     let [chatName, setChatName] = useState('경민');
-    let [chatContent, setChatContent] = useState('');
-    let [msg, setMsg] = useState('');
+    let [chatContent, setChatContent] = useState(''); // 개인쪽지
+    let [msg, setMsg] = useState(''); // 개인쪽지
     
     function handleMouseOver(event){
         event.stopPropagation();
@@ -68,6 +81,25 @@ function RoomDetail(){
         event.stopPropagation();
         setChatContent(event.target.value);
     }
+
+    /*
+    useEffect(()=>{
+        const url = window.location.href;
+        const part = url.split("/");
+        const RoomId = part[part.length-1];
+
+        axios({
+            method: "GET",
+            url: `/study-room/${RoomId}`
+        })
+        .then(function (response) {
+            console.log(response.data);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    },[])
+    */
 
     return(
     <>
@@ -148,7 +180,41 @@ function RoomDetail(){
                                 </div>
                             </div>
                             <div className="member-chat">
-                                뭐로 채우지?
+                                <h2>Chatting</h2>
+                                <hr style={{margin:'0 0'}}></hr>
+                                <div className="chats scroll">
+                                {
+                                    roomChat.map((chat,i)=>(
+                                    <>
+                                    {
+                                        chat.sender!==user.name ? 
+                                        <div className='chat-type1'>
+                                            <img src="https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/kkm5424.jpg?version=0.17936649555278406"/>
+                                            <div className="content">
+                                                <h3>{chat.sender}</h3>
+                                                <div className="chat-time">
+                                                    <p>{chat.content}</p>
+                                                    <time>{chat.date}</time>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        :
+                                        <div className='chat-type2'>
+                                            <div className="chat-time">
+                                                <time>{chat.date}</time>
+                                                <p>{chat.content}</p>
+                                            </div>
+                                        </div>
+                                    }
+                                    </>
+                                    ))
+                                }
+                                </div>
+                                <hr style={{margin:'0 0'}}></hr>
+                                <div className="sending-area">
+                                    <textarea></textarea>
+                                    <div className="sending-btn">전송</div>
+                                </div>
                             </div>
                         </div>
                     </div>
