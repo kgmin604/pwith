@@ -14,6 +14,7 @@ import { updateRecStudyList } from "../../store";
 function StudyBoard(props) {
     const navigate = useNavigate();
     const user = useSelector((state) => state.user);
+    const studyCategory = useSelector((state) => state.studyCategory);
     const dispatch = useDispatch();
     const [studyPostList, setStudyPostList] = useState([]);
     const [searchType, setSearchType] = useState(0);
@@ -32,8 +33,9 @@ function StudyBoard(props) {
             params: {
                 search: 0,
                 page: selectPage,
+                category: studyCategory
             }
-        })//TODO: category
+        })
             .then(function (response) {
                 setStudyPostList(response.data.data.posts);
                 setTotalPage(response.data.data.num);
@@ -55,7 +57,7 @@ function StudyBoard(props) {
             .catch(function (error) {
                 console.log(error);
             });
-    }, [selectPage]);
+    }, [selectPage, studyCategory]);
 
     const searchStudy = () => {
         axios({
@@ -69,9 +71,8 @@ function StudyBoard(props) {
             }
         })
             .then(function (response) {
-                console.log(response.data)
                 setStudyPostList(response.data.data.posts);
-
+                dispatch(updateRecStudyList(response.data.data.rec));
                 if (response.data.data.num > 5) {
                     const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
                     setPages(tmp);
@@ -87,7 +88,6 @@ function StudyBoard(props) {
             });
 
     };
-
     const [inputValue, setInputValue] = useState('');
 
     const handleInputChange = (event) => {

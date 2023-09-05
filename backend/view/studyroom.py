@@ -1,12 +1,12 @@
 from flask import Flask, session, Blueprint, request, jsonify
-from flask_login import login_required, current_user
+from flask_login import current_user
 from datetime import datetime
-import json
 from bardapi import Bard
+import json
 import os
 
 from backend import config
-from backend.view import uploadFileS3, s3
+from backend.view import uploadFileS3, s3, login_required
 from backend.controller.member_mgmt import Member
 from backend.controller.studyroom_mgmt import StudyRoom
 from backend.controller.mentoringroom_mgmt import MentoringRoom
@@ -14,13 +14,11 @@ from backend.controller.mentoringroom_mgmt import MentoringRoom
 studyroom_bp = Blueprint('studyRoom', __name__, url_prefix='/study-room')
 
 @studyroom_bp.route('', methods=['GET'])
-def listRoom() :
+@login_required
+def listRoom(loginMember, new_token) :
 
-    loginId = current_user.get_id()
-    loginMember = Member.findById(loginId)
-
-    studyRooms = StudyRoom.findByMemberId(loginId)
-    mentoringRooms = MentoringRoom.findByMemberId(loginId)
+    studyRooms = StudyRoom.findByMemberId(loginMember.id)
+    mentoringRooms = MentoringRoom.findByMemberId(loginMember.id)
 
     studyRoomList = []
     mentoringRoomList = []
@@ -43,13 +41,17 @@ def listRoom() :
         })
 
     return {
-        'profileImage' : loginMember.image,
-        'studyRoom' : studyRoomList,
-        'mentoringRoom' : mentoringRoomList
+        'data' : {
+            'profileImage' : loginMember.image,
+            'studyRoom' : studyRoomList,
+            'mentoringRoom' : mentoringRoomList
+        },
+        'access_token' : new_token
     }
 
 @studyroom_bp.route('', methods=['POST'])
-def createRoom() :
+@login_required
+def createRoom(loginMember, new_token) :
 
     default_image = request.args.get('image')
 
@@ -70,25 +72,26 @@ def createRoom() :
     category = data['category']
     totalP = data['totalP']
 
-    login_member = current_user.get_id()
+    roomId = StudyRoom.save(roomName, datetime.now(), category, loginMember.id, image, totalP)
 
-    roomId = StudyRoom.save(roomName, datetime.now(), category, login_member, image, totalP)
-
-    done = StudyRoom.addStudent(login_member, roomId)
+    done = StudyRoom.addStudent(loginMember.id, roomId)
 
     if done != 1 :
         return {
             'status' : 400,
             'message' : '실패',
-            'data' : None
+            'data' : None,
+            'access_token' : new_token
         }
 
     return {
-        'data' : None
+        'data' : None,
+        'access_token' : new_token
     }
 
 @studyroom_bp.route('/<id>', methods=['GET'])
-def showRoom(id) :
+@login_required
+def showRoom(loginMember, new_token, id) :
     
     room = StudyRoom.findById(id)
 
@@ -105,13 +108,17 @@ def showRoom(id) :
         })
 
     return {
-        'name' : room.name,
-        'notice' : room.notice,
-        'join_members' : join_members
+        'data' : {
+            'name' : room.name,
+            'notice' : room.notice,
+            'join_members' : join_members
+        },
+        'access_token' : new_token
     }
     
 @studyroom_bp.route('/<id>/code-bard', methods=['POST'])
-def codeBard(id) :
+@login_required
+def codeBard(loginMember, new_token, id) :
     
     token = "aQjidj4C1b8pFHPh7GVcAibKq7XClQeNkQ6AuHuQrnhFKPml0iB1FgL1r_M_GTJqqOjRlQ."
     
@@ -123,11 +130,15 @@ def codeBard(id) :
     response = bard.get_answer(question)['content']
     
     return{
-       'answer':response
+        'data' : {
+            'answer': response
+        },
+        'access_token' : new_token
     }
     
 @studyroom_bp.route('/<id>/enter', methods=['GET'])
-def studyStart(id):
+@login_required
+def studyStart(loginMember, new_token, id):
     
     room = StudyRoom.findById(id)
     members = StudyRoom.findMemberByRoomId(id)

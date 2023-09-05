@@ -1,11 +1,14 @@
 from flask import Flask, Blueprint, request, jsonify, session, current_app
-from flask_login import login_user, current_user, logout_user, login_required
+from flask_login import login_user, current_user, logout_user
 from flask_mail import Message
+import requests
 import bcrypt
 import random
 import string
 
+from backend.view import login_required
 from backend.controller.member_mgmt import Member
+from backend.controller.refreshToken_mgmt import RefreshToken
 from backend import config
 
 member_bp = Blueprint('member', __name__, url_prefix='/member')
@@ -101,20 +104,59 @@ def login() :
         'nickname' : member.nickname
     }
 
-@login_required
 @member_bp.route('/logout', methods=['GET'])
-def logout() :
+@login_required
+def logout(loginMember, new_token) :
 
-    result = logout_user()
+    provider = request.cookies.get('provider')
+    access_token = request.cookies.get('access_token')
 
-    if result == True :
+    if provider == 'kakao' :
+
+        resp = requests.post(
+            config.KAKAO_LOGOUT_ENDPOINT, 
+            headers = {
+                'Authorization' : f'Bearer {access_token}'
+            }
+        )
+        RefreshToken.deleteByMember(loginMember.id)
+
         return {
+            'status' : 200,
+            'message' : 'logout',
             'data' : None
         }
-    else :
+    
+    elif provider == 'google' :
+
+        resp = requests.post(
+            config.GOOGLE_LOGOUT_ENDPOINT,
+            params = {
+                'token' : access_token
+            },
+            headers = {
+                'Content-type' : 'application/x-www-form-urlencoded'
+            }
+        )
         return {
-            'status' : 401,
-            'message' : '로그아웃 불가'
+            'status' : 200,
+            'message' : 'logout',
+            'data' : None
+        }
+
+    elif provider == 'naver' :
+        return {
+            'status' : 200,
+            'message' : 'logout',
+            'data' : None
+        }
+
+    else : # session login
+
+        logout_user()
+        
+        return {
+            'data' : None
         }
 
 @member_bp.route('/id', methods = ['POST'])

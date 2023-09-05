@@ -1,4 +1,4 @@
-from flask_login import current_user, login_required
+from flask_login import current_user
 from flask import Blueprint, request
 import bcrypt
 
@@ -7,41 +7,40 @@ from backend.controller.study_mgmt import studyPost
 from backend.controller.community_mgmt import QNAPost
 from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.replyQna_mgmt import ReplyQna
-from backend.view import formatYMD, uploadFileS3
+from backend.view import formatYMD, uploadFileS3, login_required
 
 mypage_bp = Blueprint('mypage', __name__, url_prefix='/mypage')
 
-@login_required
 @mypage_bp.route('/account', methods=['GET'])
-def showAccount() :
-
-    id = current_user.get_id()
-    loginMember = Member.findById(id)
+@login_required
+def showAccount(loginMember, new_token) :
 
     memId = loginMember.memId
     memNick = loginMember.nickname
     memEmail = loginMember.email
     memImage = loginMember.image
+    
+    if memId is None :
+        memId = memEmail.split('@')[0]
 
     return {
-        'id' : memId,
-        'nickname' : memNick,
-        'email' : memEmail,
-        'image' : memImage
+        'data' : {
+            'id' : memId,
+            'nickname' : memNick,
+            'email' : memEmail,
+            'image' : memImage
+        },
+        'access_token' : new_token
     }
 
-@login_required
 @mypage_bp.route('/account/password', methods = ['PATCH'])
-def changePassword() :
+@login_required
+def changePassword(loginMember, new_token) : # TODO 소셜 비활성화
 
     data = request.get_json()
 
     oldPw = data['oldPw']
     newPw = data['newPw']
-
-    id = current_user.get_id()
-
-    loginMember = Member.findById(id)
 
     hashed_pw = loginMember.password
     isVerified = verifyPassword(oldPw, hashed_pw)
@@ -50,57 +49,51 @@ def changePassword() :
         return {
             'status' : 400,
             'message' : '잘못된 비밀번호',
-            'data' : None
+            'data' : None,
+            'access_token' : new_token
         }
 
     hashed_new_pw = hashPassword(newPw)
 
-    result = Member.updatePassword(id, hashed_new_pw)
-
-    # TODO result로 예외 처리 (다른 함수도)
+    Member.updatePassword(loginMember.id, hashed_new_pw)
 
     return {
-        'data' : None
+        'data' : None,
+        'access_token' : new_token
     }
 
-@login_required
 @mypage_bp.route('/account/nickname', methods = ['PATCH'])
-def changeNickname() :
+@login_required
+def changeNickname(loginMember, new_token) :
 
     newNick = request.get_json()['newNick']
 
-    id = current_user.get_id()
-
-    result = Member.updateNickname(id, newNick)
+    Member.updateNickname(loginMember.id, newNick)
     
     return {
-        'data' : newNick
+        'data' : newNick,
+        'access_token' : new_token
     }
 
-@login_required
 @mypage_bp.route('/account/image', methods = ['PATCH'])
-def changeImage() :
+@login_required
+def changeImage(loginMember, new_token) :
 
     image = request.files['newImage']
     newImage = uploadFileS3(image, "profile")
     
-    id = current_user.get_id()
-
-    result = Member.updateImage(id, newImage)
+    Member.updateImage(loginMember.id, newImage)
     
     return {
-        'data' : newImage
+        'data' : newImage,
+        'access_token' : new_token
     }
 
+@mypage_bp.route('/account', methods = ['DELETE']) # TODO 소셜 탈퇴
 @login_required
-@mypage_bp.route('/account', methods = ['DELETE'])
-def deleteAccount() :
+def deleteAccount(loginMember, new_token) :
 
     password = request.get_json()['password']
-
-    id = current_user.get_id()
-
-    loginMember = Member.findById(id)
 
     hashed_pw = loginMember.password
     isVerified = verifyPassword(password, hashed_pw)
@@ -109,25 +102,25 @@ def deleteAccount() :
         return {
             'status' : 400,
             'message' : '잘못된 비밀번호',
-            'data' : None
+            'data' : None,
+            'access_token' : new_token
         }
     
-    result = Member.deleteById(id)
+    Member.deleteById(loginMember.id)
 
     return {
-        'data' : None
+        'data' : None,
+        'access_token' : new_token
     }
 
-@login_required
 @mypage_bp.route('/writing-list/<category>', methods = ['GET'])
-def listMyPosts(category) :
-
-    login_id = current_user.get_id()
+@login_required
+def listMyPosts(loginMember, new_token, category) :
 
     if category == 'study' :
-        posts = studyPost.findByWriterId(login_id)
+        posts = studyPost.findByWriterId(loginMember.id)
     else :
-        posts = QNAPost.findByWriterId(login_id)
+        posts = QNAPost.findByWriterId(loginMember.id)
 
     result = []
 
@@ -142,19 +135,18 @@ def listMyPosts(category) :
         result.append(myPost)
     
     return {
-        'data' : result
+        'data' : result,
+        'access_token' : new_token
     }
 
-@login_required
 @mypage_bp.route('/comment-list/<category>', methods = ['GET'])
-def listMyComments(category) :
-
-    login_id = current_user.get_id()
+@login_required
+def listMyComments(loginMember, new_token, category) :
 
     if category == 'study' :
-        replies = ReplyStudy.findByWriterId(login_id)
+        replies = ReplyStudy.findByWriterId(loginMember.id)
     else :
-        replies = ReplyQna.findByWriterId(login_id)
+        replies = ReplyQna.findByWriterId(loginMember.id)
 
     result = []
 
@@ -168,7 +160,8 @@ def listMyComments(category) :
         result.append(myReply)
     
     return {
-        'data' : result
+        'data' : result,
+        'access_token' : new_token
     }
 
 

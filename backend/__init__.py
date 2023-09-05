@@ -1,14 +1,16 @@
 # __name__ = "backend"
 
-from flask import Flask, jsonify, Response, request, redirect
+from flask import Flask, jsonify, Response, request
+from flask_login import login_required as original_login_required
+from flask_login import LoginManager, current_user
 from flask_mail import Mail
-from flask_login import LoginManager
+from functools import wraps
 from botocore.client import Config
 import boto3 
 import json
 
-from backend.controller.member_mgmt import Member
 from backend.view import member, study, studyroom, mypage, communityBoard, mentoring, pwithmain, chat, oauth_server, oauth_member
+from backend.controller.member_mgmt import Member
 from backend import config
 
 def create_app() :
@@ -37,29 +39,6 @@ def create_app() :
 
     @app.after_request
     def final_return(resp) :
-        
-        if resp.json.get('message') == 'redirect' :
-            return redirect(resp.json.get('data'))
-
-        if resp.json.get('access_token') is not None :
-
-            access_token = resp.json.get('access_token')
-            refresh_token = resp.json.get('refresh_token')
-
-            if refresh_token is None :
-                refresh_token = request.headers.get('Authorization').split('.')[1]
-
-            response = app.response_class(
-                headers = {'Authorization' : f'Bearer {access_token}.{refresh_token}'},
-                response = json.dumps({
-                    'status' : resp.json.get('status', 200),
-                    'message' : resp.json.get('message', '성공'),
-                    'data' : resp.json.get('data', resp.json)
-                }),
-                status = resp.json.get('status', 200),
-                mimetype = 'application/json'
-            )
-            return response
 
         response = app.response_class(
             response = json.dumps({
@@ -70,6 +49,28 @@ def create_app() :
             status = resp.json.get('status', 200),
             mimetype = 'application/json'
         )
+
+        if resp.json.get('message') == 'logout' : # logout
+            response.set_cookie('provider', value='', path='/')
+            response.set_cookie('access_token', value='', path='/')
+            response.set_cookie('refresh_token', value='', path='/')
+        
+        if resp.json.get('access_token') is not None : # new access token
+            access_token = resp.json.get('access_token')
+            response.set_cookie('access_token', value=access_token, path='/')
+
+        if resp.json.get('token') is not None : # TODO httponly=True 설정
+
+            token = resp.json.get('token')
+
+            provider = token.get('provider')
+            access_token = token.get('access_token')
+            refresh_token = token.get('refresh_token')
+
+            response.set_cookie('provider', value=provider, path='/')
+            response.set_cookie('access_token', value=access_token, path='/')
+            response.set_cookie('refresh_token', value=refresh_token, path='/')
+
         return response
 
     return app
@@ -88,7 +89,7 @@ def loadUser(id) : # 로그인 되어있는지 판단하기 전 사용자 정보
 
 @login_manager.unauthorized_handler
 def unauthorized() : # login_required로 요청된 기능에서 로그인되어 있지 않은 경우
-    # login_manager.login_view = "users.login"
+    # login_manager.login_view = "users.login" -> 프론트에서 처리
     return {
         'status' : 401,
         'message' : '로그인 필요',

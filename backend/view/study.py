@@ -5,6 +5,7 @@ from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.studyroom_mgmt import StudyRoom
 from backend.controller.member_mgmt import Member
 from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage, nicknameToId
+from backend.view import login_required
 from datetime import datetime
 import json
 
@@ -129,39 +130,27 @@ def show():
             }
 
 @study_bp.route('/<int:id>/apply', methods=['POST']) # 스터디 신청
-def applyStudy(id) :
+@login_required
+def applyStudy(id,  loginMember, new_token ) :
 
-    loginMember = current_user.get_id()
 
     roomId = studyPost.findRoomId(id)
-    done = StudyRoom.addStudent(loginMember, roomId)
+    done = StudyRoom.addStudent(loginMember.id, roomId)
     print(done)
     
-    post = studyPost.findById(id)
-    studyPost.insertStudyAlarm(post.writer, loginMember, roomId)
+    post = studyPost.findById(id) 
+    studyPost.insertStudyAlarm(post.writer, loginMember.id, roomId)
 
     return {
-        'data' : None
+        'data' : None,
+        'access_token' : new_token
     }
 
 @study_bp.route('/<int:id>', methods=['GET'])
-def showDetail(id) :     # 글 조회
+@login_required
+def showDetail(id, loginMember, new_token) :     # 글 조회
 
-        memId = current_user.get_id()
-        # apply = request.args.get('apply')
-
-        # if apply == 'go' : # 스터디 신청
-        #     roomId = studyPost.findRoomId(id)
-
-        #     done = StudyRoom.addStudent(current_user.get_id(), roomId)
-        #     print(done)
-            
-        #     print("apply")
-        #     # studyAlarm 에 추가
-            
-        #     post = studyPost.findById(id)
-        #     studyPost.insertStudyAlarm(post.writer, current_user.get_id(), roomId)
-
+        memId = loginMember.id
 
         result = {}
 
@@ -175,9 +164,9 @@ def showDetail(id) :     # 글 조회
         
         print(studentList)
         for member in studentList:
-            if current_user.get_id() is None:
+            if loginMember is None:
                 isApplied = False
-            elif Member.findById(current_user.get_id()) == member:
+            elif Member.findById(memId) == member:
                 isApplied = True
             else:
                 isApplied = False
@@ -187,7 +176,7 @@ def showDetail(id) :     # 글 조회
 
         liked = 0
         try : # 익명의 경우
-            liked = studyPost.findLike(current_user.get_id(), id)
+            liked = studyPost.findLike(memId, id)
         except Exception as ex :
             liked = False
 
@@ -228,30 +217,35 @@ def showDetail(id) :     # 글 조회
             })
 
         return {
-            'post' : result,
-            'reply' : replyResult
+            'data' : {
+                'post' : result,
+                'reply' : replyResult
+            },
+            'access_token' : new_token
         }
         
 @study_bp.route('/<int:id>', methods = ['PATCH'])
-def updatePost(id):   # 게시글 수정
-        id = request.get_json()['postId']
+@login_required
+def updatePost(id, loginMember, new_token):   # 게시글 수정
+        # id = request.get_json()['postId']
         postContent = request.get_json()['content']
+        postTitle = request.get_json()['title']
         
         try :
-            done = studyPost.updateStudy(id, postContent)
+            done = studyPost.updateStudy(id, postContent, postTitle)
         except Exception as ex :
             print("에러 이유 : " + str(ex))
             done = 0
 
         return {
-            'data': None
+            'data': None,
+            'access_token' : new_token
         }
          
 @study_bp.route('/<int:id>', methods = ['DELETE'])
-def deletePost(id): # 게시글 삭제
-    id = request.get_json()['postId']
-    # print(id)
-    
+@login_required
+def deletePost(id, loginMember, new_token): # 게시글 삭제
+
     try :
         done = studyPost.deleteStudy(id)
     except Exception as ex :
@@ -259,14 +253,16 @@ def deletePost(id): # 게시글 삭제
         done = 0
 
     return {
-        'data': None
+        'data': None,
+        'access_token' : new_token
     }
 
 @study_bp.route('/<int:studyId>', methods = ['POST'])
-def replyPost(studyId) :        # 댓글 작성
+@login_required
+def replyPost(studyId,  loginMember, new_token ) :        # 댓글 작성
     cnt = request.get_json()['content']
 
-    writer = current_user.get_id()
+    writer = loginMember.id
 
     date = datetime.now()
 
@@ -284,15 +280,20 @@ def replyPost(studyId) :        # 댓글 작성
         return{
             'status': 400,
             'data' : None,
-            'message' : "댓글을 달 수 없습니다."
+            'message' : "댓글을 달 수 없습니다.",
+            'access_token' : new_token
         }
     return {
-        'id' : replyId, 
-        'date' : formatDateToString(date)
+        'data': {
+            'id' : replyId, 
+            'date' : formatDateToString(date)
+        },
+        'access_token' : new_token
     }
 
 @study_bp.route('/<int:studyId>/<int:replyId>', methods = ['PATCH'])
-def replyPatch(studyId) :    # 댓글 수정
+@login_required
+def replyPatch(studyId,  loginMember, new_token ) :    # 댓글 수정
 
         replyId = request.get_json()['replyId']
         # print(replyId)
@@ -308,15 +309,18 @@ def replyPatch(studyId) :    # 댓글 수정
             return{
                 'status': 400,
                 'data' : None,
-                'message' : "댓글을 수정할 수 없습니다."
+                'message' : "댓글을 수정할 수 없습니다.",
+                'access_token' : new_token
             }
         else:
             return {
-                'data':None
+                'data':None,
+                'access_token' : new_token
             }
 
 @study_bp.route('/<int:studyId>/<int:replyId>', methods = ['DELETE'])
-def replyDelete(studyId) :     # 댓글 삭제
+@login_required
+def replyDelete(studyId,  loginMember, new_token ) :     # 댓글 삭제
 
         replyId = request.get_json()['replyId']
 
@@ -327,16 +331,17 @@ def replyDelete(studyId) :     # 댓글 삭제
             done = 0
 
         return {
-            'data': None
+            'data': None,
+            'access_token' : new_token
         }
 
-@login_required
 @study_bp.route("", methods=['GET', 'POST'])
-def write():        # 글 작성
+@login_required
+def write( loginMember, new_token ):        # 글 작성
     if request.method == 'GET' :
         result = []
 
-        roomList = studyPost.getMyStudyList(current_user.get_id())
+        roomList = studyPost.getMyStudyList(loginMember.id)
         # roomList = studyPost.getMyStudyList('a')
 
         for room in roomList :
@@ -347,7 +352,8 @@ def write():        # 글 작성
 
         # print(result)
         return {
-            'result' : result
+            'result' : result,
+            'access_token' : new_token
         }
 
     else :
@@ -356,7 +362,7 @@ def write():        # 글 작성
 
 
         title = data['title']
-        writer = current_user.get_id()
+        writer = loginMember.id
         curDate = studyPost.curdate()
         content = data['content']
         likes = 0
@@ -366,39 +372,32 @@ def write():        # 글 작성
         done =studyPost.insertStudy(title, writer, curDate, content, likes, views, roomId)
         
         return {
-            'data': None
+            'data': None,
+            'access_token' : new_token
         }
     
+@study_bp.route('/<int:id>/like', methods=['POST'])
 @login_required
-@study_bp.route('/<int:id>/like', methods=['GET', 'POST'])
-def like(id):
-    memId = current_user.get_id()
+def like(id, loginMember, new_token ):
+    memId = loginMember.id
     post = studyPost.findById(id)
+
+    postId = request.get_json()['postId']
     
-    if request.method=='POST':
-        postId = request.get_json()['postId']
-        
-        print(memId, postId)
-        studyPost.Like(memId, id)
-        
-        likes = studyPost.getLikes(id)
-        liked = studyPost.findLike(memId, id)
-        print(likes)
-        print(liked)
-        
-        return {
+    print(memId, postId)
+    studyPost.Like(memId, id)
+    
+    likes = studyPost.getLikes(id)
+    liked = studyPost.findLike(memId, id)
+    print(likes)
+    print(liked)
+    
+    return {
+        'data': {
             'likes' : likes,
             'liked' : liked
-        }
-
-        
-    # if request.method == 'GET':
-    #    likes = post.likes
-    #    liked = studyPost.findLike(memId, id)
-    #    return jsonify({
-    #        'likes' : likes,
-    #        'liked' : liked
-    #    })
-    return {'message': 'Invalid request method'}   # 추가: POST 요청 이외의 다른 요청에 대한 처리 로직
-        
+        },
+        'access_token' : new_token
+    }
+ 
 
