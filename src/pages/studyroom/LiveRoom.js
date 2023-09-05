@@ -10,6 +10,7 @@ import { faUsers } from "@fortawesome/free-solid-svg-icons";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faCode } from "@fortawesome/free-solid-svg-icons";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import io from 'socket.io-client';
@@ -21,6 +22,7 @@ const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 const LiveRoom = () => {
     const [isMikeOn, setIsMikeOn] = useState(true)
     const [isCameraOn, setIsCameraOn] = useState(true)
+    const [isCodeOn, setIsCodeOn] = useState(true)
     const audioRef = useRef(null);
     let myStream
     const [showPeople, setShowPeople] = useState(false)
@@ -84,6 +86,10 @@ const LiveRoom = () => {
         setIsCameraOn(!isCameraOn)
     }
 
+    const onClickCode = () => {
+        setIsCodeOn(!isCodeOn)
+    }
+
 
     return (
         <div className="live-room" ref={ref}>
@@ -99,6 +105,9 @@ const LiveRoom = () => {
                 <div className="screen">
                     <img className="screen-data" src={screenImg} />
                 </div>
+                {isCodeOn && <div className="code-upload">
+                    <div className="header"><div>코드 업로드</div><FontAwesomeIcon icon={faXmark} onClick={() => { setIsCodeOn(false) }} /></div>
+                    <textarea placeholder="코드를 업로드 하세요!" /></div>}
             </div >
 
             {showChat && <div className="right-space">
@@ -137,9 +146,9 @@ const LiveRoom = () => {
                         {isCameraOn ? <FontAwesomeIcon icon={faVideoSlash} color={'white'} size={'2x'} /> :
                             <FontAwesomeIcon icon={faVideo} color={'white'} size={'2x'} />}
                     </div>
-                    {/* <div className="share-button" onClick={onClickContentStream}>
-                        <FontAwesomeIcon icon={faArrowUpFromBracket} color={'white'} size={'2x'} />
-                    </div> */}
+                    <div className="share-button" onClick={onClickCode}>
+                        <FontAwesomeIcon icon={faCode} color={'white'} size={'2x'} />
+                    </div>
                 </div>
                 <div className="control-bar" style={{ marginLeft: 180 }}>
                     <div className="people-button" onClick={() => setShowPeople(!showPeople)}>
