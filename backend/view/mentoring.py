@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from flask_login import login_required, current_user
+from flask_login import current_user
 from datetime import datetime
 import json
 
@@ -7,13 +7,13 @@ from backend.controller.member_mgmt import Member
 from backend.controller.mentor_mgmt import Portfolio
 from backend.controller.mentoringroom_mgmt import MentoringRoom
 from backend.controller.chat_mgmt import chat
-from backend.view import uploadFileS3
+from backend.view import uploadFileS3, login_required
 
 mento_bp = Blueprint('mentoring', __name__, url_prefix='/mentoring')
 
-@login_required
 @mento_bp.route('', methods=['POST']) # 포폴 작성
-def writePortfolio():
+@login_required
+def writePortfolio(loginMember, new_token):
 
     image = request.files['mentoPic']
     mentoPic = uploadFileS3(image, "mentoring")
@@ -27,21 +27,21 @@ def writePortfolio():
     duration = data['duration']
     subjects = data['subject']
 
-    mento = current_user.get_id()
-
     date = datetime.now()
 
-    done = Portfolio.save(mento, mentoPic, brief, content, date, tuition, duration, subjects)
+    done = Portfolio.save(loginMember.id, mentoPic, brief, content, date, tuition, duration, subjects)
 
     if done == 1 :
         return {
-            'data' : None
+            'data' : None,
+            'access_token' : new_token
         }
     else :
         return {
             'status' : 400,
             'message' : '포트폴리오 존재',
-            'data' : None
+            'data' : None,
+            'access_token' : new_token
         }
 
 @mento_bp.route('', methods = ['GET']) # 포폴 목록
@@ -86,13 +86,11 @@ def listPortfolio() :
         'portfolioList' : portfolioList
     }
 
-    return {
-        'data' : result
-    }
+    return result
 
-@login_required
 @mento_bp.route('/<id>', methods = ['GET']) # 포폴 상세
-def showPortfolio(id) :
+@login_required
+def showPortfolio(loginMember, new_token, id) :
 
     portfolio = Portfolio.findById(id)
     
@@ -100,7 +98,8 @@ def showPortfolio(id) :
         return {
             'status' : 400,
             'message' : '없는 포트폴리오',
-            'data' : None
+            'data' : None,
+            'access_token' : new_token
         }
 
     result = {
@@ -116,13 +115,14 @@ def showPortfolio(id) :
         'subject' : list(map(int, portfolio[9].split(',')))
     }
 
-    loginId = current_user.get_id()
-
-    isNotFirst = MentoringRoom.existsByMentoMenti(portfolio[10], loginId)
+    isNotFirst = MentoringRoom.existsByMentoMenti(portfolio[10], loginMember.id)
 
     result.update({'isFirst' : not isNotFirst})
 
-    return result
+    return {
+        'data' : result,
+        'access_token' : new_token
+    }
 
     # 후기 관련 파트
     # review_list = Review.showReview(mentoId)
@@ -140,15 +140,16 @@ def showPortfolio(id) :
     #     'review' : review
     # })
 
-@login_required
 @mento_bp.route('/<id>', methods = ['PATCH']) # 포폴 수정
-def modifyPortfolio(id) :
+@login_required
+def modifyPortfolio(loginMember, new_token, id) :
 
     if Portfolio.existsById(id) == False:
         return {
             'status' : 400,
             'message' : '없는 포트폴리오',
-            'data' : None
+            'data' : None,
+            'access_token' : new_token
         }
 
     image = request.files['mentoPic']
@@ -166,59 +167,65 @@ def modifyPortfolio(id) :
     Portfolio.update(id, mentoPic, brief, content, tuition, duration, subjects)
 
     return {
-        'data' : None
+        'data' : None,
+        'access_token' : new_token
     }
 
-@login_required
 @mento_bp.route('/<id>', methods = ['DELETE']) # 포폴 삭제
-def deletePortfolio(id) :
+@login_required
+def deletePortfolio(loginMember, new_token, id) :
 
     if Portfolio.existsById(id) == False:
         return {
             'status' : 400,
             'message' : '없는 포트폴리오',
-            'data' : None
+            'data' : None,
+            'access_token' : new_token
         }
 
-    done = Portfolio.delete(id)
+    Portfolio.delete(id)
 
     return {
-        'data' : None
+        'data' : None,
+        'access_token' : new_token
     }
 
-@login_required
 @mento_bp.route('/<id>/state', methods = ['PATCH']) # ON/OFF
-def changeState(id) :
+@login_required
+def changeState(loginMember, new_token, id) :
 
     if Portfolio.existsById(id) == False:
         return {
             'status' : 400,
             'message' : '없는 포트폴리오',
-            'data' : None
+            'data' : None,
+            'access_token' : new_token
         }
 
-    done = Portfolio.updateState(id, datetime.now())
+    Portfolio.updateState(id, datetime.now())
 
     return {
-        'data' : None
+        'data' : None,
+        'access_token' : new_token
     }
 
-@login_required
 @mento_bp.route('/<id>/apply', methods=['POST'])
-def applyMentoring(id) :
+@login_required
+def applyMentoring(loginMember, new_token, id) :
 
     if Portfolio.existsById(id) == False:
         return {
             'status' : 400,
             'message' : '없는 포트폴리오',
-            'data' : None
+            'data' : None,
+            'access_token' : new_token
         }
     
     # 1. 룸 생성
-    mentiId = current_user.get_id()
+    mentiId = loginMember.id
     mentoId = Portfolio.findMentoById(id)
 
-    mentiNick = Member.findById(mentiId).nickname
+    mentiNick = loginMember.nickname
     mentoNick = Member.findById(mentoId).nickname
 
     roomName = f"멘토 {mentoNick}와 멘티 {mentiNick}의 공부방"
@@ -236,7 +243,8 @@ def applyMentoring(id) :
     done = chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
 
     return {
-        'data' : None
+        'data' : None,
+        'access_token' : new_token
     }
 
 ''' 후기 관련 파트
