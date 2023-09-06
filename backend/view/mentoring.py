@@ -7,7 +7,7 @@ from backend.controller.member_mgmt import Member
 from backend.controller.mentor_mgmt import Portfolio
 from backend.controller.mentoringroom_mgmt import MentoringRoom
 from backend.controller.chat_mgmt import chat
-from backend.view import uploadFileS3, login_required
+from backend.view import uploadFileS3, login_required, findSocialLoginMember
 
 mento_bp = Blueprint('mentoring', __name__, url_prefix='/mentoring')
 
@@ -50,8 +50,12 @@ def listPortfolio() :
     # 1. my portfolio
     myPortfolioId = None
 
-    loginId = current_user.get_id()
-
+    loginId = current_user.get_id() # check session
+    if loginId is None : # check tokens
+        loginMember, new_token = findSocialLoginMember()
+        if loginMember is not None :
+            loginId = loginMember.id
+        
     if loginId != None :
         myPortfolioId = Portfolio.findByMentoId(loginId)
 

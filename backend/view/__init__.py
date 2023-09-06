@@ -35,6 +35,25 @@ def uploadFileS3(file, dir="image"):
 
     return image_url
 
+def findSocialLoginMember() :
+    loginMember = None
+    new_token = None
+
+    provider = request.cookies.get('provider')
+    access_token = request.cookies.get('access_token')
+    refresh_token = request.cookies.get('refresh_token')
+
+    if provider == 'naver' : # OAuth Naver
+        loginMember, new_token = checkLoginNaver(access_token, refresh_token)
+    
+    elif provider == 'kakao' : # OAuth Kakao
+        loginMember, new_token = checkLoginKakao(access_token, refresh_token)
+
+    elif provider == 'google' : # OAuth Google
+        loginMember, new_token = checkLoginGoogle(access_token, refresh_token)
+    
+    return loginMember, new_token
+
 def custom_login_required(func):
     @wraps(func)
     def checkLogin(*args, **kwargs):
