@@ -23,13 +23,13 @@ def connectUrl(url, category='', sub_category = '', page = 1) :
     response = requests.get(url.format(category, sub_category, page), headers=header)
     return BeautifulSoup(response.text, 'html.parser')
 
-# conn_mongodb().book_crawling.delete_many({})
+conn_mongodb().book_crawling.delete_many({})
 page = 1
 sub_category_format = '00'
-sub_category_num = 5
-category = '001001003027'
+sub_category_num = 1
+category = '001001003025'
     
-for i in range(2):
+for i in range(10):
     soup = connectUrl(book_url, category)
     print('-------------category_num-----------------')
     print(sub_category_format+str(sub_category_num))
@@ -43,7 +43,7 @@ for i in range(2):
     second_category = soup.select_one('.cateSubRgt > .cateTit_sub > .cateTit_txt').get_text(strip=True)
     print(second_category)
     
-    while page != 4 :
+    while page != 3 :
         
             
         prod_items = soup.select('.cCont_listArea .clearfix .cCont_goodsSet')
@@ -53,7 +53,7 @@ for i in range(2):
                 #print(item)      
                 url = item.select_one('.goods_img > .goods_imgSet > .imgBdr > a').get('href')
                 complete_url = "https://www.yes24.com" + url
-                img = soup.select_one('.goods_img > .goods_imgSet > .imgBdr > a > img').get('src')
+                img = item.select_one('.goods_img > .goods_imgSet > .imgBdr > a > img').get('src')
                 title = item.select_one('.goods_info > .goods_name > a').get_text(strip=True)
                 comment = item.select_one('div.goods_info > div.goods_name > span.gd_nameE').get_text(strip=True)
                 auth = item.select_one('.goods_info > .goods_pubGrp > .goods_auth > a')
@@ -74,8 +74,12 @@ for i in range(2):
                 'second_category' : second_category,
                 'type' : 'book'
                 }
-                print(data)
-                # conn_mongodb().book_crawling.insert_one(data)
+                print(img)
+                conn_mongodb().book_crawling.insert_one(data)
+
+                # 업데이트할 내용 설정
+                # update_data = {"$set": {"img": img}}
+                # conn_mongodb().book_crawling.update_many({},update_data)
                 
         else:
             

@@ -455,7 +455,7 @@ def listBooks() :
             'publisher' : book['publisher'],
             'first_category' : book['first_category'],
             'second_category' : book['second_category'],
-            'category' : book['category'],
+            'category' : 'IT 모바일',
             'link' : book['url'],
             'image': book['img'],
             'type' : book['type']
