@@ -22,7 +22,7 @@ function Reply(props) {
 
     function deleteComment(replyId) {
         if (baseUrl === undefined || id === undefined) return
-        axios.delete(`${baseUrl}/${replyId}`, {
+        axios.delete(`${baseUrl}/${id}/${replyId}`, {
             data: {
                 replyId: `${replyId}`
             }
@@ -42,7 +42,7 @@ function Reply(props) {
     }
     function updateComment(replyId, content) {
         if (baseUrl === undefined || id === undefined) return
-        axios.patch(`${baseUrl}/${replyId}`, {
+        axios.patch(`${baseUrl}/${id}/${replyId}`, {
             replyId: `${replyId}`,
             content: `${content}`
         })
@@ -61,11 +61,6 @@ function Reply(props) {
                 // 오류발생시 실행
             })
     }
-
-    useEffect(() => {
-        console.log(reply)
-    }, [reply])
-
     return <div key={item.id}>{/* 댓글하나 */}
         <div className='align-row' style={{ justifyContent: "center", alignItems: "center" }}>
             {item.profileImage && <img src={`${item.profileImage}?version=${Math.random()}`} className='comment' style={{ width: '45px', height: '45px' }} />}
