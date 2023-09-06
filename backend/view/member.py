@@ -273,7 +273,7 @@ def makeUrl() :
 
     return url
 
-def sendResetPage(email, url) :
+def sendResetPage(email, url) : # TODO refactoring
 
     title = '[Pwith] 비밀번호 재설정 페이지'
     content = '''
@@ -292,7 +292,7 @@ def sendResetPage(email, url) :
     sendEmail(email, title, content)
     return None
 
-def sendAuthCode(email) :
+def sendAuthCode(email) : # TODO refactoring
 
     auth_number = str(random.randint(100000, 999999))
     title = '[Pwith] 이메일 인증 번호 발급'
