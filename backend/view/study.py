@@ -293,10 +293,8 @@ def replyPost(studyId,  loginMember, new_token ) :        # 댓글 작성
 
 @study_bp.route('/<int:studyId>/<int:replyId>', methods = ['PATCH'])
 @login_required
-def replyPatch(studyId,  loginMember, new_token ) :    # 댓글 수정
+def replyPatch(studyId, replyId, loginMember, new_token ) :    # 댓글 수정
 
-        replyId = request.get_json()['replyId']
-        # print(replyId)
         newContent = request.get_json()['content']
 
         try :
@@ -320,9 +318,7 @@ def replyPatch(studyId,  loginMember, new_token ) :    # 댓글 수정
 
 @study_bp.route('/<int:studyId>/<int:replyId>', methods = ['DELETE'])
 @login_required
-def replyDelete(studyId,  loginMember, new_token ) :     # 댓글 삭제
-
-        replyId = request.get_json()['replyId']
+def replyDelete(studyId, replyId, loginMember, new_token ) :     # 댓글 삭제
 
         try :
             done = ReplyStudy.removeReply(replyId)
@@ -352,7 +348,9 @@ def write( loginMember, new_token ):        # 글 작성
 
         # print(result)
         return {
-            'result' : result,
+            'data' : {
+                'result' : result
+                },
             'access_token' : new_token
         }
 
