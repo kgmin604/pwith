@@ -311,8 +311,8 @@ def replyPost(id, loginMember, new_token) :      # 댓글 작성
 
 @community_bp.route('/qna/<int:id>/<int:replyId>', methods = ['PATCH'])
 @login_required
-def replyPatch(id, loginMember, new_token) :  # 댓글 수정
-        replyId = request.get_json()['replyId']
+def replyPatch(id, replyId, loginMember, new_token) :  # 댓글 수정
+
         newContent = request.get_json()['content']
 
         try :
@@ -322,15 +322,13 @@ def replyPatch(id, loginMember, new_token) :  # 댓글 수정
             done = 0
 
         return {
-            'done' : None,
+            'data' : None,
             'access_token' : new_token
         }
 
 @community_bp.route('/qna/<int:id>/<int:replyId>', methods = ['DELETE'])
 @login_required
-def replyDelete(id, loginMember, new_token) : # 댓글 삭제
-
-        replyId = request.get_json()['replyId']
+def replyDelete(id, replyId, loginMember, new_token) : # 댓글 삭제
 
         try :
             done = ReplyQna.removeReply(replyId)
