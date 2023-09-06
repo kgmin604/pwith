@@ -120,15 +120,13 @@ def showRoom(loginMember, new_token, id) :
     
 @studyroom_bp.route('/<id>/code-bard', methods=['POST'])
 @login_required
-def codeBard(loginMember, new_token, id) :
-    
-    token = "aQjidj4C1b8pFHPh7GVcAibKq7XClQeNkQ6AuHuQrnhFKPml0iB1FgL1r_M_GTJqqOjRlQ."
+def codeBard(id, loginMember, new_token) :
     
     data = request.get_json(silent=True)
     question = data['text']
     
 
-    bard = Bard(token=token)
+    bard = Bard(token=config.BARD_TOKEN)
     response = bard.get_answer(question)['content']
     
     return{
@@ -138,18 +136,14 @@ def codeBard(loginMember, new_token, id) :
         'access_token' : new_token
     }
     
-@studyroom_bp.route('/<id>/enter', methods=['GET'])
+@studyroom_bp.route('/live/<id>', methods=['GET'])
 @login_required
 def studyStart(loginMember, new_token, id):
     
     room = StudyRoom.findById(id)
     members = StudyRoom.findMemberByRoomId(id)
 
-    join_members = []
-
-    for m in members :
-
-        join_members.append({
-            'nickname' : m.nickname,
-        })
-    
+    return{
+        'data' : None,
+        'access_token' : new_token
+    }
