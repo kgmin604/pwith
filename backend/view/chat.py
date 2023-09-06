@@ -1,16 +1,16 @@
 from flask import Flask, Blueprint, request, jsonify, redirect, url_for, session, render_template
-from flask_login import login_user, current_user, login_required
 from backend.controller.chat_mgmt import chat
 from backend.view import IdtoMemId, nicknameToId, findNickName, getFormattedDate, mainFormattedDate, formatDateToString
+from backend.view import login_required
 
 chat_bp = Blueprint('chat', __name__, url_prefix='/mypage/chat')
 
-@login_required
 @chat_bp.route('/list', methods=['POST'])
-def showList():     # 1:1 채팅 목록 가져오기
+@login_required
+def showList(loginMember, new_token):     # 1:1 채팅 목록 가져오기
 
     data = request.get_json(silent=True)  # silent: parsing fail 에러 방지
-    memId = current_user.get_id()
+    memId = loginMember.id
     nickname = nicknameToId(data.get('nickname'))
     
     
@@ -35,18 +35,19 @@ def showList():     # 1:1 채팅 목록 가져오기
         msgList.append(chatting_data)
     #print(chatlist)
     return {
-            'data': msgList
+            'data': msgList,
+            'access_token' : new_token
             }
         
 
-@login_required
 @chat_bp.route('', methods=['POST'])
-def send():     # 쪽지 보내기
+@login_required
+def send(loginMember, new_token):     # 쪽지 보내기
     data = request.get_json(silent=True)  # silent: parsing fail 에러 방지
         
     print(data)
     # postType = data.get('type')
-    memId = current_user.get_id()
+    memId = loginMember.id
     print(memId)
     nickname = data.get('nickname')
     print(nickname)
@@ -66,20 +67,22 @@ def send():     # 쪽지 보내기
         chat.insertChatAlarm(oppNickId, memId, chatId)
         
         return {
-            'data': None
+            'data': None,
+            'access_token' : new_token
         }
     else:   # oppId 유효하지 않은 경우
         return {
             "status": 400,
             "data" : None,
-            "message" : "상대방 아이디를 찾을 수 없습니다."
+            "message" : "상대방 아이디를 찾을 수 없습니다.",
+            'access_token' : new_token
             }
         
         
-@login_required
 @chat_bp.route('', methods=['GET'])
-def showAllChat():     #전체 채팅목록 가져오기 (current_user id와 관련있는 채팅 모두)
-    postMemId = current_user.get_id()
+@login_required
+def showAllChat(loginMember, new_token):     #전체 채팅목록 가져오기 (current_user id와 관련있는 채팅 모두)
+    postMemId = loginMember.id
     chat_data = []
     chattings = chat.getAllChat(postMemId)
 
@@ -95,5 +98,6 @@ def showAllChat():     #전체 채팅목록 가져오기 (current_user id와 관
         chat_data.append(chatting_data)
     print(chat_data)
     return {
-            'data' : chat_data
+            'data' : chat_data,
+            'access_token' : new_token
         }
