@@ -1,0 +1,19 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Noom
+        link(rel="stylesheet", href="https://unpkg.com/mvp.css")
+    body
+        header
+            h1 Chatting
+        main
+            h3
+            ul
+            //- 안에 사용자, 내용, 시간
+            form#message
+                input(placeholder="메시지를 입력하세요.", required, type="text")
+                button 전송
+        script(src="/socket.io/socket.io.js")
+        script(src="/public/js/app.js")
