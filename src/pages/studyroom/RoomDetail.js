@@ -22,14 +22,26 @@ function RoomDetail(){
     let navigate = useNavigate();
     
     let [roomInfo, setRoomInfo] = useState({
-        id:31,
-        name: '방학맞이 알고리즘',
-        img:'https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/studyroom/kkm5424203979823822.jpg',
-        notice: '공지입니다',
-        leader: '경민',
-        mem: ['경민', '주연', '채영', '정윤']
+        id: 0,
+        name: '',
+        image:'',
+        notice: '',
+        leader: '',
+        join_members: [
+            {
+                "image": "",
+                "memId": "",
+                "nickname": ""
+            },
+            {
+                "image": "",
+                "memId": "",
+                "nickname": ""
+            }
+        ]
     });
 
+    // dummy data
     let tmp = {
         sender: '경민',
         content: '채애팅',
@@ -50,7 +62,6 @@ function RoomDetail(){
         content: '백엔드 ㅋ',
         date: '23/09/05 20:00'
     };
-
     let tmp4 = {
         sender: '주연',
         content: '프론트엔드 ㅎ',
@@ -65,9 +76,11 @@ function RoomDetail(){
     let [isChange, setIsChange] = useState(false);
 
     let [newNotice, setNewNotice] = useState('공지입니다');
-    let [chatName, setChatName] = useState('경민');
-    let [chatContent, setChatContent] = useState(''); // 개인쪽지
-    let [msg, setMsg] = useState(''); // 개인쪽지
+    
+    // 개인 쪽지 관련 데이터
+    let [chatName, setChatName] = useState('');
+    let [chatContent, setChatContent] = useState('');
+    let [msg, setMsg] = useState('');
     
     function handleMouseOver(event){
         event.stopPropagation();
@@ -99,7 +112,6 @@ function RoomDetail(){
         setChatContent(event.target.value);
     }
 
-    /*
     useEffect(()=>{
         const url = window.location.href;
         const part = url.split("/");
@@ -110,13 +122,17 @@ function RoomDetail(){
             url: `/study-room/${RoomId}`
         })
         .then(function (response) {
-            console.log(response.data);
+            //console.log(response.data);
+            const tmp = response.data.data;
+            tmp['id'] = RoomId;
+            setRoomInfo(tmp);
+            console.log(roomInfo);
         })
         .catch(function (error) {
-            console.log(error);
+            //console.log(error);
         });
     },[])
-    */
+    
 
     return(
     <>
@@ -124,7 +140,7 @@ function RoomDetail(){
             <div className="row">
                 <div className="col-md-3">
                     <div className="info-area">
-                        <img src={`${roomInfo.img}`} alt="User" />
+                        <img src={`${roomInfo.image}`} alt="User" />
                         <div className="info-header">
                             <h3>{roomInfo.name}</h3>
                             <h3 className="leader">
@@ -144,6 +160,10 @@ function RoomDetail(){
                             </div>
                         </div>
                         <div className="ent-btn" onClick={ (e)=>{e.stopPropagation(); navigate(`./../live/${roomInfo.id}`);}}>입장하기</div>
+                        {
+                            user.name === roomInfo.leader ?
+                            <span>스터디 삭제하기</span> : null
+                        }
                     </div>
                 </div>
                 <div class="col-md-9">
@@ -184,12 +204,12 @@ function RoomDetail(){
                                 <hr style={{margin:'0 0'}}></hr>
                                 <div className="items">
                                 {
-                                    roomInfo.mem.map((member, i)=>(
+                                    roomInfo.join_members.map((member, i)=>(
                                         <div className="item" key={i}>
-                                            <h3>{member}</h3>
+                                            <h3>{member.nickname}</h3>
                                             <FontAwesomeIcon 
                                                 icon={faMessage} className="send-btn"
-                                                onClick={(e)=>{ handleModal(e); }}
+                                                onClick={(e)=>{ setChatName(member.nickname); handleModal(e); }}
                                             />
                                         </div>
                                     ))

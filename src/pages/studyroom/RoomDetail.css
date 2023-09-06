@@ -49,6 +49,13 @@ div.room-detail-wrap div.row div.col-md-3 div.info-area
     margin: 15px 0;
 }
 
+div.room-detail-wrap div.row div.col-md-3 div.info-area
+span{
+    font-size: 5px;
+    color: gray;
+    text-decoration: underline;
+}
+
 div.room-detail-wrap div.row div.col-md-3 div.info-area div.info-header
 h3{
     margin: 5px 0;
