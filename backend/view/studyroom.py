@@ -6,7 +6,7 @@ import json
 import os
 
 from backend import config
-from backend.view import uploadFileS3, s3, login_required
+from backend.view import uploadFileS3, s3, login_required, findNickName
 from backend.controller.member_mgmt import Member
 from backend.controller.studyroom_mgmt import StudyRoom
 from backend.controller.mentoringroom_mgmt import MentoringRoom
@@ -111,6 +111,8 @@ def showRoom(loginMember, new_token, id) :
         'data' : {
             'name' : room.name,
             'notice' : room.notice,
+            'leader' : findNickName(room.leader),
+            'image' : room.image,
             'join_members' : join_members
         },
         'access_token' : new_token
