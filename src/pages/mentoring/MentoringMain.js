@@ -5,7 +5,7 @@ import "./mentoring.css";
 import { Form, Nav, Stack, Button, Row } from "react-bootstrap";
 import axios from 'axios';
 import { Link, useNavigate } from "react-router-dom";
-import MentoCard from './MentoCard';
+import MentorCard from './MentorCard';
 import { useSelector } from "react-redux";
 
 
@@ -71,7 +71,7 @@ function MentoringMain() {
                     <hr />
                     <Row className="row-cols-1 row-cols-md-4 g-2" style={{ padding: '10px' }}>
                         {mentoList?.map((mento) => {
-                            return (<MentoCard mento={mento} />
+                            return (<MentorCard mento={mento} />
                             )
                         })}
                     </Row>

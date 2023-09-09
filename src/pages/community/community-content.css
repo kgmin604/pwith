@@ -1,13 +1,12 @@
-.category-area{
+.category-area {
     text-align: center;
 }
 
-.content-area{
+.content-area {
     margin-bottom: 100px;
 }
 
-div.content-area
-.header{
+div.content-area .header {
     background-color: rgb(245, 245, 245);
     border-radius: 5px;
     width: 100%;
@@ -15,12 +14,11 @@ div.content-area
     margin: 0 0;
     margin-bottom: 30px;
     display: flex;
-    gap:10px;
+    gap: 10px;
     padding-left: 10px;
 }
 
-div.content-area div.header
-h3{
+div.content-area div.header h3 {
     height: 50px;
     line-height: 50px;
     font-family: 'Noto Sans KR';
@@ -29,35 +27,30 @@ h3{
     color: gray;
 }
 
-div.content-area div.header
-.selected{
+div.content-area div.header .selected {
     font-weight: 900;
     font-size: 18px;
-    color:black;
-    text-decoration-line:underline;
+    color: black;
+    text-decoration-line: underline;
 }
 
-div.content-area div.header
-.non-selected{
+div.content-area div.header .non-selected {
     cursor: pointer;
 }
 
-div.content-area
-.body{
+div.content-area .body {
     padding: 0 45px;
 }
 
-div.content-area div.body
-.items{
+div.content-area div.body .items {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
 }
 
-div.content-area div.body div.items
-.item{
+div.content-area div.body div.items .item {
     display: flex;
-    align-items: center; 
+    align-items: center;
     flex-direction: column;
     width: 200px;
     height: 240px;
@@ -68,24 +61,26 @@ div.content-area div.body div.items
     padding: 10px;
 }
 
-div.content-area div.body div.items div.item
-img{
+div.content-area div.body div.items .item:hover {
+    transform: translateY(-5px);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+div.content-area div.body div.items div.item img {
     width: 220px;
     height: 150px;
     object-fit: cover;
     overflow: hidden;
 }
 
-div.content-area div.body div.items div.item
-h5{
+div.content-area div.body div.items div.item h5 {
     font-family: 'Noto Sans KR';
     font-weight: 700;
     font-size: 14px;
     margin: 0 0;
 }
 
-div.content-area div.body div.items div.item
-.tags{
+div.content-area div.body div.items div.item .tags {
     height: 24px;
     display: flex;
     flex-wrap: wrap;
@@ -95,12 +90,13 @@ div.content-area div.body div.items div.item
     margin: 0 0;
 }
 
-div.content-area div.body div.items div.item div.tags
-.tag{
+div.content-area div.body div.items div.item div.tags .tag {
     border-radius: 3px;
     background-color: rgb(229, 229, 229);
-    display: inline-block; /* inline 요소를 block 요소로 변경하여 width 조절 가능 */
-    padding: 3px 5px; /* 패딩을 추가하여 텍스트 주위에 여백 생성 */
+    display: inline-block;
+    /* inline 요소를 block 요소로 변경하여 width 조절 가능 */
+    padding: 3px 5px;
+    /* 패딩을 추가하여 텍스트 주위에 여백 생성 */
     font-family: 'Noto Sans KR';
     font-weight: 700;
     font-size: 12px;

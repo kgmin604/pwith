@@ -164,6 +164,8 @@
     color: #1D1D29;
     font-size: 18px;
     font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .noScore {
