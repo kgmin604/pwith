@@ -164,12 +164,10 @@ function RoomDetail(){
 
     function tmpF(){
         console.log('클릭');
-        // socket = io('http://localhost:5000/studyroom/', {
-        //     cors: {
-        //         origin: '*',
-        //     },
-        // });
-        socket.emit('enter');
+        socket.emit('sendTo', { // sendTo 테스트 하려고 바꿈 - ㅊㅇ
+            'roomId': 123,
+            'message': '안녕안녕'
+        });
     }
 
     return(
