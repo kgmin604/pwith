@@ -45,6 +45,9 @@ const LiveRoom = () => {
         }
     };
 
+    const socket = io()
+    const myPeerConnection = new RTCPeerConnection();
+    let myDataChannel;
 
     async function getMedia() {
         const initialConstrains = {
@@ -62,8 +65,45 @@ const LiveRoom = () => {
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
         getMedia()
+        socket.on("welcome", async () => {
+            myDataChannel = myPeerConnection.createDataChannel("chat");
+            myDataChannel.addEventListener("message", (event) => console.log(event.data));
+            console.log("made data channel");
+            const offer = await myPeerConnection.createOffer();
+            myPeerConnection.setLocalDescription(offer);
+            console.log("sent the offer");
+            socket.emit("offer", offer);
+        });
+
+        socket.on("offer", async (offer) => {
+            myPeerConnection.addEventListener("datachannel", (event) => {
+                myDataChannel = event.channel;
+                myDataChannel.addEventListener("message", (event) =>
+                    console.log(event.data)
+                );
+            });
+            console.log("received the offer");
+            myPeerConnection.setRemoteDescription(offer);
+            const answer = await myPeerConnection.createAnswer();
+            myPeerConnection.setLocalDescription(answer);
+            socket.emit("answer", answer,);
+            console.log("sent the answer");
+        });
+
+        socket.on("answer", (answer) => {
+            console.log("received the answer");
+            myPeerConnection.setRemoteDescription(answer);
+        });
+
+        socket.on("ice", (ice) => {
+            console.log("received candidate");
+            myPeerConnection.addIceCandidate(ice);
+        });
+
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+            socket.disconnect();
+
         };
     }, []);
 
