@@ -18,9 +18,23 @@ import { faVideoSlash } from "@fortawesome/free-solid-svg-icons/faVideoSlash";
 import { faPencil } from "@fortawesome/free-solid-svg-icons/faPencil";
 import { faMessage } from "@fortawesome/free-solid-svg-icons/faMessage";
 
-const socket = io('http://127.0.0.1:5000');
+/*
+const socket = io('http://localhost:5000', {
+  transports: ['websocket'], // 웹소켓 사용
+  cors: {
+    origin: '*',
+  },
+});
+*/
 
 function RoomDetail(){
+
+    const socket = io('http://localhost:5000', {
+        cors: {
+            origin: '*',
+        },
+    });
+    
     let user = useSelector((state) => state.user);
     let navigate = useNavigate();
     
@@ -139,12 +153,18 @@ function RoomDetail(){
     // 소켓 통신하기
     
     useEffect(()=>{
-        socket.on('connect', () => { // socket 연결 성공. 서버와 통신 시작.
+        console.log('연결 시도')
+
+        socket.on('connect', (data) => { // socket 연결 성공. 서버와 통신 시작.
             console.log('Socket connected');
         });
-        socket.emit('enter');
-        
+
     },[])
+
+    function tmpF(){
+        console.log('클릭');
+        socket.emit('enter');
+    }
 
     return(
     <>
@@ -155,7 +175,7 @@ function RoomDetail(){
                         <img src={`${roomInfo.image}`} alt="User" />
                         <div className="info-header">
                             <h3>{roomInfo.name}</h3>
-                            <h3 className="leader">
+                            <h3 className="leader" onClick={e=>{e.stopPropagation(); tmpF();}}> 
                                 LEADER
                                 <FontAwesomeIcon icon={faCrown} style={{color: "rgb(61, 105, 144)", 'margin':'0 5px'}}/>
                                 {roomInfo.leader}

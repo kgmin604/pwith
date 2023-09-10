@@ -52,5 +52,6 @@ def upload_file():
 #     socketio.emit('ice', ice, room=roomId)
 
 if __name__ == "__main__": # 해당 파일을 실행했을 경우
-    # app.run(host="127.0.0.1", port="5000")
-    socketio.run(app)
+    #app.run(host="127.0.0.1", port="5000")
+    #socketio.run(app)
+    socketio.run(app, host="127.0.0.1", port=5000)
