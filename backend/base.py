@@ -3,6 +3,8 @@ from backend.view import s3
 from flask import request
 from werkzeug.utils import secure_filename
 
+from flask_socketio import SocketIO, emit
+
 @app.route('/imgupload', methods=['POST'])
 def upload_file():
 
@@ -29,6 +31,25 @@ def upload_file():
     #     'message' : '선택된 파일 없음',
     #     'data' : None
     # }
+    
+socketio = SocketIO(app, cors_allowed_origins="http://localhost:3000")
+
+# @socketio.on('join_room')
+# def join_room(roomId):
+#     socketio.join_room(roomId)
+#     socketio.emit('welcome', room=roomId)
+
+# @socketio.on('offer')
+# def handle_offer(offer, roomId):
+#     socketio.emit('offer', offer, room=roomId)
+
+# @socketio.on('answer')
+# def handle_answer(answer, roomId):
+#     socketio.emit('answer', answer, room=roomId)
+
+# @socketio.on('ice')
+# def handle_ice(ice, roomId):
+#     socketio.emit('ice', ice, room=roomId)
 
 if __name__ == "__main__": # 해당 파일을 실행했을 경우
     app.run(host="127.0.0.1", port="5000")
