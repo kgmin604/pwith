@@ -1,6 +1,8 @@
 import React from 'react';
 import axios from "axios";
 
+import io from 'socket.io-client';
+
 import "./RoomDetail.css";
 import "./liveroom.css";
 import { useState, useEffect  } from "react";
@@ -16,6 +18,7 @@ import { faVideoSlash } from "@fortawesome/free-solid-svg-icons/faVideoSlash";
 import { faPencil } from "@fortawesome/free-solid-svg-icons/faPencil";
 import { faMessage } from "@fortawesome/free-solid-svg-icons/faMessage";
 
+const socket = io('http://127.0.0.1:5000');
 
 function RoomDetail(){
     let user = useSelector((state) => state.user);
@@ -28,16 +31,13 @@ function RoomDetail(){
         notice: '',
         leader: '',
         join_members: [
+            /*
             {
                 "image": "",
                 "memId": "",
                 "nickname": ""
             },
-            {
-                "image": "",
-                "memId": "",
-                "nickname": ""
-            }
+            */
         ]
     });
 
@@ -45,7 +45,8 @@ function RoomDetail(){
     let tmp = {
         sender: '경민',
         content: '채애팅',
-        date: '23/09/05 14:00'
+        date: '23/09/05 14:00',
+        roomId: 31,
     };
     let tmp1 = {
         sender: '경민',
@@ -112,6 +113,8 @@ function RoomDetail(){
         setChatContent(event.target.value);
     }
 
+    // room data 받아오기
+
     useEffect(()=>{
         const url = window.location.href;
         const part = url.split("/");
@@ -132,7 +135,16 @@ function RoomDetail(){
             //console.log(error);
         });
     },[])
+
+    // 소켓 통신하기
     
+    useEffect(()=>{
+        socket.on('connect', () => { // socket 연결 성공. 서버와 통신 시작.
+            console.log('Socket connected');
+        });
+        socket.emit('enter');
+        
+    },[])
 
     return(
     <>
@@ -207,10 +219,15 @@ function RoomDetail(){
                                     roomInfo.join_members.map((member, i)=>(
                                         <div className="item" key={i}>
                                             <h3>{member.nickname}</h3>
-                                            <FontAwesomeIcon 
-                                                icon={faMessage} className="send-btn"
-                                                onClick={(e)=>{ setChatName(member.nickname); handleModal(e); }}
-                                            />
+                                            {
+                                                member.nickname !== user.name ?
+                                                <FontAwesomeIcon 
+                                                    icon={faMessage} className="send-btn"
+                                                    onClick={(e)=>{ setChatName(member.nickname); handleModal(e); }}
+                                                />
+                                                :
+                                                null
+                                            }
                                         </div>
                                     ))
                                 }

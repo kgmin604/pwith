@@ -48,6 +48,10 @@ function Auth() {
                 alert("유효하지 않은 페이지입니다.");
                 navigate("/");
             }
+            if(error.response.data.status===409){
+                alert("이미 사용중인 이메일입니다.");
+                navigate("/");
+            }
         })
     },[]);
 

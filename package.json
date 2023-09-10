@@ -21,6 +21,7 @@
     "browser-image-compression": "^2.0.2",
     "ckeditor4": "^4.21.0",
     "html-react-parser": "^3.0.16",
+    "http": "^0.0.1-security",
     "js-cookie": "^3.0.5",
     "mongodb": "^6.0.0",
     "mongoose": "^7.5.0",
