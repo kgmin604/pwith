@@ -26,10 +26,11 @@ const socket = io('http://localhost:5000', {
   },
 });
 */
+let socket;
 
 function RoomDetail(){
 
-    const socket = io('http://localhost:5000', {
+    socket = io('ws://localhost:5000', {
         cors: {
             origin: '*',
         },
@@ -163,6 +164,11 @@ function RoomDetail(){
 
     function tmpF(){
         console.log('클릭');
+        // socket = io('http://localhost:5000/studyroom/', {
+        //     cors: {
+        //         origin: '*',
+        //     },
+        // });
         socket.emit('enter');
     }
 

@@ -9,6 +9,7 @@ from functools import wraps
 from botocore.client import Config
 import boto3 
 import json
+import logging ###
 
 from backend.view import member, study, studyroom, mypage, communityBoard, mentoring, pwithmain, chat, oauth_server, oauth_member
 from backend.controller.member_mgmt import Member
@@ -37,6 +38,8 @@ def create_app() :
     app.register_blueprint(chat.chat_bp)
     app.register_blueprint(oauth_server.oauth_bp)
     app.register_blueprint(oauth_member.oauth_member_bp)
+
+    app.logger.setLevel(logging.WARNING) ###
 
     @app.after_request
     def final_return(resp) :
@@ -87,7 +90,6 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def loadUser(id) : # 로그인 되어있는지 판단하기 전 사용자 정보 조회
-    print("memId : " + str(id))
     return Member.findById(id)
 
 @login_manager.unauthorized_handler

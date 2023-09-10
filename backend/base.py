@@ -5,6 +5,10 @@ from werkzeug.utils import secure_filename
 
 from flask_socketio import SocketIO
 
+# @app.route('/socket.io/', methods=['GET', 'POST'])
+# def socketioTest():
+#     print("=================")
+
 @app.route('/imgupload', methods=['POST'])
 def upload_file():
 
@@ -21,16 +25,6 @@ def upload_file():
     return {
         'data' : f"https://{config.S3_BUCKET_NAME}.s3.{location}.amazonaws.com/{filename}.jpg"
     }
-
-    #     # return {
-    #     #     'result' : '파일 업로드 성공'
-    #     # }
-    
-    # return {
-    #     'status' : 404,
-    #     'message' : '선택된 파일 없음',
-    #     'data' : None
-    # }
     
 # socketio = SocketIO(app, cors_allowed_origins="http://localhost:3000")
 
@@ -53,4 +47,18 @@ def upload_file():
 
 if __name__ == "__main__": # 해당 파일을 실행했을 경우
     # app.run(host="127.0.0.1", port="5000")
-    socketio.run(app, host="127.0.0.1", port=5000)
+    # socketio.run(app, host="127.0.0.1", port=5000)
+    # socketio.run(app)
+    pass
+
+@socketio.on('connect')
+def test_connect():
+    print("========CONNECT========")
+
+@socketio.on('disconnect')
+def test_disconnect():
+    print('========DISCONNECT========')
+
+@socketio.on('enter')
+def enterRoom(): # data는 json type
+    print("======ENTERROOM======")
