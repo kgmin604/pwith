@@ -80,7 +80,7 @@ app = create_app()
 
 mail = Mail(app)
 
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 login_manager = LoginManager()
 login_manager.init_app(app)
