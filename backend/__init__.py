@@ -4,6 +4,7 @@ from flask import Flask, jsonify, Response, request
 from flask_login import login_required as original_login_required
 from flask_login import LoginManager, current_user
 from flask_mail import Mail
+from flask_socketio import SocketIO
 from functools import wraps
 from botocore.client import Config
 import boto3 
@@ -78,6 +79,8 @@ def create_app() :
 app = create_app()
 
 mail = Mail(app)
+
+socketio = SocketIO(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
