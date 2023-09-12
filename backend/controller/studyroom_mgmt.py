@@ -119,3 +119,12 @@ class StudyRoom() :
         studentsList = selectOne(sql)[0]
 
         return studentsList
+
+    @staticmethod
+    def updateNotice(roomId, notice) : # 공지 수정
+
+        sql = f"UPDATE studyRoom SET notice='{notice}' WHERE id={roomId}"
+
+        done = commit(sql)
+
+        return done

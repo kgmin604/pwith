@@ -204,6 +204,9 @@ def updateAccessToken(refresh_token, provider) :
 def formatDateToString(date): # 타입 변경 datetime -> string
     return datetime.strftime(date, "%Y-%m-%d %H:%M:%S")
 
+def formatYMDHM(date): # datetime -> string 년-월-일 시:분
+    return datetime.strftime(date, "%Y-%m-%d %H:%M")
+
 def getFormattedDate(curDate): # 날짜 포맷 년-월-일-상세시간
     date_object = datetime.strptime(curDate, "%Y-%m-%d %H:%M:%S")
 
