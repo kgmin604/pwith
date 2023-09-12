@@ -123,7 +123,16 @@ class StudyRoom() :
     @staticmethod
     def updateNotice(roomId, notice) : # 공지 수정
 
-        sql = f"UPDATE studyRoom SET notice='{notice}' WHERE id={roomId}"
+        sql = f"UPDATE studyRoom SET notice='{notice}' WHERE id = {roomId}"
+
+        done = commit(sql)
+
+        return done
+
+    @staticmethod
+    def delete(roomId) : # 삭제
+
+        sql = f"DELETE FROM studyRoom WHERE id = {roomId}"
 
         done = commit(sql)
 

@@ -112,6 +112,26 @@ def updateNotice(loginMember, new_token, id) : # 공지 수정
         'access_token' : new_token
     }
 
+@studyroom_bp.route('/<id>', methods=['DELETE'])
+@login_required
+def deleteRoom(loginMember, new_token, id) : # 룸 삭제
+
+    leaderId = StudyRoom.findById(id).leader
+    if loginMember.id != leaderId :
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    StudyRoom.delete(id)
+
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
+
 @studyroom_bp.route('/<id>', methods=['GET'])
 @login_required
 def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
@@ -133,7 +153,7 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
 
     for c in chatList:
         chats.append({
-            'sender' : c['sender'], #['nickname'], # TODO TEST
+            'sender' : c['sender'],
             'content' : c['content'],
             'date' : formatYMDHM(c['createdAt'])
         })
@@ -144,8 +164,8 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
             'notice' : room.notice,
             'leader' : findNickName(room.leader),
             'image' : room.image,
-            'join_members' : join_members
-            # 'chat' : chats
+            'join_members' : join_members,
+            'chat' : chats
         },
         'access_token' : new_token
     }
