@@ -51,7 +51,7 @@ def listPortfolio() :
     myPortfolioId = None
 
     loginMember = current_user # chk session
-    if loginMember is None : # chk tokens
+    if loginMember.is_anonymous : # chk tokens
         loginMember, new_token = findSocialLoginMember()
         
     if loginMember != None :

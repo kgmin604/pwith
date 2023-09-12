@@ -1,12 +1,12 @@
-from flask import Blueprint
-from backend import socketio
+# from flask import Blueprint
+# from backend import socketio
 
 # studyroom_bp = Blueprint('studyRoom', __name__, url_prefix='/study-room')
 
 
-@socketio.on('enter')
-def enterRoom():
-    print("enter room")
+# @socketio.on('enter')
+# def enterRoom():
+#     print("enter room")
     # roomId = session.get('room')
     # join_room(roomId)
     # socketio.emit('in', 'asdf', room = roomId) # session.get('nickname'), cnt

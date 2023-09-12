@@ -127,17 +127,17 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
             'nickname' : m.nickname,
             'image' : m.image
         })
-    '''
+
     chats = []
     chatList = conn_mongodb().studyroom_chat.find({'roomId':int(id)})
 
     for c in chatList:
         chats.append({
-            'sender' : c['sender'], #['nickname'], TODO TEST
+            'sender' : c['sender'], #['nickname'], # TODO TEST
             'content' : c['content'],
             'date' : formatYMDHM(c['createdAt'])
         })
-    '''
+
     return {
         'data' : {
             'name' : room.name,

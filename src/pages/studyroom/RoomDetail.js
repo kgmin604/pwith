@@ -165,8 +165,9 @@ function RoomDetail(){
     function tmpF(){
         console.log('클릭');
         socket.emit('sendTo', { // sendTo 테스트 하려고 바꿈 - ㅊㅇ
-            'roomId': 123,
-            'message': '안녕안녕'
+            'roomId': 1,
+            'message': '테스트 메시지야 😎',
+            'sender' : '열정걸' // 닉네임
         });
     }
 
