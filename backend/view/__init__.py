@@ -65,14 +65,13 @@ def custom_login_required(func):
         access_token = request.cookies.get('access_token')
         refresh_token = request.cookies.get('refresh_token')
 
-        if provider is None : # session login
+        if provider is None :
 
-            if not current_user.is_authenticated :
+            if not current_user.is_authenticated : # not login
                 return current_app.login_manager.unauthorized()
 
-            else :
-                id = current_user.get_id()
-                loginMember = Member.findById(id)
+            else : # session login
+                loginMember = current_user
 
         elif provider == 'naver' : # OAuth Naver
             loginMember, new_token = checkLoginNaver(access_token, refresh_token)
