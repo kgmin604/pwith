@@ -67,12 +67,12 @@ def showStudy():
 def showalarm():
     # 알림창
     
-    #chatAlarm 에서 memId = current_user.get_id() 인 것 select
-    #studyReplyAlarm 에서 memId = current_user.get_id() 인 것 select
-    #qnaReplyAlarm 에서 memId = current_user.get_id() 인 것 select
-    #studyAlarm 에서 memId = current_user.get_id() 인 것 select
+    #chatAlarm 에서 memId = current_user.id 인 것 select
+    #studyReplyAlarm 에서 memId = current_user.id 인 것 select
+    #qnaReplyAlarm 에서 memId = current_user.id 인 것 select
+    #studyAlarm 에서 memId = current_user.id 인 것 select
     
-    memId = current_user.get_id()
+    memId = current_user.id
     
     chat = alarm.getChatAlarm(memId)
     studyReply = alarm.getStudyReplyAlarm(memId)

@@ -53,7 +53,7 @@ def show():
                 'title': posts[i][1],
                 'writerId': posts[i][2],
                 'writerNick': findNickName(posts[i][2]),
-                # 'image' : getProfileImage(current_user.get_id()),
+                # 'image' : getProfileImage(current_user.id),
                 'curDate': posts[i][3],
                 'likes': posts[i][5],
                 'views': posts[i][6]
@@ -114,7 +114,7 @@ def show():
                     'title' : posts[i][1],
                     'writerId': posts[i][2],
                     'writerNick': findNickName(posts[i][2]),
-                    # 'image' : getProfileImage(current_user.get_id()),
+                    # 'image' : getProfileImage(current_user.id),
                     'curDate' : posts[i][3],
                     'likes' : posts[i][5],
                     'views' : posts[i][6]
@@ -184,7 +184,7 @@ def showDetail(id, loginMember, new_token) :     # 글 조회
             'isApplied' : isApplied,
             'title': post.title,
             'writer' : findNickName(post.writer),
-            # 'writerImage': getProfileImage(current_user.get_id()),
+            # 'writerImage': getProfileImage(current_user.id),
             'content': post.content,
             'curDate' : postDate,
             'likes' : post.likes,

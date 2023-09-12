@@ -50,14 +50,12 @@ def listPortfolio() :
     # 1. my portfolio
     myPortfolioId = None
 
-    loginId = current_user.get_id() # check session
-    if loginId is None : # check tokens
+    loginMember = current_user # chk session
+    if loginMember is None : # chk tokens
         loginMember, new_token = findSocialLoginMember()
-        if loginMember is not None :
-            loginId = loginMember.id
         
-    if loginId != None :
-        myPortfolioId = Portfolio.findByMentoId(loginId)
+    if loginMember != None :
+        myPortfolioId = Portfolio.findByMentoId(loginMember.id)
 
     # 2. portfolio list
     searchWord = request.args.get('search')
@@ -258,7 +256,7 @@ def review(mentoId) :
 
         cnt = request.get_json()['content']
 
-        writer = current_user.get_id()
+        writer = current_user.id
 
         try :
             pk = Review.writeReview(writer, cnt, mentoId)
