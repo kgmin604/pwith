@@ -69,8 +69,12 @@ class QNAPost() :
         return str(now)
     
     @staticmethod
-    def getQNA():   # QNA 게시글 넘겨주는 함수
-        sql = "select * from qna order by curDate desc"
+    def getQNA(category):   # QNA 게시글 넘겨주는 함수
+        if category <11 : 
+            sql = f"select * from qna where category = '{int(category)}' order by curDate desc"
+        else:
+            sql = f"select * from qna order by curDate desc"
+
         rows = selectAll(sql)
   
         # mysql_db.close()

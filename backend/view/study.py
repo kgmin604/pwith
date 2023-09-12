@@ -28,19 +28,22 @@ def show():
         recStudy.append(rec)
         
     search = request.args.get('search')
-    if search == None : # 임시 예외 처리 (프론트 수정 완료되면 지우면 됩니다) - 채영
-        search = 0      # (PS. 주석 정리도 부탁해요) 😘
       
-    if int(search) == 0:
-        print(search)
+    if int(search) == 0:        # 검색 x, 기본 값
+
         posts = []
         result = []
         page = 0
 
         page = request.args.get('page')
+        category = request.args.get('category')
+
+        if category is None:
+            category = 11
+        
 
         # 전체 글 출력
-        posts = studyPost.getStudy()
+        posts = studyPost.getStudy(int(category))
         requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
 
         for i in range(int(page)):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기

@@ -111,10 +111,15 @@ def show():     # 전체 글 출력
         posts = []
         result = []
         page = 0
-        posts = QNAPost.getQNA()
         
         page = request.args.get('page')
+        category = request.args.get('category')
 
+        if category is None:
+            category = 11
+
+        posts = QNAPost.getQNA(int(category))
+        
         requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
         
         for i in range(int(page)):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
