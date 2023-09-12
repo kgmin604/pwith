@@ -99,7 +99,7 @@ class StudyRoom() :
         return room
 
     @staticmethod
-    def findMemberByRoomId(roomId) :
+    def findMemberByRoomId(roomId) : # 참가자 조회
 
         sql = f"SELECT m.id, m.memId, m.password, m.nickname, m.email, m.image, m.isAdmin FROM studyMember sm, member m WHERE sm.member = m.id AND sm.room = {roomId}"
 
@@ -110,15 +110,6 @@ class StudyRoom() :
             result.append(Member(r[0],r[1],r[2],r[3],r[4],r[5],r[6]))
 
         return result
-
-    @staticmethod
-    def getStudentList(roomId) : # 스터디룸 참가자 조회 TODO 수정
-
-        sql = f"SELECT studentsList FROM studyRoom WHERE roomId = {roomId}"
-
-        studentsList = selectOne(sql)[0]
-
-        return studentsList
 
     @staticmethod
     def updateNotice(roomId, notice) : # 공지 수정

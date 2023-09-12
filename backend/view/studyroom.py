@@ -136,10 +136,16 @@ def deleteRoom(loginMember, new_token, id) : # 룸 삭제
 @login_required
 def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
     
-    room = StudyRoom.findById(id)
-
     join_members = []
     members = StudyRoom.findMemberByRoomId(id)
+
+    if loginMember not in members :
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
 
     for m in members :
         join_members.append({
@@ -157,6 +163,8 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
             'content' : c['content'],
             'date' : formatYMDHM(c['createdAt'])
         })
+
+    room = StudyRoom.findById(id)
 
     return {
         'data' : {
