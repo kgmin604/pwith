@@ -154,8 +154,17 @@ def modifyPortfolio(loginMember, new_token, id) :
             'access_token' : new_token
         }
 
+    writerId = Portfolio.findMentoById(id)
+    if loginMember.id != writerId :
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
+
     image = request.files['mentoPic']
-    mentoPic = uploadFileS3(image, "mentoring")
+    mentoPic = uploadFileS3(image, 'mentoring')
 
     data_str = request.form['data']
     data = json.loads(data_str)
@@ -181,6 +190,15 @@ def deletePortfolio(loginMember, new_token, id) :
         return {
             'status' : 400,
             'message' : '없는 포트폴리오',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    writerId = Portfolio.findMentoById(id)
+    if loginMember.id != writerId :
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
             'data' : None,
             'access_token' : new_token
         }
