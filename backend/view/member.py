@@ -101,7 +101,8 @@ def login() :
     
     return {
         'id' : member.memId,
-        'nickname' : member.nickname
+        'nickname' : member.nickname,
+        'isSocial' : False
     }
 
 @member_bp.route('/logout', methods=['GET'])

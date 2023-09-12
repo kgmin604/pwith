@@ -34,9 +34,7 @@ def google_callback():
     ))
 
     access_token = token_response.json().get("access_token")
-    print(access_token)
     refresh_token = token_response.json().get("refresh_token")
-    print(refresh_token)
 
     info_response = requests.get(
         info_endpoint,
@@ -45,7 +43,6 @@ def google_callback():
         }
     )
     info = info_response.json()
-    print(info)
 
     status = 200
     message = '성공'
@@ -73,7 +70,8 @@ def google_callback():
 
         data = {
             'id' : message.email.split('@')[0],
-            'nickname' : message.nickname
+            'nickname' : message.nickname,
+            'isSocial' : True
         }
         message = '성공'
         access_token_return = access_token
@@ -115,7 +113,7 @@ def checkJoin_google(data) :
 
     return 200, member
 
-@oauth_bp.route('/oauth/callback/naver', methods = ['GET'])  # 네이버
+@oauth_bp.route('/oauth/callback/naver', methods = ['GET']) # 네이버
 def naver_callback():
     
     code = request.args.get('code')
@@ -169,7 +167,8 @@ def naver_callback():
 
         data = {
             'id' : message.email.split('@')[0],
-            'nickname' : message.nickname
+            'nickname' : message.nickname,
+            'isSocial' : True
         }
         message = '성공'
         access_token_return = access_token
@@ -279,7 +278,8 @@ def kakao_callback():
 
         data = {
             'id' : message.email.split('@')[0],
-            'nickname' : message.nickname
+            'nickname' : message.nickname,
+            'isSocial' : True
         }
         message = '성공'
         access_token_return = access_token
