@@ -109,8 +109,8 @@ class Portfolio() :
             WHERE p.id = {id}
             '''
         result = selectOne(sql)
-
-        if not result :
+        
+        if not result[0] :
             return None
 
         return result
