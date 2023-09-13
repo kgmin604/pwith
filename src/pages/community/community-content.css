@@ -42,18 +42,19 @@ div.content-area .body {
     padding: 0 45px;
 }
 
-div.content-area div.body .items {
+div.content-area div.body .items div {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
 }
 
-div.content-area div.body div.items .item {
+.content-card {
     display: flex;
     align-items: center;
     flex-direction: column;
+    justify-content: center;
     width: 200px;
-    height: 240px;
+    height: auto;
     cursor: pointer;
     gap: 10px;
     border: solid 1px rgb(214, 214, 214);
@@ -61,26 +62,26 @@ div.content-area div.body div.items .item {
     padding: 10px;
 }
 
-div.content-area div.body div.items .item:hover {
+.content-card:hover {
     transform: translateY(-5px);
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-div.content-area div.body div.items div.item img {
+.content-card img {
     width: 220px;
     height: 150px;
     object-fit: cover;
     overflow: hidden;
 }
 
-div.content-area div.body div.items div.item h5 {
+.content-card h5 {
     font-family: 'Noto Sans KR';
     font-weight: 700;
     font-size: 14px;
     margin: 0 0;
 }
 
-div.content-area div.body div.items div.item .tags {
+.content-card .tags {
     height: 24px;
     display: flex;
     flex-wrap: wrap;
@@ -90,7 +91,7 @@ div.content-area div.body div.items div.item .tags {
     margin: 0 0;
 }
 
-div.content-area div.body div.items div.item div.tags .tag {
+.content-card .tags .tag {
     border-radius: 3px;
     background-color: rgb(229, 229, 229);
     display: inline-block;
@@ -100,4 +101,16 @@ div.content-area div.body div.items div.item div.tags .tag {
     font-family: 'Noto Sans KR';
     font-weight: 700;
     font-size: 12px;
+}
+
+.more-button {
+    padding: 10px;
+    background-color: rgb(229, 229, 229);
+    font-weight: 600;
+    color: black;
+    font-size: 20px;
+    border-radius: 10px;
+    margin: auto;
+    cursor: pointer;
+    display: block;
 }

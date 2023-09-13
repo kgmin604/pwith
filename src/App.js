@@ -8,6 +8,7 @@ import { Routes, Route, Link, useNavigate, useLocation, useParams } from "react-
 import { useDispatch, useSelector } from "react-redux";
 //import Cookies from 'js-cookie';
 // import { useCookies, Cookies } from 'react-cookie';
+import { setStudyCategory, setQnaCategory } from './store.js'
 
 import PwithMain from "./pages/pwithmain/PwithMain.js";
 import StudyMain from "./pages/study/StudyMain.js";
@@ -178,6 +179,7 @@ function App() {
                       e.stopPropagation();
                       navigate("/study/main");
                       setIsNav(0);
+                      dispatch(setStudyCategory(null));
                     }}
                     onMouseEnter={() => setIsNav(1)}
                     onMouseLeave={() => setIsNav(0)}
@@ -187,7 +189,7 @@ function App() {
                       isNav === 1 ?
                         <div className='navbar-modal' onClick={(e) => { e.stopPropagation(); }}>
                           <ul className='lst'>
-                            <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/study/main"); setIsNav(0); }}>
+                            <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/study/main"); setIsNav(0); dispatch(setStudyCategory(null)); }}>
                               스터디
                             </li>
                           </ul>
@@ -233,6 +235,7 @@ function App() {
                       e.stopPropagation();
                       navigate("/community/main");
                       setIsNav(0);
+                      dispatch(setQnaCategory(null));
                     }}
                     onMouseEnter={() => setIsNav(3)}
                     onMouseLeave={() => setIsNav(0)}
@@ -245,7 +248,7 @@ function App() {
                             <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/it"); setIsNav(0); }}>
                               IT뉴스
                             </li>
-                            <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/qna/main"); setIsNav(0); }}>
+                            <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/qna/main"); setIsNav(0); dispatch(setQnaCategory(null)); }}>
                               QnA
                             </li>
                             <li className='lst-item' onClick={(e) => { e.stopPropagation(); navigate("/community/content"); setIsNav(0); }}>
