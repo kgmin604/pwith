@@ -30,12 +30,12 @@ let socket;
 
 function RoomDetail(){
 
-    socket = io('http://localhost:5000', {
-        cors: {
-            origin: '*',
-        },
-        transports: ["websocket"],
-    });
+    // socket = io('http://localhost:5000', {
+    //     cors: {
+    //         origin: '*',
+    //     },
+    //     transports: ["websocket"],
+    // });
     
     let user = useSelector((state) => state.user);
     let navigate = useNavigate();
@@ -154,7 +154,13 @@ function RoomDetail(){
 
     // 소켓 통신하기
     
-    useEffect(()=>{
+    useEffect(()=>{    
+        socket = io('http://localhost:5000', {
+            cors: {
+                origin: '*',
+            },
+            transports: ["websocket"],
+        });
         console.log('연결 시도');
 
         socket.on('connect', (data) => { // socket 연결 성공. 서버와 통신 시작.
