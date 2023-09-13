@@ -30,10 +30,11 @@ let socket;
 
 function RoomDetail(){
 
-    socket = io('ws://localhost:5000', {
+    socket = io('http://localhost:5000', {
         cors: {
             origin: '*',
         },
+        transports: ["websocket"],
     });
     
     let user = useSelector((state) => state.user);
@@ -154,12 +155,11 @@ function RoomDetail(){
     // 소켓 통신하기
     
     useEffect(()=>{
-        console.log('연결 시도')
+        console.log('연결 시도');
 
         socket.on('connect', (data) => { // socket 연결 성공. 서버와 통신 시작.
             console.log('Socket connected');
         });
-
     },[])
 
     function tmpF(){
