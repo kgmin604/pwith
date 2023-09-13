@@ -62,8 +62,12 @@ class studyPost() :
         return str(now)
     
     @staticmethod
-    def getStudy():     # study 글 전체를 최신순으로 가져오는 함수
-        sql = "select * from study ORDER BY curDate DESC"
+    def getStudy(category):     # study 글 전체를 최신순으로 가져오는 함수
+        
+        if category <11 :
+            sql = f"select study.* from study, studyRoom WHERE study.roomId = studyRoom.id and studyRoom.category ='{int(category)}' ORDER BY study.curDate DESC"
+        else :
+            sql = f"select * from study ORDER BY curDate DESC"
         
         rows = selectAll(sql)
         
