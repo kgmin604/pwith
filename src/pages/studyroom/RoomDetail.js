@@ -5,7 +5,7 @@ import io from "socket.io-client";
 
 import "./RoomDetail.css";
 import "./liveroom.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -18,23 +18,11 @@ import { faVideoSlash } from "@fortawesome/free-solid-svg-icons/faVideoSlash";
 import { faPencil } from "@fortawesome/free-solid-svg-icons/faPencil";
 import { faMessage } from "@fortawesome/free-solid-svg-icons/faMessage";
 
-/*
-const socket = io('http://localhost:5000', {
-  transports: ['websocket'], // 웹소켓 사용
-  cors: {
-    origin: '*',
-  },
-});
-*/
 let socket;
 
 function RoomDetail() {
-  // socket = io('http://localhost:5000', {
-  //     cors: {
-  //         origin: '*',
-  //     },
-  //     transports: ["websocket"],
-  // });
+
+  const chatAreaRef = useRef(null);
 
   let user = useSelector((state) => state.user);
   let navigate = useNavigate();
@@ -149,8 +137,8 @@ function RoomDetail() {
       sender: user.name,
     };
     socket.emit("sendTo", data);
-
-    //setMyChat('');
+    document.getElementById("chat-area").value = "";
+    setMyChat("");
   }
 
   // room data 받아오기
@@ -165,13 +153,11 @@ function RoomDetail() {
       url: `/study-room/${RoomId}`,
     })
       .then(function (response) {
-        //console.log(response.data);
         const tmp = response.data.data; // API 변경 후 수정
         tmp["id"] = RoomId;
         setRoomInfo(tmp);
 
         setRoomChat(response.data.data.chat);
-        console.log(response.data.data.chat);
       })
       .catch(function (error) {
         //console.log(error);
@@ -185,16 +171,18 @@ function RoomDetail() {
       cors: {
         origin: "*",
       },
-      transports: ["websocket"],
+      transports: ["polling"],
+      autoConnect: false,
     });
     console.log("연결 시도");
+    socket.connect();
 
     socket.on("connect", (data) => {
       // socket 연결 성공. 서버와 통신 시작.
       console.log("Socket connected");
     });
     socket.on("sendFrom", (data) => {
-        setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
+      setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
     });
   }, []);
 
@@ -208,99 +196,19 @@ function RoomDetail() {
     });
   }
 
-<<<<<<< HEAD
-    let [newNotice, setNewNotice] = useState('공지입니다');
-    
-    // 개인 쪽지 관련 데이터
-    let [chatName, setChatName] = useState('');
-    let [chatContent, setChatContent] = useState('');
-    let [msg, setMsg] = useState('');
-    
-    function handleMouseOver(event){
-        event.stopPropagation();
-        setIsOn(true);
+  // 스크롤 영역을 항상 아래로 스크롤하는 함수
+  const scrollToBottom = () => {
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
     }
+  };
 
-    function handleMouseOut(event){
-        event.stopPropagation();
-        setIsOn(false);
-    }
+  // 컴포넌트가 업데이트 될 때마다 스크롤을 아래로 이동
+  useEffect(() => {
+    scrollToBottom();
+  }, [roomChat]);
 
-    function changeNotice(e){
-        e.stopPropagation();
-        setNewNotice(e.target.value);
-    }
-
-    function handleModal(event){
-        event.stopPropagation();
-        setIsModalOpen(!isModalOpen);
-    }
-
-    function changeNickname(event){
-        event.stopPropagation();
-        setChatName(event.target.value);
-    }
-
-    function changeContent(event){
-        event.stopPropagation();
-        setChatContent(event.target.value);
-    }
-
-    // room data 받아오기
-
-    useEffect(()=>{
-        const url = window.location.href;
-        const part = url.split("/");
-        const RoomId = part[part.length-1];
-
-        axios({
-            method: "GET",
-            url: `/study-room/${RoomId}`
-        })
-        .then(function (response) {
-            //console.log(response.data);
-            const tmp = response.data.data;
-            tmp['id'] = RoomId;
-            setRoomInfo(tmp);
-            console.log(roomInfo);
-        })
-        .catch(function (error) {
-            //console.log(error);
-        });
-    },[])
-
-    // 소켓 통신하기
-    
-    useEffect(()=>{    
-        socket = io('ws://localhost:5000', {
-            rejectUnauthorized: false,
-            cors: {
-                origin: '*',
-            },
-            // transports: ["websocket"],
-            autoConnect: false,
-        });
-        console.log('연결 시도');
-        socket.connect();
-
-        socket.on('connect', (data) => { // socket 연결 성공. 서버와 통신 시작.
-            console.log('Socket connected');
-        });
-    },[])
-
-    function tmpF(){
-        console.log('클릭');
-        socket.emit('sendTo', { // sendTo 테스트 하려고 바꿈 - ㅊㅇ
-            'roomId': 1,
-            'message': '테스트 메시지야 😎',
-            'sender' : '열정걸' // 닉네임
-        });
-    }
-
-    return(
-=======
   return (
->>>>>>> 4aa30695ab5551a91d0485a5a78c039c04bb35d9
     <>
       <div className="room-detail-wrap">
         <div className="row">
@@ -446,7 +354,10 @@ function RoomDetail() {
                 <div className="member-chat">
                   <h2>Chatting</h2>
                   <hr style={{ margin: "0 0" }}></hr>
-                  <div className="chats scroll">
+                  <div 
+                    className="chats scroll"
+                    ref={chatAreaRef}
+                >
                     {roomChat.map((chat, i) => (
                       <>
                         {chat.sender !== user.name ? (
@@ -473,7 +384,10 @@ function RoomDetail() {
                   </div>
                   <hr style={{ margin: "0 0" }}></hr>
                   <div className="sending-area">
-                    <textarea onChange={(e) => changeChatInput(e)}></textarea>
+                    <textarea
+                      id="chat-area"
+                      onChange={(e) => changeChatInput(e)}
+                    ></textarea>
                     <div
                       className="sending-btn"
                       onClick={(e) => {
