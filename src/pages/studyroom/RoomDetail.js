@@ -155,13 +155,16 @@ function RoomDetail(){
     // 소켓 통신하기
     
     useEffect(()=>{    
-        socket = io('http://localhost:5000', {
+        socket = io('ws://localhost:5000', {
+            rejectUnauthorized: false,
             cors: {
                 origin: '*',
             },
-            transports: ["websocket"],
+            // transports: ["websocket"],
+            autoConnect: false,
         });
         console.log('연결 시도');
+        socket.connect();
 
         socket.on('connect', (data) => { // socket 연결 성공. 서버와 통신 시작.
             console.log('Socket connected');
