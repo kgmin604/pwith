@@ -105,7 +105,7 @@ def sendMessage(data):
     })
 
     formatted_now = formatYMDHM(now)
-    emit('sendFrom', {'sender': sender, 'message': message, 'date': formatted_now})
+    emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now})
 
 @socketio.on("leave")
 def leaveRoom(data):
