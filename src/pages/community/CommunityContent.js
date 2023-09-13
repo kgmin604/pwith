@@ -14,6 +14,8 @@ function CommunityContent() {
     const [selectBookPage, setSelectBookPage] = useState(1);
     const [selectLecturePage, setSelectLecturePage] = useState(1);
     const [category, setCategory] = useState(null);
+    const [bookIsNext, setBookIsNext] = useState(true)
+    const [lectureIsNext, setLectureIsNext] = useState(true)
 
     const [bookList, setBookList] = useState([])
     const [lectureList, setLectureList] = useState([])
@@ -29,8 +31,8 @@ function CommunityContent() {
         })
             .then(function (response) {
                 const data = response.data.data
-                console.log(data)
                 setBookList((prev) => [...prev, ...data.book])
+                setBookIsNext(data.isNext)
             })
             .catch(function (error) {
             });
@@ -47,6 +49,7 @@ function CommunityContent() {
             .then(function (response) {
                 const data = response.data.data
                 setLectureList((prev) => [...prev, ...data.lecture])
+                setLectureIsNext(data.isNext)
             })
             .catch(function (error) {
             });
@@ -96,7 +99,7 @@ function CommunityContent() {
 
                                     </div>
                                 ))}</div>
-                                    <div className="more-button" onClick={moreBook}>더보기</div>
+                                    {bookIsNext && <div className="more-button" onClick={moreBook}>더보기</div>}
                                 </div>
 
                             }
@@ -118,7 +121,7 @@ function CommunityContent() {
                                 </div>
                             ))}
                             </div>
-                                <div className="more-button" onClick={moreLecture}>더보기</div>
+                                {lectureIsNext && <div className="more-button" onClick={moreLecture}>더보기</div>}
                             </div>}
                         </div>
                     </div>
