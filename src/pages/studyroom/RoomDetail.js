@@ -5,7 +5,7 @@ import io from "socket.io-client";
 
 import "./RoomDetail.css";
 import "./liveroom.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -35,6 +35,8 @@ function RoomDetail() {
   //     },
   //     transports: ["websocket"],
   // });
+
+  const chatAreaRef = useRef(null);
 
   let user = useSelector((state) => state.user);
   let navigate = useNavigate();
@@ -149,8 +151,8 @@ function RoomDetail() {
       sender: user.name,
     };
     socket.emit("sendTo", data);
-
-    //setMyChat('');
+    document.getElementById("chat-area").value = "";
+    setMyChat("");
   }
 
   // room data 받아오기
@@ -165,13 +167,11 @@ function RoomDetail() {
       url: `/study-room/${RoomId}`,
     })
       .then(function (response) {
-        //console.log(response.data);
         const tmp = response.data.data; // API 변경 후 수정
         tmp["id"] = RoomId;
         setRoomInfo(tmp);
 
         setRoomChat(response.data.data.chat);
-        console.log(response.data.data.chat);
       })
       .catch(function (error) {
         //console.log(error);
@@ -194,7 +194,7 @@ function RoomDetail() {
       console.log("Socket connected");
     });
     socket.on("sendFrom", (data) => {
-        setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
+      setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
     });
   }, []);
 
@@ -207,6 +207,18 @@ function RoomDetail() {
       sender: "열정걸", // 닉네임
     });
   }
+
+  // 스크롤 영역을 항상 아래로 스크롤하는 함수
+  const scrollToBottom = () => {
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+    }
+  };
+
+  // 컴포넌트가 업데이트 될 때마다 스크롤을 아래로 이동
+  useEffect(() => {
+    scrollToBottom();
+  }, [roomChat]);
 
   return (
     <>
@@ -354,7 +366,10 @@ function RoomDetail() {
                 <div className="member-chat">
                   <h2>Chatting</h2>
                   <hr style={{ margin: "0 0" }}></hr>
-                  <div className="chats scroll">
+                  <div 
+                    className="chats scroll"
+                    ref={chatAreaRef}
+                >
                     {roomChat.map((chat, i) => (
                       <>
                         {chat.sender !== user.name ? (
@@ -381,7 +396,10 @@ function RoomDetail() {
                   </div>
                   <hr style={{ margin: "0 0" }}></hr>
                   <div className="sending-area">
-                    <textarea onChange={(e) => changeChatInput(e)}></textarea>
+                    <textarea
+                      id="chat-area"
+                      onChange={(e) => changeChatInput(e)}
+                    ></textarea>
                     <div
                       className="sending-btn"
                       onClick={(e) => {
