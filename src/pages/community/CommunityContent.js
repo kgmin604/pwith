@@ -11,7 +11,8 @@ function CommunityContent() {
     let [type, setType] = useState('책'); // 책 또는 강의
 
     const [pages, setPages] = useState([]); // 임시
-    const [selectPage, setSelectPage] = useState(1);
+    const [selectBookPage, setSelectBookPage] = useState(1);
+    const [selectLecturePage, setSelectLecturePage] = useState(1);
     const [category, setCategory] = useState(null);
 
     const [bookList, setBookList] = useState([])
@@ -22,32 +23,41 @@ function CommunityContent() {
             method: "GET",
             url: "/community/contents/book",
             params: {
-                page: selectPage,
+                page: selectBookPage,
                 category: category
             }
         })
             .then(function (response) {
                 const data = response.data.data
-                setBookList(data.book)
+                console.log(data)
+                setBookList((prev) => [...prev, ...data.book])
             })
             .catch(function (error) {
             });
+    }, [selectBookPage]);
+    useEffect(() => {
         axios({
             method: "GET",
             url: "/community/contents/lecture",
             params: {
-                page: selectPage,
+                page: selectLecturePage,
                 category: category
             }
         })
             .then(function (response) {
                 const data = response.data.data
-                setLectureList(data.lecture)
+                setLectureList((prev) => [...prev, ...data.lecture])
             })
             .catch(function (error) {
             });
-    }, [selectPage]);
+    }, [selectLecturePage]);
+    const moreBook = () => {
+        setSelectBookPage(selectBookPage + 1)
+    }
+    const moreLecture = () => {
+        setSelectLecturePage(selectLecturePage + 1)
 
+    }
     return (
         <>
             <div class="row">
@@ -69,10 +79,10 @@ function CommunityContent() {
                     <div className="body">
                         <div className="items">
                             {
-                                type === '책' && bookList.map((item, i) => (
+                                type === '책' && <div><div>{bookList.map((item, i) => (
                                     <div
                                         key={i}
-                                        className="item"
+                                        className="content-card"
                                         onClick={(e) => { e.stopPropagation(); window.open(item.link, '_blank') }}
                                     >
                                         <img src={item.image} />
@@ -83,14 +93,18 @@ function CommunityContent() {
                                             >{item.second_category}</span>
                                             }
                                         </div>
+
                                     </div>
-                                ))
+                                ))}</div>
+                                    <div className="more-button" onClick={moreBook}>더보기</div>
+                                </div>
 
                             }
-                            {type === '강의' && lectureList.map((item, i) => (
+
+                            {type === '강의' && <div><div>{lectureList.map((item, i) => (
                                 <div
                                     key={i}
-                                    className="item"
+                                    className="content-card"
                                     onClick={(e) => { e.stopPropagation(); window.open(item.link, '_blank') }}
                                 >
                                     <img src={item.image} />
@@ -103,6 +117,9 @@ function CommunityContent() {
                                     </div>
                                 </div>
                             ))}
+                            </div>
+                                <div className="more-button" onClick={moreLecture}>더보기</div>
+                            </div>}
                         </div>
                     </div>
                 </div>
