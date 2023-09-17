@@ -116,13 +116,13 @@ function MentoringCreate() {
         <div className="MentoringCreate">
             <h5 style={{ fontFamily: 'TmoneyRoundWind' }}>포트폴리오 작성하기</h5>
 
-            <div className='mentoPic' >
+            <div className='mentoPic-area' >
                 <form>
                     <label
                         htmlFor="imageUpload"
                         className='btn-area'
                     >
-                        업로드
+                       사진 업로드
                     </label>
                     <input
                         id="imageUpload"

@@ -14,9 +14,25 @@
     margin: 0 auto;
 }
 
+.form-wrapper-update{
+    width:100%;
+    display: flex;
+    flex-direction: column;
+align-items: center;
+}
 
 .title-input {
     width: 765px;
+    height: 40px;
+    margin: 10px auto;
+    border: 1px solid #d1d1d1;
+    padding-left: 10px;
+    text-align: left;
+    color: gray;
+}
+
+.title-input-update {
+    width: 100%;
     height: 40px;
     margin: 10px auto;
     border: 1px solid #d1d1d1;

@@ -224,13 +224,13 @@ function PortfolioManage() {
                             <h5>포트폴리오 수정</h5>
                         </div>}
                         <hr />
-                        <div className='mentoPic' >
+                        <div className='mentoPic-area' >
                             <form>
                                 <label
                                     htmlFor="imageUpload"
                                     className='btn-area'
                                 >
-                                    업로드
+                                    사진 수정
                                 </label>
                                 <input
                                     id="imageUpload"
@@ -256,9 +256,9 @@ function PortfolioManage() {
 
                         </div>
 
-                        <div className='form-wrapper'>
-                            <input className="title-input" type='text' value={portfolio.brief} onChange={getValue} name='brief' />
-                            <MDEditor height={865} value={portfolio.content} onChange={(value, event) => {
+                        <div className='form-wrapper-update'>
+                            <input className="title-input-update" type='text' value={portfolio.brief} onChange={getValue} name='brief' />
+                            <MDEditor height={865} style={{width:'100%'}} value={portfolio.content} onChange={(value, event) => {
                                 setPortfolio({
                                     ...portfolio,
                                     content: value
