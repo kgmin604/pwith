@@ -412,10 +412,15 @@ def listLectures() :
     all_lectureList = conn_mongodb().lecture_crawling.find()
     requiredPage = len(list(all_lectureList)) // 10 + 1
     
-    lectureList = conn_mongodb().lecture_crawling.find().skip((page-1)*10).limit(10)
+    lectureList = conn_mongodb().lecture_crawling.find().skip((page-1)*32).limit(32)
 
+    cnt = 0
+    
     for lecture in lectureList :
-        print(lecture)
+        if cnt == 32:
+            cnt = 0
+        else:
+            cnt += 1
         result.append({
             'title' : lecture['title'],
             'instructor' : lecture['instructor'],
@@ -426,9 +431,14 @@ def listLectures() :
             'image': lecture['img'],
             'type' : lecture['type']
         })
+        
+    if cnt != 0 :
+        isNext = True
+    else:
+        isNext = False
     
     return {
-        'page' : requiredPage,
+        'isNext' : isNext,
         'lecture' : result
     }
     
@@ -449,9 +459,14 @@ def listBooks() :
     all_bookList = conn_mongodb().book_crawling.find()
     requiredPage = len(list(all_bookList)) // 10 + 1
 
-    bookList = conn_mongodb().book_crawling.find().sort('_id', -1).skip((page-1)*10).limit(10)
-
+    bookList = conn_mongodb().book_crawling.find().sort('_id', -1).skip((page-1)*32).limit(32)
+    
+    cnt = 0
     for book in bookList :
+        if cnt == 32:
+            cnt = 0
+        else:
+            cnt += 1
         result.append({
             'title' : book['title'],
             'writer' : book['writer'],
@@ -463,8 +478,14 @@ def listBooks() :
             'image': book['img'],
             'type' : book['type']
         })
+        
+    if cnt != 0 :
+        isNext = True
+    else:
+        isNext = False
+        
     
     return {
-        'page' : requiredPage,
+        'isNext' : isNext,
         'book' : result
     }

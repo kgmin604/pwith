@@ -18,23 +18,11 @@ import { faVideoSlash } from "@fortawesome/free-solid-svg-icons/faVideoSlash";
 import { faPencil } from "@fortawesome/free-solid-svg-icons/faPencil";
 import { faMessage } from "@fortawesome/free-solid-svg-icons/faMessage";
 
-/*
-const socket = io('http://localhost:5000', {
-  transports: ['websocket'], // 웹소켓 사용
-  cors: {
-    origin: '*',
-  },
-});
-*/
 let socket;
 
 function RoomDetail() {
-  // socket = io('http://localhost:5000', {
-  //     cors: {
-  //         origin: '*',
-  //     },
-  //     transports: ["websocket"],
-  // });
+
+  const chatAreaRef = useRef(null);
 
   const chatAreaRef = useRef(null);
 
@@ -185,9 +173,11 @@ function RoomDetail() {
       cors: {
         origin: "*",
       },
-      transports: ["websocket"],
+      transports: ["polling"],
+      autoConnect: false,
     });
     console.log("연결 시도");
+    socket.connect();
 
     socket.on("connect", (data) => {
       // socket 연결 성공. 서버와 통신 시작.

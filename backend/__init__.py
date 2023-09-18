@@ -9,7 +9,7 @@ from functools import wraps
 from botocore.client import Config
 import boto3 
 import json
-import logging ###
+# import logging ###
 
 from backend.view import member, study, studyroom, mypage, mentoring, community, pwithmain, chat, oauth_server, oauth_member
 from backend.controller.member_mgmt import Member
@@ -39,7 +39,7 @@ def create_app() :
     app.register_blueprint(oauth_server.oauth_bp)
     app.register_blueprint(oauth_member.oauth_member_bp)
 
-    app.logger.setLevel(logging.WARNING) ###
+    # app.logger.setLevel(logging.WARNING) ###
 
     @app.after_request
     def final_return(resp) :

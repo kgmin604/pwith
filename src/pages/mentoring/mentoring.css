@@ -198,3 +198,15 @@
     line-height: 20px;
     letter-spacing: -0.32px;
 }
+
+.mentoPic-area{
+margin-top: 20px;
+width: 100%;
+}
+
+.mentoPic-area > form {
+    cursor: pointer;
+    width: 100px;
+    margin: auto;
+
+}

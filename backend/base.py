@@ -44,12 +44,12 @@ def upload_file():
 # def handle_ice(ice, roomId):
 #     socketio.emit('ice', ice, room=roomId)
 
+socketio = SocketIO(app, manage_session=False, cors_allowed_origins='*')
+
 if __name__ == "__main__": # 해당 파일을 실행했을 경우
     # app.run(host="127.0.0.1", port="5000")
     # socketio.run(app, host="127.0.0.1", port=5000)
-    socketio.run(app)
-
-socketio = SocketIO(app, manage_session=False, cors_allowed_origins=['http://localhost:3000'])
+    socketio.run(app, host="127.0.0.1", port=5000)
 
 @socketio.on('connect')
 def test_connect():
