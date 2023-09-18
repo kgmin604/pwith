@@ -24,8 +24,6 @@ function RoomDetail() {
 
   const chatAreaRef = useRef(null);
 
-  const chatAreaRef = useRef(null);
-
   let user = useSelector((state) => state.user);
   let navigate = useNavigate();
 
@@ -169,6 +167,12 @@ function RoomDetail() {
   // 소켓 통신하기
 
   useEffect(() => {
+    // socket = io('http://localhost:5000', {
+    //     cors: {
+    //         origin: '*',
+    //     },
+    //     transports: ["websocket"],
+    // });
     socket = io("http://localhost:5000", {
       cors: {
         origin: "*",
