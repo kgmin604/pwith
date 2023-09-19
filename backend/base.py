@@ -9,23 +9,6 @@ from datetime import datetime
 from flask import request, session
 from flask_login import current_user
 from flask_socketio import SocketIO, join_room, leave_room, rooms, emit, disconnect
-    
-# @socketio.on('join_room')
-# def join_room(roomId):
-#     socketio.join_room(roomId)
-#     socketio.emit('welcome', room=roomId)
-
-# @socketio.on('offer')
-# def handle_offer(offer, roomId):
-#     socketio.emit('offer', offer, room=roomId)
-
-# @socketio.on('answer')
-# def handle_answer(answer, roomId):
-#     socketio.emit('answer', answer, room=roomId)
-
-# @socketio.on('ice')
-# def handle_ice(ice, roomId):
-#     socketio.emit('ice', ice, room=roomId)
 
 socketio = SocketIO(app, manage_session=False, cors_allowed_origins='*')
 
@@ -37,8 +20,6 @@ if __name__ == "__main__": # 해당 파일을 실행했을 경우
 @socketio.on('connect')
 def test_connect():
     print("========CONNECT========")
-    # rooms()
-    # print(rooms)
 
 @socketio.on('disconnect')
 def test_disconnect():
@@ -47,10 +28,10 @@ def test_disconnect():
 @socketio.on('enter')
 def enterRoom(data):
     print("======ENTERROOM======")
-    print(data)
     roomId = data['roomId']
     print(roomId)
     join_room(roomId)
+    print(rooms())
 
 # def authenticated_only(f):
 #     @functools.wraps(f)
@@ -82,7 +63,6 @@ def sendMessage(data):
 
     formatted_now = formatYMDHM(now)
     emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now}, to = roomId)
-    # emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now})
 
 @socketio.on("leave")
 def leaveRoom(data):
@@ -104,19 +84,19 @@ def sendMessage(data):
 
     emit('sendFromRoom', {'sender': sender, 'content': message, 'date': formatted_now}, to = roomId)
 
-@socketio.on('join_room')
-def join_room(roomId):
-    print("======조인룸======")
-    emit('welcome', room=roomId)
+# @socketio.on('join_room')
+# def join_room(roomId):
+#     print("======조인룸======")
+#     emit('welcome', room=roomId)
 
-@socketio.on('offer')
-def handle_offer(offer, roomId):
-    emit('offer', offer, room=roomId)
+# @socketio.on('offer')
+# def handle_offer(offer, roomId):
+#     emit('offer', offer, room=roomId)
 
-@socketio.on('answer')
-def handle_answer(answer, roomId):
-    emit('answer', answer, room=roomId)
+# @socketio.on('answer')
+# def handle_answer(answer, roomId):
+#     emit('answer', answer, room=roomId)
 
-@socketio.on('ice')
-def handle_ice(ice, roomId):
-    emit('ice', ice, room=roomId)
+# @socketio.on('ice')
+# def handle_ice(ice, roomId):
+#     emit('ice', ice, room=roomId)
