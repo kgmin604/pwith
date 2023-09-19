@@ -168,11 +168,14 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
 
     return {
         'data' : {
-            'name' : room.name,
-            'notice' : room.notice,
-            'leader' : findNickName(room.leader),
-            'image' : room.image,
-            'join_members' : join_members,
+            'room' : {
+                'id' : id,
+                'name' : room.name,
+                'notice' : room.notice,
+                'leader' : findNickName(room.leader),
+                'image' : room.image,
+                'members' : join_members,
+            },
             'chat' : chats
         },
         'access_token' : new_token
