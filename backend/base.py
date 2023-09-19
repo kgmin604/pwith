@@ -84,19 +84,19 @@ def sendMessage(data):
 
     emit('sendFromRoom', {'sender': sender, 'content': message, 'date': formatted_now}, to = roomId)
 
-# @socketio.on('join_room')
-# def join_room(roomId):
-#     print("======조인룸======")
-#     emit('welcome', room=roomId)
+@socketio.on('join_room')
+def join_room(roomId):
+    print("======조인룸======")
+    emit('welcome', room=roomId)
 
-# @socketio.on('offer')
-# def handle_offer(offer, roomId):
-#     emit('offer', offer, room=roomId)
+@socketio.on('offer')
+def handle_offer(offer, roomId):
+    emit('offer', offer, room=roomId)
 
-# @socketio.on('answer')
-# def handle_answer(answer, roomId):
-#     emit('answer', answer, room=roomId)
+@socketio.on('answer')
+def handle_answer(answer, roomId):
+    emit('answer', answer, room=roomId)
 
-# @socketio.on('ice')
-# def handle_ice(ice, roomId):
-#     emit('ice', ice, room=roomId)
+@socketio.on('ice')
+def handle_ice(ice, roomId):
+    emit('ice', ice, room=roomId)
