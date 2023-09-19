@@ -398,3 +398,7 @@ div.room-detail-wrap div.member-chat div.sending-area
 .sending-btn:active{
     background-color: rgb(61, 105, 144);
 }
+
+.room-delete-btn{
+    cursor: pointer;
+}

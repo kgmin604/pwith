@@ -11,20 +11,18 @@ import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { faCode } from "@fortawesome/free-solid-svg-icons";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import io from 'socket.io-client';
 import screenImg from "./screen.png"
 import userImg from "./user.png"
 import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
+import { useNavigate, useParams } from "react-router-dom";
 
 const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 const LiveRoom = () => {
-    const [isMikeOn, setIsMikeOn] = useState(true)
-    const [isCameraOn, setIsCameraOn] = useState(true)
+    const { id } = useParams();
+    const [isMikeOn, setIsMikeOn] = useState(undefined)
+    const [isCameraOn, setIsCameraOn] = useState(undefined)
     const [isCodeOn, setIsCodeOn] = useState(true)
-    const [videoStream, setVideoStream] = useState(null); // 비디오 스트림을 따로 저장
-
     const videoRef = useRef(null);
     const [myStream, setMyStream] = useState(null)
     const [showPeople, setShowPeople] = useState(true)
@@ -45,7 +43,7 @@ const LiveRoom = () => {
         }
     };
 
-    const socket = io()
+   let socket = io()
     const myPeerConnection = new RTCPeerConnection();
     let myDataChannel;
 
@@ -65,28 +63,32 @@ const LiveRoom = () => {
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
         getMedia()
-        socket.on("welcome", async () => {
-            myDataChannel = myPeerConnection.createDataChannel("chat");
-            myDataChannel.addEventListener("message", (event) => console.log(event.data));
-            console.log("made data channel");
-            const offer = await myPeerConnection.createOffer();
-            myPeerConnection.setLocalDescription(offer);
-            console.log("sent the offer");
-            socket.emit("offer", offer);
+        socket = io("http://localhost:5000", {
+            cors: {
+                origin: "*",
+            },
+            transports: ["polling"],
+            autoConnect: false,
         });
 
-        socket.on("offer", async (offer) => {
-            myPeerConnection.addEventListener("datachannel", (event) => {
-                myDataChannel = event.channel;
-                myDataChannel.addEventListener("message", (event) =>
-                    console.log(event.data)
-                );
-            });
-            console.log("received the offer");
-            myPeerConnection.setRemoteDescription(offer);
-            const answer = await myPeerConnection.createAnswer();
-            myPeerConnection.setLocalDescription(answer);
-            socket.emit("answer", answer,);
+        socket.connect()
+        console.log("연결 시도");
+
+        socket.on("connect", (data) => {
+            // socket 연결 성공. 서버와 통신 시작.
+            console.log("Socket connected");
+            socket.emit("join_room",id);
+          });
+         
+
+        socket.on("welcome", () => {
+            console.log("웰컴")
+            socket.emit("offer",id);
+        });
+
+        socket.on("offer", (offer) => {
+            console.log("offer")
+            socket.emit("answer",id);
             console.log("sent the answer");
         });
 
@@ -99,14 +101,12 @@ const LiveRoom = () => {
             console.log("received candidate");
             myPeerConnection.addIceCandidate(ice);
         });
-
+       
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
             socket.disconnect();
-
         };
     }, []);
-
 
     const onClickMike = async () => {
         myStream

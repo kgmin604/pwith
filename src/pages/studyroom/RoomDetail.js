@@ -115,16 +115,20 @@ function RoomDetail() {
 
   function requestDeleteRoom(event){
     event.stopPropagation();
-    axios({
-      method: "GET",
-      url: `/study-room/${roomInfo.id}`,
-    })
-      .then(function (response) {
-        alert('삭제가 완료되었습니다.');
+
+    if (window.confirm("정말로 삭제하시겠습니까?")){
+      axios({
+        method: "DELETE",
+        url: `/study-room/${roomInfo.id}`,
       })
-      .catch(function (error) {
-        console.log(error);
-      });
+        .then(function (response) {
+          alert('삭제가 완료되었습니다.');
+          navigate('./..');
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
   }
 
   // 소켓 통신 함수
@@ -141,6 +145,16 @@ function RoomDetail() {
     socket.emit("sendTo", data);
     document.getElementById("chat-area").value = "";
     setMyChat("");
+  }
+
+  function EnterRoom(){
+    const url = window.location.href;
+    const part = url.split("/");
+    const RoomId = part[part.length - 1];
+    let data = {
+      roomId: Number(RoomId)
+    };
+    socket.emit("enter",data);
   }
 
   // room data 받아오기
@@ -190,7 +204,7 @@ function RoomDetail() {
     console.log("연결 시도");
 
     socket.on("connect", (data) => {
-      // socket 연결 성공. 서버와 통신 시작.
+      EnterRoom();
       console.log("Socket connected");
     });
     socket.on("sendFrom", (data) => {
@@ -272,13 +286,18 @@ function RoomDetail() {
                 className="ent-btn"
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`./../live/${roomInfo.id}`);
+                  window.open(`./../studyroom/live/${roomInfo.id}`, '_blank');
                 }}
               >
                 입장하기
               </div>
               {user.name === roomInfo.leader ? (
-                <span>스터디 삭제하기</span>
+                <span
+                  className="room-delete-btn"
+                  onClick={e=>requestDeleteRoom(e)}
+                >
+                  스터디 삭제하기
+                </span>
               ) : null}
             </div>
           </div>
