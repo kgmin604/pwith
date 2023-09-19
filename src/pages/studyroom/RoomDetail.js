@@ -280,7 +280,7 @@ function RoomDetail() {
                 className="ent-btn"
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`./../live/${roomInfo.id}`);
+                  window.open(`./../studyroom/live/${roomInfo.id}`, '_blank');
                 }}
               >
                 입장하기

@@ -114,3 +114,20 @@ def leaveRoom(data):
     leave_room(roomId)
     # done()
     # socketio.emit("out", 'qwer', 123)
+
+@socketio.on('join_room')
+def join_room(roomId):
+    print("======조인룸======")
+    emit('welcome', room=roomId)
+
+@socketio.on('offer')
+def handle_offer(offer, roomId):
+    emit('offer', offer, room=roomId)
+
+@socketio.on('answer')
+def handle_answer(answer, roomId):
+    emit('answer', answer, room=roomId)
+
+@socketio.on('ice')
+def handle_ice(ice, roomId):
+    emit('ice', ice, room=roomId)
