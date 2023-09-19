@@ -167,21 +167,27 @@ function RoomDetail() {
   // 소켓 통신하기
 
   useEffect(() => {
-    // socket = io('http://localhost:5000', {
-    //     cors: {
-    //         origin: '*',
-    //     },
-    //     transports: ["websocket"],
-    // });
-    socket = io("http://localhost:5000", {
-      cors: {
-        origin: "*",
-      },
-      transports: ["polling"],
-      //autoConnect: false,
+    // websocket 방식 여기부터
+    socket = io('http://localhost:5000', {
+        cors: {
+            origin: '*',
+        },
+        transports: ["websocket"],
     });
+    // 여기까지
+
+    // polling 방식 여기부터
+    // socket = io("http://localhost:5000", {
+    //   cors: {
+    //     origin: "*",
+    //   },
+    //   transports: ["polling"],
+    //   autoConnect: false,
+    // });
+    // socket.connect();
+    // 여기까지
+
     console.log("연결 시도");
-    socket.connect();
 
     socket.on("connect", (data) => {
       // socket 연결 성공. 서버와 통신 시작.
