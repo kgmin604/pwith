@@ -191,6 +191,7 @@ function RoomDetail() {
   // 소켓 통신하기
 
   useEffect(() => {
+<<<<<<< HEAD
     // socket = io('http://localhost:5000', {
     //     cors: {
     //         origin: '*',
@@ -203,9 +204,29 @@ function RoomDetail() {
       },
       transports: ["polling"],
       autoConnect: false,
+=======
+    // websocket 방식 여기부터
+    socket = io('http://localhost:5000', {
+        cors: {
+            origin: '*',
+        },
+        transports: ["websocket"],
+>>>>>>> 1af8b84abd1eec460b959b511dda6adb853026c6
     });
+    // 여기까지
+
+    // polling 방식 여기부터
+    // socket = io("http://localhost:5000", {
+    //   cors: {
+    //     origin: "*",
+    //   },
+    //   transports: ["polling"],
+    //   autoConnect: false,
+    // });
+    // socket.connect();
+    // 여기까지
+
     console.log("연결 시도");
-    socket.connect();
 
     socket.on("connect", (data) => {
       EnterRoom();
