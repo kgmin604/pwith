@@ -149,10 +149,9 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
 
     for m in members :
         join_members.append({
-            m.nickname : {
-                'memId' : m.memId,
-                'image' : m.image
-            }
+            'memId' : m.memId,
+            'nickname' : m.nickname,
+            'image' : m.image
         })
 
     chats = []
