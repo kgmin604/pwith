@@ -33,7 +33,7 @@ function RoomDetail() {
     image: "",
     notice: "",
     leader: "",
-    join_members: [
+    members: [
       /*
             {
                 "image": "",
@@ -44,36 +44,6 @@ function RoomDetail() {
     ],
   });
 
-  // dummy data
-  let tmp = {
-    sender: "경민",
-    content: "채애팅",
-    date: "23/09/05 14:00",
-    roomId: 31,
-  };
-  let tmp1 = {
-    sender: "경민",
-    content:
-      "채팅을 보냈습니다다다다다다다다다다다다다다다다다다다다다다다다다라라라라라라라라라라라라라라라라라라라라라라라라라",
-    date: "23/09/05 15:00",
-  };
-  let tmp2 = {
-    sender: "채영",
-    content:
-      "답장을 보냈습니다다다다다다다다다다다다다다다라라라라라라라라라라라라",
-    date: "23/09/05 16:00",
-  };
-  let tmp3 = {
-    sender: "정윤",
-    content: "백엔드 ㅋ",
-    date: "23/09/05 20:00",
-  };
-  let tmp4 = {
-    sender: "주연",
-    content: "프론트엔드 ㅎ",
-    date: "23/09/05 19:00",
-  };
-  //let [roomChat, setRoomChat] = useState([tmp, tmp1,tmp1,tmp2,tmp2,tmp1,tmp1,tmp2,tmp2,tmp1,tmp1,tmp2,tmp2,tmp3, tmp4]);
   let [roomChat, setRoomChat] = useState([]);
   let [myChat, setMyChat] = useState("");
 
@@ -83,7 +53,7 @@ function RoomDetail() {
   let [isOn, setIsOn] = useState(false);
   let [isChange, setIsChange] = useState(false);
 
-  let [newNotice, setNewNotice] = useState("공지입니다");
+  let [newNotice, setNewNotice] = useState("");
 
   // 개인 쪽지 관련 데이터
   let [chatName, setChatName] = useState("");
@@ -153,11 +123,10 @@ function RoomDetail() {
       url: `/study-room/${RoomId}`,
     })
       .then(function (response) {
-        const tmp = response.data.data; // API 변경 후 수정
-        tmp["id"] = RoomId;
-        setRoomInfo(tmp);
-
+        setRoomInfo(response.data.data.room);
+        console.log(response.data.data.room);
         setRoomChat(response.data.data.chat);
+        console.log(response.data.data.chat);
       })
       .catch(function (error) {
         //console.log(error);
@@ -186,16 +155,6 @@ function RoomDetail() {
     });
   }, []);
 
-  function tmpF() {
-    console.log("클릭");
-    socket.emit("sendTo", {
-      // sendTo 테스트 하려고 바꿈 - ㅊㅇ
-      roomId: 31,
-      message: "테스트 메시지야 😎",
-      sender: "열정걸", // 닉네임
-    });
-  }
-
   // 스크롤 영역을 항상 아래로 스크롤하는 함수
   const scrollToBottom = () => {
     if (chatAreaRef.current) {
@@ -219,10 +178,6 @@ function RoomDetail() {
                 <h3>{roomInfo.name}</h3>
                 <h3
                   className="leader"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    tmpF();
-                  }}
                 >
                   LEADER
                   <FontAwesomeIcon
@@ -334,7 +289,7 @@ function RoomDetail() {
                   <h2>스터디 멤버</h2>
                   <hr style={{ margin: "0 0" }}></hr>
                   <div className="items">
-                    {roomInfo.join_members.map((member, i) => (
+                    {roomInfo.members.map((member, i) => (
                       <div className="item" key={i}>
                         <h3>{member.nickname}</h3>
                         {member.nickname !== user.name ? (
