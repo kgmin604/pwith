@@ -75,6 +75,24 @@ function RoomDetail() {
     setNewNotice(e.target.value);
   }
 
+  function requestChangeNotice(){
+    axios({
+      method: "PATCH",
+      url: `/study-room/${roomInfo.id}`,
+      data:{
+        notice: `${newNotice}`
+      }
+    })
+      .then(function (response) {
+        setRoomInfo(response.data.data.room);
+        setRoomChat(response.data.data.chat);
+        setNewNotice(response.data.data.room.notice);
+      })
+      .catch(function (error) {
+        //console.log(error);
+      });
+  }
+
   function handleModal(event) {
     event.stopPropagation();
     setIsModalOpen(!isModalOpen);
@@ -93,6 +111,20 @@ function RoomDetail() {
   function changeChatInput(event) {
     event.stopPropagation();
     setMyChat(event.target.value);
+  }
+
+  function requestDeleteRoom(event){
+    event.stopPropagation();
+    axios({
+      method: "GET",
+      url: `/study-room/${roomInfo.id}`,
+    })
+      .then(function (response) {
+        alert('삭제가 완료되었습니다.');
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   // 소켓 통신 함수
@@ -124,9 +156,8 @@ function RoomDetail() {
     })
       .then(function (response) {
         setRoomInfo(response.data.data.room);
-        console.log(response.data.data.room);
         setRoomChat(response.data.data.chat);
-        console.log(response.data.data.chat);
+        setNewNotice(response.data.data.room.notice);
       })
       .catch(function (error) {
         //console.log(error);
@@ -147,7 +178,7 @@ function RoomDetail() {
         origin: "*",
       },
       transports: ["polling"],
-      autoConnect: false,
+      //autoConnect: false,
     });
     console.log("연결 시도");
     socket.connect();
@@ -268,6 +299,7 @@ function RoomDetail() {
                         className="notice-btn"
                         onClick={(e) => {
                           e.stopPropagation();
+                          requestChangeNotice();
                           setIsChange(false);
                         }}
                       >
