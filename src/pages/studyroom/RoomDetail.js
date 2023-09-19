@@ -157,6 +157,16 @@ function RoomDetail() {
     socket.emit("enter",data);
   }
 
+  function LeaveRoom(){
+    const url = window.location.href;
+    const part = url.split("/");
+    const RoomId = part[part.length - 1];
+    let data = {
+      roomId: Number(RoomId)
+    };
+    socket.emit("leave",data);
+  }
+
   // room data 받아오기
 
   useEffect(() => {
@@ -192,7 +202,7 @@ function RoomDetail() {
         origin: "*",
       },
       transports: ["polling"],
-      //autoConnect: false,
+      autoConnect: false,
     });
     console.log("연결 시도");
     socket.connect();
@@ -203,6 +213,10 @@ function RoomDetail() {
     });
     socket.on("sendFrom", (data) => {
       setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
+    });
+    socket.on("disconnect", (data)=>{
+      LeaveRoom();
+      console.log("Socket disconnected")
     });
   }, []);
 
@@ -217,6 +231,15 @@ function RoomDetail() {
   useEffect(() => {
     scrollToBottom();
   }, [roomChat]);
+
+  const pressEnter = (e) => {
+    e.stopPropagation();
+    if (e.key === 'Enter' && e.shiftKey) { // [shift] + [Enter] 치면 걍 리턴
+      return;
+    } else if (e.key === 'Enter') { 	   // [Enter] 치면 메시지 보내기
+      sendTo();
+    }
+  };
 
   return (
     <>
@@ -374,11 +397,12 @@ function RoomDetail() {
                       <>
                         {chat.sender !== user.name ? (
                           <div className="chat-type1">
-                            <img src="https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/kkm5424.jpg?version=0.17936649555278406" />
+                            <img src="https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/kkm5424.jpg?version=0.17936649555278406" 
+                            onClick={e=>alert(roomInfo.members[`${chat.sender}`])}/>
                             <div className="content">
                               <h3>{chat.sender}</h3>
                               <div className="chat-time">
-                                <p>{chat.content}</p>
+                                <p style={{ whiteSpace: "pre-line" }} >{chat.content}</p>
                                 <time>{chat.date}</time>
                               </div>
                             </div>
@@ -387,7 +411,7 @@ function RoomDetail() {
                           <div className="chat-type2">
                             <div className="chat-time">
                               <time>{chat.date}</time>
-                              <p>{chat.content}</p>
+                              <p style={{ whiteSpace: "pre-line" }}>{chat.content}</p>
                             </div>
                           </div>
                         )}
@@ -399,6 +423,7 @@ function RoomDetail() {
                     <textarea
                       id="chat-area"
                       onChange={(e) => changeChatInput(e)}
+                      onKeyDown={pressEnter}
                     ></textarea>
                     <div
                       className="sending-btn"
