@@ -1,6 +1,6 @@
-from backend import app, config#, socketio
+from backend import app, config
 from backend.model.db_mongo import conn_mongodb
-from backend.view import s3, findSocialLoginMember, formatYMDHM, login_required
+from backend.view import s3, findSocialLoginMember, formatYMDHM
 from backend.controller.member_mgmt import Member
 
 import functools
@@ -8,24 +8,7 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 from flask import request, session
 from flask_login import current_user
-from flask_socketio import SocketIO, join_room, leave_room, emit, disconnect
-
-@app.route('/imgupload', methods=['POST'])
-def upload_file():
-
-    file = request.files['file']
-
-    if file:
-
-        filename = secure_filename(file.filename)
-
-        s3.upload_fileobj(file, config.S3_BUCKET_NAME, filename)
-
-    location = s3.get_bucket_location(Bucket=config.S3_BUCKET_NAME)["LocationConstraint"]
-
-    return {
-        'data' : f"https://{config.S3_BUCKET_NAME}.s3.{location}.amazonaws.com/{filename}.jpg"
-    }
+from flask_socketio import SocketIO, join_room, leave_room, rooms, emit, disconnect
     
 # @socketio.on('join_room')
 # def join_room(roomId):
@@ -54,6 +37,8 @@ if __name__ == "__main__": # 해당 파일을 실행했을 경우
 @socketio.on('connect')
 def test_connect():
     print("========CONNECT========")
+    # rooms()
+    # print(rooms)
 
 @socketio.on('disconnect')
 def test_disconnect():
@@ -66,8 +51,6 @@ def enterRoom(data):
     roomId = data['roomId']
     print(roomId)
     join_room(roomId)
-    # done()
-    # emit('in', {'nickname': socket['nickname']}, to=roomId)
 
 # def authenticated_only(f):
 #     @functools.wraps(f)
@@ -79,7 +62,6 @@ def enterRoom(data):
 #             return f(*args, **kwargs)
 #     return wrapped
 
-# @login_required
 # @authenticated_only
 @socketio.on("sendTo")
 def sendMessage(data):
@@ -88,12 +70,6 @@ def sendMessage(data):
     roomId = data['roomId']
     message = data['message']
     sender = data['sender']
-
-    # loginId = current_user.get_id()
-    # if loginId is None :
-    #     loginMember, new_token = findSocialLoginMember()
-    # else :
-    #     loginMember = Member.findById(loginId)
 
     now = datetime.now()
 
@@ -105,12 +81,25 @@ def sendMessage(data):
     })
 
     formatted_now = formatYMDHM(now)
-    emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now})
+    emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now}, to = roomId)
+    # emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now})
 
 @socketio.on("leave")
 def leaveRoom(data):
+    print("=======LEAVEROOM=======")
     roomId = data['roomId']
     print(roomId)
     leave_room(roomId)
-    # done()
-    # socketio.emit("out", 'qwer', 123)
+
+@socketio.on("sendToRoom")
+def sendMessage(data):
+    print("======SENDMSGROOM======")
+    
+    roomId = data['roomId']
+    message = data['message']
+    sender = data['sender']
+
+    now = datetime.now()
+    formatted_now = formatYMDHM(now)
+
+    emit('sendFromRoom', {'sender': sender, 'content': message, 'date': formatted_now}, to = roomId)
