@@ -136,6 +136,12 @@ function RoomDetail() {
   // 소켓 통신하기
 
   useEffect(() => {
+    // socket = io('http://localhost:5000', {
+    //     cors: {
+    //         origin: '*',
+    //     },
+    //     transports: ["websocket"],
+    // });
     socket = io("http://localhost:5000", {
       cors: {
         origin: "*",
