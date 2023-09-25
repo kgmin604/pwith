@@ -9,7 +9,6 @@ from functools import wraps
 from botocore.client import Config
 import boto3 
 import json
-# import logging ###
 
 from backend.view import member, study, studyroom, mypage, mentoring, community, pwithmain, chat, oauth_server, oauth_member
 from backend.controller.member_mgmt import Member
@@ -39,8 +38,6 @@ def create_app() :
     app.register_blueprint(oauth_server.oauth_bp)
     app.register_blueprint(oauth_member.oauth_member_bp)
 
-    # app.logger.setLevel(logging.WARNING) ###
-
     @app.after_request
     def final_return(resp) :
 
@@ -63,7 +60,7 @@ def create_app() :
             access_token = resp.json.get('access_token')
             response.set_cookie('access_token', value=access_token, path='/')
 
-        if resp.json.get('token') is not None : # TODO httponly=True 설정
+        if resp.json.get('token') is not None : # social login
 
             token = resp.json.get('token')
 
@@ -71,9 +68,9 @@ def create_app() :
             access_token = token.get('access_token')
             refresh_token = token.get('refresh_token')
 
-            response.set_cookie('provider', value=provider, path='/')
-            response.set_cookie('access_token', value=access_token, path='/')
-            response.set_cookie('refresh_token', value=refresh_token, path='/')
+            response.set_cookie('provider', value=provider, path='/', httponly=True, secure=True)
+            response.set_cookie('access_token', value=access_token, path='/', httponly=True, secure=True)
+            response.set_cookie('refresh_token', value=refresh_token, path='/', httponly=True, secure=True)
 
         return response
 
@@ -82,8 +79,6 @@ def create_app() :
 app = create_app()
 
 mail = Mail(app)
-
-# socketio = SocketIO(app, cors_allowed_origins="*", manage_session=False)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
