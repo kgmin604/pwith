@@ -13,7 +13,7 @@ from backend import config
 
 member_bp = Blueprint('member', __name__, url_prefix='/member')
 
-@member_bp.route('/join/email', methods=['POST'])
+@member_bp.route('/join/email', methods=['POST']) # 이메일 유효성 검사 및 본인 인증
 def checkEmail() :
 
     email = request.get_json()['email']
@@ -31,7 +31,7 @@ def checkEmail() :
         'auth' : auth_number
     }
 
-@member_bp.route('/join', methods=['POST'])
+@member_bp.route('/join', methods=['POST']) # 회원가입
 def join() :
     
     data = request.get_json()
@@ -70,7 +70,7 @@ def join() :
         'data' : None
     }
 
-@member_bp.route('/login', methods=['POST'])
+@member_bp.route('/login', methods=['POST']) # 로그인 (일반)
 def login() :
 
     data = request.get_json()
@@ -105,7 +105,7 @@ def login() :
         'isSocial' : False
     }
 
-@member_bp.route('/logout', methods=['GET'])
+@member_bp.route('/logout', methods=['GET']) # 로그아웃 (일반 + 소셜)
 @login_required
 def logout(loginMember, new_token) :
 
@@ -160,7 +160,7 @@ def logout(loginMember, new_token) :
             'data' : None
         }
 
-@member_bp.route('/id', methods = ['POST'])
+@member_bp.route('/id', methods = ['POST']) # 아이디 찾기
 def findId() :
 
     email = request.get_json()['email']
@@ -181,7 +181,7 @@ def findId() :
     }
 
 url_cache = {}
-@member_bp.route('/password', methods = ['POST'])
+@member_bp.route('/password', methods = ['POST']) # 비밀번호 찾기
 def findPassword() :
 
     data = request.get_json()
@@ -215,7 +215,7 @@ def findPassword() :
         'data' : None
     }
 
-@member_bp.route('/password/<url>', methods = ['GET'])
+@member_bp.route('/password/<url>', methods = ['GET']) # 비밀번호 재설정 페이지 유효성 검사
 def checkValidPage(url) :
 
     valid_id = url_cache.get(url)
@@ -232,7 +232,7 @@ def checkValidPage(url) :
             'data' : None
         }
 
-@member_bp.route('/password/<url>', methods = ['PATCH'])
+@member_bp.route('/password/<url>', methods = ['PATCH']) # 비밀번호 재설정
 def resetPassword(url) :
 
     data = request.get_json()
