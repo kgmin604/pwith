@@ -128,8 +128,22 @@ def updateAccessToken(refresh_token, provider) :
 
     if provider == 'NAVER':
         resp = requests.get(token_endpoint, params = data)
-    else:
+    elif provider == 'KAKAO':
         resp = requests.post(token_endpoint, data = data)
+    elif provider == 'GOOGLE': # TODO TEST & REFACTOR
+        resp = requests.post(token_endpoint,
+            headers = {
+                'Content-type' : 'application/x-www-form-urlencoded;'
+            },
+            data = {
+                'client_id': client_id,
+                'client_secret': client_secret,
+                'refresh_token': refresh_token,
+                'grant_type': 'refresh_token',
+                'access_type': 'offline'
+            }
+        )
+        print(resp.json())
 
     return resp.json().get('access_token')
 
