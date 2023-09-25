@@ -112,7 +112,7 @@ def logout(loginMember, new_token) :
     provider = request.cookies.get('provider')
     access_token = request.cookies.get('access_token')
 
-    if provider == 'kakao' :
+    if provider == 'KAKAO' :
 
         resp = requests.post(
             config.KAKAO_LOGOUT_ENDPOINT, 
@@ -128,31 +128,15 @@ def logout(loginMember, new_token) :
             'data' : None
         }
     
-    elif provider == 'google' :
+    elif provider == 'GOOGLE' or provider == 'NAVER':
 
-        resp = requests.post(
-            config.GOOGLE_LOGOUT_ENDPOINT,
-            params = {
-                'token' : access_token
-            },
-            headers = {
-                'Content-type' : 'application/x-www-form-urlencoded'
-            }
-        )
         return {
             'status' : 200,
             'message' : 'logout',
             'data' : None
         }
 
-    elif provider == 'naver' :
-        return {
-            'status' : 200,
-            'message' : 'logout',
-            'data' : None
-        }
-
-    else : # session login
+    else : # Session
 
         logout_user()
         
