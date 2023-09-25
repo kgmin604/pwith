@@ -52,9 +52,9 @@ def create_app() :
         )
 
         if resp.json.get('message') == 'logout' : # logout
-            response.set_cookie('provider', value='', path='/', expires = 0)
-            response.set_cookie('access_token', value='', path='/', expires = 0)
-            response.set_cookie('refresh_token', value='', path='/', expires = 0)
+            response.set_cookie('provider', value='', path='/', expires=0)
+            response.set_cookie('access_token', value='', path='/', expires=0)
+            response.set_cookie('refresh_token', value='', path='/', expires=0)
         
         if resp.json.get('access_token') is not None : # new access token
             access_token = resp.json.get('access_token')

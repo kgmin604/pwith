@@ -11,7 +11,7 @@ def login_oauth(provider):
     if provider not in ['google', 'naver', 'kakao']:
         return {
             'status' : 404,
-            'message' : '잘못된 리소스 서버',
+            'message' : '제공하지 않는 리소스 서버',
             'data' : None
         }
 
