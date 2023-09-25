@@ -22,7 +22,7 @@ def showAccount(loginMember, new_token) : # 회원 정보
     memEmail = loginMember.email
     memImage = loginMember.image
     
-    if memId is None :
+    if memId is None : ## TODO 추후 삭제
         memId = memEmail.split('@')[0]
 
     return {
@@ -37,7 +37,16 @@ def showAccount(loginMember, new_token) : # 회원 정보
 
 @mypage_bp.route('/account/password', methods = ['PATCH'])
 @login_required
-def changePassword(loginMember, new_token) : # TODO 소셜 비활성화
+def changePassword(loginMember, new_token) : # 비밀번호 수정
+
+    provider = request.cookies.get('provider')
+    if provider is not None:
+        return {
+            'status' : 404,
+            'message' : '소셜 계정',
+            'data' : None,
+            'access_token' : new_token
+        }
 
     data = request.get_json()
 
