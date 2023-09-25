@@ -8,7 +8,7 @@ oauth_member_bp = Blueprint('oauth_member', __name__, url_prefix='/member')
 @oauth_member_bp.route('/login/auth/<provider>', methods = ['GET'])
 def login_oauth(provider):
 
-    if provider not in ['google', 'naver', 'kakao']:
+    if provider not in ['GOOGLE', 'NAVER', 'KAKAO']:
         return {
             'status' : 404,
             'message' : '제공하지 않는 리소스 서버',

@@ -14,7 +14,7 @@ oauth_bp = Blueprint('oauth', __name__, url_prefix = '')
 @oauth_bp.route('/oauth/callback/<provider>', methods = ['GET'])
 def oauth_callback(provider):
 
-    if provider not in ['google', 'naver', 'kakao']:
+    if provider not in ['GOOGLE', 'NAVER', 'KAKAO']:
         return {
             'status' : 404,
             'message' : '제공하지 않는 리소스 서버',
