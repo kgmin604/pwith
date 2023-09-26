@@ -69,7 +69,7 @@ class Member(UserMixin):
         if not mem:
             return None
 
-        member = Member(mem[0], None, None, mem[3], mem[4], mem[5], mem[8])
+        member = Member(mem[0], mem[1], None, mem[3], mem[4], mem[5], mem[8])
 
         return member
 
