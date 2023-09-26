@@ -10,7 +10,7 @@ from flask import request, session
 from flask_login import current_user
 from flask_socketio import SocketIO, join_room, leave_room, rooms, emit, disconnect
 
-socketio = SocketIO(app, manage_session=False, cors_allowed_origins='*')
+socketio = SocketIO(app, cors_allowed_origins='*')
 
 if __name__ == "__main__": # 해당 파일을 실행했을 경우
     # app.run(host="127.0.0.1", port="5000")
