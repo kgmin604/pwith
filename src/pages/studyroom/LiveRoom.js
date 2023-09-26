@@ -75,7 +75,7 @@ const LiveRoom = () => {
 
     function handleIce(data) {
         console.log("sent candidate");
-        socket.emit("ice", data.candidate);
+        socketRef.current.emit("ice", data.candidate);
       }
       
       function handleAddStream(data) {
