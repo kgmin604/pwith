@@ -69,26 +69,20 @@ const LiveRoom = () => {
             peerRef.current.addTrack(track, stream);
         });
 
-        // iceCandidate 이벤트 
-        peerRef.current.onicecandidate = (e) => {
-            if (e.candidate) {
-                if (!socketRef.current) {
-                    return;
-                }
-                console.log("recv candidate");
-                socketRef.current.emit("ice", e.candidate);
-            }
-        };
-
-        // 구 addStream 현 track 이벤트 
-        peerRef.current.ontrack = (e) => {
-            if (otherVideoRef.current) {
-                console.log('test', e.streams[0])
-                otherVideoRef.current.srcObject = e.streams[0];
-            }
-        };
-
+        peerRef.current.addEventListener("icecandidate", handleIce);
+        peerRef.current.addEventListener("addstream", handleAddStream);
     }
+
+    function handleIce(data) {
+        console.log("sent candidate");
+        socket.emit("ice", data.candidate);
+      }
+      
+      function handleAddStream(data) {
+        if(otherVideoRef.current){
+            otherVideoRef.current.srcObject = data.stream;
+        }
+      }
 
     const createOffer = async () => {
         console.log("create Offer");
