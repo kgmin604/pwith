@@ -334,14 +334,15 @@ def replyDelete(studyId, replyId, loginMember, new_token ) :     # 댓글 삭제
             'access_token' : new_token
         }
 
-@study_bp.route("", methods=['GET', 'POST'])
+@study_bp.route('/create', methods=['GET', 'POST'])
 @login_required
-def write( loginMember, new_token ):        # 글 작성
+def write(loginMember, new_token): # 글 작성
+
     if request.method == 'GET' :
+
         result = []
 
         roomList = studyPost.getMyStudyList(loginMember.id)
-        # roomList = studyPost.getMyStudyList('a')
 
         for room in roomList :
             result.append({
@@ -349,32 +350,29 @@ def write( loginMember, new_token ):        # 글 작성
                 'label' : room[1]
             })
 
-        # print(result)
         return {
             'data' : {
                 'result' : result
-                },
+            },
             'access_token' : new_token
         }
+    else : # POST
 
-    else :
-
-        data = request.get_json(silent=True)
-
+        data = request.get_json()
 
         title = data['title']
+        content = data['content']
+        roomId = data['roomId']
         writer = loginMember.id
         curDate = studyPost.curdate()
-        content = data['content']
         likes = 0
         views = 0
-        roomId = data['roomId']
         
-        done =studyPost.insertStudy(title, writer, curDate, content, likes, views, roomId)
+        studyPost.insertStudy(title, writer, curDate, content, likes, views, roomId)
         
         return {
             'data': None,
-            'access_token' : new_token
+            'access_token': new_token
         }
     
 @study_bp.route('/<int:id>/like', methods=['POST'])
