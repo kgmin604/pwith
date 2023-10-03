@@ -210,3 +210,23 @@ def codeBard(id, loginMember, new_token) : # 코드 리뷰
         },
         'access_token' : new_token
     }
+    
+@studyroom_bp.route('/<id>/out', methods=['DELETE'])
+@login_required
+def studyOut(id, loginMember, new_token) : # 스터디 탈퇴
+    
+    done = StudyRoom.deleteStudent(loginMember.id, id)
+    print(done)
+    
+    if done == 0 :
+        return {
+            'status' : 400,
+            'message' : "스터디를 삭제할 수 없습니다.",
+            'data' : None,
+            'access_token' : new_token
+        }
+    else: 
+        return {
+            'data' : None,
+            'access_token' : new_token
+        }
