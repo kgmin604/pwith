@@ -22,9 +22,6 @@ def showAccount(loginMember, new_token) : # 회원 정보
     memEmail = loginMember.email
     memImage = loginMember.image
     
-    if memId is None : ## TODO 추후 삭제
-        memId = memEmail.split('@')[0]
-
     return {
         'data' : {
             'id' : memId,
