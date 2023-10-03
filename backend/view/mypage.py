@@ -1,4 +1,4 @@
-from flask_login import current_user
+from flask_login import current_user, logout_user
 from flask import Blueprint, request
 import bcrypt
 import requests
@@ -97,9 +97,19 @@ def changeImage(loginMember, new_token) : # 프로필 사진 수정
         'access_token' : new_token
     }
 
+@mypage_bp.route('/account', methods = ['POST'])
+@login_required
+def checkEmail(loginMember, new_token) : # 탈퇴 전 이메일 인증
+
+    auth_number = sendAuthCode(loginMember.email)
+
+    return {
+        'auth': auth_number
+    }
+
 @mypage_bp.route('/account', methods = ['DELETE'])
 @login_required
-def deleteAccount(loginMember, new_token) : # 회원 탈퇴 (일반 + 소셜) -> TODO 정윤 DB 수정 후 마무리
+def deleteAccount(loginMember, new_token) : # 회원 탈퇴 (일반 + 소셜)
 
     provider = request.cookies.get('provider')
     access_token = request.cookies.get('access_token')
@@ -119,9 +129,9 @@ def deleteAccount(loginMember, new_token) : # 회원 탈퇴 (일반 + 소셜) ->
                 'access_token' : new_token
             }
 
-        logout_user()
-        
         Member.deleteById(loginMember.id)
+
+        logout_user()
 
         return {
             'data' : None,
@@ -161,6 +171,7 @@ def deleteAccount(loginMember, new_token) : # 회원 탈퇴 (일반 + 소셜) ->
                     'Content-type' : 'application/x-www-form-urlencoded'
                 }
             )
+
         Member.deleteById(loginMember.id)
 
         return {
