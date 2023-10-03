@@ -697,14 +697,17 @@ function Withdraw() {
                     password: `${pw}`,
                 }
             })
-                .then(function (response) {
-                    alert("회원 탈퇴가 완료되었습니다.");
-                    navigate("./../..");
-                })
-                .catch(function (error) {
-                    console.log(error);
-                    alert("잘못된 비밀번호입니다.");
-                });
+            .then(function (response) {
+                alert("회원 탈퇴가 완료되었습니다.");
+                navigate("./../..");
+            })
+            .catch(function (error) {
+                console.log(error);
+                alert("잘못된 비밀번호입니다.");
+            });
+        }
+        else{
+            alert("취소되었습니다.");
         }
     }
 

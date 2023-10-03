@@ -27,7 +27,7 @@ function Login() {
     })
     .then(function (response) {
       axios({
-        method: "GET",
+        method: "POST",
         url: `${response.data.data.auth_url}`
       })
       .then(function(response){
