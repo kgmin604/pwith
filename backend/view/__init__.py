@@ -43,14 +43,7 @@ def findSocialLoginMember() :
     access_token = request.cookies.get('access_token')
     refresh_token = request.cookies.get('refresh_token')
 
-    if provider == 'naver' : # OAuth Naver
-        loginMember, new_token = checkLoginNaver(access_token, refresh_token)
-    
-    elif provider == 'kakao' : # OAuth Kakao
-        loginMember, new_token = checkLoginKakao(access_token, refresh_token)
-
-    elif provider == 'google' : # OAuth Google
-        loginMember, new_token = checkLoginGoogle(access_token, refresh_token)
+    loginMember, new_token = checkToken(access_token, refresh_token, provider)
     
     return loginMember, new_token
 
@@ -73,14 +66,8 @@ def custom_login_required(func):
             else : # session login
                 loginMember = current_user
 
-        elif provider == 'naver' : # OAuth Naver
-            loginMember, new_token = checkLoginNaver(access_token, refresh_token)
-        
-        elif provider == 'kakao' : # OAuth Kakao
-            loginMember, new_token = checkLoginKakao(access_token, refresh_token)
-
-        elif provider == 'google' : # OAuth Google
-            loginMember, new_token = checkLoginGoogle(access_token, refresh_token)
+        elif provider in ['GOOGLE', 'NAVER', 'KAKAO']: # OAuth
+            loginMember, new_token = checkToken(access_token, refresh_token, provider)
 
         if loginMember is None :
             return current_app.login_manager.unauthorized()
@@ -94,95 +81,43 @@ def custom_login_required(func):
 
 login_required = custom_login_required
 
-def checkLoginGoogle(access_token, refresh_token) :
+def checkToken(access_token, refresh_token, provider) :
 
     loginMember, new_token = None, None
 
     resp = requests.get(
-        config.GOOGLE_INFO_ENDPOINT,
-        headers = {
-            'Authorization' : f'Bearer {access_token}'
-        }
-    )
-    result = resp.json()
-    print(result) ###
-    
-    if result.get('error') is None : # access 유효
-
-        sns_id = result.get('id')
-        loginMember = Member.findBySns(sns_id, 'GOOGLE')
-
-    elif result.get('error').get('code') == 401 : # access 만료 / refresh 오류
-
-        member_id = RefreshToken.findMemberByToken(refresh_token)
-        if member_id is None :
-            loginMember = None
-        else :
-            loginMember = Member.findById(member_id)
-        new_token = updateAccessToken(refresh_token, 'GOOGLE')
-
-    return loginMember, new_token
-
-def checkLoginNaver(access_token, refresh_token) :
-
-    loginMember, new_token = None, None
-
-    resp = requests.get(
-        config.NAVER_INFO_ENDPOINT,
-        headers = {
-            'Authorization' : f'Bearer {access_token}'
-        }
-    )
-    result = resp.json()
-    
-    if result.get('resultcode') == '00' : # access 유효
-
-        sns_id = result.get('response').get('id')
-        loginMember = Member.findBySns(sns_id, 'NAVER')
-
-    elif result.get('resultcode') == '024' : # access 만료 / refresh 오류
-
-        member_id = RefreshToken.findMemberByToken(refresh_token)
-        if member_id is None :
-            loginMember = None
-        else :
-            loginMember = Member.findById(member_id)
-        new_token = updateAccessToken(refresh_token, 'NAVER')
-    
-    return loginMember, new_token
-
-def checkLoginKakao(access_token, refresh_token) :
-
-    loginMember, new_token = None, None
-
-    resp = requests.get(
-        config.KAKAO_VALIDATION_ENDPOINT,
+        getattr(config, f'{provider}_VALIDATION_ENDPOINT'
+            if provider == 'KAKAO' else f'{provider}_INFO_ENDPOINT'),
         headers = {
             'Authorization' : f'Bearer {access_token}'
         }
     )
     result = resp.json()
 
-    if result.get('id') is not None : # access 유효
-        sns_id = result.get('id')
-        loginMember = Member.findBySns(sns_id, 'KAKAO')
+    conditions = {
+        'GOOGLE': (result.get('error') is None, result.get('error', {}).get('code') == 401),
+        'KAKAO': (result.get('id') is not None, result.get('code') == '-401'),
+        'NAVER': (result.get('resultcode') == '00', result.get('resultcode') == '024')
+    }
 
-    elif result.get('code') == '-401' : # access 만료 / refresh 오류
-        
+    if conditions.get(provider)[0]: # access 유효
+        sns_id = result.get('response').get('id') if provider == 'NAVER' else result.get('id')
+        loginMember = Member.findBySns(sns_id, provider)
+
+    elif conditions.get(provider)[1]: # access 만료 / refresh 오류
         member_id = RefreshToken.findMemberByToken(refresh_token)
-        if member_id is None :
-            loginMember = None
-        else :
-            loginMember = Member.findById(member_id)
-        new_token = updateAccessToken(refresh_token, 'KAKAO')
-    
+        loginMember = Member.findById(member_id) if member_id is not None else None
+        new_token = updateAccessToken(refresh_token, provider)
+
     return loginMember, new_token
 
 def updateAccessToken(refresh_token, provider) :
 
+    print("==updateAccessToken==")
+
     token_endpoint = getattr(config, f'{provider}_TOKEN_ENDPOINT')
-    client_id = getattr(config, f'{provider}_CLIENT_ID')
     client_secret = getattr(config, f'{provider}_CLIENT_SECRET')
+    client_id = getattr(config, f'{provider}_CLIENT_ID')
 
     data = dict(
         client_id = client_id,
@@ -191,12 +126,24 @@ def updateAccessToken(refresh_token, provider) :
         grant_type = 'refresh_token'
     )
 
-    if provider == 'NAVER' :
+    if provider == 'NAVER':
         resp = requests.get(token_endpoint, params = data)
-    elif provider == 'KAKAO' :
+    elif provider == 'KAKAO':
         resp = requests.post(token_endpoint, data = data)
-    elif provider == 'GOOGLE' :
-        resp = requests.post(token_endpoint, data = data) ### TODO check
+    elif provider == 'GOOGLE': # TODO TEST & REFACTOR
+        resp = requests.post(token_endpoint,
+            headers = {
+                'Content-type' : 'application/x-www-form-urlencoded;'
+            },
+            data = {
+                'client_id': client_id,
+                'client_secret': client_secret,
+                'refresh_token': refresh_token,
+                'grant_type': 'refresh_token',
+                'access_type': 'offline'
+            }
+        )
+        print(resp.json())
 
     return resp.json().get('access_token')
 

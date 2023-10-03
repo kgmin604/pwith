@@ -23,8 +23,6 @@ const LiveRoom = () => {
     const [isMikeOn, setIsMikeOn] = useState(undefined)
     const [isCameraOn, setIsCameraOn] = useState(undefined)
     const [isCodeOn, setIsCodeOn] = useState(true)
-    const videoRef = useRef(null);
-    const [myStream, setMyStream] = useState(null)
     const [showPeople, setShowPeople] = useState(true)
     const [showChat, setShowChat] = useState(false)
 
@@ -43,81 +41,163 @@ const LiveRoom = () => {
         }
     };
 
-   let socket = io()
-    const myPeerConnection = new RTCPeerConnection();
-    let myDataChannel;
+    const socketRef = useRef();
+    // 자신의 비디오
+    const myVideoRef = useRef(null);
+    // 다른사람의 비디오
+    const otherVideoRef = useRef(null);
+    // peerConnection
+    const peerRef = useRef();
 
-    async function getMedia() {
-        const initialConstrains = {
-            'video': true,
-            'audio': true,
-        };
-        try {
-            const newStream = await navigator.mediaDevices.getUserMedia(initialConstrains);
-            videoRef.current.srcObject = newStream
-            setMyStream(newStream)
-        } catch (e) {
-            console.log(e);
+    const getMedia = async () => {
+
+        // 자신이 원하는 자신의 스트림정보
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true,
+        });
+        if (myVideoRef.current) {
+            myVideoRef.current.srcObject = stream
+            console.log('stream', stream)
         }
+
+        // 스트림을 peerConnection에 등록
+        stream.getTracks().forEach((track) => {
+            if (!peerRef.current) {
+                return;
+            }
+            peerRef.current.addTrack(track, stream);
+        });
+
+        peerRef.current.addEventListener("icecandidate", handleIce);
+        peerRef.current.addEventListener("addstream", handleAddStream);
+    }
+
+    function handleIce(data) {
+        console.log("sent candidate");
+        socketRef.current.emit("ice", data.candidate);
+      }
+      
+      function handleAddStream(data) {
+        if(otherVideoRef.current){
+            otherVideoRef.current.srcObject = data.stream;
+        }
+      }
+
+    const createOffer = async () => {
+        console.log("create Offer");
+        if (!(peerRef.current && socketRef.current)) {
+            return;
+        }
+        const sdp = await peerRef.current.createOffer();
+        peerRef.current.setLocalDescription(sdp);
+        console.log('createOffer setRemoteDescription 시그널 상태',  peerRef.current.signalingState)
+        console.log("sent the offer");
+        socketRef.current.emit("offer", sdp);
+    };
+
+    const createAnswer = async (sdp) => {
+        console.log("createAnswer");
+        if (!(peerRef.current && socketRef.current)) {
+            return;
+        }
+        console.log('createAnswer setRemoteDescription 시그널 상태', peerRef.current.signalingState)
+        peerRef.current.setRemoteDescription(sdp);
+
+        const answerSdp = await peerRef.current.createAnswer();
+        console.log('createAnswer setLocalDescription 시그널 상태', peerRef.current.signalingState)
+        peerRef.current.setLocalDescription(answerSdp);
+        console.log("sent the answer");
+        socketRef.current.emit("answer", answerSdp);
     }
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside);
-        getMedia()
-        socket = io("http://localhost:5000", {
+        socketRef.current = io("http://localhost:5000", {
             cors: {
                 origin: "*",
             },
             transports: ["polling"],
             autoConnect: false,
         });
-
-        socket.connect()
+        socketRef.current.connect()
+        peerRef.current = new RTCPeerConnection({
+            iceServers: [
+                {
+                    urls: [
+                        "stun:stun.l.google.com:19302",
+                        "stun:stun1.l.google.com:19302",
+                        "stun:stun2.l.google.com:19302",
+                        "stun:stun3.l.google.com:19302",
+                        "stun:stun4.l.google.com:19302",
+                    ],
+                },
+            ],
+        });
         console.log("연결 시도");
 
-        socket.on("connect", (data) => {
+        socketRef.current.on("connect", (data) => {
             // socket 연결 성공. 서버와 통신 시작.
             console.log("Socket connected");
-            socket.emit("join_room",id);
-          });
-         
-
-        socket.on("welcome", () => {
-            console.log("웰컴")
-            socket.emit("offer",id);
+            socketRef.current.emit("join_room", id);
         });
 
-        socket.on("offer", (offer) => {
-            console.log("offer")
-            socket.emit("answer",id);
-            console.log("sent the answer");
+        socketRef.current.on("welcome", () => {
+            console.log('welcome 받음')
+            createOffer();
         });
 
-        socket.on("answer", (answer) => {
-            console.log("received the answer");
-            myPeerConnection.setRemoteDescription(answer);
+        socketRef.current.on("offer", (sdp) => {
+            console.log("recv Offer");
+            createAnswer(sdp);
         });
 
-        socket.on("ice", (ice) => {
-            console.log("received candidate");
-            myPeerConnection.addIceCandidate(ice);
+        // answer를 전달받을 PeerA만 해당됩니다.
+        // answer를 전달받아 PeerA의 RemoteDescription에 등록
+        socketRef.current.on("answer", async (sdp) => {
+            console.log("recv Answer");
+            if (!peerRef.current) {
+                return;
+            }
+
+            // if (peerRef.current.signalingState !== "stable") {
+            try {
+                console.log('on answer setRemoteDescription 시그널 상태', peerRef.current.signalingState)
+                peerRef.current.setRemoteDescription(sdp);
+            } catch (error) {
+                console.error("원격 설명 설정 오류:", error);
+            }
+            // } else {
+            //     console.error("잘못된 상태에서 원격 설명을 설정하려고 시도했습니다:", peerRef.current.signalingState);
+            // }
         });
-       
+
+        socketRef.current.on("ice", async (candidate) => {
+            if (!peerRef.current) {
+                return;
+            }
+            peerRef.current.addIceCandidate(candidate);
+        });
+
+        getMedia()
+
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
-            socket.disconnect();
+            socketRef.current.disconnect();
         };
     }, []);
 
     const onClickMike = async () => {
-        myStream
+        if (!myVideoRef.current) return
+        myVideoRef.current
             .getAudioTracks()
             .forEach((track) => (track.enabled = !track.enabled));
         setIsMikeOn((prev) => !prev)
     };
 
     const onClickCamera = async () => {
+        if (!myVideoRef.current) return
         setIsCameraOn((prev) => !prev);
-        myStream.getVideoTracks().forEach((track) => (track.enabled = !track.enabled));
+        myVideoRef.current.getVideoTracks().forEach((track) => (track.enabled = !track.enabled));
     };
 
 
@@ -129,12 +209,14 @@ const LiveRoom = () => {
         setIsCodeOn(!isCodeOn)
     }
 
-
     return (
         <div className="live-room" ref={ref}>
             <div className="left-space">
                 <div className="people-list">
-                    <div className="people"><video autoPlay playsInline className="my-camera" ref={videoRef} />
+                    <div className="people"><video autoPlay playsInline className="my-camera" ref={myVideoRef} />
+                        <div className="user-name">내 닉네임</div>
+                    </div>
+                    <div className="people"><video autoPlay playsInline className="my-camera" ref={otherVideoRef} />
                         <div className="user-name">내 닉네임</div>
                     </div>
                     {data.map((a, i) => {

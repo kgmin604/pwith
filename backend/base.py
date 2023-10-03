@@ -10,11 +10,10 @@ from flask import request, session
 from flask_login import current_user
 from flask_socketio import SocketIO, join_room, leave_room, rooms, emit, disconnect
 
-socketio = SocketIO(app, manage_session=False, cors_allowed_origins='*')
+socketio = SocketIO(app, cors_allowed_origins='*')
 
 if __name__ == "__main__": # 해당 파일을 실행했을 경우
     # app.run(host="127.0.0.1", port="5000")
-    # socketio.run(app, host="127.0.0.1", port=5000)
     socketio.run(app, host="127.0.0.1", port=5000)
 
 @socketio.on('connect')
@@ -33,26 +32,15 @@ def enterRoom(data):
     join_room(roomId)
     print(rooms())
 
-# def authenticated_only(f):
-#     @functools.wraps(f)
-#     def wrapped(*args, **kwargs):
-#         if not current_user.is_authenticated:
-#             disconnect()
-#         else:
-#             print(current_user.id)
-#             return f(*args, **kwargs)
-#     return wrapped
-
-# @authenticated_only
 @socketio.on("sendTo")
 def sendMessage(data):
     print("======SENDMSG======")
-    
     roomId = data['roomId']
     message = data['message']
     sender = data['sender']
 
     now = datetime.now()
+    formatted_now = formatYMDHM(now)
 
     conn_mongodb().studyroom_chat.insert_one({
         'sender': sender,
@@ -60,8 +48,6 @@ def sendMessage(data):
         'createdAt': now,
         'roomId': roomId
     })
-
-    formatted_now = formatYMDHM(now)
     emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now}, to = roomId)
 
 @socketio.on("leave")
@@ -70,6 +56,7 @@ def leaveRoom(data):
     roomId = data['roomId']
     print(roomId)
     leave_room(roomId)
+    print(rooms())
 
 @socketio.on("sendToRoom")
 def sendMessage(data):
@@ -85,18 +72,22 @@ def sendMessage(data):
     emit('sendFromRoom', {'sender': sender, 'content': message, 'date': formatted_now}, to = roomId)
 
 @socketio.on('join_room')
-def join_room(roomId):
+def joinRoom(roomId):
     print("======조인룸======")
-    emit('welcome', room=roomId)
+    join_room(roomId)
+    emit('welcome', to=roomId)
 
 @socketio.on('offer')
-def handle_offer(offer, roomId):
-    emit('offer', offer, room=roomId)
+def handle_offer(offer):
+    print("======offer=======")
+    emit('offer', offer)
 
 @socketio.on('answer')
-def handle_answer(answer, roomId):
-    emit('answer', answer, room=roomId)
+def handle_answer(answer):
+    print("======answer=======")
+    emit('answer', answer)
 
 @socketio.on('ice')
-def handle_ice(ice, roomId):
-    emit('ice', ice, room=roomId)
+def handle_ice(ice):
+    print("======ice=======")
+    emit('ice',ice)

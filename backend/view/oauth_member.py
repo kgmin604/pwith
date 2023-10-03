@@ -1,89 +1,78 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from urllib.parse import urlencode
 
 from backend import config
+from backend.controller.member_mgmt import Member
 
 oauth_member_bp = Blueprint('oauth_member', __name__, url_prefix='/member')
 
-@oauth_member_bp.route('/login/auth/google', methods = ['GET'])
-def login_oauth():
+@oauth_member_bp.route('/login/auth/<provider>', methods = ['GET'])
+def login_oauth(provider):
 
-    # if target not in ['google', 'kakao']:
-    #     return abort(404)
+    if provider not in ['google', 'naver', 'kakao']:
+        return {
+            'status' : 404,
+            'message' : '제공하지 않는 리소스 서버',
+            'data' : None
+        }
 
-    # target = str.upper(target)
-    
-    authorize_endpoint = config.GOOGLE_AUTHORIZE_ENDPOINT
-    client_id = config.GOOGLE_CLIENT_ID
-    redirect_uri = config.GOOGLE_REDIRECT_URI
-    scope = config.GOOGLE_SCOPE
+    provider = str.upper(provider)
+
+    authorize_endpoint = getattr(config, f'{provider}_AUTHORIZE_ENDPOINT')
+    redirect_uri = getattr(config, f'{provider}_REDIRECT_URI')
+    client_id = getattr(config, f'{provider}_CLIENT_ID')
+    scope = getattr(config, f'{provider}_SCOPE')
     response_type = 'code'
 
-    query_param = urlencode(dict(
-        redirect_uri = redirect_uri,
-        client_id = client_id,
-        scope = scope,
-        response_type = response_type,
-        access_type = 'offline'
-        # prompt = 'consent' # only for development env
-    ))
-
-    authorize_redirect = f'{authorize_endpoint}?{query_param}'
-
-    '''
-    return {
-        'message' : 'redirect',
-        'data' : authorize_redirect
-    }
-    '''
-    return {
-        'auth_url' : authorize_redirect
-    }
-
-@oauth_member_bp.route('/login/auth/naver', methods = ['GET'])
-def login_naver():
-    
-    authorize_endpoint = config.NAVER_AUTHORIZE_ENDPOINT
-    client_id = config.NAVER_CLIENT_ID
-    redirect_uri = config.NAVER_REDIRECT_URI
-    response_type = 'code'
-
-    query_param = urlencode(dict(
-        redirect_uri = redirect_uri,
-        client_id = client_id,
-        response_type = response_type
-    ))
-
-    authorize_redirect = f'{authorize_endpoint}?{query_param}'
-    
-    '''
-     return {
-         'message' : 'redirect',
-         'data' : authorize_redirect
-     }
-    '''
-    
-    return {
-        'auth_url' : authorize_redirect
-    }
-
-@oauth_member_bp.route('/login/auth/kakao', methods = ['GET'])
-def login_kakao():
-    
-    authorize_endpoint = config.KAKAO_AUTHORIZE_ENDPOINT
-    client_id = config.KAKAO_CLIENT_ID
-    redirect_uri = config.KAKAO_REDIRECT_URI
-    response_type = 'code'
-
-    query_param = urlencode(dict(
-        redirect_uri = redirect_uri,
-        client_id = client_id,
-        response_type = response_type,
-        scope = 'profile_nickname, profile_image, account_email'
-    ))
+    if provider == 'KAKAO':
+        query_param = urlencode(dict(
+            redirect_uri = redirect_uri,
+            client_id = client_id,
+            response_type = response_type,
+            scope = scope
+        ))
+    elif provider == 'NAVER':
+        query_param = urlencode(dict(
+            redirect_uri = redirect_uri,
+            client_id = client_id,
+            response_type = response_type
+        ))
+    elif provider == 'GOOGLE':
+        query_param = urlencode(dict(
+            redirect_uri = redirect_uri,
+            client_id = client_id,
+            scope = scope,
+            response_type = response_type,
+            access_type = 'offline'
+            # prompt = 'consent' # only for development env
+        ))
 
     authorize_redirect = f'{authorize_endpoint}?{query_param}'
     
     return {
         'auth_url' : authorize_redirect
     }
+
+@oauth_member_bp.route('/login/auth', methods = ['POST'])
+def check_id():
+
+    data = request.get_json()
+    memId = data['id']
+    memNick = data['nickname']
+
+    if Member.existsById(memId):
+        return {
+            'status': 409,
+            'message': '중복된 아이디',
+            'data': None
+        }
+    elif Member.existsByNickname(memNick):
+        return {
+            'status': 400,
+            'message': '중복된 닉네임',
+            'data': None
+        }
+    else:
+        return {
+            'data': None
+        }
