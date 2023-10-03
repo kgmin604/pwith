@@ -18,30 +18,49 @@ function Login() {
     memPw: "",
   });
 
+
+  // 소셜 로그인 처리 
   function SocialLogin(name) {
     axios({
       method: "GET",
       url: `/member/login/auth/${name}`,
     })
-      .then(function (response) {
-        window.location.href = response.data.data.auth_url;
-        //history.push(`${response.request.responseURL}`);
-        // window.location.replace(`${response.request.responseURL}`);
-        // if(response.data.status===200){
-        //   dispatch(
-        //     loginUser({
-        //       id: response.data.data.id,
-        //       name: response.data.data.nickname
-        //     })
-        //   );
-        //   navigate("/");
-        // }
+    .then(function (response) {
+      axios({
+        method: "GET",
+        url: `${response.data.data.auth_url}`
       })
-      .catch(function (error) {
-        console.log(error);
-      });
+      .then(function(response){
+        console.log(response.data);
+        if(response.data.status===200){
+            console.log("소셜 로그인 데이터");
+            console.log(response.data.data);
+            dispatch(
+              loginUser({
+                id: response.data.data.id,
+                name: response.data.data.nickname,
+                isSocial: response.data.data.isSocial
+              })
+            );
+            navigate("/");
+        }
+      })
+      .catch(function(error){
+        if(error.response.data.status===400){
+          alert("유효하지 않은 페이지입니다.");
+          navigate("/");
+        }
+        if(error.response.data.status===409){
+          alert("이미 사용중인 이메일입니다.");
+          navigate("/");
+        }
+      })
+    })
+    .catch(function(error){
+      console.log(error);
+    })
   }
-
+  
   function inputChange(e) {
     let copyUserinput = { ...userinput };
     copyUserinput[e.target.id] = e.target.value;
@@ -58,12 +77,12 @@ function Login() {
       },
     })
       .then(function (response) {
-        console.log(response.data);
         if (response.data.status === 200) {
           dispatch(
             loginUser({
               id: response.data.data.id,
               name: response.data.data.nickname,
+              isSocial: response.data.data.isSocial
             })
           );
           navigate("/");
@@ -83,6 +102,7 @@ function Login() {
       ? alert("아이디 또는 비밀번호를 입력해주세요.")
       : postLogin();
   }
+
   return (
     <>
       <div style={{ height: "510px" }} className="round-box">

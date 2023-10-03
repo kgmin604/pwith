@@ -35,14 +35,14 @@ function RoomDetail() {
     leader: "",
     members: [
       /*
-            {
-                "image": "",
-                "memId": "",
-                "nickname": ""
-            },
-            */
+        nickname : {
+            "image": "",
+            "memId": "",
+        },
+      */
     ],
   });
+  let [imgData, setImgData] = useState({});
 
   let [roomChat, setRoomChat] = useState([]);
   let [myChat, setMyChat] = useState("");
@@ -182,6 +182,13 @@ function RoomDetail() {
         setRoomInfo(response.data.data.room);
         setRoomChat(response.data.data.chat);
         setNewNotice(response.data.data.room.notice);
+
+        let tmp = {};
+        response.data.data.room.members.map((member,i)=>{
+          tmp[member.nickname] = member.image;
+        })
+        setImgData(tmp);
+        console.log(tmp);
       })
       .catch(function (error) {
         //console.log(error);
@@ -191,7 +198,6 @@ function RoomDetail() {
   // 소켓 통신하기
 
   useEffect(() => {
-<<<<<<< HEAD
     // socket = io('http://localhost:5000', {
     //     cors: {
     //         origin: '*',
@@ -204,29 +210,9 @@ function RoomDetail() {
       },
       transports: ["polling"],
       autoConnect: false,
-=======
-    // websocket 방식 여기부터
-    socket = io('http://localhost:5000', {
-        cors: {
-            origin: '*',
-        },
-        transports: ["websocket"],
->>>>>>> 1af8b84abd1eec460b959b511dda6adb853026c6
     });
-    // 여기까지
-
-    // polling 방식 여기부터
-    // socket = io("http://localhost:5000", {
-    //   cors: {
-    //     origin: "*",
-    //   },
-    //   transports: ["polling"],
-    //   autoConnect: false,
-    // });
-    // socket.connect();
-    // 여기까지
-
     console.log("연결 시도");
+    socket.connect();
 
     socket.on("connect", (data) => {
       EnterRoom();
@@ -329,14 +315,26 @@ function RoomDetail() {
               >
                 입장하기
               </div>
-              {user.name === roomInfo.leader ? (
+              {
+              user.name === roomInfo.leader ?
+              (
                 <span
                   className="room-delete-btn"
                   onClick={e=>requestDeleteRoom(e)}
                 >
                   스터디 삭제하기
                 </span>
-              ) : null}
+              )
+               : 
+               (
+                <span
+                  className="room-delete-btn"
+                  onClick={e=>e.stopPropagation()} // API 연결 필요
+                >
+                  스터디 탈퇴하기
+                </span>
+              )
+              }
             </div>
           </div>
           <div class="col-md-9">
@@ -418,7 +416,7 @@ function RoomDetail() {
                       <>
                         {chat.sender !== user.name ? (
                           <div className="chat-type1">
-                            <img src="https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/kkm5424.jpg?version=0.17936649555278406" 
+                            <img src={imgData[`${chat.sender}`] === null ? `default_user` : imgData[`${chat.sender}`]} 
                             onClick={e=>alert(roomInfo.members[`${chat.sender}`])}/>
                             <div className="content">
                               <h3>{chat.sender}</h3>
