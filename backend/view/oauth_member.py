@@ -1,7 +1,8 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from urllib.parse import urlencode
 
 from backend import config
+from backend.controller.member_mgmt import Member
 
 oauth_member_bp = Blueprint('oauth_member', __name__, url_prefix='/member')
 
@@ -51,3 +52,27 @@ def login_oauth(provider):
     return {
         'auth_url' : authorize_redirect
     }
+
+@oauth_member_bp.route('/login/auth', methods = ['POST'])
+def check_id():
+
+    data = request.get_json()
+    memId = data['id']
+    memNick = data['nickname']
+
+    if Member.existsById(memId):
+        return {
+            'status': 409,
+            'message': '중복된 아이디',
+            'data': None
+        }
+    elif Member.existsByNickname(memNick):
+        return {
+            'status': 400,
+            'message': '중복된 닉네임',
+            'data': None
+        }
+    else:
+        return {
+            'data': None
+        }
