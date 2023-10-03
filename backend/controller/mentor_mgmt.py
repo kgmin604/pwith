@@ -73,14 +73,14 @@ class Portfolio() :
         return done
 
     @staticmethod
-    def findAll() : # 전체 목록 조회
-
-        sql = '''
+    def findPaging(page=0) : # 전체 목록 조회
+        sql = f'''
             SELECT p.id, m.memId, m.nickname, p.mentoPic, p.brief, p.tuition, p.duration, p.score, group_concat(subject)
             FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id
             WHERE p.isOpen = true
             GROUP BY p.id
             ORDER BY p.curDate DESC
+            LIMIT {page}, 12
             '''
         result = selectAll(sql)
 
