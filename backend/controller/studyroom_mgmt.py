@@ -66,6 +66,25 @@ class StudyRoom() :
         done = commit(sql2)
         
         return done
+    
+    @staticmethod
+    def deleteStudent(member, roomId) : 
+
+        try :
+            # 1. 멤버 삭제
+            sql = f"DELETE FROM studyMember where  member = '{member}' and room =  '{roomId}'"
+            done = commit(sql)
+        except : 
+            return 0
+
+        # 2. 참가자 수 감소
+        if done == 1:
+            sql2 = f"UPDATE studyRoom SET joinP = joinP - 1 WHERE id = {roomId}"
+            done = commit(sql2)
+        else : 
+            done = 0
+            
+        return done
 
     @staticmethod
     def findByMemberId(member_id) :
