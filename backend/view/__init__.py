@@ -43,6 +43,9 @@ def findSocialLoginMember() :
     access_token = request.cookies.get('access_token')
     refresh_token = request.cookies.get('refresh_token')
 
+    if not provider or not access_token or not refresh_token:
+        return loginMember, new_token
+
     loginMember, new_token = checkToken(access_token, refresh_token, provider)
     
     return loginMember, new_token
@@ -86,8 +89,7 @@ def checkToken(access_token, refresh_token, provider) :
     loginMember, new_token = None, None
 
     resp = requests.get(
-        getattr(config, f'{provider}_VALIDATION_ENDPOINT'
-            if provider == 'KAKAO' else f'{provider}_INFO_ENDPOINT'),
+        getattr(config, f'{provider}_VALIDATION_ENDPOINT' if provider == 'KAKAO' else f'{provider}_INFO_ENDPOINT'),
         headers = {
             'Authorization' : f'Bearer {access_token}'
         }

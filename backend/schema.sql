@@ -130,8 +130,8 @@ CREATE TABLE study
     views INT DEFAULT 0,
     roomId BIGINT NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(writer) REFERENCES member(id),
-    FOREIGN KEY(roomId) REFERENCES studyRoom(id)
+    FOREIGN KEY(writer) REFERENCES member(id) on delete cascade on update cascade,
+    FOREIGN KEY(roomId) REFERENCES studyRoom(id) on delete cascade on update cascade
 );
 
 CREATE TABLE qna
@@ -145,7 +145,7 @@ CREATE TABLE qna
     likes INT DEFAULT 0, 
     views INT DEFAULT 0,
     PRIMARY KEY(id),
-    FOREIGN KEY(writer) REFERENCES member(id)
+    FOREIGN KEY(writer) REFERENCES member(id) on delete cascade on update cascade
 );
 
 
@@ -156,8 +156,8 @@ CREATE TABLE chat (
     content VARCHAR(500),
     curDate DATETIME,
     PRIMARY KEY(id),
-    FOREIGN KEY(sender) REFERENCES member(id),
-    FOREIGN KEY(receiver) REFERENCES member(id)
+    FOREIGN KEY(sender) REFERENCES member(id) on delete cascade on update cascade,
+    FOREIGN KEY(receiver) REFERENCES member(id) on delete cascade on update cascade
 );
 
 CREATE TABLE studyRoomChat (
@@ -167,8 +167,8 @@ CREATE TABLE studyRoomChat (
     content VARCHAR(500) NOT NULL,
     curDate DATETIME NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(memId) REFERENCES member(id),
-    FOREIGN KEY(roomId) REFERENCES studyRoom(id)
+    FOREIGN KEY(memId) REFERENCES member(id) on delete cascade on update cascade,
+    FOREIGN KEY(roomId) REFERENCES studyRoom(id) on delete cascade on update cascade
 );
 
 CREATE TABLE mentoringRoomChat (
@@ -178,8 +178,8 @@ CREATE TABLE mentoringRoomChat (
     content VARCHAR(500) NOT NULL,
     curDate DATETIME NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(memId) REFERENCES member(id),
-    FOREIGN KEY(roomId) REFERENCES mentoringRoom(id)
+    FOREIGN KEY(memId) REFERENCES member(id) on delete cascade on update cascade,
+    FOREIGN KEY(roomId) REFERENCES mentoringRoom(id) on delete cascade on update cascade
 );
 
 create table mentoringRoom (
@@ -188,8 +188,8 @@ create table mentoringRoom (
     mentoId varchar(10) not null,
     mentiId varchar(10) not null,
     primary key(roomId),
-    foreign key(mentoId) references mento(mentoId),
-    foreign key(mentiId) references member(memId)
+    foreign key(mentoId) references mento(mentoId) on delete cascade on update cascade,
+    foreign key(mentiId) references member(memId) on delete cascade on update cascade
 );
 
 create table studyLike
@@ -198,7 +198,7 @@ create table studyLike
     memberId BIGINT NOT NULL,
     studyId BIGINT NOT NULL,
     PRIMARY KEY(id), 
-    FOREIGN KEY(memberId) REFERENCES member(id),
+    FOREIGN KEY(memberId) REFERENCES member(id) on delete cascade on update cascade,
     FOREIGN KEY(studyId) REFERENCES study(id) ON DELETE CASCADE
 );
 
@@ -208,7 +208,7 @@ create table qnaLike
     memberId BIGINT NOT NULL,
     qnaId BIGINT NOT NULL,
     PRIMARY KEY(id),
-    FOREIGN KEY(memberId) REFERENCES member(id),
+    FOREIGN KEY(memberId) REFERENCES member(id) on delete cascade on update cascade,
     FOREIGN KEY(qnaId) REFERENCES qna(id) ON DELETE CASCADE
 );
 
@@ -220,9 +220,9 @@ create table chatAlarm
     contentId BIGINT NOT NULL,
     reading BOOLEAN DEFAULT FALSE,
     PRIMARY KEY(id),
-    FOREIGN KEY(memId) REFERENCES member(id),
-    FOREIGN KEY(oppId) REFERENCES member(id),
-    FOREIGN KEY(contentId) REFERENCES chat(id)
+    FOREIGN KEY(memId) REFERENCES member(id) on delete cascade on update cascade,
+    FOREIGN KEY(oppId) REFERENCES member(id) on delete cascade on update cascade,
+    FOREIGN KEY(contentId) REFERENCES chat(id) on delete cascade on update cascade
 );
 
 create table replyStudyAlarm
@@ -233,9 +233,9 @@ create table replyStudyAlarm
     contentId BIGINT NOT NULL,
     reading BOOLEAN DEFAULT FALSE,
     PRIMARY KEY(id),
-    FOREIGN KEY(memId) REFERENCES member(id),
-    FOREIGN KEY(oppId) REFERENCES member(id),
-    FOREIGN KEY(contentId) REFERENCES replyStudy(id)
+    FOREIGN KEY(memId) REFERENCES member(id) on delete cascade on update cascade,
+    FOREIGN KEY(oppId) REFERENCES member(id) on delete cascade on update cascade,
+    FOREIGN KEY(contentId) REFERENCES replyStudy(id) on delete cascade on update cascade
 );
 
 create table replyQnaAlarm
@@ -246,9 +246,9 @@ create table replyQnaAlarm
     contentId BIGINT NOT NULL,
     reading BOOLEAN DEFAULT FALSE,
     PRIMARY KEY(id),
-    FOREIGN KEY(memId) REFERENCES member(id),
-    FOREIGN KEY(oppId) REFERENCES member(id),
-    FOREIGN KEY(contentId) REFERENCES replyQna(id)
+    FOREIGN KEY(memId) REFERENCES member(id) on delete cascade on update cascade,
+    FOREIGN KEY(oppId) REFERENCES member(id) on delete cascade on update cascade,
+    FOREIGN KEY(contentId) REFERENCES replyQna(id) on delete cascade on update cascade
 );
 
 create table studyAlarm
@@ -259,7 +259,7 @@ create table studyAlarm
     contentId BIGINT NOT NULL,
     reading BOOLEAN DEFAULT FALSE,
     PRIMARY KEY(id),
-    FOREIGN KEY(memId) REFERENCES member(id),
-    FOREIGN KEY(oppId) REFERENCES member(id),
-    FOREIGN KEY(contentId) REFERENCES studyRoom(id)
+    FOREIGN KEY(memId) REFERENCES member(id) on delete cascade on update cascade,
+    FOREIGN KEY(oppId) REFERENCES member(id) on delete cascade on update cascade,
+    FOREIGN KEY(contentId) REFERENCES studyRoom(id) on delete cascade on update cascade
 );
