@@ -59,9 +59,10 @@ def listPortfolio() :
 
     # 2. portfolio list
     searchWord = request.args.get('search')
+    page = request.args.get('page')
 
     if searchWord is None :
-        portfolios = Portfolio.findAll()
+        portfolios = Portfolio.findPaging(int(page) * 12 if page else 0)
     else :
         portfolios = Portfolio.searchByMento(searchWord)
 
@@ -85,7 +86,8 @@ def listPortfolio() :
 
     result = {
         'myPortfolio' : myPortfolioId,
-        'portfolioList' : portfolioList
+        'portfolioList' : portfolioList,
+        'isNext' : False if len(portfolioList) < 12 else True
     }
 
     return result
