@@ -11,7 +11,8 @@ from backend.controller.refreshToken_mgmt import RefreshToken
 
 oauth_bp = Blueprint('oauth', __name__, url_prefix = '')
 
-@oauth_bp.route('/oauth/callback/<provider>', methods = ['GET'])
+# @oauth_bp.route('/oauth/callback/<provider>', methods = ['GET'])
+@oauth_bp.route('/oauth/callback/<provider>', methods = ['POST'])
 def oauth_callback(provider):
 
     if provider not in ['google', 'naver', 'kakao']:
@@ -80,8 +81,10 @@ def oauth_callback(provider):
         }
 
     # valid access token
+
+    mem_data = request.get_json()
     
-    status, message = checkJoin(info.get('response') if provider == 'NAVER' else info, provider)
+    status, message = checkJoin(info.get('response') if provider == 'NAVER' else info, provider, mem_data)
 
     if status == 200 : # login
 
@@ -113,9 +116,9 @@ def oauth_callback(provider):
         }
     }
 
-def checkJoin(data, sns_type) :
+def checkJoin(sns_data, sns_type, mem_data) :
 
-    sns_id = data.get('id')
+    sns_id = sns_data.get('id')
     member = Member.findBySns(sns_id, sns_type)
     if member is not None :
         # login
@@ -123,29 +126,32 @@ def checkJoin(data, sns_type) :
 
     # join
     if sns_type == 'NAVER':
-        email = data.get('email')
-        nickname = data.get('nickname')
-        image = data.get('profile_image')
+        email = sns_data.get('email')
+        # nickname = sns_data.get('nickname')
+        image = sns_data.get('profile_image')
 
     elif sns_type == 'KAKAO':
-        account = data.get('kakao_account')
+        account = sns_data.get('kakao_account')
         email = account.get('email')
         profile = account.get('profile')
-        nickname = profile.get('nickname')
+        # nickname = profile.get('nickname')
         image = profile.get('profile_image_url')
 
     elif sns_type == 'GOOGLE':
-        email = data.get('email')
-        nickname = data.get('name')
-        image = data.get('picture')
+        email = sns_data.get('email')
+        # nickname = sns_data.get('name')
+        image = sns_data.get('picture')
 
     if Member.existsByEmail(email) :
         return 409, '이메일 중복'
         
     if image is None :
         image = 'https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/profile/default_user.jpg'
+    
+    memId = mem_data.get('id')
+    memNick = mem_data.get('nickname')
 
-    member_id = Member.saveOauth(nickname, email, image, sns_id, sns_type)
+    member_id = Member.saveOauth(memId, memNick, email, image, sns_id, sns_type)
 
     member = Member.findById(member_id)
 

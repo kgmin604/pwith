@@ -120,9 +120,9 @@ class Member(UserMixin):
         return done
 
     @staticmethod
-    def saveOauth(nickname, email, image, sns_id, sns_type):
+    def saveOauth(memId, nickname, email, image, sns_id, sns_type):
 
-        sql = f"INSERT INTO member(nickname, email, image, sns_id, sns_type) VALUES ('{nickname}', '{email}', '{image}', '{sns_id}', '{sns_type}')"
+        sql = f"INSERT INTO member(memId, nickname, email, image, sns_id, sns_type) VALUES ('{memId}', '{nickname}', '{email}', '{image}', '{sns_id}', '{sns_type}')"
 
         mem_id = commitAndGetId(sql)
 
