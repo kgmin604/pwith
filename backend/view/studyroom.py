@@ -213,7 +213,7 @@ def codeBard(id, loginMember, new_token) : # 코드 리뷰
     
 @studyroom_bp.route('/<id>/out', methods=['DELETE'])
 @login_required
-def studyOut(id, loginMember, new_token) : # 스터디 탈퇴
+def studyout(id, loginMember, new_token) : # 스터디 탈퇴
     
     done = StudyRoom.deleteStudent(loginMember.id, id)
     print(done)

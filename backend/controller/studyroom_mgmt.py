@@ -68,7 +68,7 @@ class StudyRoom() :
         return done
     
     @staticmethod
-    def deleteStudent(member, roomId) :
+    def deleteStudent(member, roomId) : 
 
         try :
             # 1. 멤버 삭제
