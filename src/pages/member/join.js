@@ -205,19 +205,8 @@ function Join() {
       url: `/member/login/auth/${name}`
     })
       .then(function (response) {
-        console.log(response.data)
+        // 여기에서 id, 비밀번호 입력받기
         window.location.href = response.data.data.auth_url;
-        /*
-        if(response.data.status===200){
-          dispatch(
-            loginUser({
-              id: response.data.data.id,
-              name: response.data.data.nickname
-            })
-          );
-          navigate("/");
-        }
-        */
       })
       .catch(function (error) {
         

@@ -14,6 +14,7 @@ import 'cropperjs/dist/cropper.css';
 
 function Account() {
     let navigate = useNavigate();
+    let userData = useSelector((state) => state.user);
 
     /* 개인정보 */
     let [user, setUser] = useState({
@@ -164,10 +165,13 @@ function Account() {
                     </div>
                     <div className="acc-box">
                         <h5>비밀번호</h5>
-                        <div
-                            className="text-btn"
-                            onClick={(e) => { e.stopPropagation(); navigate('./changepw'); }}
-                        ><em>비밀번호 변경</em></div>
+                        {
+                            userData.isSocial===true ? null : 
+                            <div
+                                className="text-btn"
+                                onClick={(e) => { e.stopPropagation(); navigate('./changepw'); }}
+                            ><em>비밀번호 변경</em></div>
+                        }
                     </div>
                     <div className="acc-box">
                         <h5>이메일</h5>
@@ -233,7 +237,7 @@ function WritingList() {
                 </div>
                 <div className="writinglist-bottom scroll-area">
                     {
-                        mypost === [] ? null :
+                        mypost.length === 0 ? null :
                             mypost.map((post, index) => {
                                 return (
                                     <div
@@ -308,7 +312,7 @@ function CommentList() {
                 </div>
                 <div className="writinglist-bottom scroll-area">
                     {
-                        mycomment === [] ? null :
+                        mycomment.length === 0 ? null :
                             mycomment.map((comm, index) => {
                                 return (
                                     <div
@@ -486,7 +490,7 @@ function Chat() {
                             selectedItem === null ? null :
                                 <div className="content">
                                     {
-                                        msgList === [] ? null :
+                                        msgList.length === 0 ? null :
                                             msgList.map((msg, i) => {
                                                 const type = msg['sender'] === user.id ? "보낸 쪽지" : "받은 쪽지";
                                                 return (
@@ -707,27 +711,58 @@ function Withdraw() {
     return (
         <>
             <h3 className="my-header">회원 탈퇴</h3>
-            <div className="witdraw-wrap" style={{ 'height': '80px' }}>
-                <form method="POST">
-                    <div className="witdraw-box" style={{ 'width': '100%' }}>
-                        <div className="witdraw-header" style={{ 'width': '200px' }}>현재 비밀번호</div>
-                        <div className="witdraw-box-wrap">
-                            <input
-                                className="witdraw-box"
-                                type="password"
-                                onChange={e => { e.stopPropagation(); setPw(e.target.value); }}
-                                onKeyDown={(e) => { if (e.key === "Enter") requestWithdraw(e) }}
-                            />
+            {
+                user.isSocial?
+                <>
+                <div className="witdraw-wrap" style={{ 'height': '80px' }}>
+                    <form method="POST">
+                        <div className="witdraw-box" style={{ 'width': '100%' }}>
+                            <div className="witdraw-header" style={{ 'width': '200px' }}>이메일 주소</div>
+                            <div className="witdraw-box-wrap">{user.email}</div>
+                            <span>비밀번호 전송</span>
 
+                            <div className="witdraw-header" style={{ 'width': '200px' }}>비밀번호 확인</div>
+                            <div className="witdraw-box-wrap">
+                                <input
+                                    className="witdraw-box"
+                                    type="password"
+                                    onChange={e => { e.stopPropagation(); setPw(e.target.value); }}
+                                    onKeyDown={(e) => { if (e.key === "Enter") requestWithdraw(e) }}
+                                />
+
+                            </div>
+                            {
+                                msg === '' ? null :
+                                    <div className="err-msg">{msg}</div>
+                            }
                         </div>
-                        {
-                            msg === '' ? null :
-                                <div className="err-msg">{msg}</div>
-                        }
-                    </div>
+                    </form>
+                </div>
+                </>
+                :
+                <>
+                <div className="witdraw-wrap" style={{ 'height': '80px' }}>
+                    <form method="POST">
+                        <div className="witdraw-box" style={{ 'width': '100%' }}>
+                            <div className="witdraw-header" style={{ 'width': '200px' }}>현재 비밀번호</div>
+                            <div className="witdraw-box-wrap">
+                                <input
+                                    className="witdraw-box"
+                                    type="password"
+                                    onChange={e => { e.stopPropagation(); setPw(e.target.value); }}
+                                    onKeyDown={(e) => { if (e.key === "Enter") requestWithdraw(e) }}
+                                />
 
-                </form>
-            </div>
+                            </div>
+                            {
+                                msg === '' ? null :
+                                    <div className="err-msg">{msg}</div>
+                            }
+                        </div>
+                    </form>
+                </div>
+                </>
+            }
 
             <div style={{ 'width': '100%' }}>
                 <Button variant="light" className="witdrawBtn" onClick={(e) => requestWithdraw(e)}>확인</Button>

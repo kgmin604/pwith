@@ -96,40 +96,19 @@ function App() {
   // },[])
 
   function logout() {
-    if (localStorage.getItem("Authorization")) {
-      // access token이 존재하는 경우
-      axios({
-        method: "GET",
-        url: "/member/logout", // 임시 경로
-        headers: {
-          Authorization: `${localStorage.getItem("Authorization")}`, // Access Token을 Authorization 헤더에 추가
-        },
+    axios({
+      method: "GET",
+      url: "/member/logout",
+    })
+      .then(function (response) {
+        if (response.data.status == 200) {
+          dispatch(clearUser());
+          navigate("/");
+        }
       })
-        .then(function (response) {
-          if (response.data.status == 200) {
-            dispatch(clearUser());
-            localStorage.removeItem("Authorization");
-            navigate("/");
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    } else {
-      axios({
-        method: "GET",
-        url: "/member/logout",
-      })
-        .then(function (response) {
-          if (response.data.status == 200) {
-            dispatch(clearUser());
-            navigate("/");
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   // access 만료 테스트

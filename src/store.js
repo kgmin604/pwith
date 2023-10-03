@@ -4,16 +4,19 @@ let user = createSlice({
   name: 'user',
   initialState: {
     id: null,
-    name: null
+    name: null,
+    isSocial: null
   },
   reducers: {
     loginUser: (state, action) => {
       state.id = action.payload.id;
       state.name = action.payload.name;
+      state.isSocial = action.payload.isSocial;
     },
     clearUser: (state) => {
       state.id = null;
       state.name = null;
+      state.isSocial = null;
     }
   }
 });
@@ -27,6 +30,7 @@ const recStudyList = createSlice({
     }
   }
 });
+
 const studyCategory = createSlice({
   name: 'studyCategory',
   initialState: null,
