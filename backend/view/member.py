@@ -20,9 +20,9 @@ def checkEmail() :
 
     if Member.existsByEmail(email) :
         return {
-                'status' : 400,
-                'message' : '중복된 이메일',
-                'data' : None
+            'status' : 400,
+            'message' : '중복된 이메일',
+            'data' : None
         }
 
     auth_number = sendAuthCode(email)
