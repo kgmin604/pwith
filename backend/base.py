@@ -71,23 +71,36 @@ def sendMessage(data):
 
     emit('sendFromRoom', {'sender': sender, 'content': message, 'date': formatted_now}, to = roomId)
 
-@socketio.on('join_room', namespace='/live')
-def joinroom(roomId):
-    print("======조인룸======")
+
+@socketio.on('connect',namespace='/live')
+def test_connect():
+    print("========CONNECT live========")
+
+@socketio.on("send",namespace='/live')
+def sendMessage(data):
+    print("======SENDMSG live======")
+    roomId = data['roomId']
+    message = data['message']
+    sender = data['sender']
+
+    now = datetime.now()
+    formatted_now = formatYMDHM(now)
+
+    emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now}, to = roomId)
+
+
+@socketio.on("leave",namespace='/live')
+def leaveRoom(data):
+    print("=======LEAVEROOM live=======")
+    roomId = data['roomId']
+    print(roomId)
+    leave_room(roomId)
+    print(rooms())
+
+@socketio.on('enter',namespace='/live')
+def enterRoom(data):
+    print("======ENTERROOM live======")
+    roomId = data['roomId']
+    print(roomId)
     join_room(roomId)
-    emit('welcome', to=roomId)
-
-@socketio.on('offer', namespace='/live')
-def handle_offer(offer):
-    print("======offer=======")
-    emit('offer', offer)
-
-@socketio.on('answer', namespace='/live')
-def handle_answer(answer):
-    print("======answer=======")
-    emit('answer', answer)
-
-@socketio.on('ice', namespace='/live')
-def handle_ice(ice):
-    print("======ice=======")
-    emit('ice', ice)
+    print(rooms())

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import "./liveroom.css";
 
-const Video = ({ email, stream, muted }) => {
+const Video = ({ name, stream, muted }) => {
     const ref = useRef(null);
     useEffect(() => {
         if (ref.current) ref.current.srcObject = stream;
@@ -18,7 +18,7 @@ const Video = ({ email, stream, muted }) => {
                     backgroundColor: 'black',
                 }}
                 muted={muted} autoPlay />
-            <div className='user-name'>{email}</div>
+            <div className='user-name'>{name}</div>
         </div>
     );
 };
