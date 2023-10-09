@@ -15,6 +15,7 @@ import 'cropperjs/dist/cropper.css';
 function Account() {
     let navigate = useNavigate();
     let userData = useSelector((state) => state.user);
+    const dispatch = useDispatch();
 
     /* 개인정보 */
     let [user, setUser] = useState({
@@ -676,38 +677,89 @@ function Withdraw() {
     let navigate = useNavigate();
 
     let [pw, setPw] = useState('');
-
     let [msg, setMsg] = useState('');
+
+    // 소셜 로그인 회원 탈퇴
+    let [auth, setAuth] = useState('');         // 사용자 입력 값
+    let [userAuth, setUserAuth] = useState(''); // 서버로부터 받은 값
+
+    function sendPassword(e){
+        e.stopPropagation();
+        axios({
+            method: "POST",
+            url: "/mypage/account",
+        })
+        .then(function (response) {
+            setUserAuth(response.data.data.auth);
+            alert("이메일로 전송된 인증번호를 확인해주세요.");
+        })
+        .catch(function (error) {
+            if(error.response.data.status===400){
+                alert("존재하지 않는 이메일입니다.");
+            }
+        });
+    }
 
     function requestWithdraw(e) {
         e.stopPropagation();
 
-        let confirm_withdraw = window.confirm("정말 탈퇴하시겠습니까?");
-
-        if (pw === '') {
-            setMsg('비밀번호를 입력해주세요.');
-            return;
-        }
-
-        if (confirm_withdraw) {
-            axios({
-                method: "DELETE",
-                url: "/mypage/account",
-                data: {
-                    password: `${pw}`,
+        if(user.isSocial){
+            if(auth !== userAuth){
+                setMsg('인증번호가 일치하지 않습니다. 다시 확인해주세요.');
+                return;
+            }
+            else{
+                let confirm_withdraw = window.confirm("정말 탈퇴하시겠습니까?");
+    
+                if (confirm_withdraw) {
+                    axios({
+                        method: "DELETE",
+                        url: "/mypage/account",
+                        data: {
+                            password: `${pw}`,
+                        }
+                    })
+                    .then(function (response) {
+                        alert("회원 탈퇴가 완료되었습니다.");
+                        navigate("./../..");
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
                 }
-            })
-            .then(function (response) {
-                alert("회원 탈퇴가 완료되었습니다.");
-                navigate("./../..");
-            })
-            .catch(function (error) {
-                console.log(error);
-                alert("잘못된 비밀번호입니다.");
-            });
+                else{
+                    alert("취소되었습니다.");
+                }
+            }
         }
         else{
-            alert("취소되었습니다.");
+            if (pw === '') {
+                setMsg('비밀번호를 입력해주세요.');
+                return;
+            }
+
+            let confirm_withdraw = window.confirm("정말 탈퇴하시겠습니까?");
+    
+            if (confirm_withdraw) {
+                axios({
+                    method: "DELETE",
+                    url: "/mypage/account",
+                    data: {
+                        password: `${pw}`,
+                    }
+                })
+                .then(function (response) {
+                    alert("회원 탈퇴가 완료되었습니다.");
+                    navigate("./../..");
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    alert("잘못된 비밀번호입니다.");
+                });
+            }
+            else{
+                alert("취소되었습니다.");
+            }
         }
     }
 
@@ -717,22 +769,22 @@ function Withdraw() {
             {
                 user.isSocial?
                 <>
-                <div className="witdraw-wrap" style={{ 'height': '80px' }}>
+                <div className="witdraw-wrap" style={{ 'height': '130px' }}>
                     <form method="POST">
                         <div className="witdraw-box" style={{ 'width': '100%' }}>
-                            <div className="witdraw-header" style={{ 'width': '200px' }}>이메일 주소</div>
-                            <div className="witdraw-box-wrap">{user.email}</div>
-                            <span>비밀번호 전송</span>
-
-                            <div className="witdraw-header" style={{ 'width': '200px' }}>비밀번호 확인</div>
+                            <div className="witdraw-header" style={{ 'width': '200px' }}>이메일 인증하기</div>
+                            <span 
+                                className="witdraw-pw-btn"
+                                onClick={e=>sendPassword(e)}
+                            >인증번호 전송</span>
+                            <br></br>
+                            <div className="witdraw-header" style={{ 'width': '200px' }}>인증번호 확인</div>
                             <div className="witdraw-box-wrap">
                                 <input
                                     className="witdraw-box"
                                     type="password"
-                                    onChange={e => { e.stopPropagation(); setPw(e.target.value); }}
-                                    onKeyDown={(e) => { if (e.key === "Enter") requestWithdraw(e) }}
+                                    onChange={e => { e.stopPropagation(); setAuth(e.target.value); }}
                                 />
-
                             </div>
                             {
                                 msg === '' ? null :

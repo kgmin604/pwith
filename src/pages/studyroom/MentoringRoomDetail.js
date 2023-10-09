@@ -20,19 +20,19 @@ import { faMessage } from "@fortawesome/free-solid-svg-icons/faMessage";
 
 let socket;
 
-function RoomDetail() {
+function MentoringRoomDetail() {
 
   const chatAreaRef = useRef(null);
 
   let user = useSelector((state) => state.user);
   let navigate = useNavigate();
 
-  let [roomInfo, setRoomInfo] = useState({
-    id: 0,
-    name: "",
-    image: "",
-    notice: "",
-    leader: "",
+  let [roomInfo, setRoomInfo] = useState({ // dummy 데이터
+    id: 12,
+    name: "멘토 채영와 멘티 경민의 공부방",
+    image: "https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/mentoring/cyhelena.jpg",
+    notice: "복습해오기",
+    leader: "채영",
     members: [
       /*
         nickname : {
@@ -53,12 +53,10 @@ function RoomDetail() {
   let [isOn, setIsOn] = useState(false);
   let [isChange, setIsChange] = useState(false);
 
-  let [newNotice, setNewNotice] = useState("");
+  let [newNotice, setNewNotice] = useState("복습해오기");
 
-  // 개인 쪽지 관련 데이터
-  let [chatName, setChatName] = useState("");
-  let [chatContent, setChatContent] = useState("");
-  let [msg, setMsg] = useState("");
+ // 수업 횟수 체크
+ let [checkNum, setCheckNum] = useState([8,3,2]); // [총,멘토체크,멘티체크]
 
   function handleMouseOver(event) {
     event.stopPropagation();
@@ -76,6 +74,7 @@ function RoomDetail() {
   }
 
   function requestChangeNotice(){
+    /*
     axios({
       method: "PATCH",
       url: `/study-room/${roomInfo.id}`,
@@ -91,21 +90,7 @@ function RoomDetail() {
       .catch(function (error) {
         //console.log(error);
       });
-  }
-
-  function handleModal(event) {
-    event.stopPropagation();
-    setIsModalOpen(!isModalOpen);
-  }
-
-  function changeNickname(event) {
-    event.stopPropagation();
-    setChatName(event.target.value);
-  }
-
-  function changeContent(event) {
-    event.stopPropagation();
-    setChatContent(event.target.value);
+    */
   }
 
   function changeChatInput(event) {
@@ -115,7 +100,7 @@ function RoomDetail() {
 
   function requestDeleteRoom(event){
     event.stopPropagation();
-
+    /*
     if (window.confirm("정말로 삭제하시겠습니까?")){
       axios({
         method: "DELETE",
@@ -129,11 +114,12 @@ function RoomDetail() {
           console.log(error);
         });
     }
+    */
   }
 
   function requestOutRoom(event){
     event.stopPropagation();
-
+    /*
     if (window.confirm("정말로 탈퇴하시겠습니까?")){
       axios({
         method: "DELETE",
@@ -147,6 +133,7 @@ function RoomDetail() {
           console.log(error);
         });
     }
+    */
   }
 
   // 소켓 통신 함수
@@ -160,7 +147,7 @@ function RoomDetail() {
       message: myChat,
       sender: user.name,
     };
-    socket.emit("sendTo", data);
+    socket.emit("m-sendTo", data);
     document.getElementById("chat-area").value = "";
     setMyChat("");
   }
@@ -172,7 +159,7 @@ function RoomDetail() {
     let data = {
       roomId: Number(RoomId)
     };
-    socket.emit("enter",data);
+    socket.emit("m-enter",data);
   }
 
   function LeaveRoom(){
@@ -182,11 +169,12 @@ function RoomDetail() {
     let data = {
       roomId: Number(RoomId)
     };
-    socket.emit("leave",data);
+    socket.emit("m-leave",data);
   }
 
   // room data 받아오기
 
+  /*
   useEffect(() => {
     const url = window.location.href;
     const part = url.split("/");
@@ -194,7 +182,7 @@ function RoomDetail() {
 
     axios({
       method: "GET",
-      url: `/study-room/${RoomId}`,
+      url: `/mentoring-room/${RoomId}`,
     })
       .then(function (response) {
         setRoomInfo(response.data.data.room);
@@ -217,6 +205,7 @@ function RoomDetail() {
         LeaveRoom();
       };
   }, []);
+*/
 
   // 소켓 통신하기
 
@@ -241,7 +230,7 @@ function RoomDetail() {
       EnterRoom();
       console.log("Socket connected");
     });
-    socket.on("sendFrom", (data) => {
+    socket.on("m-sendFrom", (data) => {
       setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
     });
     socket.on("disconnect", (data)=>{
@@ -263,7 +252,7 @@ function RoomDetail() {
 
   const pressEnter = (e) => {
     e.stopPropagation();
-    if (e.key === 'Enter' && e.shiftKey) { // [shift] + [Enter] 치면 걍 리턴
+    if (e.key === 'Enter' && e.shiftKey) { // [shift] + [Enter] 치면 그냥 리턴
       return;
     } else if (e.key === 'Enter') { 	   // [Enter] 치면 메시지 보내기
       sendTo();
@@ -280,11 +269,11 @@ function RoomDetail() {
                 <img src={`${roomInfo.image}`} alt="User" />
               </div>
               <div className="info-header">
-                <h3>{roomInfo.name}</h3>
+                <h3>{"공부방"}</h3>
                 <h3
                   className="leader"
                 >
-                  LEADER
+                  Mentor
                   <FontAwesomeIcon
                     icon={faCrown}
                     style={{ color: "rgb(61, 105, 144)", margin: "0 5px" }}
@@ -344,18 +333,18 @@ function RoomDetail() {
               (
                 <span
                   className="room-delete-btn"
-                  onClick={e=>requestDeleteRoom(e)}
+                  onClick={e=>e.stopPropagation()} // API 연결
                 >
-                  스터디 삭제하기
+                  멘토링 삭제하기
                 </span>
               )
                : 
                (
                 <span
                   className="room-delete-btn"
-                  onClick={e=>requestOutRoom(e)} // API 연결 필요
+                  onClick={e=>e.stopPropagation()} // API 연결
                 >
-                  스터디 탈퇴하기
+                  멘토링 그만두기
                 </span>
               )
               }
@@ -408,25 +397,32 @@ function RoomDetail() {
                 </div>
               </div>
               <div className="bottom">
-                <div className="member-list">
-                  <h2>스터디 멤버</h2>
+                <div className="number-list">
+                  <h2>수업 횟수 체크</h2>
                   <hr style={{ margin: "0 0" }}></hr>
-                  <div className="items">
-                    {roomInfo.members.map((member, i) => (
-                      <div className="item" key={i}>
-                        <h3>{member.nickname}</h3>
-                        {member.nickname !== user.name ? (
-                          <FontAwesomeIcon
-                            icon={faMessage}
-                            className="send-btn"
-                            onClick={(e) => {
-                              setChatName(member.nickname);
-                              handleModal(e);
-                            }}
-                          />
-                        ) : null}
-                      </div>
-                    ))}
+                  <div className="number-items">
+                  {
+                    Array.from({ length: checkNum[0] }, (_, index) => {
+                        let num_type = '';
+
+                        if (index + 1 <= checkNum[1] && index + 1 <= checkNum[2]) {
+                            num_type = 'both-selected';
+                        } else if (index + 1 > checkNum[1] && index + 1 <= checkNum[2]) {
+                            num_type = 'mentee-selected';
+                        } else if (index + 1 <= checkNum[1] && index + 1 > checkNum[2]) {
+                            num_type = 'mentor-selected';
+                        } else {
+                            num_type = 'non-selected';
+                        }
+
+                        return (
+                            <div 
+                                key={index} 
+                                className={`number-item ${num_type}`}
+                            ></div>
+                        );
+                    })
+                }
                   </div>
                 </div>
                 <div className="member-chat">
@@ -483,46 +479,9 @@ function RoomDetail() {
             </div>
           </div>
         </div>
-        {isModalOpen === true ? (
-          <>
-            <div className="modal-wrap"></div>
-            <form method="POST">
-              <div className="modal">
-                <a
-                  title="닫기"
-                  className="close"
-                  onClick={(event) => handleModal(event)}
-                >
-                  X
-                </a>
-                <h3>쪽지 보내기</h3>
-                <p className="receiver">
-                  <input
-                    type="text"
-                    onChange={(e) => {
-                      changeNickname(e);
-                    }}
-                    placeholder="수신자 아이디 입력"
-                    defaultValue={chatName} // 수정
-                  ></input>
-                </p>
-                <p>
-                  <textarea
-                    name="message"
-                    className="text"
-                    placeholder="내용 입력"
-                    onChange={(e) => changeContent(e)}
-                  ></textarea>
-                </p>
-                <input type="button" value="전송" className="button"></input>
-                <div className="message">{msg}</div>
-              </div>
-            </form>
-          </>
-        ) : null}
       </div>
     </>
   );
 }
 
-export default RoomDetail;
+export default MentoringRoomDetail;

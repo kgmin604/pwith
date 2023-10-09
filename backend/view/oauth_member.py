@@ -61,6 +61,7 @@ def check_id():
     memId = data['memId']
     memNick = data['nickname']
 
+    print(id, memId, memNick) ##
     if Member.existsById(memId):
         return {
             'status': 409,

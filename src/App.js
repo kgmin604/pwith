@@ -23,6 +23,7 @@ import RoomMain from "./pages/studyroom/RoomMain.js";
 import RoomCreate from "./pages/studyroom/RoomCreate.js";
 import LiveRoom from "./pages/studyroom/LiveRoom";
 import RoomDetail from "./pages/studyroom/RoomDetail.js";
+import MentoringRoomDetail from "./pages/studyroom/MentoringRoomDetail.js";
 import CommunityMain from "./pages/community/CommunityMain.js";
 import MentoringMain from "./pages/mentoring/MentoringMain.js";
 import MentoringCreate from "./pages/mentoring/MetoringCreate";
@@ -31,6 +32,7 @@ import Join from "./pages/member/join.js";
 import Help from "./pages/member/help.js";
 import Mypage from "./pages/member/mypage.js";
 import Auth from "./pages/auth/Auth.js";
+import AuthJoin from "./pages/auth/AuthJoin.js";
 
 import {
   Account,
@@ -139,7 +141,7 @@ function App() {
       <div className="wrap">
         {!isStudyRoomPath && (
           <div className="top-area">
-            {user.id === null ? (
+            {user.name === null ? (
               <div className="top-msg"></div>
             ) : (
               <div className="top-msg">
@@ -366,7 +368,7 @@ function App() {
                   🔍{" "}
                 </div>
               </Form>
-              {user.id === null ? (
+              {user.name === null ? (
                 <div className="mem-area">
                   <div
                     className="mem-btn"
@@ -501,6 +503,7 @@ function App() {
           <Route path="/studyroom/create" element={<RoomCreate />} />
           <Route path="/studyroom/:id" element={<RoomDetail />} />
           <Route path="/studyroom/live/:id" element={<LiveRoom />} />
+          <Route path="/mentoringroom/:id" element={<MentoringRoomDetail />} />
           <Route path="/community" element={<CommunityMain />}>
             <Route path="main" element={<CommunityBoard />} />
             <Route path="it" element={<CommunityIT />} />
@@ -529,6 +532,7 @@ function App() {
           <Route path="/oauth/callback/naver" element={<Auth />} />
           <Route path="/oauth/callback/google" element={<Auth />} />
           <Route path="/oauth/callback/kakao" element={<Auth />} />
+          <Route path="/member/login/auth" element={<AuthJoin/>} />
           <Route
             path="*"
             element={

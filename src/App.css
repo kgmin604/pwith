@@ -52,6 +52,7 @@
   font-family: "TmoneyRoundWind";
   cursor: pointer;
   color:grey;
+  user-select: none;
 }
 
 .navbar-btn:hover{
@@ -137,6 +138,7 @@ ul.navbar-menu div.parent-container li.navbar-btn div.navbar-modal ul.lst
   margin: 0 10px;
   float: left;
   cursor: pointer;
+  user-select: none;
 }
 
 .mybtn {
