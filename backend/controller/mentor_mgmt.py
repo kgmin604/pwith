@@ -51,7 +51,15 @@ class Portfolio() :
 
     @staticmethod
     def existsById(id) :
-        sql = f"SELECT EXISTS (SELECT id FROM portfolio WHERE id = {id})"
+        sql = f"SELECT EXISTS (SELECT id FROM portfolio WHERE id = {id} and isDeleted = false)"
+
+        result = selectOne(sql)[0]
+
+        return True if result == 1 else False
+
+    @staticmethod
+    def existsByMentoId(id) :
+        sql = f"SELECT EXISTS (SELECT id FROM portfolio WHERE mento = {id} and isDeleted = false)"
 
         result = selectOne(sql)[0]
 
@@ -65,7 +73,6 @@ class Portfolio() :
         try :
             portfolioId = commitAndGetId(sql1)
         except pymysql.err.IntegrityError as ex:
-            # print(f"SQL 예외 발생: {ex}")
             return 0
 
         for subject in subjects :
@@ -81,7 +88,7 @@ class Portfolio() :
         sql = f'''
             SELECT p.id, m.memId, m.nickname, p.mentoPic, p.brief, p.tuition, p.duration, p.score, group_concat(subject)
             FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id
-            WHERE p.isOpen = true
+            WHERE p.isOpen = true AND p.isDeleted = false
             GROUP BY p.id
             ORDER BY p.curDate DESC
             LIMIT {page}, 12
@@ -96,7 +103,7 @@ class Portfolio() :
         sql =  f'''
             SELECT p.id, m.memId, m.nickname, p.mentoPic, p.brief, p.tuition, p.duration, p.score, group_concat(subject)
             FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id 
-            WHERE p.isOpen = true AND m.nickname LIKE '%{value}%'
+            WHERE p.isOpen = true AND p.isDeleted = false AND m.nickname LIKE '%{value}%'
             GROUP BY p.id
             ORDER BY p.curDate DESC
             LIMIT {page}, 12
@@ -119,18 +126,6 @@ class Portfolio() :
             return None
 
         return result
-
-    @staticmethod
-    def findPicById(id) : # 이미지 찾기
-
-        sql = f"SELECT mentoPic FROM portfolio WHERE id = {id}"
-
-        res = selectOne(sql)
-        
-        if not res[0] :
-            return None
-
-        return res
 
     @staticmethod
     def findMentoById(id) :
@@ -173,22 +168,18 @@ class Portfolio() :
         return done
 
     @staticmethod
-    def delete(id) :
+    def updateDeleted(id) : # 삭제 대신 isDeleted
 
-        sql = f"DELETE FROM portfolio WHERE id = {id}"
+        sql = f"UPDATE portfolio SET isDeleted = true WHERE id = {id}"
 
-        commit(sql)
-
-        sql2 = f"DELETE FROM portfolioSubject WHERE portfolio = {id}"
-
-        done = commit(sql2)
+        done = commit(sql)
 
         return done
 
     @staticmethod
     def findByMentoId(mento_id) :
 
-        sql = f"SELECT id FROM portfolio WHERE mento = {mento_id}"
+        sql = f"SELECT id FROM portfolio WHERE mento = {mento_id} and isDeleted = false"
 
         result = selectOne(sql)
 

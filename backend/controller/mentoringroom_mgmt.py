@@ -49,38 +49,38 @@ class MentoringRoom() :
         return self.__portfolio
 
     @staticmethod
-    def save(roomName, date, mentoId, mentiId) :
+    def save(roomName, date, mentoId, mentiId, portId) :
 
-        sql = f"INSERT INTO mentoringRoom(name, curDate, mento, menti) VALUES('{roomName}', '{date}', {mentoId}, {mentiId})"
+        sql = f"INSERT INTO mentoringRoom(name, curDate, mento, menti, portfolio) VALUES('{roomName}', '{date}', {mentoId}, {mentiId}, {portId})"
 
         roomId = commitAndGetId(sql)
 
         return roomId
 
     @staticmethod
-    def findById(roomId): # 멘토링룸 + 포폴 이미지
+    def findById(roomId): # 멘토링룸 + 포폴
 
-        sql = f"SELECT * FROM mentoringRoom WHERE id = {roomId}"
+        sql = f"SELECT * FROM mentoringRoom mr JOIN portfolio p ON mr.portfolio = p.id \
+            WHERE mr.id = {roomId}"
 
         r = selectOne(sql)
+
         if not r :
             return None
-        room = MentoringRoom(r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8],r[9],r[10])
 
-        if room.portfolio is not None:
-            mentoPic = Portfolio.findPicById(room.portfolio)
-        else:
-            mentoPic = None
+        room = MentoringRoom(r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8],r[9],r[10])
+        portfolio = Portfolio(r[11],r[12],r[13],r[14],r[15],r[16],r[17],r[18],r[19],r[20],r[21])
 
         return {
             'room': room,
-            'mentoPic': mentoPic
+            'portfolio': portfolio
         }
 
     @staticmethod
-    def findByMemberId(memberId) : # 참여한 멘토링룸
+    def findByMemberId(memberId) : # 참여한 멘토링룸 + 포폴
 
-        sql = f"SELECT * FROM mentoringRoom WHERE mento = {memberId} OR menti = {memberId} ORDER BY curDate DESC"
+        sql = f"SELECT * FROM mentoringRoom mr JOIN portfolio p ON mr.portfolio = p.id \
+            WHERE mr.mento = {memberId} OR mr.menti = {memberId} ORDER BY mr.curDate DESC"
 
         rooms = selectAll(sql)
 
@@ -89,23 +89,21 @@ class MentoringRoom() :
             item = {}
             
             room = MentoringRoom(r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8],r[9],r[10])
+            portfolio = Portfolio(r[11],r[12],r[13],r[14],r[15],r[16],r[17],r[18],r[19],r[20],r[21])
+
             item['room'] = room
-            
-            if room.portfolio:
-                item['mentoPic'] = Portfolio.findPicById(room.portfolio)
-            else:
-                item['mentoPic'] = None
+            item['portfolio'] = portfolio
+
             result.append(item)
 
         return result
 
     @staticmethod
-    def existsByMentoMenti(mento_id, menti_id) :
+    def existsByMentoMenti(mento_id, menti_id) : # 첫수업인지 -> 삭제
 
         sql = f"SELECT EXISTS (SELECT id FROM mentoringRoom WHERE mento = {mento_id} AND menti = {menti_id})"
 
         result = selectOne(sql)[0]
-        print(result)
 
         return True if result == 1 else False
 

@@ -47,7 +47,7 @@ CREATE TABLE replyQna
 CREATE TABLE portfolio
 (
     id BIGINT AUTO_INCREMENT,
-    mento BIGINT NOT NULL UNIQUE,
+    mento BIGINT NOT NULL,
     brief VARCHAR(50) NOT NULL,
     mentoPic VARCHAR(2048) NOT NULL,
     content VARCHAR(500) NOT NULL,
@@ -98,7 +98,7 @@ CREATE TABLE studyRoom (
 
 CREATE TABLE mentoringRoom (
     id BIGINT AUTO_INCREMENT,
-    name VARCHAR(20) NOT NULL,
+    name VARCHAR(50) NOT NULL,
     curDate DATETIME NOT NULL,
     mento BIGINT NOT NULL,
     menti BIGINT NOT NULL,

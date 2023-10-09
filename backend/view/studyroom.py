@@ -36,18 +36,13 @@ def listRoom(loginMember, new_token) : # 룸 목록 조회
 
     for mr in mentoringRooms :
         room = mr['room']
-        mentoPic = mr['mentoPic']
+        portfolio = mr['portfolio']
 
-        if not mentoPic:
-            location = s3.get_bucket_location(Bucket=config.S3_BUCKET_NAME)["LocationConstraint"]
-        
-            mentoPic = f"https://{config.S3_BUCKET_NAME}.s3.{location}.amazonaws.com/studyroom/default_study_image_{randint(1, 3)}.jpg"
-            
         mentoringRoomList.append({
             'id' : room.id,
             'name' : room.name,
             'mento' : room.mento,
-            'image' : mentoPic
+            'image' : portfolio.mentoPic
         })
 
     return {
