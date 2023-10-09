@@ -11,8 +11,7 @@ from backend.controller.refreshToken_mgmt import RefreshToken
 
 oauth_bp = Blueprint('oauth', __name__, url_prefix = '')
 
-# @oauth_bp.route('/oauth/callback/<provider>', methods = ['GET'])
-@oauth_bp.route('/oauth/callback/<provider>', methods = ['POST'])
+@oauth_bp.route('/oauth/callback/<provider>', methods = ['GET'])
 def oauth_callback(provider):
 
     if provider not in ['google', 'naver', 'kakao']:
@@ -82,9 +81,7 @@ def oauth_callback(provider):
 
     # valid access token
 
-    mem_data = request.get_json()
-    
-    status, message = checkJoin(info.get('response') if provider == 'NAVER' else info, provider, mem_data)
+    status, message = checkJoin(info.get('response') if provider == 'NAVER' else info, provider)
 
     if status == 200 : # login
 
@@ -99,10 +96,11 @@ def oauth_callback(provider):
             refresh_token = RefreshToken.findTokenByMemberId(message.id)
 
         data = {
-            'id' : message.memId,
-            'nickname' : message.nickname,
+            'memId' : message.memId if message.memId is not None else message.id, ##
+            'nickname' : message.nickname if message.nickname else None,
             'isSocial' : True
         }
+        print(data)
         message = '성공'
 
     return {
@@ -116,7 +114,7 @@ def oauth_callback(provider):
         }
     }
 
-def checkJoin(sns_data, sns_type, mem_data) :
+def checkJoin(sns_data, sns_type) :
 
     sns_id = sns_data.get('id')
     member = Member.findBySns(sns_id, sns_type)
@@ -148,10 +146,7 @@ def checkJoin(sns_data, sns_type, mem_data) :
     if image is None :
         image = 'https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/profile/default_user.jpg'
     
-    memId = mem_data.get('id')
-    memNick = mem_data.get('nickname')
-
-    member_id = Member.saveOauth(memId, memNick, email, image, sns_id, sns_type)
+    member_id = Member.saveOauth(email, image, sns_id, sns_type)
 
     member = Member.findById(member_id)
 
