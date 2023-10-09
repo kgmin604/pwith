@@ -61,6 +61,7 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
     
     info = MentoringRoom.findById(id)
 
+    # 1. room
     room = info['room']
     mentoId = room.mento
     mentiId = room.menti
@@ -96,6 +97,7 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
         'image' : m.image
     }
 
+    # 2. chat
     chats = []
     chatList = conn_mongodb().mentoringroom_chat.find({'roomId':int(id)})
 
@@ -116,10 +118,20 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
                 'menti' : menti,
                 'image' : mentoPic
             },
-            'chat' : chats
+            'chat' : chats,
+            'lesson' : {
+                'total' : room.lesson_cnt,
+                'mento' : room.mento_cnt,
+                'menti' : room.menti_cnt,
+                'refund' : room.refund_cnt
+            }
         },
         'access_token' : new_token
     }
+
+# TODO 결제할 때마다 mr.lesson_cnt += p.duration
+# TODO 환급할 때마다 mr.refund_cnt += 환급 횟수
+# TODO 체크할 때마다 mr.mento_cnt or mr.menti_cnt += 1
     
 @mentoringroom_bp.route('/<id>/out', methods=['DELETE']) # TODO 결제 관련 코드 추가
 @login_required
