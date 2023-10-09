@@ -25,7 +25,7 @@ function Auth() {
     });
     let [is, setIs] = useState(false);
 
-    /*
+    
     useEffect(()=>{
         axios({
             method: "GET",
@@ -57,7 +57,7 @@ function Auth() {
             }
         })
     },[]);
-    */
+    
 
     function inputChange(e){
         e.stopPropagation();
@@ -86,6 +86,7 @@ function Auth() {
 
     return(
         <>
+        {/*
         <div style={{'height':'430px'}} className='round-box'>
           <div style={{'margin-bottom':'40px'}} className = "top-message">회원가입</div>
           <form method="POST">
@@ -120,8 +121,10 @@ function Auth() {
             
           </form>
         </div>
+        */}
       </>
     );
 }
+
 
 export default Auth;

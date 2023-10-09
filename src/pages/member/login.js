@@ -26,6 +26,9 @@ function Login() {
       url: `/member/login/auth/${name}`,
     })
     .then(function (response) {
+      console.log(response.data);
+      window.location.href = response.data.data.auth_url;
+      /*
       axios({
         method: "POST",
         url: `${response.data.data.auth_url}`
@@ -46,6 +49,7 @@ function Login() {
         }
       })
       .catch(function(error){
+        
         if(error.response.data.status===400){
           alert("유효하지 않은 페이지입니다.");
           navigate("/");
@@ -54,7 +58,9 @@ function Login() {
           alert("이미 사용중인 이메일입니다.");
           navigate("/");
         }
+        
       })
+      */
     })
     .catch(function(error){
       console.log(error);

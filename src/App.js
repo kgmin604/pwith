@@ -23,6 +23,7 @@ import RoomMain from "./pages/studyroom/RoomMain.js";
 import RoomCreate from "./pages/studyroom/RoomCreate.js";
 import LiveRoom from "./pages/studyroom/LiveRoom";
 import RoomDetail from "./pages/studyroom/RoomDetail.js";
+import MentoringRoomDetail from "./pages/studyroom/MentoringRoomDetail.js";
 import CommunityMain from "./pages/community/CommunityMain.js";
 import MentoringMain from "./pages/mentoring/MentoringMain.js";
 import MentoringCreate from "./pages/mentoring/MetoringCreate";
@@ -501,6 +502,7 @@ function App() {
           <Route path="/studyroom/create" element={<RoomCreate />} />
           <Route path="/studyroom/:id" element={<RoomDetail />} />
           <Route path="/studyroom/live/:id" element={<LiveRoom />} />
+          <Route path="/mentoringroom/:id" element={<MentoringRoomDetail />} />
           <Route path="/community" element={<CommunityMain />}>
             <Route path="main" element={<CommunityBoard />} />
             <Route path="it" element={<CommunityIT />} />
