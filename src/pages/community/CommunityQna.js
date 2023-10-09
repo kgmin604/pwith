@@ -69,7 +69,6 @@ function CommunityQna(props) {
             }
         })
             .then(function (response) {
-                console.log(response.data)
                 setPostList(response.data.data.posts);
 
                 if (response.data.data.num > 5) {

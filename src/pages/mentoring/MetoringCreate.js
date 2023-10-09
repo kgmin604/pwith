@@ -60,7 +60,6 @@ function MentoringCreate() {
             }));
             axios.post('/mentoring', formData)
                 .then((response) => {
-                    console.log(response.data);
                     alert("새 글이 등록되었습니다.");
                     navigate("../mentoring/main");
                 })
