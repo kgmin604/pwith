@@ -334,7 +334,7 @@ function RoomDetail() {
                 className="ent-btn"
                 onClick={(e) => {
                   e.stopPropagation();
-                  window.open(`./../studyroom/live/${roomInfo.id}`, '_blank');
+                  navigate(`./../live/${roomInfo.id}`);
                 }}
               >
                 입장하기
