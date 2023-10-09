@@ -171,7 +171,7 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
             'room' : {
                 'id' : id,
                 'name' : room.name,
-                'notice' : room.notice,
+                'notice' : room.notice if room.notice else '',
                 'leader' : findNickName(room.leader),
                 'image' : room.image,
                 'members' : join_members,
