@@ -225,7 +225,7 @@ const LiveRoom = () => {
 
     const onClickMike = async () => {
         if (!localVideoRef.current) return
-        localVideoRef.current
+        localVideoRef.current.srcObject
             .getAudioTracks()
             .forEach((track) => (track.enabled = !track.enabled));
         setIsMikeOn((prev) => !prev)
@@ -234,7 +234,7 @@ const LiveRoom = () => {
     const onClickCamera = async () => {
         if (!localVideoRef.current) return
         setIsCameraOn((prev) => !prev);
-        localVideoRef.current.getVideoTracks().forEach((track) => (track.enabled = !track.enabled));
+        localVideoRef.current.srcObject.getVideoTracks().forEach((track) => (track.enabled = !track.enabled));
     };
 
 
