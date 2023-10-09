@@ -111,6 +111,7 @@ div.right-space .header {
     justify-content: center;
     position: fixed;
     bottom: 50px;
+    z-index: 100;
 }
 
 .chat {
@@ -200,13 +201,18 @@ div.right-space .header {
 
 .user-name {
     position: relative;
-    bottom: 20px;
+    bottom: 25px;
     width: 150px;
     height: 20px;
     font-size: 15px;
-    color: black;
+    color: white;
     padding-left: 3px;
     background-color: #0000005A;
+    z-index: 100;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    left:5px;
 }
 
 .my-camera {}
