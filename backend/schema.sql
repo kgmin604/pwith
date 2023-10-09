@@ -55,6 +55,7 @@ CREATE TABLE portfolio
     tuition INT NOT NULL,
     duration INT NOT NULL,
     isOpen BOOLEAN NOT NULL DEFAULT true,
+    isDeleted BOOLEAN NOT NULL DEFAULT false,
     score INT NOT NULL DEFAULT -1,
     PRIMARY KEY(id),
     FOREIGN KEY(mento) REFERENCES member(id) on delete cascade on update cascade
@@ -102,6 +103,10 @@ CREATE TABLE mentoringRoom (
     mento BIGINT NOT NULL,
     menti BIGINT NOT NULL,
     notice VARCHAR(50),
+    lesson_cnt INT NOT NULL DEFAULT 0,
+    mento_cnt INT NOT NULL DEFAULT 0,
+    menti_cnt INT NOT NULL DEFAULT 0,
+    refund_cnt INT NOT NULL DEFAULT 0,
     portfolio BIGINT DEFAULT NULL,
     PRIMARY KEY(id),
     UNIQUE KEY (mento, menti),

@@ -3,7 +3,7 @@ import pymysql
 
 class Portfolio() :
     
-    def __init__(self, id, mento, brief, mentoPic, content, curDate, tuition, duration, isOpen, score):
+    def __init__(self, id, mento, brief, mentoPic, content, curDate, tuition, duration, isOpen, isDeleted, score):
         self.__id = id
         self.__mento = mento
         self.__brief = brief
@@ -13,6 +13,7 @@ class Portfolio() :
         self.__tuition = tuition
         self.__duration = duration
         self.__isOpen = isOpen
+        self.__isDeleted = isDeleted
         self.__score = score
     @property
     def id(self) :
@@ -41,6 +42,9 @@ class Portfolio() :
     @property
     def isOpen(self) :
         return self.__isOpen
+    @property
+    def isDeleted(self) :
+        return self.__isDeleted
     @property
     def score(self) :
         return self.__score
