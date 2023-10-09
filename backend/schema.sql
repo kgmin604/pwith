@@ -101,10 +101,13 @@ CREATE TABLE mentoringRoom (
     curDate DATETIME NOT NULL,
     mento BIGINT NOT NULL,
     menti BIGINT NOT NULL,
+    notice VARCHAR(50),
+    portfolio BIGINT DEFAULT NULL,
     PRIMARY KEY(id),
     UNIQUE KEY (mento, menti),
     FOREIGN KEY(mento) REFERENCES member(id) on delete cascade on update cascade,
-    FOREIGN KEY(menti) REFERENCES member(id) on delete cascade on update cascade
+    FOREIGN KEY(menti) REFERENCES member(id) on delete cascade on update cascade,
+    FOREIGN KEY(portfolio) REFERENCES portfolio(id) on delete set null on update cascade
 )
 
 CREATE TABLE studyMember (
