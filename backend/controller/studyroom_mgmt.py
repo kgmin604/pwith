@@ -131,6 +131,15 @@ class StudyRoom() :
         return result
 
     @staticmethod
+    def existByMemberAndRoom(memberId, roomId) : # 참가자인지
+
+        sql = f"SELECT EXISTS (SELECT id FROM studyMember WHERE member = {memberId} and room = {roomId})"
+
+        result = selectOne(sql)[0]
+
+        return True if result == 1 else False
+
+    @staticmethod
     def updateNotice(roomId, notice) : # 공지 수정
 
         sql = f"UPDATE studyRoom SET notice='{notice}' WHERE id = {roomId}"
