@@ -2,6 +2,7 @@ from flask import Flask, session, Blueprint, request, jsonify
 from flask_login import current_user
 from datetime import datetime
 from bardapi import Bard
+from random import randint
 import json
 import os
 
@@ -33,12 +34,20 @@ def listRoom(loginMember, new_token) : # 룸 목록 조회
             'joinP' : room.joinP
         })
 
-    for room in mentoringRooms :
+    for mr in mentoringRooms :
+        room = mr['room']
+        mentoPic = mr['mentoPic']
+
+        if not mentoPic:
+            location = s3.get_bucket_location(Bucket=config.S3_BUCKET_NAME)["LocationConstraint"]
+        
+            mentoPic = f"https://{config.S3_BUCKET_NAME}.s3.{location}.amazonaws.com/studyroom/default_study_image_{randint(1, 3)}.jpg"
+            
         mentoringRoomList.append({
             'id' : room.id,
             'name' : room.name,
             'mento' : room.mento,
-            'image' : room.mentoPic
+            'image' : mentoPic
         })
 
     return {

@@ -63,8 +63,8 @@ def listPortfolio() :
 
     if searchWord is None :
         portfolios = Portfolio.findPaging(int(page) * 12 if page else 0)
-    else :
-        portfolios = Portfolio.searchByMento(searchWord)
+    else : # 검색
+        portfolios = Portfolio.searchByMento(searchWord, int(page) * 12 if page else 0)
 
     portfolioList = []
 

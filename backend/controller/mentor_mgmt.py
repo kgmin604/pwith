@@ -73,7 +73,7 @@ class Portfolio() :
         return done
 
     @staticmethod
-    def findPaging(page=0) : # 전체 목록 조회
+    def findPaging(page=0) : # 전체 목록 조회 + 페이징
         sql = f'''
             SELECT p.id, m.memId, m.nickname, p.mentoPic, p.brief, p.tuition, p.duration, p.score, group_concat(subject)
             FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id
@@ -87,7 +87,7 @@ class Portfolio() :
         return result
 
     @staticmethod
-    def searchByMento(value) : # 닉네임으로 검색
+    def searchByMento(value, page=0) : # 닉네임으로 검색 + 페이징
 
         sql =  f'''
             SELECT p.id, m.memId, m.nickname, p.mentoPic, p.brief, p.tuition, p.duration, p.score, group_concat(subject)
@@ -95,6 +95,7 @@ class Portfolio() :
             WHERE p.isOpen = true AND m.nickname LIKE '%{value}%'
             GROUP BY p.id
             ORDER BY p.curDate DESC
+            LIMIT {page}, 12
             '''
         result = selectAll(sql)
         

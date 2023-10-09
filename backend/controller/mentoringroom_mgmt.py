@@ -62,19 +62,24 @@ class MentoringRoom() :
         }
 
     @staticmethod
-    def findByMemberId(member_id) :
+    def findByMemberId(memberId) : # 참여한 멘토링룸
 
-        sql = f'''
-        SELECT mr.id, mr.name, mr.curDate, mr.mento, mr.menti, p.mentoPic
-        FROM mentoringRoom mr JOIN portfolio p ON mr.mento = p.mento
-        WHERE mr.mento = {member_id} OR mr.menti = {member_id}
-        ORDER BY mr.curDate DESC
-        '''
+        sql = f"SELECT * FROM mentoringRoom WHERE mento = {memberId} OR menti = {memberId} ORDER BY curDate DESC"
+
         rooms = selectAll(sql)
 
         result = []
         for r in rooms :
-            result.append(MentoringRoom(r[0],r[1],r[2],r[3],r[4],r[5]))
+            item = {}
+            
+            room = MentoringRoom(r[0],r[1],r[2],r[3],r[4],r[5],r[6])
+            item['room'] = room
+            
+            if room.portfolio:
+                item['mentoPic'] = Portfolio.findPicById(room.portfolio)
+            else:
+                item['mentoPic'] = None
+            result.append(item)
 
         return result
 
