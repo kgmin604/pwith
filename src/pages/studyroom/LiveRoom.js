@@ -16,6 +16,9 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Video from "./Video";
 import Chat from "./Chat";
+import { useNavigate } from "react-router-dom";
+import CodeEditor, { SelectionText } from "@uiw/react-textarea-code-editor";
+
 
 const pc_config = {
     iceServers: [
@@ -250,6 +253,11 @@ const LiveRoom = () => {
         setIsCodeOn(!isCodeOn)
     }
 
+    const [selectedLanguage, setSelectedLanguage] = useState('js');
+    const handleLanguageChange = (e) => {
+        setSelectedLanguage(e.target.value);
+    };
+
     return (
         <div className="live-room" ref={ref}>
             <div className="left-space">
@@ -277,9 +285,38 @@ const LiveRoom = () => {
                 <div className="screen">
                     <img className="screen-data" src={screenImg} />
                 </div>
-                {isCodeOn && <div className="code-upload">
-                    <div className="header"><div>코드 업로드</div><FontAwesomeIcon icon={faXmark} onClick={() => { setIsCodeOn(false) }} /></div>
-                    <textarea placeholder="코드를 업로드 하세요!" /></div>}
+                {isCodeOn && <div className="code-upload" data-color-mode="light">
+                    <div className="header"><div>코드 업로드</div>
+                        <select value={selectedLanguage} onChange={handleLanguageChange}>
+                            <option value="js">JavaScript</option>
+                            <option value="python">Python</option>
+                            <option value="java">Java</option>
+                            <option value="cpp">C++</option>
+                            <option value="html">HTML</option>
+                            <option value="css">CSS</option>
+                            <option value="markdown">Markdown</option>
+                            <option value="sql">SQL</option>
+                            <option value="ruby">Ruby</option>
+                            <option value="php">PHP</option>
+                            {/* 필요한 언어 옵션들을 추가하세요 */}
+                        </select>
+                        <FontAwesomeIcon icon={faXmark} onClick={() => { setIsCodeOn(false) }} />
+                    </div>
+                    <CodeEditor
+                        value={myCode.content}
+                        ref={textRef}
+                        language={selectedLanguage}
+                        placeholder="코드를 입력하세요"
+                        onChange={(evn) => setMyCode({ ...myCode, content: evn.target.value })}
+                        padding={15}
+                        style={{
+                            width: '100%',
+                            fontFamily:
+                                "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
+                            fontSize: 12
+                        }}
+                    />
+                </div>}
             </div >
 
             {showChat && <Chat roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />}
