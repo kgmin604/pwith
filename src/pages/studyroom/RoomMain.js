@@ -139,14 +139,10 @@ function RoomMain() {
                                                             rooms2.map((room, index) => (
                                                                 <div className="item" key={index} onClick={(e) => {
                                                                     e.stopPropagation();
-                                                                    navigate(`/studyroom/${room.id}`);
+                                                                    navigate(`/mentoringroom/${room.id}`);
                                                                 }}>
                                                                     <div className="img-area">
                                                                         <img src={room.image} />
-                                                                        <div className="join-area">
-                                                                            <FontAwesomeIcon icon={faUser} />
-                                                                            <span>4명</span>
-                                                                        </div>
                                                                     </div>
                                                                     <h3>{room.name}</h3>
                                                                 </div>

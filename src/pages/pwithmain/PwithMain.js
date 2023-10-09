@@ -28,6 +28,7 @@ function PwithMain(){
             setStudyList(response.data.data.study);
             setNewsList(response.data.data.news);
             setMentorList(response.data.data.mentoring);
+            setContentList(response.data.data.contents);
           })
           .catch(function (error) {
               console.log(error);
@@ -43,7 +44,7 @@ function PwithMain(){
                     <span className="posting-plus" onClick={()=>{navigate("/study/main")}}>(+)</span></h5>
                     <ul className="posting-list">
                     {
-                        studyList === [] ? null :
+                        studyList.length===0 ? null :
                         studyList.map((a,i)=>{
                             return(
                                 <li 
@@ -63,7 +64,7 @@ function PwithMain(){
                     <span className="posting-plus" onClick={()=>{navigate("/community/IT")}}>(+)</span></h5>
                     <ul className="posting-list">
                     {
-                        newsList === [] ? null :
+                        newsList.length===0 ? null :
                         newsList.map((a,i)=>{
                             return(
                                 <li 
@@ -81,7 +82,7 @@ function PwithMain(){
                     <span className="posting-plus" onClick={()=>{navigate("/mentoring")}}>(+)</span></h5>
                     <ul className="posting-list">
                     {
-                        mentorList === [] ? null :
+                        mentorList.length===0 ? null :
                         mentorList.map((a,i)=>{
                             return(
                                 <li 
@@ -102,8 +103,12 @@ function PwithMain(){
                 {
                     contentList.map((a,i)=>{
                         return(
-                            <div className="study-content" key={i}>
-                                <img className="study-content-img"/>
+                            <div 
+                                className="study-content" 
+                                key={i} 
+                                onClick={e=>{e.stopPropagation(); window.open(`${a['url']}`, '_blank');}}
+                            >
+                                <img className="study-content-img" src={a['img']}/>
                                 <h5 className="study-content-header">{a['title']}</h5>
                             </div>
                         )

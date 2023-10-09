@@ -116,6 +116,18 @@ class Portfolio() :
         return result
 
     @staticmethod
+    def findPicById(id) : # 이미지 찾기
+
+        sql = f"SELECT mentoPic FROM portfolio WHERE id = {id}"
+
+        res = selectOne(sql)
+        
+        if not res[0] :
+            return None
+
+        return res
+
+    @staticmethod
     def findMentoById(id) :
 
         sql = f'SELECT mento FROM portfolio WHERE id = {id}'

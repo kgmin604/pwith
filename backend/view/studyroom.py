@@ -171,7 +171,7 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
             'room' : {
                 'id' : id,
                 'name' : room.name,
-                'notice' : room.notice,
+                'notice' : room.notice if room.notice else '',
                 'leader' : findNickName(room.leader),
                 'image' : room.image,
                 'members' : join_members,
@@ -213,15 +213,22 @@ def codeBard(id, loginMember, new_token) : # 코드 리뷰
     
 @studyroom_bp.route('/<id>/out', methods=['DELETE'])
 @login_required
-def studyout(id, loginMember, new_token) : # 스터디 탈퇴
+def studyOut(id, loginMember, new_token) : # 스터디 탈퇴
+
+    if not StudyRoom.existByMemberAndRoom(loginMember.id, id):
+        return {
+            'status': 403,
+            'message': '탈퇴 대상자 아님',
+            'data': None,
+            'access_token': new_token
+        }
     
     done = StudyRoom.deleteStudent(loginMember.id, id)
-    print(done)
     
     if done == 0 :
         return {
             'status' : 400,
-            'message' : "스터디를 삭제할 수 없습니다.",
+            'message' : '스터디 탈퇴 불가능',
             'data' : None,
             'access_token' : new_token
         }

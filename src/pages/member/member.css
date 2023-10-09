@@ -780,3 +780,17 @@ div.login-bottom
     font-size: 8px;
     color: gray;
 }
+
+/* 소셜 로그인 회원 탈퇴 */
+
+.witdraw-pw-btn{
+    border-radius: 5px;
+    background-color: #2D61A0;
+    color: white;
+    font-size: small;
+    font-weight: 700;
+    font-family: 'Noto Sans KR';
+    user-select: none;
+    cursor: pointer;
+    padding: 3px 6px;
+}

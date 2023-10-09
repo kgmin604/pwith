@@ -10,7 +10,7 @@ from botocore.client import Config
 import boto3 
 import json
 
-from backend.view import member, study, studyroom, mypage, mentoring, community, pwithmain, chat, oauth_server, oauth_member
+from backend.view import member, study, studyroom, mypage, mentoring, mentoringroom, community, pwithmain, chat, oauth_server, oauth_member
 from backend.controller.member_mgmt import Member
 from backend import config
 
@@ -33,6 +33,7 @@ def create_app() :
     app.register_blueprint(mypage.mypage_bp)
     app.register_blueprint(community.community_bp)
     app.register_blueprint(mentoring.mento_bp)
+    app.register_blueprint(mentoringroom.mentoringroom_bp)
     app.register_blueprint(pwithmain.main_bp)
     app.register_blueprint(chat.chat_bp)
     app.register_blueprint(oauth_server.oauth_bp)
