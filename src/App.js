@@ -32,6 +32,7 @@ import Join from "./pages/member/join.js";
 import Help from "./pages/member/help.js";
 import Mypage from "./pages/member/mypage.js";
 import Auth from "./pages/auth/Auth.js";
+import AuthJoin from "./pages/auth/AuthJoin.js";
 
 import {
   Account,
@@ -140,7 +141,7 @@ function App() {
       <div className="wrap">
         {!isStudyRoomPath && (
           <div className="top-area">
-            {user.id === null ? (
+            {user.name === null ? (
               <div className="top-msg"></div>
             ) : (
               <div className="top-msg">
@@ -367,7 +368,7 @@ function App() {
                   🔍{" "}
                 </div>
               </Form>
-              {user.id === null ? (
+              {user.name === null ? (
                 <div className="mem-area">
                   <div
                     className="mem-btn"
@@ -531,6 +532,7 @@ function App() {
           <Route path="/oauth/callback/naver" element={<Auth />} />
           <Route path="/oauth/callback/google" element={<Auth />} />
           <Route path="/oauth/callback/kakao" element={<Auth />} />
+          <Route path="/member/login/auth" element={<AuthJoin/>} />
           <Route
             path="*"
             element={
