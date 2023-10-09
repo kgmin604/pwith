@@ -9,6 +9,7 @@ from backend.controller.community_mgmt import QNAPost
 from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.replyQna_mgmt import ReplyQna
 from backend.view import formatYMD, uploadFileS3, login_required
+from backend.view.member import sendAuthCode
 from backend import config
 
 mypage_bp = Blueprint('mypage', __name__, url_prefix='/mypage')
