@@ -203,7 +203,7 @@ class studyPost() :
             update_done = commit(sql)
                   
     def getNStudy(num):     # study 게시글 일부만 가져오기
-        sql = f"select id, title from study ORDER BY curDate DESC LIMIT {int(num)} "
+        sql = f"select id, title from study ORDER BY  RAND() LIMIT {int(num)} "
       
         rows = selectAll(sql)
         
