@@ -12,31 +12,43 @@ import { useSelector } from "react-redux";
 
 function MentoringMain() {
     const navigate = useNavigate();
+    const [selectPage, setSelectPage] = useState(0);
     const [mentoList, setMentoList] = useState([]);
     const [userinput, setUserinput] = useState('');
+    const [isNext,setIsNext]=useState(false)
     const [myPortfolio, setMyPortfolio] = useState();
 
     useEffect(() => {
         axios({
             method: "GET",
             url: "/mentoring",
+            params: {
+                page: selectPage
+            }
         })
             .then(function (response) {
-                setMentoList(response.data.data.portfolioList);
-                setMyPortfolio(response.data.data.myPortfolio);
+                const data = response.data.data
+                setMentoList((prev) => [...prev, ...data.portfolioList]);
+                setMyPortfolio(data.myPortfolio);
+                setIsNext(data.isNext);
             })
             .catch(function (error) {
                 console.log(error);
             });
 
-    }, []);
+    }, [selectPage]);
+
+    const more = () => {
+        setSelectPage(selectPage + 1)
+    }
 
     function searchMentor() {
         axios({
             method: "GET",
             url: "/mentoring",
             params: {
-                search: `${userinput}`
+                search: `${userinput}`,
+                page:0,
             }
         })
             .then(function (response) {
@@ -75,6 +87,7 @@ function MentoringMain() {
                             )
                         })}
                     </Row>
+                    {isNext && <div className="more-button" onClick={more}>더보기</div>}
                 </div>
 
                 <div className="col-md-3"></div>
