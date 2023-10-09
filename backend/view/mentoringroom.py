@@ -35,7 +35,7 @@ def updateNotice(loginMember, new_token, id) : # 공지 수정
         'access_token' : new_token
     }
 
-@mentoringroom_bp.route('/<id>', methods=['DELETE'])
+@mentoringroom_bp.route('/<id>', methods=['DELETE']) # TODO 결제 관련 코드 추가
 @login_required
 def deleteRoom(loginMember, new_token, id) : # 룸 삭제
 
@@ -121,52 +121,30 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
         'access_token' : new_token
     }
     
-# @mentoringroom_bp.route('/live/<id>', methods=['GET'])
-# @login_required
-# def studyStart(loginMember, new_token, id): # 룸 상세
-    
-#     room = StudyRoom.findById(id)
-#     members = StudyRoom.findMemberByRoomId(id)
+@mentoringroom_bp.route('/<id>/out', methods=['DELETE']) # TODO 결제 관련 코드 추가
+@login_required
+def studyOut(id, loginMember, new_token) : # 스터디 그만두기
+    pass
 
-#     return{
-#         'data' : None,
-#         'access_token' : new_token
-#     }
+    # if not MentoringRoom.existByMemberAndRoom(loginMember.id, id):
+    #     return {
+    #         'status': 403,
+    #         'message': '탈퇴 대상자 아님',
+    #         'data': None,
+    #         'access_token': new_token
+    #     }
     
-# @mentoringroom_bp.route('/<id>/code-bard', methods=['POST'])
-# @login_required
-# def codeBard(id, loginMember, new_token) : # 코드 리뷰
+    # done = MentoringRoom.deleteStudent(loginMember.id, id)
     
-#     data = request.get_json(silent=True)
-#     question = data['text']
-    
-
-#     bard = Bard(token=config.BARD_TOKEN)
-#     response = bard.get_answer(question)['content']
-    
-#     return{
-#         'data' : {
-#             'answer': response
-#         },
-#         'access_token' : new_token
-#     }
-    
-# @mentoringroom_bp.route('/<id>/out', methods=['DELETE'])
-# @login_required
-# def studyout(id, loginMember, new_token) : # 스터디 탈퇴
-    
-#     done = StudyRoom.deleteStudent(loginMember.id, id)
-#     print(done)
-    
-#     if done == 0 :
-#         return {
-#             'status' : 400,
-#             'message' : "스터디를 삭제할 수 없습니다.",
-#             'data' : None,
-#             'access_token' : new_token
-#         }
-#     else: 
-#         return {
-#             'data' : None,
-#             'access_token' : new_token
-#         }
+    # if done == 0 :
+    #     return {
+    #         'status' : 400,
+    #         'message' : "스터디를 삭제할 수 없습니다.",
+    #         'data' : None,
+    #         'access_token' : new_token
+    #     }
+    # else: 
+    #     return {
+    #         'data' : None,
+    #         'access_token' : new_token
+    #     }
