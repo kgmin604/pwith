@@ -120,13 +120,22 @@ class Member(UserMixin):
         return done
 
     @staticmethod
-    def saveOauth(memId, nickname, email, image, sns_id, sns_type):
+    def saveOauth(email, image, sns_id, sns_type):
 
-        sql = f"INSERT INTO member(memId, nickname, email, image, sns_id, sns_type) VALUES ('{memId}', '{nickname}', '{email}', '{image}', '{sns_id}', '{sns_type}')"
+        sql = f"INSERT INTO member(email, image, sns_id, sns_type) VALUES ('{email}', '{image}', '{sns_id}', '{sns_type}')"
 
         mem_id = commitAndGetId(sql)
 
         return mem_id
+
+    @staticmethod
+    def updateOauth(id, memId, nickname):
+
+        sql = f"UPDATE member SET memId = '{memId}', nickname = '{nickname}' WHERE id = {id}"
+
+        done = commit(sql)
+
+        return done
 
     @staticmethod
     def updatePassword(id, newPw):

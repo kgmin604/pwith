@@ -57,7 +57,8 @@ def login_oauth(provider):
 def check_id():
 
     data = request.get_json()
-    memId = data['id']
+    id = data['id']
+    memId = data['memId']
     memNick = data['nickname']
 
     if Member.existsById(memId):
@@ -73,6 +74,9 @@ def check_id():
             'data': None
         }
     else:
+        Member.updateOauth(id, memId, memNick)
         return {
-            'data': None
+            'id': memId,
+            'nickname': memNick,
+            'isSocial': True
         }

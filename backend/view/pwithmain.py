@@ -40,7 +40,10 @@ def showStudy():
             }
             mentoringList.append(portfolio)
             
-        book_db = conn_mongodb().book_crawling.find().sort('_id', -1).limit(2)
+        book_db = conn_mongodb().book_crawling.aggregate([
+            { "$sample": { "size": 2 } }
+        ])
+
         for book in book_db :
             contentsList.append({
                 'title' : book['title'],
@@ -48,7 +51,9 @@ def showStudy():
                 'url' : book['url']
             })
             
-        lecture_db = conn_mongodb().lecture_crawling.find().sort('_id', -1).limit(2)
+        lecture_db = conn_mongodb().lecture_crawling.aggregate([
+            { "$sample": { "size": 2 } }
+        ])
         for lecture in lecture_db :
             contentsList.append({
                 'title' : lecture['title'],
@@ -111,3 +116,15 @@ def showalarm():
     #return{
     #    'alarmList': alarmList
     #}
+    
+# @main_bp.route('/', methods = ['GET'])      # 전체 검색
+# def search():
+    
+#     search = request.args.get('search')
+    
+#     if int(search) == 1:
+        
+#         searchType = request.args.get('type')
+#         searchValue = request.args.get('value')
+        
+        
