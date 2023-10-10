@@ -152,8 +152,43 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
 
 # TODO 결제할 때마다 mr.lesson_cnt += p.duration
 # TODO 환급할 때마다 mr.refund_cnt += 환급 횟수
-# TODO 체크할 때마다 mr.mento_cnt or mr.menti_cnt += 1
-    
+
+@mentoringroom_bp.route('/<id>', methods=['POST'])
+@login_required
+def checkLesson(id, loginMember, new_token):
+
+    info = MentoringRoom.findById(id)
+
+    if not info:
+        return {
+            'status' : 400,
+            'message' : '없는 멘토링룸',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    room = info['room']
+    if loginMember.id not in [room.mento, room.menti]:
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    isMentoChk = request.args.get('isMento')
+
+    if isMentoChk == True:
+        MentoringRoom.updateMentoCheck(id)
+    elif isMentoChk == False:
+        MentoringRoom.updateMentiCheck(id)
+    else:
+        pass
+
+    return {
+        'data': None
+    }
+
 @mentoringroom_bp.route('/<id>/out', methods=['DELETE']) # TODO 결제 관련 코드 추가
 @login_required
 def studyOut(id, loginMember, new_token) : # 스터디 그만두기
