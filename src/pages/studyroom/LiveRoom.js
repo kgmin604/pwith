@@ -128,6 +128,7 @@ const LiveRoom = () => {
         getLocalStream();
 
         socketRef.current.on('all_users', (allUsers) => {
+            console.log(allUsers)
             allUsers.forEach(async (user) => {
                 if (!localStreamRef.current) return;
                 const pc = createPeerConnection(user.id, user.name);
@@ -250,6 +251,8 @@ const LiveRoom = () => {
         setIsCodeOn(!isCodeOn)
     }
 
+    useEffect(()=>{console.log(users)},[users])
+
     return (
         <div className="live-room" ref={ref}>
             <div className="left-space">
@@ -282,7 +285,7 @@ const LiveRoom = () => {
                     <textarea placeholder="코드를 업로드 하세요!" /></div>}
             </div >
 
-            {showChat && <Chat roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />}
+            {showChat && <Chat roomId={roomId} roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />}
 
 
             <div className="control-bar-wrapper">

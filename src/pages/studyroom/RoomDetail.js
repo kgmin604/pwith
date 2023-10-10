@@ -227,7 +227,7 @@ function RoomDetail() {
     //     },
     //     transports: ["websocket"],
     // });
-    socket = io("http://localhost:5000", {
+    socket = io("http://localhost:5000/study-ready", {
       cors: {
         origin: "*",
       },
