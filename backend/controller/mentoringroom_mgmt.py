@@ -57,6 +57,15 @@ class MentoringRoom() :
 
         return roomId
 
+    # @staticmethod
+    # def existsById(roomId): # 방이 존재하는지
+
+    #     sql = f"SELECT EXISTS (SELECT id FROM mentoringRoom WHERE id = {id})"
+
+    #     result = selectOne(sql)[0]
+
+    #     return True if result == 1 else False
+
     @staticmethod
     def findById(roomId): # 멘토링룸 + 포폴
 
@@ -106,6 +115,25 @@ class MentoringRoom() :
         result = selectOne(sql)[0]
 
         return True if result == 1 else False
+
+    @staticmethod
+    def updateMentoCheck(id) : # 멘토 수업 횟수 증가
+
+        sql = f"UPDATE mentoringRoom SET mento_cnt = mento_cnt + 1 WHERE id = {id}"
+
+        done = commit(sql)
+
+        return done
+
+    @staticmethod
+    def updateMentiCheck(id) : # 멘티 수업 횟수 증가
+
+        sql = f"UPDATE mentoringRoom SET menti_cnt = menti_cnt + 1 WHERE id = {id}"
+
+        done = commit(sql)
+
+        return done
+
 
     @staticmethod
     def updateNotice(roomId, notice) : # 공지 수정
