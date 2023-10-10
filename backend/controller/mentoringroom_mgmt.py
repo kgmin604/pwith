@@ -2,13 +2,17 @@ from backend.controller import commit, commitAndGetId, selectAll, selectOne
 from backend.controller.mentor_mgmt import Portfolio
 
 class MentoringRoom() :
-    def __init__(self, id, name, curDate, mentoId, mentiId, notice, portfolio):
+    def __init__(self, id, name, curDate, mentoId, mentiId, notice, total, cnt_o, cnt_i, cnt_r, portfolio):
         self.__id = id
         self.__name = name
         self.__curDate = curDate
         self.__mento = mentoId
         self.__menti = mentiId
         self.__notice = notice
+        self.__lesson_cnt = total
+        self.__mento_cnt = cnt_o
+        self.__menti_cnt = cnt_i
+        self.__refund_cnt = cnt_r
         self.__portfolio = portfolio
     @property
     def id(self) :
@@ -29,42 +33,54 @@ class MentoringRoom() :
     def notice(self) :
         return self.__notice
     @property
+    def lesson_cnt(self) :
+        return self.__lesson_cnt
+    @property
+    def mento_cnt(self) :
+        return self.__mento_cnt
+    @property
+    def menti_cnt(self) :
+        return self.__menti_cnt
+    @property
+    def refund_cnt(self) :
+        return self.__refund_cnt
+    @property
     def portfolio(self) :
         return self.__portfolio
 
     @staticmethod
-    def save(roomName, date, mentoId, mentiId) :
+    def save(roomName, date, mentoId, mentiId, portId) :
 
-        sql = f"INSERT INTO mentoringRoom(name, curDate, mento, menti) VALUES('{roomName}', '{date}', {mentoId}, {mentiId})"
+        sql = f"INSERT INTO mentoringRoom(name, curDate, mento, menti, portfolio) VALUES('{roomName}', '{date}', {mentoId}, {mentiId}, {portId})"
 
         roomId = commitAndGetId(sql)
 
         return roomId
 
     @staticmethod
-    def findById(roomId): # 멘토링룸 + 포폴 이미지
+    def findById(roomId): # 멘토링룸 + 포폴
 
-        sql = f"SELECT * FROM mentoringRoom WHERE id = {roomId}"
+        sql = f"SELECT * FROM mentoringRoom mr JOIN portfolio p ON mr.portfolio = p.id \
+            WHERE mr.id = {roomId}"
 
         r = selectOne(sql)
+
         if not r :
             return None
-        room = MentoringRoom(r[0],r[1],r[2],r[3],r[4],r[5],r[6])
 
-        if room.portfolio is not None:
-            mentoPic = Portfolio.findPicById(room.portfolio)
-        else:
-            mentoPic = None
+        room = MentoringRoom(r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8],r[9],r[10])
+        portfolio = Portfolio(r[11],r[12],r[13],r[14],r[15],r[16],r[17],r[18],r[19],r[20],r[21])
 
         return {
             'room': room,
-            'mentoPic': mentoPic
+            'portfolio': portfolio
         }
 
     @staticmethod
-    def findByMemberId(memberId) : # 참여한 멘토링룸
+    def findByMemberId(memberId) : # 참여한 멘토링룸 + 포폴
 
-        sql = f"SELECT * FROM mentoringRoom WHERE mento = {memberId} OR menti = {memberId} ORDER BY curDate DESC"
+        sql = f"SELECT * FROM mentoringRoom mr JOIN portfolio p ON mr.portfolio = p.id \
+            WHERE mr.mento = {memberId} OR mr.menti = {memberId} ORDER BY mr.curDate DESC"
 
         rooms = selectAll(sql)
 
@@ -72,24 +88,22 @@ class MentoringRoom() :
         for r in rooms :
             item = {}
             
-            room = MentoringRoom(r[0],r[1],r[2],r[3],r[4],r[5],r[6])
+            room = MentoringRoom(r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8],r[9],r[10])
+            portfolio = Portfolio(r[11],r[12],r[13],r[14],r[15],r[16],r[17],r[18],r[19],r[20],r[21])
+
             item['room'] = room
-            
-            if room.portfolio:
-                item['mentoPic'] = Portfolio.findPicById(room.portfolio)
-            else:
-                item['mentoPic'] = None
+            item['portfolio'] = portfolio
+
             result.append(item)
 
         return result
 
     @staticmethod
-    def existsByMentoMenti(mento_id, menti_id) :
+    def existsByMentoMenti(mento_id, menti_id) : # 첫수업인지 -> 삭제
 
         sql = f"SELECT EXISTS (SELECT id FROM mentoringRoom WHERE mento = {mento_id} AND menti = {menti_id})"
 
         result = selectOne(sql)[0]
-        print(result)
 
         return True if result == 1 else False
 
@@ -110,28 +124,3 @@ class MentoringRoom() :
         done = commit(sql)
 
         return done
-
-
-    # @staticmethod
-    # def getMentiList(mentoId) : # 멘토링 참가자 조회
-
-    #     sql = f"SELECT studentsList FROM mentor WHERE roomId = {mentoId}"
-
-    #     studentsList = selectOne(sql)[0]
-
-    #     return studentsList
-
-    # @staticmethod
-    # def addStudent(mento, mentiList) :
-    #     mysql_db = conn_mysql()
-    #     cursor_db = mysql_db.cursor()
-
-    #     sql = f"UPDATE mento SET mentiList = '{mentiList}' WHERE mentoId = '{mento}'"
-
-    #     done = cursor_db.execute(sql)
-
-    #     mysql_db.commit()
-
-    #     mysql_db.close()
-        
-    #     return done

@@ -47,7 +47,7 @@ CREATE TABLE replyQna
 CREATE TABLE portfolio
 (
     id BIGINT AUTO_INCREMENT,
-    mento BIGINT NOT NULL UNIQUE,
+    mento BIGINT NOT NULL,
     brief VARCHAR(50) NOT NULL,
     mentoPic VARCHAR(2048) NOT NULL,
     content VARCHAR(500) NOT NULL,
@@ -55,6 +55,7 @@ CREATE TABLE portfolio
     tuition INT NOT NULL,
     duration INT NOT NULL,
     isOpen BOOLEAN NOT NULL DEFAULT true,
+    isDeleted BOOLEAN NOT NULL DEFAULT false,
     score INT NOT NULL DEFAULT -1,
     PRIMARY KEY(id),
     FOREIGN KEY(mento) REFERENCES member(id) on delete cascade on update cascade
@@ -97,11 +98,15 @@ CREATE TABLE studyRoom (
 
 CREATE TABLE mentoringRoom (
     id BIGINT AUTO_INCREMENT,
-    name VARCHAR(20) NOT NULL,
+    name VARCHAR(50) NOT NULL,
     curDate DATETIME NOT NULL,
     mento BIGINT NOT NULL,
     menti BIGINT NOT NULL,
     notice VARCHAR(50),
+    lesson_cnt INT NOT NULL DEFAULT 0,
+    mento_cnt INT NOT NULL DEFAULT 0,
+    menti_cnt INT NOT NULL DEFAULT 0,
+    refund_cnt INT NOT NULL DEFAULT 0,
     portfolio BIGINT DEFAULT NULL,
     PRIMARY KEY(id),
     UNIQUE KEY (mento, menti),

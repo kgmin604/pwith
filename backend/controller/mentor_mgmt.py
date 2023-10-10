@@ -3,7 +3,7 @@ import pymysql
 
 class Portfolio() :
     
-    def __init__(self, id, mento, brief, mentoPic, content, curDate, tuition, duration, isOpen, score):
+    def __init__(self, id, mento, brief, mentoPic, content, curDate, tuition, duration, isOpen, isDeleted, score):
         self.__id = id
         self.__mento = mento
         self.__brief = brief
@@ -13,6 +13,7 @@ class Portfolio() :
         self.__tuition = tuition
         self.__duration = duration
         self.__isOpen = isOpen
+        self.__isDeleted = isDeleted
         self.__score = score
     @property
     def id(self) :
@@ -42,12 +43,23 @@ class Portfolio() :
     def isOpen(self) :
         return self.__isOpen
     @property
+    def isDeleted(self) :
+        return self.__isDeleted
+    @property
     def score(self) :
         return self.__score
 
     @staticmethod
-    def existsById(id) :
-        sql = f"SELECT EXISTS (SELECT id FROM portfolio WHERE id = {id})"
+    def existsById(id) : # 글이 존재하는지
+        sql = f"SELECT EXISTS (SELECT id FROM portfolio WHERE id = {id} and isDeleted = false)"
+
+        result = selectOne(sql)[0]
+
+        return True if result == 1 else False
+
+    @staticmethod
+    def existsByMentoId(id) : # 본인 글이 존재하는지
+        sql = f"SELECT EXISTS (SELECT id FROM portfolio WHERE mento = {id} and isDeleted = false)"
 
         result = selectOne(sql)[0]
 
@@ -61,7 +73,6 @@ class Portfolio() :
         try :
             portfolioId = commitAndGetId(sql1)
         except pymysql.err.IntegrityError as ex:
-            # print(f"SQL 예외 발생: {ex}")
             return 0
 
         for subject in subjects :
@@ -77,7 +88,7 @@ class Portfolio() :
         sql = f'''
             SELECT p.id, m.memId, m.nickname, p.mentoPic, p.brief, p.tuition, p.duration, p.score, group_concat(subject)
             FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id
-            WHERE p.isOpen = true
+            WHERE p.isOpen = true AND p.isDeleted = false
             GROUP BY p.id
             ORDER BY p.curDate DESC
             LIMIT {page}, 12
@@ -92,7 +103,7 @@ class Portfolio() :
         sql =  f'''
             SELECT p.id, m.memId, m.nickname, p.mentoPic, p.brief, p.tuition, p.duration, p.score, group_concat(subject)
             FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id 
-            WHERE p.isOpen = true AND m.nickname LIKE '%{value}%'
+            WHERE p.isOpen = true AND p.isDeleted = false AND m.nickname LIKE '%{value}%'
             GROUP BY p.id
             ORDER BY p.curDate DESC
             LIMIT {page}, 12
@@ -106,8 +117,10 @@ class Portfolio() :
 
         sql = f'''
             SELECT m.memId, m.nickname, p.mentoPic, p.brief, p.content, p.tuition, p.duration, p.isOpen, p.score, group_concat(subject), m.id
-            FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id
-            WHERE p.id = {id}
+            FROM portfolio p
+                JOIN portfolioSubject ps ON p.id = ps.portfolio
+                JOIN member m ON p.mento = m.id
+            WHERE p.id = {id} AND p.isDeleted = false
             '''
         result = selectOne(sql)
         
@@ -117,21 +130,18 @@ class Portfolio() :
         return result
 
     @staticmethod
-    def findPicById(id) : # 이미지 찾기
+    def existsByIdAndMento(id, mentoId) :
 
-        sql = f"SELECT mentoPic FROM portfolio WHERE id = {id}"
+        sql = f'SELECT EXISTS (SELECT id FROM portfolio WHERE id = {id} AND mento = {mentoId} AND isDeleted = false)'
 
-        res = selectOne(sql)
-        
-        if not res[0] :
-            return None
+        result = selectOne(sql)[0]
 
-        return res
+        return True if result == 1 else False
 
     @staticmethod
     def findMentoById(id) :
 
-        sql = f'SELECT mento FROM portfolio WHERE id = {id}'
+        sql = f'SELECT mento FROM portfolio WHERE id = {id} AND isDeleted = false'
 
         result = selectOne(sql)[0]
 
@@ -169,22 +179,18 @@ class Portfolio() :
         return done
 
     @staticmethod
-    def delete(id) :
+    def updateDeleted(id) : # 삭제 대신 isDeleted
 
-        sql = f"DELETE FROM portfolio WHERE id = {id}"
+        sql = f"UPDATE portfolio SET isDeleted = true WHERE id = {id}"
 
-        commit(sql)
-
-        sql2 = f"DELETE FROM portfolioSubject WHERE portfolio = {id}"
-
-        done = commit(sql2)
+        done = commit(sql)
 
         return done
 
     @staticmethod
     def findByMentoId(mento_id) :
 
-        sql = f"SELECT id FROM portfolio WHERE mento = {mento_id}"
+        sql = f"SELECT id FROM portfolio WHERE mento = {mento_id} and isDeleted = false"
 
         result = selectOne(sql)
 

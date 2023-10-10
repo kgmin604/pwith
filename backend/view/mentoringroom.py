@@ -17,7 +17,17 @@ mentoringroom_bp = Blueprint('mentoringRoom', __name__, url_prefix='/mentoring-r
 @login_required
 def updateNotice(loginMember, new_token, id) : # 공지 수정
 
-    mentoId = MentoringRoom.findById(id)['room'].mento
+    info = MentoringRoom.findById(id)
+
+    if not info:
+        return {
+            'status' : 400,
+            'message' : '없는 멘토링룸',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    mentoId = info['room'].mento
     if loginMember.id != mentoId :
         return {
             'status' : 403,
@@ -39,7 +49,17 @@ def updateNotice(loginMember, new_token, id) : # 공지 수정
 @login_required
 def deleteRoom(loginMember, new_token, id) : # 룸 삭제
 
-    mentoId = MentoringRoom.findById(id)['room'].mento
+    info = MentoringRoom.findById(id)
+
+    if not info:
+        return {
+            'status' : 400,
+            'message' : '없는 멘토링룸',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    mentoId = info['room'].mento
     if loginMember.id != mentoId :
         return {
             'status' : 403,
@@ -61,18 +81,20 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
     
     info = MentoringRoom.findById(id)
 
+    if not info:
+        return {
+            'status' : 400,
+            'message' : '없는 멘토링룸',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    # 1. room
     room = info['room']
     mentoId = room.mento
     mentiId = room.menti
 
-    if not info['mentoPic']:
-
-        location = s3.get_bucket_location(Bucket=config.S3_BUCKET_NAME)["LocationConstraint"]
-        
-        mentoPic = f"https://{config.S3_BUCKET_NAME}.s3.{location}.amazonaws.com/studyroom/default_study_image_{randint(1, 3)}.jpg"
-
-    else:
-        mentoPic = info['mentoPic']
+    portfolio = info['portfolio']
 
     if loginMember.id not in [mentoId, mentiId]:
         return {
@@ -96,6 +118,7 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
         'image' : m.image
     }
 
+    # 2. chat
     chats = []
     chatList = conn_mongodb().mentoringroom_chat.find({'roomId':int(id)})
 
@@ -114,12 +137,22 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
                 'notice' : room.notice if room.notice else '',
                 'mento' : mento,
                 'menti' : menti,
-                'image' : mentoPic
+                'image' : portfolio.mentoPic
             },
-            'chat' : chats
+            'chat' : chats,
+            'lesson' : {
+                'total' : room.lesson_cnt,
+                'mento' : room.mento_cnt,
+                'menti' : room.menti_cnt,
+                'refund' : room.refund_cnt
+            }
         },
         'access_token' : new_token
     }
+
+# TODO 결제할 때마다 mr.lesson_cnt += p.duration
+# TODO 환급할 때마다 mr.refund_cnt += 환급 횟수
+# TODO 체크할 때마다 mr.mento_cnt or mr.menti_cnt += 1
     
 @mentoringroom_bp.route('/<id>/out', methods=['DELETE']) # TODO 결제 관련 코드 추가
 @login_required
