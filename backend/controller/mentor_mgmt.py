@@ -50,7 +50,7 @@ class Portfolio() :
         return self.__score
 
     @staticmethod
-    def existsById(id) :
+    def existsById(id) : # 글이 존재하는지
         sql = f"SELECT EXISTS (SELECT id FROM portfolio WHERE id = {id} and isDeleted = false)"
 
         result = selectOne(sql)[0]
@@ -58,7 +58,7 @@ class Portfolio() :
         return True if result == 1 else False
 
     @staticmethod
-    def existsByMentoId(id) :
+    def existsByMentoId(id) : # 본인 글이 존재하는지
         sql = f"SELECT EXISTS (SELECT id FROM portfolio WHERE mento = {id} and isDeleted = false)"
 
         result = selectOne(sql)[0]
@@ -117,8 +117,10 @@ class Portfolio() :
 
         sql = f'''
             SELECT m.memId, m.nickname, p.mentoPic, p.brief, p.content, p.tuition, p.duration, p.isOpen, p.score, group_concat(subject), m.id
-            FROM portfolio p JOIN portfolioSubject ps ON p.id=ps.portfolio JOIN member m ON p.mento=m.id
-            WHERE p.id = {id}
+            FROM portfolio p
+                JOIN portfolioSubject ps ON p.id = ps.portfolio
+                JOIN member m ON p.mento = m.id
+            WHERE p.id = {id} AND p.isDeleted = false
             '''
         result = selectOne(sql)
         
@@ -128,9 +130,18 @@ class Portfolio() :
         return result
 
     @staticmethod
+    def existsByIdAndMento(id, mentoId) :
+
+        sql = f'SELECT EXISTS (SELECT id FROM portfolio WHERE id = {id} AND mento = {mentoId} AND isDeleted = false)'
+
+        result = selectOne(sql)[0]
+
+        return True if result == 1 else False
+
+    @staticmethod
     def findMentoById(id) :
 
-        sql = f'SELECT mento FROM portfolio WHERE id = {id}'
+        sql = f'SELECT mento FROM portfolio WHERE id = {id} AND isDeleted = false'
 
         result = selectOne(sql)[0]
 

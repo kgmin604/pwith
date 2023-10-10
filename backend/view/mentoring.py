@@ -152,8 +152,7 @@ def modifyPortfolio(loginMember, new_token, id) :
             'access_token' : new_token
         }
 
-    writerId = Portfolio.findMentoById(id)
-    if loginMember.id != writerId :
+    if not Portfolio.existsByIdAndMento(id, loginMember.id):
         return {
             'status' : 403,
             'message' : '권한 없는 사용자',
@@ -192,8 +191,7 @@ def deletePortfolio(loginMember, new_token, id) :
             'access_token' : new_token
         }
 
-    writerId = Portfolio.findMentoById(id)
-    if loginMember.id != writerId :
+    if not Portfolio.existsByIdAndMento(id, loginMember.id):
         return {
             'status' : 403,
             'message' : '권한 없는 사용자',
