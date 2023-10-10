@@ -153,7 +153,7 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
 # TODO 결제할 때마다 mr.lesson_cnt += p.duration
 # TODO 환급할 때마다 mr.refund_cnt += 환급 횟수
 
-@mentoringroom_bp.route('/<id>', methods=['POST'])
+@mentoringroom_bp.route('/<id>/lesson', methods=['GET'])
 @login_required
 def checkLesson(id, loginMember, new_token):
 
@@ -216,3 +216,68 @@ def studyOut(id, loginMember, new_token) : # 스터디 그만두기
     #         'data' : None,
     #         'access_token' : new_token
     #     }
+
+
+# 후기 관련 파트
+    # review_list = Review.showReview(mentoId)
+    # review = []
+
+    # for rev in review_list :
+    #     review.append({
+    #         'reviewId' : rev[0],
+    #         'menti' : rev[1],
+    #         'review' : rev[2]
+    #     })
+
+    # return jsonify({
+    #     'portfolio' : detail,
+    #     'review' : review
+    # })
+
+
+@mentoringroom_bp.route('/<mentoId>/review', methods = ['POST', 'PUT', 'DELETE'])
+def review(mentoId) :
+    if request.method == 'POST' : # 후기 작성
+
+        cnt = request.get_json()['content']
+
+        writer = current_user.id
+
+        try :
+            pk = Review.writeReview(writer, cnt, mentoId)
+        except Exception as ex:
+            print("에러 이유 : " + str(ex))
+            pk = 0
+
+        return jsonify({
+            'reviewId' : pk # 0 is fail
+        })
+
+    elif request.method == 'PUT' : # 후기 수정
+
+        reviewId = request.get_json()['reviewId']
+        newContent = request.get_json()['content']
+
+        try :
+            done = Review.modifyReview(reviewId, newContent)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return jsonify({
+            'done' : done
+        })
+
+    else : # 후기 삭제
+
+        reviewId = request.get_json()['reviewId']
+
+        try :
+            done = Review.removeReview(reviewId)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return jsonify({
+            'done' : done
+        })
