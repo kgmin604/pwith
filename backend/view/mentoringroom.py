@@ -10,6 +10,7 @@ from backend.view import uploadFileS3, s3, login_required, findNickName, formatY
 from backend.model.db_mongo import conn_mongodb
 from backend.controller.member_mgmt import Member
 from backend.controller.mentoringroom_mgmt import MentoringRoom
+from backend.controller.review_mgmt import Review
 
 mentoringroom_bp = Blueprint('mentoringRoom', __name__, url_prefix='/mentoring-room')
 
@@ -128,6 +129,9 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
             'content' : c['content'],
             'date' : formatYMDHM(c['createdAt'])
         })
+
+    # 3. review
+    review = Review.findByRoom(id)
     
     return {
         'data' : {
@@ -138,6 +142,11 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
                 'mento' : mento,
                 'menti' : menti,
                 'image' : portfolio.mentoPic
+            },
+            'review' : {
+                'id' : review.id if review else None,
+                'content' : review.content if review else None,
+                'date' : formatYMDHM(review.curDate) if review else None
             },
             'chat' : chats,
             'lesson' : {
@@ -155,7 +164,7 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
 
 @mentoringroom_bp.route('/<id>/lesson', methods=['GET'])
 @login_required
-def checkLesson(id, loginMember, new_token):
+def checkLesson(id, loginMember, new_token): # 수업 횟수 체크
 
     info = MentoringRoom.findById(id)
 
@@ -217,67 +226,102 @@ def studyOut(id, loginMember, new_token) : # 스터디 그만두기
     #         'access_token' : new_token
     #     }
 
+@mentoringroom_bp.route('/<id>', methods=['POST'])
+@login_required
+def writeReview(id, loginMember, new_token) : # 후기 작성
 
-# 후기 관련 파트
-    # review_list = Review.showReview(mentoId)
-    # review = []
+    info = MentoringRoom.findById(id)
 
-    # for rev in review_list :
-    #     review.append({
-    #         'reviewId' : rev[0],
-    #         'menti' : rev[1],
-    #         'review' : rev[2]
-    #     })
+    if not info:
+        return {
+            'status' : 400,
+            'message' : '없는 멘토링룸',
+            'data' : None,
+            'access_token' : new_token
+        }
 
-    # return jsonify({
-    #     'portfolio' : detail,
-    #     'review' : review
-    # })
+    room = info['room']
+    if loginMember.id != room.menti :
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
 
+    if Review.existsByWriterAndRoom(id, loginMember.id) :
+        return {
+            'status' : 409,
+            'message' : '이미 후기 존재',
+            'data' : None,
+            'access_token' : new_token
+        }
 
-@mentoringroom_bp.route('/<mentoId>/review', methods = ['POST', 'PUT', 'DELETE'])
-def review(mentoId) :
-    if request.method == 'POST' : # 후기 작성
+    data = request.get_json()
+    content = data['content']
+    score = data['score']
 
-        cnt = request.get_json()['content']
+    key = Review.save(loginMember.id, content, score, datetime.now(), room.mento, id)
 
-        writer = current_user.id
+    return {
+        'reviewId' : key,
+        'access_token' : new_token
+    }
 
-        try :
-            pk = Review.writeReview(writer, cnt, mentoId)
-        except Exception as ex:
-            print("에러 이유 : " + str(ex))
-            pk = 0
+@mentoringroom_bp.route('/<id>/<reviewId>', methods=['PATCH'])
+@login_required
+def updateReview(id, reviewId, loginMember, new_token) : # 후기 수정
 
-        return jsonify({
-            'reviewId' : pk # 0 is fail
-        })
+    review = Review.findByIdAndRoom(reviewId, id)
+    if not review:
+        return {
+            'status' : 400,
+            'message' : '없는 후기',
+            'data' : None,
+            'access_token' : new_token
+        }
+    if loginMember.id != review.writer :
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
 
-    elif request.method == 'PUT' : # 후기 수정
+    data = request.get_json()
+    newContent = data['content']
+    newScore = data['score']
 
-        reviewId = request.get_json()['reviewId']
-        newContent = request.get_json()['content']
+    Review.update(reviewId, newContent, newScore)
 
-        try :
-            done = Review.modifyReview(reviewId, newContent)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
+    return {
+        'data': None,
+        'access_token' : new_token
+    }
 
-        return jsonify({
-            'done' : done
-        })
+@mentoringroom_bp.route('/<id>/<reviewId>', methods=['DELETE'])
+@login_required
+def deleteReview(id, reviewId, loginMember, new_token) : # 후기 삭제
 
-    else : # 후기 삭제
+    review = Review.findByIdAndRoom(reviewId, id)
+    if not review:
+        return {
+            'status' : 400,
+            'message' : '없는 후기',
+            'data' : None,
+            'access_token' : new_token
+        }
+    if loginMember.id != review.writer :
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
 
-        reviewId = request.get_json()['reviewId']
+    Review.delete(reviewId)
 
-        try :
-            done = Review.removeReview(reviewId)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
-
-        return jsonify({
-            'done' : done
-        })
+    return {
+        'data': None,
+        'access_token' : new_token
+    }
