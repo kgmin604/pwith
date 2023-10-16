@@ -3,6 +3,7 @@ from flask import Blueprint, request
 import bcrypt
 import requests
 
+from backend.view.member import sendAuthCode
 from backend.controller.member_mgmt import Member
 from backend.controller.study_mgmt import studyPost
 from backend.controller.community_mgmt import QNAPost

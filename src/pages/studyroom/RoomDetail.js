@@ -227,7 +227,7 @@ function RoomDetail() {
     //     },
     //     transports: ["websocket"],
     // });
-    socket = io("http://localhost:5000", {
+    socket = io("http://localhost:5000/study-ready", {
       cors: {
         origin: "*",
       },
@@ -409,7 +409,7 @@ function RoomDetail() {
               </div>
               <div className="bottom">
                 <div className="member-list">
-                  <h2>스터디 멤버</h2>
+                  <h2 className="no-drag">스터디 멤버</h2>
                   <hr style={{ margin: "0 0" }}></hr>
                   <div className="items">
                     {roomInfo.members.map((member, i) => (
@@ -430,7 +430,7 @@ function RoomDetail() {
                   </div>
                 </div>
                 <div className="member-chat">
-                  <h2>Chatting</h2>
+                  <h2 className="no-drag">Chatting</h2>
                   <hr style={{ margin: "0 0" }}></hr>
                   <div 
                     className="chats scroll"

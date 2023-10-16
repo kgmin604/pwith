@@ -16,7 +16,7 @@ import { faMicrophoneSlash } from "@fortawesome/free-solid-svg-icons/faMicrophon
 import { faVideo } from "@fortawesome/free-solid-svg-icons/faVideo";
 import { faVideoSlash } from "@fortawesome/free-solid-svg-icons/faVideoSlash";
 import { faPencil } from "@fortawesome/free-solid-svg-icons/faPencil";
-import { faMessage } from "@fortawesome/free-solid-svg-icons/faMessage";
+import { faStar } from "@fortawesome/free-solid-svg-icons/faStar";
 
 let socket;
 
@@ -28,11 +28,11 @@ function MentoringRoomDetail() {
   let navigate = useNavigate();
 
   let [roomInfo, setRoomInfo] = useState({ // dummy 데이터
-    id: 12,
-    name: "멘토 채영와 멘티 경민의 공부방",
-    image: "https://pwith-bucket.s3.ap-northeast-2.amazonaws.com/mentoring/cyhelena.jpg",
-    notice: "복습해오기",
-    leader: "채영",
+    id: -1,
+    name: "",
+    image: "",
+    notice: "",
+    leader: "",
     members: [
       /*
         nickname : {
@@ -55,8 +55,18 @@ function MentoringRoomDetail() {
 
   let [newNotice, setNewNotice] = useState("복습해오기");
 
- // 수업 횟수 체크
- let [checkNum, setCheckNum] = useState([8,3,2]); // [총,멘토체크,멘티체크]
+  // 수업 횟수 체크
+  let [numData, setNumData] = useState({
+      total: 8,
+      mento: 4,
+      menti: 2,
+      refund: 0
+  });
+
+  // 리뷰 관리
+  let [review, setReview] = useState({
+
+  })
 
   function handleMouseOver(event) {
     event.stopPropagation();
@@ -147,7 +157,7 @@ function MentoringRoomDetail() {
       message: myChat,
       sender: user.name,
     };
-    socket.emit("m-sendTo", data);
+    socket.emit("sendTo", data);
     document.getElementById("chat-area").value = "";
     setMyChat("");
   }
@@ -159,7 +169,7 @@ function MentoringRoomDetail() {
     let data = {
       roomId: Number(RoomId)
     };
-    socket.emit("m-enter",data);
+    socket.emit("enter",data);
   }
 
   function LeaveRoom(){
@@ -169,12 +179,10 @@ function MentoringRoomDetail() {
     let data = {
       roomId: Number(RoomId)
     };
-    socket.emit("m-leave",data);
+    socket.emit("leave",data);
   }
 
-  // room data 받아오기
-
-  /*
+  
   useEffect(() => {
     const url = window.location.href;
     const part = url.split("/");
@@ -185,9 +193,13 @@ function MentoringRoomDetail() {
       url: `/mentoring-room/${RoomId}`,
     })
       .then(function (response) {
-        setRoomInfo(response.data.data.room);
-        setRoomChat(response.data.data.chat);
-        setNewNotice(response.data.data.room.notice);
+        console.log("멘토링 룸 정보 get");
+        
+        setRoomInfo(response.data.data.room); // 룸 기본 정보
+        setRoomChat(response.data.data.chat); // 채팅 정보
+        setNewNotice(response.data.data.room.notice); // 공지 정보
+        setNumData(response.data.data.lesson); // 남은 수업 정보
+        setReview(response.data.data.review);
 
         let tmp = {};
         response.data.data.room.members.map((member,i)=>{
@@ -205,7 +217,6 @@ function MentoringRoomDetail() {
         LeaveRoom();
       };
   }, []);
-*/
 
   // 소켓 통신하기
 
@@ -216,7 +227,7 @@ function MentoringRoomDetail() {
     //     },
     //     transports: ["websocket"],
     // });
-    socket = io("http://localhost:5000", {
+    socket = io("http://localhost:5000/mentoring-ready", {
       cors: {
         origin: "*",
       },
@@ -259,6 +270,55 @@ function MentoringRoomDetail() {
     }
   };
 
+  function MenteeClick(e){
+    e.stopPropagation();
+    if(user.name === roomInfo.leader) return; // 멘토라면 돌아가기
+
+    let confirm_check = window.confirm("수업 완료로 상태를 변경하시겠습니까? 취소할 수 없습니다.");
+    if (confirm_check) {
+      let copy = {...numData};
+      copy.menti = copy.menti+1;
+      setNumData(copy); 
+    }
+    
+  }
+
+  function MentorClick(e){
+    e.stopPropagation();
+    if(user.name !== roomInfo.leader) return; // 멘티라면 돌아가기
+
+    let confirm_check = window.confirm("수업 완료로 상태를 변경하시겠습니까? 취소할 수 없습니다.");
+    if (confirm_check) {
+      let copy = {...numData};
+      copy.mento = copy.mento+1;
+      setNumData(copy); 
+    }
+  }
+
+  /* 모달창 관리 */
+  let [open, setOpen] = useState(false);
+  let handleModal = (event) => {
+      event.stopPropagation();
+      setOpen(!open);
+      //setMsg('');
+      //setContent('');
+  }
+
+  /* 리뷰 관리 */
+  let [clicked, setClicked] = useState([false, false, false, false, false]);
+  const handleStarClick = index => {
+    let clickStates = [...clicked];
+    for (let i = 0; i < 5; i++) {
+      if(i<index){
+        clickStates[i] = true;
+      }
+      else{
+        clickStates[i] = false;
+      }
+    }
+    setClicked(clickStates);
+  };
+
   return (
     <>
       <div className="room-detail-wrap">
@@ -269,7 +329,7 @@ function MentoringRoomDetail() {
                 <img src={`${roomInfo.image}`} alt="User" />
               </div>
               <div className="info-header">
-                <h3>{"공부방"}</h3>
+                <h3>{"멘토링"}</h3>
                 <h3
                   className="leader"
                 >
@@ -398,35 +458,133 @@ function MentoringRoomDetail() {
               </div>
               <div className="bottom">
                 <div className="number-list">
-                  <h2>수업 횟수 체크</h2>
+                  <h2 className="no-drag">수업 횟수 체크 <span className="num-summary">{`(${numData.menti}회/${numData.total}회)`}</span> </h2>
                   <hr style={{ margin: "0 0" }}></hr>
+                  
+                  <div className="number-sign no-drag">박스를 클릭해 수업 횟수를 체크해주세요!</div>
+                  <div className="sign-items">
+                    <div className="sign-item">
+                      <div className="number-item both-selected"></div>
+                      <span className="no-drag">완료 수업</span>
+                    </div>
+                    <div className="sign-item">
+                      <div className="number-item mentor-selected"></div>
+                      <span className="no-drag">멘티 확인 필요</span>
+                    </div>
+                    <div className="sign-item">
+                      <div className="number-item non-selected"></div>
+                      <span className="no-drag">남은 수업</span>
+                    </div>
+                  </div>
+                  <hr style={{ margin: "0 0" }}></hr>
+
                   <div className="number-items">
                   {
-                    Array.from({ length: checkNum[0] }, (_, index) => {
-                        let num_type = '';
-
-                        if (index + 1 <= checkNum[1] && index + 1 <= checkNum[2]) {
-                            num_type = 'both-selected';
-                        } else if (index + 1 > checkNum[1] && index + 1 <= checkNum[2]) {
-                            num_type = 'mentee-selected';
-                        } else if (index + 1 <= checkNum[1] && index + 1 > checkNum[2]) {
-                            num_type = 'mentor-selected';
-                        } else {
-                            num_type = 'non-selected';
-                        }
-
+                    Array.from({ length: numData.total }, (_, index) => {
+                      if (index < numData.menti) { // 둘 다 선택
                         return (
+                          <div 
+                            key={index} 
+                            className={`number-item both-selected`}
+                          ></div>
+                        );
+                      } else if (index < numData.mento) { // 멘토만 선택
+                        if(numData.menti === index){
+                          return (
                             <div 
-                                key={index} 
-                                className={`number-item ${num_type}`}
+                              key={index} 
+                              className={`number-item mentor-selected ${user.name!==roomInfo.leader? "can-click" : ""}`}
+                              onClick={e=>{MenteeClick(e)}}
+                            ></div>
+                          );
+                        }
+                        else{
+                          return (
+                            <div 
+                              key={index} 
+                              className={`number-item mentor-selected`}
                             ></div>
                         );
+                        }
+                      } else {
+                        if(numData.mento === index){
+                          return (
+                            <div 
+                              key={index} 
+                              className={`number-item non-selected ${user.name===roomInfo.leader? "can-click" : ""}`}
+                              onClick={e=>{MentorClick(e)}}
+                            ></div>
+                          );
+                        }
+                        else{
+                          return (
+                            <div 
+                              key={index} 
+                              className={`number-item non-selected`}
+                            ></div>
+                          );
+                        }
+                      }
                     })
-                }
+                  }
+                  {
+                    roomInfo.leader === user.name ? 
+                    <div className="review-btn no-drag" onClick={(e)=>handleModal(e)}>
+                      정산 요청하기
+                    </div>
+                    :
+                    <div className="review-btn no-drag" onClick={(e)=>handleModal(e)}>
+                      리뷰 남기기
+                    </div>
+                  }  
                   </div>
                 </div>
+
+                {
+                    open === true ?
+                        <>
+                            <div className="modal-wrap"></div>
+                            <form method='POST'>
+                                <div className="modal">
+                                    <a title="닫기" className="close" onClick={(e)=>handleModal(e)}>X</a>
+                                    <h3>리뷰 남기기</h3>
+                                    <div>
+                                      {clicked.map((a, idx) => {
+                                        return (
+                                          <div key={idx} onClick={(e) => {e.stopPropagation(); alert(idx); handleStarClick(idx)}}>
+                                            <FontAwesomeIcon 
+                                              icon={faStar} 
+                                              style={{color: "#b5b5b5",}}
+                                              className={`${clicked[idx]?"yellowStar":""}`}
+                                            />
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                    <p>
+                                        <textarea
+                                            name="message"
+                                            className="text"
+                                            placeholder="내용 입력"
+                                            onChange={e => e.stopPropagation()}>
+                                        </textarea>
+                                    </p>
+                                    <input
+                                        type="button"
+                                        value="등록하기"
+                                        className="button"
+                                        onClick={e => e.stopPropagation()}
+                                    ></input>
+                                    <div className="message">{"msg"}</div>
+                                </div>
+                            </form>
+                        </>
+                        :
+                        null
+                }
+                
                 <div className="member-chat">
-                  <h2>Chatting</h2>
+                  <h2 className="no-drag">Chatting</h2>
                   <hr style={{ margin: "0 0" }}></hr>
                   <div 
                     className="chats scroll"
