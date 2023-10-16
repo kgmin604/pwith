@@ -15,7 +15,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 //import Cookies from 'js-cookie';
 // import { useCookies, Cookies } from 'react-cookie';
-import { setStudyCategory, setQnaCategory } from "./store.js";
+import { setStudyCategory, setQnaCategory, setContentCategory} from "./store.js";
 
 import PwithMain from "./pages/pwithmain/PwithMain.js";
 import StudyMain from "./pages/study/StudyMain.js";
@@ -243,6 +243,7 @@ function App() {
                       navigate("/community/main");
                       setIsNav(0);
                       dispatch(setQnaCategory(null));
+                      dispatch(setContentCategory(null));
                     }}
                     onMouseEnter={() => setIsNav(3)}
                     onMouseLeave={() => setIsNav(0)}
@@ -282,6 +283,7 @@ function App() {
                             onClick={(e) => {
                               e.stopPropagation();
                               navigate("/community/content");
+                              dispatch(setContentCategory(null));
                               setIsNav(0);
                             }}
                           >

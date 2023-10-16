@@ -8,14 +8,14 @@ import { faVideo } from "@fortawesome/free-solid-svg-icons/faVideo";
 import { faVideoSlash } from "@fortawesome/free-solid-svg-icons/faVideoSlash";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
-import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { faCode } from "@fortawesome/free-solid-svg-icons";
-import { io, Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
 import screenImg from "./screen.png"
 import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
-import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Video from "./Video";
+import Chat from "./Chat";
 
 const pc_config = {
     iceServers: [
@@ -32,6 +32,7 @@ const LiveRoom = () => {
     const localVideoRef = useRef(null);
     const localStreamRef = useRef();
     const [users, setUsers] = useState([]);
+    const [roomChat, setRoomChat] = useState([]);
     const [isMikeOn, setIsMikeOn] = useState(undefined)
     const [isCameraOn, setIsCameraOn] = useState(undefined)
     const [isCodeOn, setIsCodeOn] = useState(true)
@@ -43,11 +44,9 @@ const LiveRoom = () => {
     const handleDivClick = () => {
         setIsClicked(true);
     };
-    const textRef = useRef();
+
     const ref = useRef(null);
-    const handleResizeHeight = useCallback(() => {
-        textRef.current.style.height = textRef.current.scrollHeight + "px";
-    }, []);
+
     const handleClickOutside = (event) => {
         if (ref.current && !ref.current.contains(event.target)) {
             setIsClicked(false);
@@ -69,14 +68,14 @@ const LiveRoom = () => {
             if (!socketRef.current) return;
             socketRef.current.emit('join_room', {
                 room: roomId,
-                email: 'sample@naver.com',
+                name: user.name,
             });
         } catch (e) {
             console.log(`getUserMedia error: ${e}`);
         }
     }, []);
 
-    const createPeerConnection = useCallback((socketID, email) => {
+    const createPeerConnection = useCallback((socketID, name) => {
         try {
             const pc = new RTCPeerConnection(pc_config);
 
@@ -101,7 +100,7 @@ const LiveRoom = () => {
                         .filter((user) => user.id !== socketID)
                         .concat({
                             id: socketID,
-                            email,
+                            name,
                             stream: e.streams[0],
                         }),
                 );
@@ -129,9 +128,10 @@ const LiveRoom = () => {
         getLocalStream();
 
         socketRef.current.on('all_users', (allUsers) => {
+            console.log(allUsers)
             allUsers.forEach(async (user) => {
                 if (!localStreamRef.current) return;
-                const pc = createPeerConnection(user.id, user.email);
+                const pc = createPeerConnection(user.id, user.name);
                 if (!(pc && socketRef.current)) return;
                 pcsRef.current = { ...pcsRef.current, [user.id]: pc };
                 try {
@@ -144,7 +144,7 @@ const LiveRoom = () => {
                     socketRef.current.emit('offer', {
                         sdp: localSdp,
                         offerSendID: socketRef.current.id,
-                        offerSendEmail: 'offerSendSample@sample.com',
+                        offerSendName: user.name,
                         offerReceiveID: user.id,
                     });
                 } catch (e) {
@@ -156,10 +156,10 @@ const LiveRoom = () => {
         socketRef.current.on(
             'getOffer',
             async (data) => {
-                const { sdp, offerSendID, offerSendEmail } = data;
+                const { sdp, offerSendID, offerSendName } = data;
                 console.log('get offer');
                 if (!localStreamRef.current) return;
-                const pc = createPeerConnection(offerSendID, offerSendEmail);
+                const pc = createPeerConnection(offerSendID, offerSendName);
                 if (!(pc && socketRef.current)) return;
                 pcsRef.current = { ...pcsRef.current, [offerSendID]: pc };
                 try {
@@ -214,6 +214,11 @@ const LiveRoom = () => {
             if (socketRef.current) {
                 socketRef.current.disconnect();
             }
+
+            if(localStreamRef.current){
+                localStreamRef.current.getVideoTracks()[0].stop()
+                localStreamRef.current = null;
+            }
             users.forEach((user) => {
                 if (!pcsRef.current[user.id]) return;
                 pcsRef.current[user.id].close();
@@ -225,7 +230,7 @@ const LiveRoom = () => {
 
     const onClickMike = async () => {
         if (!localVideoRef.current) return
-        localVideoRef.current
+        localVideoRef.current.srcObject
             .getAudioTracks()
             .forEach((track) => (track.enabled = !track.enabled));
         setIsMikeOn((prev) => !prev)
@@ -234,7 +239,7 @@ const LiveRoom = () => {
     const onClickCamera = async () => {
         if (!localVideoRef.current) return
         setIsCameraOn((prev) => !prev);
-        localVideoRef.current.getVideoTracks().forEach((track) => (track.enabled = !track.enabled));
+        localVideoRef.current.srcObject.getVideoTracks().forEach((track) => (track.enabled = !track.enabled));
     };
 
 
@@ -246,24 +251,30 @@ const LiveRoom = () => {
         setIsCodeOn(!isCodeOn)
     }
 
+    useEffect(()=>{console.log(users)},[users])
+
     return (
         <div className="live-room" ref={ref}>
             <div className="left-space">
                 <div className="people-list">
-                        <video
-                            style={{
-                                width: 150,
-                                height: 150,
-                                margin: 5,
-                                backgroundColor: 'black',
-                            }}
-                            muted
-                            ref={localVideoRef}
-                            autoPlay
-                        />
-                        {users.map((user, index) => (
-                            <Video key={index} email={user.email} stream={user.stream} />
-                        ))}
+                    <div>
+                    <video
+                        style={{
+                            width: 150,
+                            height: 150,
+                            margin: 5,
+                            backgroundColor: 'black',
+                        }}
+                        muted
+                        ref={localVideoRef}
+                        autoPlay
+                    />
+                    <div class='user-name'>{user.name}</div>
+                    </div>
+                    
+                    {users.map((user, index) => (
+                        <Video key={index} name={user.name} stream={user.stream} />
+                    ))}
                 </div>
 
                 <div className="screen">
@@ -274,30 +285,7 @@ const LiveRoom = () => {
                     <textarea placeholder="코드를 업로드 하세요!" /></div>}
             </div >
 
-            {showChat && <div className="right-space">
-                <div>
-                    <div className="header">채팅<FontAwesomeIcon icon={faXmark} onClick={() => { setShowChat(false) }} /></div>
-                    <div className="chat">
-                        <div className="chat-user"><div className="chat-name">박주연</div><div className="chat-time">오후 5:40</div></div>
-                        <div className="chat-content">울랄라</div>
-                        <div className="chat-content">어쩌구</div>
-                        <div className="chat-content">움냔냥</div>
-                        <div className="chat-user"><div className="chat-name">김경민</div><div className="chat-time">오후 5:40</div></div>
-                        <div className="chat-content">코딩 공부 같이 해요</div>
-                        <div className="chat-content">재밌는 코딩 공부</div>
-                        <div className="chat-user"><div className="chat-name">박주연</div><div className="chat-time">오후 5:40</div></div>
-                        <div className="chat-content">울랄라</div>
-                        <div className="chat-content">어쩌구</div>
-                        <div className="chat-content">움냔냥</div>
-                    </div>
-                </div>
-                <form className={`chat-input ${isClicked ? 'clicked' : ''}`} onClick={handleDivClick}>
-                    <textarea ref={textRef} onInput={handleResizeHeight} />
-                    <div className="iconWrapper">
-                        <FontAwesomeIcon icon={faPaperPlane} color={'white'} />
-                    </div>
-                </form>
-            </div>}
+            {showChat && <Chat roomId={roomId} roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />}
 
 
             <div className="control-bar-wrapper">

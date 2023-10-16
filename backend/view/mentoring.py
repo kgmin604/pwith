@@ -15,6 +15,14 @@ mento_bp = Blueprint('mentoring', __name__, url_prefix='/mentoring')
 @login_required
 def writePortfolio(loginMember, new_token):
 
+    if Portfolio.existsByMentoId(loginMember.id):
+        return {
+            'status' : 400,
+            'message' : '포트폴리오 존재',
+            'data' : None,
+            'access_token' : new_token
+        }
+
     image = request.files['mentoPic']
     mentoPic = uploadFileS3(image, "mentoring")
 
@@ -29,20 +37,12 @@ def writePortfolio(loginMember, new_token):
 
     date = datetime.now()
 
-    done = Portfolio.save(loginMember.id, mentoPic, brief, content, date, tuition, duration, subjects)
+    Portfolio.save(loginMember.id, mentoPic, brief, content, date, tuition, duration, subjects)
 
-    if done == 1 :
-        return {
-            'data' : None,
-            'access_token' : new_token
-        }
-    else :
-        return {
-            'status' : 400,
-            'message' : '포트폴리오 존재',
-            'data' : None,
-            'access_token' : new_token
-        }
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
 
 @mento_bp.route('', methods = ['GET']) # 포폴 목록
 def listPortfolio() :
@@ -63,8 +63,8 @@ def listPortfolio() :
 
     if searchWord is None :
         portfolios = Portfolio.findPaging(int(page) * 12 if page else 0)
-    else :
-        portfolios = Portfolio.searchByMento(searchWord)
+    else : # 검색
+        portfolios = Portfolio.searchByMento(searchWord, int(page) * 12 if page else 0)
 
     portfolioList = []
 
@@ -119,36 +119,16 @@ def showPortfolio(loginMember, new_token, id) :
         'subject' : list(map(int, portfolio[9].split(',')))
     }
 
-    isNotFirst = MentoringRoom.existsByMentoMenti(portfolio[10], loginMember.id)
-
-    result.update({'isFirst' : not isNotFirst})
-
     return {
         'data' : result,
         'access_token' : new_token
     }
 
-    # 후기 관련 파트
-    # review_list = Review.showReview(mentoId)
-    # review = []
-
-    # for rev in review_list :
-    #     review.append({
-    #         'reviewId' : rev[0],
-    #         'menti' : rev[1],
-    #         'review' : rev[2]
-    #     })
-
-    # return jsonify({
-    #     'portfolio' : detail,
-    #     'review' : review
-    # })
-
 @mento_bp.route('/<id>', methods = ['PATCH']) # 포폴 수정
 @login_required
 def modifyPortfolio(loginMember, new_token, id) :
 
-    if Portfolio.existsById(id) == False:
+    if not Portfolio.existsById(id):
         return {
             'status' : 400,
             'message' : '없는 포트폴리오',
@@ -156,8 +136,7 @@ def modifyPortfolio(loginMember, new_token, id) :
             'access_token' : new_token
         }
 
-    writerId = Portfolio.findMentoById(id)
-    if loginMember.id != writerId :
+    if not Portfolio.existsByIdAndMento(id, loginMember.id):
         return {
             'status' : 403,
             'message' : '권한 없는 사용자',
@@ -188,7 +167,7 @@ def modifyPortfolio(loginMember, new_token, id) :
 @login_required
 def deletePortfolio(loginMember, new_token, id) :
 
-    if Portfolio.existsById(id) == False:
+    if not Portfolio.existsById(id):
         return {
             'status' : 400,
             'message' : '없는 포트폴리오',
@@ -196,8 +175,7 @@ def deletePortfolio(loginMember, new_token, id) :
             'access_token' : new_token
         }
 
-    writerId = Portfolio.findMentoById(id)
-    if loginMember.id != writerId :
+    if not Portfolio.existsByIdAndMento(id, loginMember.id):
         return {
             'status' : 403,
             'message' : '권한 없는 사용자',
@@ -205,7 +183,7 @@ def deletePortfolio(loginMember, new_token, id) :
             'access_token' : new_token
         }
 
-    Portfolio.delete(id)
+    Portfolio.updateDeleted(id)
 
     return {
         'data' : None,
@@ -216,7 +194,7 @@ def deletePortfolio(loginMember, new_token, id) :
 @login_required
 def changeState(loginMember, new_token, id) :
 
-    if Portfolio.existsById(id) == False:
+    if not Portfolio.existsById(id):
         return {
             'status' : 400,
             'message' : '없는 포트폴리오',
@@ -231,11 +209,11 @@ def changeState(loginMember, new_token, id) :
         'access_token' : new_token
     }
 
-@mento_bp.route('/<id>/apply', methods=['POST'])
+@mento_bp.route('/<id>/apply', methods=['POST']) # 멘토링 신청
 @login_required
 def applyMentoring(loginMember, new_token, id) :
 
-    if Portfolio.existsById(id) == False:
+    if not Portfolio.existsById(id):
         return {
             'status' : 400,
             'message' : '없는 포트폴리오',
@@ -252,7 +230,7 @@ def applyMentoring(loginMember, new_token, id) :
 
     roomName = f"멘토 {mentoNick}와 멘티 {mentiNick}의 공부방"
 
-    roomId = MentoringRoom.save(roomName, datetime.now(), mentoId, mentiId)
+    roomId = MentoringRoom.save(roomName, datetime.now(), mentoId, mentiId, id)
 
     # 2. 멘토링룸 링크 생성
     url = "http://localhost:3000/mentoringroom/" + str(roomId)
@@ -268,52 +246,3 @@ def applyMentoring(loginMember, new_token, id) :
         'data' : None,
         'access_token' : new_token
     }
-
-''' 후기 관련 파트
-@mento_bp.route('/<mentoId>/review', methods = ['POST', 'PUT', 'DELETE'])
-def review(mentoId) :
-    if request.method == 'POST' : # 후기 작성
-
-        cnt = request.get_json()['content']
-
-        writer = current_user.id
-
-        try :
-            pk = Review.writeReview(writer, cnt, mentoId)
-        except Exception as ex:
-            print("에러 이유 : " + str(ex))
-            pk = 0
-
-        return jsonify({
-            'reviewId' : pk # 0 is fail
-        })
-
-    elif request.method == 'PUT' : # 후기 수정
-
-        reviewId = request.get_json()['reviewId']
-        newContent = request.get_json()['content']
-
-        try :
-            done = Review.modifyReview(reviewId, newContent)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
-
-        return jsonify({
-            'done' : done
-        })
-
-    else : # 후기 삭제
-
-        reviewId = request.get_json()['reviewId']
-
-        try :
-            done = Review.removeReview(reviewId)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
-
-        return jsonify({
-            'done' : done
-        })
-'''

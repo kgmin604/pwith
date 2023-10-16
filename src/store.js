@@ -50,17 +50,28 @@ const qnaCategory = createSlice({
     }
   }
 })
+const contentCategory = createSlice({
+  name: 'contentCategory',
+  initialState: null,
+  reducers: {
+    setContentCategory: (state, action) => {
+      return action.payload;
+    }
+  }
+})
 
 export let { loginUser, clearUser } = user.actions;
 export const { updateRecStudyList } = recStudyList.actions;
 export const { setStudyCategory } = studyCategory.actions;
 export const { setQnaCategory } = qnaCategory.actions;
+export const { setContentCategory } = contentCategory.actions;
 
 export default configureStore({
   reducer: {
     user: user.reducer, // 앞의 user는 작명, user.reducer의 user는 slice
     recStudyList: recStudyList.reducer,
     studyCategory: studyCategory.reducer,
-    qnaCategory: qnaCategory.reducer
+    qnaCategory: qnaCategory.reducer,
+    contentCategory: qnaCategory.reducer
   }
 })

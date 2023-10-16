@@ -28,9 +28,9 @@ io.on('connection', socket => {
                 socket.to(socket.id).emit('room_full');
                 return;
             }
-            users[data.room].push({id: socket.id, email: data.email});
+            users[data.room].push({id: socket.id, name: data.name});
         } else {
-            users[data.room] = [{id: socket.id, email: data.email}];
+            users[data.room] = [{id: socket.id, name: data.name}];
         }
         socketToRoom[socket.id] = data.room;
 
@@ -45,7 +45,7 @@ io.on('connection', socket => {
     });
 
     socket.on('offer', data => {
-        socket.to(data.offerReceiveID).emit('getOffer', {sdp: data.sdp, offerSendID: data.offerSendID, offerSendEmail: data.offerSendEmail});
+        socket.to(data.offerReceiveID).emit('getOffer', {sdp: data.sdp, offerSendID: data.offerSendID, offerSendName: data.offerSendName});
     });
 
     socket.on('answer', data => {
