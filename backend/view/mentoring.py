@@ -24,7 +24,7 @@ def writePortfolio(loginMember, new_token):
         }
 
     image = request.files['mentoPic']
-    mentoPic = uploadFileS3(image, "mentoring")
+    mentoPic = uploadFileS3(image, 'mentoring')
 
     data_str = request.form['data']
     data = json.loads(data_str)
@@ -34,6 +34,13 @@ def writePortfolio(loginMember, new_token):
     tuition = data['tuition']
     duration = data['duration']
     subjects = data['subject']
+    if subjects == []:
+        return {
+            'status' : 404,
+            'message' : '불충분한 입력',
+            'data' : None,
+            'access_token' : new_token
+        }
 
     date = datetime.now()
 
