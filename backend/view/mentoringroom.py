@@ -131,7 +131,14 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
         })
 
     # 3. review
-    review = Review.findByRoom(id)
+    review = None
+    if rv:= Review.findByRoom(id):
+        review = {
+            'id' : rv.id,
+            'content' : rv.content,
+            'date' : formatYMDHM(rv.curDate),
+            'score' : rv.score
+        }
     
     return {
         'data' : {
@@ -143,11 +150,7 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
                 'menti' : menti,
                 'image' : portfolio.mentoPic
             },
-            'review' : {
-                'id' : review.id if review else None,
-                'content' : review.content if review else None,
-                'date' : formatYMDHM(review.curDate) if review else None
-            },
+            'review' : review,
             'chat' : chats,
             'lesson' : {
                 'total' : room.lesson_cnt,
