@@ -76,9 +76,13 @@ CREATE TABLE review
     writer BIGINT NOT NULL DEFAULT 0,
     content VARCHAR(300) NOT NULL,
     mento BIGINT NOT NULL,
+    room bigint,
+    score int default 0,
+    curDate datetime not null,
     PRIMARY KEY(id),
     FOREIGN KEY(writer) REFERENCES member(id) on delete set default on update cascade,
     FOREIGN KEY(mento) REFERENCES member(id) on delete cascade on update cascade
+    foreign key(room) references mentoringRoom(id) on delete set null on update cascade
 )
 
 CREATE TABLE studyRoom (

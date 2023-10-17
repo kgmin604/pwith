@@ -124,22 +124,6 @@ def showPortfolio(loginMember, new_token, id) :
         'access_token' : new_token
     }
 
-    # 후기 관련 파트
-    # review_list = Review.showReview(mentoId)
-    # review = []
-
-    # for rev in review_list :
-    #     review.append({
-    #         'reviewId' : rev[0],
-    #         'menti' : rev[1],
-    #         'review' : rev[2]
-    #     })
-
-    # return jsonify({
-    #     'portfolio' : detail,
-    #     'review' : review
-    # })
-
 @mento_bp.route('/<id>', methods = ['PATCH']) # 포폴 수정
 @login_required
 def modifyPortfolio(loginMember, new_token, id) :
@@ -262,52 +246,3 @@ def applyMentoring(loginMember, new_token, id) :
         'data' : None,
         'access_token' : new_token
     }
-
-''' 후기 관련 파트
-@mento_bp.route('/<mentoId>/review', methods = ['POST', 'PUT', 'DELETE'])
-def review(mentoId) :
-    if request.method == 'POST' : # 후기 작성
-
-        cnt = request.get_json()['content']
-
-        writer = current_user.id
-
-        try :
-            pk = Review.writeReview(writer, cnt, mentoId)
-        except Exception as ex:
-            print("에러 이유 : " + str(ex))
-            pk = 0
-
-        return jsonify({
-            'reviewId' : pk # 0 is fail
-        })
-
-    elif request.method == 'PUT' : # 후기 수정
-
-        reviewId = request.get_json()['reviewId']
-        newContent = request.get_json()['content']
-
-        try :
-            done = Review.modifyReview(reviewId, newContent)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
-
-        return jsonify({
-            'done' : done
-        })
-
-    else : # 후기 삭제
-
-        reviewId = request.get_json()['reviewId']
-
-        try :
-            done = Review.removeReview(reviewId)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
-
-        return jsonify({
-            'done' : done
-        })
-'''

@@ -57,14 +57,14 @@ class MentoringRoom() :
 
         return roomId
 
-    # @staticmethod
-    # def existsById(roomId): # 방이 존재하는지
+    @staticmethod
+    def existsById(roomId): # 방이 존재하는지
 
-    #     sql = f"SELECT EXISTS (SELECT id FROM mentoringRoom WHERE id = {id})"
+        sql = f"SELECT EXISTS (SELECT id FROM mentoringRoom WHERE id = {id})"
 
-    #     result = selectOne(sql)[0]
+        result = selectOne(sql)[0]
 
-    #     return True if result == 1 else False
+        return True if result == 1 else False
 
     @staticmethod
     def findById(roomId): # 멘토링룸 + 포폴
@@ -105,6 +105,18 @@ class MentoringRoom() :
 
             result.append(item)
 
+        return result
+
+    @staticmethod
+    def findMentoById(id):
+
+        sql = f"SELECT mento FROM mentoringRoom WHERE id = {id}"
+
+        result = selectOne(sql)[0]
+
+        if not result :
+            return None
+        
         return result
 
     @staticmethod

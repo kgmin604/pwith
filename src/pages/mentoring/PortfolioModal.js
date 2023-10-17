@@ -80,9 +80,7 @@ function PortfolioModal(props) {
             </div>
             <div className="bottom">
                 <div className="price">1회 멘토링 : {portfolio.duration}시간 / {portfolio.tuition}원</div>
-                {portfolio.isFirst ?
-                    <Button variant="blue" className="joinBtn" onClick={onClickJoinBtn} disabled={isDisabled}>첫수업 무료</Button> :
-                    <Button variant="blue" className="joinBtn" onClick={onClickJoinBtn} disabled={isDisabled}>신청하기</Button>}
+                <Button variant="blue" className="joinBtn" onClick={onClickJoinBtn} disabled={isDisabled}>신청하기</Button>
             </div>
 
         </div>

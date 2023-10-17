@@ -65,7 +65,7 @@ function CommunityContent() {
         <>
             <div class="row">
                 <div class="col-md-3 category-area">
-                    <Category />
+                    <Category type={type} />
                 </div>
                 <div class="col-md-9 content-area">
                     <div className="header">
@@ -132,23 +132,191 @@ function CommunityContent() {
     );
 }
 
-function Category() {//카테고리
+const lectureCategory = [
+    {
+        firstCategory: '개발/프로그래밍',
+        secondCategory: [
+            '웹개발',
+            '프론트엔드',
+            '백엔드',
+            '풀스택',
+            '모바일 앱 개발',
+            '게임 개발',
+            '프로그래밍 언어',
+            '알고리즘/자료구조',
+            '데이터베이스',
+            '데브옵스/인프라',
+            '자격증',
+            '개발 도구',
+            '데이터 사이언스',
+            '데스크톱 앱 개발',
+            '교양 기타']
+    },
+    {
+        firstCategory: '보안/네트워크',
+        secondCategory: [
+            '보안',
+            '네트워크',
+            '시스템',
+            '클라우드',
+            '블록체인',
+            '자격증',
+            '기타'
+        ]
+
+    },
+    {
+        firstCategory: '데이터 사이언스',
+        secondCategory: [
+            '데이터 분석',
+            '인공지능',
+            '데이터 시각화',
+            '데이터 수집/처리',
+            '기타'
+        ]
+    },
+    {
+        firstCategory: '게임 개발',
+        secondCategory: [
+            '게임 프로그래밍',
+            '게임 기획',
+            '게임 아트/그래픽',
+            '기타'
+        ]
+    },
+    {
+        firstCategory: '하드웨어',
+        secondCategory: [
+            '컴퓨터 구조',
+            '임베디드/IoT',
+            '반도체',
+            '로봇공학',
+            '모빌리티',
+            '자격증',
+            '기타'
+        ]
+    }
+]
+
+const bookCategory = [
+    {
+        firstCategory: '게임',
+        secondCategory: [
+            '게임 개발',
+            '게임 기획',
+            '모바일 게임'
+        ]
+    },
+    {
+        firstCategory: '네트워크/해킹/보안',
+        secondCategory: [
+            '네트워크 일반',
+            'TCP/IP',
+            '보안/해킹'
+        ]
+    },
+    {
+        firstCategory: '모바일 프로그래밍',
+        secondCategory: [
+            '아이폰',
+            '안드로이드폰',
+            '윈도우폰',
+            '모바일 게임'
+        ]
+    },
+    {
+        firstCategory: '웹사이트',
+        secondCategory: [
+            'HTML/JavaScript/CSS',
+            '웹디자인',
+            '웹기획',
+            'UI/UX'
+        ]
+    },
+    {
+        firstCategory: '컴퓨터공학',
+        secondCategory: [
+            '컴퓨터 교육',
+            '네트워크/데이터 통신',
+            '마이크로 프로세서',
+            '자료구조/알고리즘',
+            '전산수학',
+            '정보통신 공학',
+            '컴퓨터구조 일반',
+            '운영체제 일반',
+            '데이터베이스 일반'
+        ]
+    },
+    {
+        firstCategory: 'OS/데이터베이스',
+        secondCategory: [
+            '클라우드/빅데이터',
+            '프로그래밍 교육',
+            '리눅스',
+            'Oracle',
+            '시스템관리/서버',
+            '윈도우',
+            'SQL Server',
+            'MAC OS',
+            '유닉스',
+            'Access',
+            'MySQL'
+        ]
+    },
+    {
+        firstCategory: '프로그래밍 언어',
+        secondCategory: [
+            '자바',
+            '프로그래밍 교육',
+            'ASP',
+            'Visual Basic',
+            'C',
+            'C#',
+            'JSP',
+            'Visual C++',
+            'C++',
+            '.NET',
+            'Perl',
+            'XML',
+            'JavaScript/CGI',
+            '델파이',
+            'PHP',
+            '파이썬',
+            'Ajax',
+            'Ruby/Rails',
+            '프로그래밍 언어 기타'
+        ]
+    }
+];
+
+function Category({ type }) {//카테고리
     return (
         <>
             <h5>학습 콘텐츠</h5>
             <hr style={{ width: '60%', margin: '0 auto' }} />
-            <Nav defaultActiveKey="#" className="flex-column">
-                <Nav.Link href="#"><div style={{ color: '#282c34' }}>네트워크/해킹/보안</div></Nav.Link>
-                <Nav.Link href="#"><div style={{ color: '#282c34' }}>게임</div></Nav.Link>
-                <Nav.Link href="#"><div style={{ color: '#282c34' }}>모바일 프로그래밍</div></Nav.Link>
-                <Nav.Link href="#"><div style={{ color: '#282c34' }}>웹사이트</div></Nav.Link>
-                <Nav.Link href="#"><div style={{ color: '#282c34' }}>컴퓨터공학</div></Nav.Link>
-                <Nav.Link href="#"><div style={{ color: '#282c34' }}>컴퓨터수험서</div></Nav.Link>
-                <Nav.Link href="#"><div style={{ color: '#282c34' }}>프로그래밍 언어</div></Nav.Link>
-                <Nav.Link href="#"><div style={{ color: '#282c34' }}>OS/데이터베이스</div></Nav.Link>
-            </Nav>
+            {type === '강의' ? <Nav defaultActiveKey="#" className="flex-column">
+                {lectureCategory.map((category, index) => {
+                    return <SecondCategory category={category} />
+                    // return 
+                })}
+            </Nav> : <Nav defaultActiveKey="#" className="flex-column">
+                {bookCategory.map((category, index) => {
+                    return <Nav.Link href="#"><div style={{ color: '#282c34' }}>{category.firstCategory}</div></Nav.Link>
+                })}
+            </Nav>}
         </>
     );
+}
+
+function SecondCategory({ category }) {
+    const [showSecondCategory, setShowSecondCategory] = useState(false)
+    return <>
+        <Nav.Link href="#" onClick={()=>setShowSecondCategory((prev)=>!prev)}><div style={{ color: '#282c34' }}>{category.firstCategory}</div></Nav.Link>
+        {showSecondCategory&&category.secondCategory.map((category,index)=>{
+            return <div>{category}</div>
+        })
+        }
+    </>
 }
 
 export default CommunityContent;

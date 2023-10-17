@@ -212,9 +212,7 @@ function PortfolioManage() {
                     <div className="bottom" style={{ display: 'flex' }}>
                         <div className="price">1회 멘토링 : {portfolio.duration}시간 / {portfolio.tuition}원</div>
                         {user.id !== portfolio?.mentoId && <div style={{ justifySelf: 'center', marginTop: '20px' }}>
-                            {portfolio.isFirst ?
-                                <Button variant="blue" className="joinBtn" onClick={onClickJoinBtn} disabled={isDisabled}>첫수업 무료</Button> :
-                                <Button variant="blue" className="joinBtn" onClick={onClickJoinBtn} disabled={isDisabled}>신청하기</Button>}
+                            <Button variant="blue" className="joinBtn" onClick={onClickJoinBtn} disabled={isDisabled}>신청하기</Button>
                         </div>}
 
                     </div>
@@ -258,7 +256,7 @@ function PortfolioManage() {
 
                         <div className='form-wrapper-update'>
                             <input className="title-input-update" type='text' value={portfolio.brief} onChange={getValue} name='brief' />
-                            <MDEditor height={865} style={{width:'100%'}} value={portfolio.content} onChange={(value, event) => {
+                            <MDEditor height={865} style={{ width: '100%' }} value={portfolio.content} onChange={(value, event) => {
                                 setPortfolio({
                                     ...portfolio,
                                     content: value

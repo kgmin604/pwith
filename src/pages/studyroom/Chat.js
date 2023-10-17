@@ -50,7 +50,7 @@ function Chat({ roomId,roomChat,setRoomChat, setShowChat, isClicked, handleDivCl
         //     cors: {
         //         origin: '*',
         //     },
-        //     transports: ["websocketRef.current"],
+        //     transports: ["websocket"],
         // });
         socketRef.current = io("http://localhost:5000/live", {
             cors: {

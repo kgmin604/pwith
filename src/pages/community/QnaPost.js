@@ -28,7 +28,6 @@ function QnaPost(props) {
     }, []);
 
     useEffect(() => {
-        console.log(post.title)
     }, [post.title])
 
     if (!post) {
