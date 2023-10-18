@@ -19,7 +19,14 @@
     margin: 10px;
 }
 
-.code-upload {
+.language-select{
+    display: flex;
+}
+
+.language-select >select{
+    cursor: pointer;
+}
+.ask-bard {
     width: 96%;
     display: flex;
     flex-direction: column;
@@ -36,20 +43,18 @@
     margin: auto;
 }
 
-div.code-upload .header {
+.ask-bard >.header{
     width: 100%;
     margin: 0px 0px 10px;
     font-size: 20px;
     font-weight: 600;
     color: #414141;
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
-    align-items: center;
     padding: 0px 10px;
 }
 
-.code-upload textarea {
+.ask-bard >textarea{
     width: 100%;
     outline: none;
     padding: 5px;
@@ -63,7 +68,36 @@ div.code-upload .header {
     padding: 1px;
     line-height: 150%;
 }
+.upload-button{
+    padding: 5px;
+    background-color: rgba(0, 134, 255, 1);
+    border-radius: 10px;
+    color:#F7F7F7;
+    gap:5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+div.screen>.header {
+    width: 100%;
+    margin: 5px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #414141;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 10px;
+}
 
+.language-select > select{
+    margin-left: 20px;
+}
+.screen{
+    border-radius: 10px;
+}
 div.right-space .header {
     margin: 0px 0px 10px;
     font-size: 20px;

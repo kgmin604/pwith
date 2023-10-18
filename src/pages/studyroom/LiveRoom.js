@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import "./liveroom.css";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,12 +10,26 @@ import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { faCode } from "@fortawesome/free-solid-svg-icons";
 import { io } from 'socket.io-client';
-import screenImg from "./screen.png"
 import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Video from "./Video";
 import Chat from "./Chat";
+import AceEditor from "react-ace";
+
+import "ace-builds/src-noconflict/mode-java";
+import "ace-builds/src-noconflict/mode-javascript";
+import "ace-builds/src-noconflict/mode-c_cpp";
+import "ace-builds/src-noconflict/mode-html";
+import "ace-builds/src-noconflict/mode-css";
+import "ace-builds/src-noconflict/mode-sql";
+import "ace-builds/src-noconflict/mode-python";
+import "ace-builds/src-noconflict/mode-markdown";
+import "ace-builds/src-noconflict/theme-monokai";
+import "ace-builds/src-noconflict/ace";
+import "ace-builds/src-noconflict/ext-language_tools";
+import 'ace-builds/webpack-resolver';
+
 
 const pc_config = {
     iceServers: [
@@ -28,16 +42,22 @@ const pc_config = {
 const SOCKET_SERVER_URL = 'http://localhost:8080';
 const LiveRoom = () => {
     const socketRef = useRef();
+    const flaskSocketRef = useRef(null);
     const pcsRef = useRef({});
+    const textRef = useRef(null);
     const localVideoRef = useRef(null);
     const localStreamRef = useRef();
     const [users, setUsers] = useState([]);
     const [roomChat, setRoomChat] = useState([]);
-    const [isMikeOn, setIsMikeOn] = useState(undefined)
-    const [isCameraOn, setIsCameraOn] = useState(undefined)
-    const [isCodeOn, setIsCodeOn] = useState(true)
-    const [showChat, setShowChat] = useState(false)
+    const [isMikeOn, setIsMikeOn] = useState(undefined);
+    const [isCameraOn, setIsCameraOn] = useState(undefined);
+    const [isCodeOn, setIsCodeOn] = useState(true);
+    const [showChat, setShowChat] = useState(false);
+    const [myCode, setMyCode] = useState({ language: '', content: '' });
     const [isClicked, setIsClicked] = useState(false);
+    const [selectedLanguage, setSelectedLanguage] = useState('');
+    const [clickedUser, setClickedUser] = useState({})
+
     const user = useSelector((state) => state.user);
     const roomId = useParams().id;
 
@@ -47,6 +67,9 @@ const LiveRoom = () => {
 
     const ref = useRef(null);
 
+    const handleLanguageChange = (e) => {
+        setSelectedLanguage(e.target.value);
+    };
     const handleClickOutside = (event) => {
         if (ref.current && !ref.current.contains(event.target)) {
             setIsClicked(false);
@@ -74,6 +97,10 @@ const LiveRoom = () => {
             console.log(`getUserMedia error: ${e}`);
         }
     }, []);
+
+    useEffect(() => {
+        console.log(users)
+    }, [users])
 
     const createPeerConnection = useCallback((socketID, name) => {
         try {
@@ -123,8 +150,65 @@ const LiveRoom = () => {
         }
     }, []);
 
+    function EnterRoom() {
+        let data = {
+            roomId: Number(roomId)
+        };
+        socketRef.current.emit("enter", data);
+    }
+
+    function LeaveRoom() {
+        let data = {
+            roomId: Number(roomId)
+        };
+        socketRef.current?.emit("leave", data);
+    }
+
+    function uploadCode() {
+        const data = {
+            roomId: Number(roomId),
+            language: selectedLanguage,
+            code: myCode.content,
+            sender: user.name,
+        };
+        flaskSocketRef.current?.emit("codeSend", data);
+    }
     useEffect(() => {
         socketRef.current = io.connect(SOCKET_SERVER_URL);
+        // socketRef.current = io('http://localhost:5000/live', {
+        //     cors: {
+        //         origin: '*',
+        //     },
+        //     transports: ["websocketRef.current"],
+        // });
+        flaskSocketRef.current = io("http://localhost:5000/study-live", {
+            cors: {
+                origin: "*",
+            },
+            transports: ["polling"],
+            autoConnect: false,
+        });
+        flaskSocketRef.current.connect();
+
+        flaskSocketRef.current.on("connect", (data) => {
+            EnterRoom();
+            console.log("socket connected");
+        });
+        flaskSocketRef.current.on("codeUploadFrom", (data) => {
+            console.log(data)
+            setUsers(users => {
+                return users.map(user => {
+                    if (user.name === data.sender) {
+                        return { ...user, language: data.language, code: data.code };
+                    }
+                    return user;
+                });
+            });
+        });
+        flaskSocketRef.current.on("disconnect", (data) => {
+            LeaveRoom();
+            console.log("socket disconnected")
+        });
         getLocalStream();
 
         socketRef.current.on('all_users', (allUsers) => {
@@ -215,7 +299,7 @@ const LiveRoom = () => {
                 socketRef.current.disconnect();
             }
 
-            if(localStreamRef.current){
+            if (localStreamRef.current) {
                 localStreamRef.current.getVideoTracks()[0].stop()
                 localStreamRef.current = null;
             }
@@ -242,50 +326,91 @@ const LiveRoom = () => {
         localVideoRef.current.srcObject.getVideoTracks().forEach((track) => (track.enabled = !track.enabled));
     };
 
-
-    const onClickContentStream = () => {
-        //컨텐츠
-    }
-
     const onClickCode = () => {
         setIsCodeOn(!isCodeOn)
     }
 
-    useEffect(()=>{console.log(users)},[users])
+    const onClickSomeone = (user) => {
+        console.log(user)
+        setClickedUser(user)
+    }
 
     return (
         <div className="live-room" ref={ref}>
             <div className="left-space">
                 <div className="people-list">
                     <div>
-                    <video
-                        style={{
-                            width: 150,
-                            height: 150,
-                            margin: 5,
-                            backgroundColor: 'black',
-                        }}
-                        muted
-                        ref={localVideoRef}
-                        autoPlay
-                    />
-                    <div class='user-name'>{user.name}</div>
+                        <video
+                            style={{
+                                width: 150,
+                                height: 150,
+                                margin: 5,
+                                backgroundColor: 'black',
+                            }}
+                            muted
+                            ref={localVideoRef}
+                            autoPlay
+                        />
+                        <div class='user-name'>{user.name}</div>
                     </div>
-                    
+
                     {users.map((user, index) => (
-                        <Video key={index} name={user.name} stream={user.stream} />
+                        <div onClick={() => onClickSomeone(user)} >
+                            <Video key={index} name={user.name} stream={user.stream} />
+                        </div>
+
                     ))}
                 </div>
 
                 <div className="screen">
-                    <img className="screen-data" src={screenImg} />
+                    <div className="header">
+                        <div class="language-select">
+                            <div>코드 업로드</div>
+                            <select value={selectedLanguage} onChange={handleLanguageChange}>
+                                <option value="">-언어 선택-</option>
+                                <option value="python">Python</option>
+                                <option value="javascript">JavaScript</option>
+                                <option value="java">Java</option>
+                                <option value="c_cpp">C/C++</option>
+                                <option value="html">HTML</option>
+                                <option value="css">CSS</option>
+                                <option value="markdown">Markdown</option>
+                                <option value="sql">SQL</option>
+                            </select>
+                        </div>
+                        <div class="upload-button" onClick={uploadCode}>
+                            <div>업로드 하기</div>
+                            <FontAwesomeIcon icon={faArrowUpFromBracket} color={'white'} size={'1x'} />
+                        </div>
+                    </div>
+                    <AceEditor
+                        placeholder="코드를 입력하세요"
+                        mode={selectedLanguage}
+                        theme="monokai"
+                        name="blah2"
+                        ref={textRef}
+                        onChange={(evn) => setMyCode({ ...myCode, content: evn })}
+                        fontSize={14}
+                        showPrintMargin={true}
+                        showGutter={true}
+                        highlightActiveLine={true}
+                        value={myCode?.content}
+                        style={{ 'width': '100%' }}
+                        setOptions={{
+                            tabSize: 2,
+                            useWorker: false
+                        }} />
                 </div>
-                {isCodeOn && <div className="code-upload">
-                    <div className="header"><div>코드 업로드</div><FontAwesomeIcon icon={faXmark} onClick={() => { setIsCodeOn(false) }} /></div>
-                    <textarea placeholder="코드를 업로드 하세요!" /></div>}
-            </div >
+                {isCodeOn && <div className="ask-bard">
+                    <div className="header">
+                        <div>바드에게 질문하기</div>
+                        <FontAwesomeIcon icon={faXmark} onClick={() => { setIsCodeOn(false) }} />
+                    </div>
+                    <textarea />
+                </div>}
+            </div>
 
-            {showChat && <Chat roomId={roomId} roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />}
+            {showChat && <Chat socketRef={flaskSocketRef} roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />}
 
 
             <div className="control-bar-wrapper">
@@ -298,25 +423,35 @@ const LiveRoom = () => {
                         {isCameraOn ? <FontAwesomeIcon icon={faVideoSlash} color={'white'} size={'2x'} /> :
                             <FontAwesomeIcon icon={faVideo} color={'white'} size={'2x'} />}
                     </div>
-                    <div className="share-button" onClick={onClickContentStream}>
-                        <FontAwesomeIcon icon={faArrowUpFromBracket} color={'white'} size={'2x'} />
-                    </div>
                     <div className="share-button" onClick={onClickCode}>
                         <FontAwesomeIcon icon={faCode} color={'white'} size={'2x'} />
                     </div>
                 </div>
                 <div className="control-bar" style={{ marginLeft: 180 }}>
-                    {/* <div className="people-button" onClick={() => setShowPeople(!showPeople)}>
-                    <FontAwesomeIcon icon={faUsers} color={'white'} size={'2x'} />
-                </div> */}
                     <div className="chat-button" onClick={() => setShowChat(!showChat)}>
                         <FontAwesomeIcon icon={faComment} color={'white'} size={'2x'} />
                     </div>
                 </div>
             </div>
+            {clickedUser && clickedUser?.language && clickedUser?.code &&
+                <AceEditor
+                    placeholder="코드를 입력하세요"
+                    mode={clickedUser.language}
+                    theme="monokai"
+                    name="blah2"
+                    ref={textRef}
+                    fontSize={14}
+                    showPrintMargin={true}
+                    showGutter={true}
+                    highlightActiveLine={true}
+                    value={clickedUser.code}
+                    style={{ 'width': '100%' }}
+                    setOptions={{
+                        tabSize: 2,
+                        useWorker: false
+                    }} />}
         </div >
     )
 }
-
 
 export default LiveRoom;
