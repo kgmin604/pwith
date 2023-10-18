@@ -44,30 +44,37 @@ class chat():
         return chatId[0]
     
     def getMyChat(memId, oppId):
-        sql = f"select distinct * from chat where (sender = '{str(memId)}' and receiver = '{str(oppId)}') or (sender = '{str(oppId)}' and receiver = '{str(memId)}') order by curDate desc"
+        sql = f"select  * from chat where (sender = '{str(memId)}' and receiver = '{str(oppId)}') or (sender = '{str(oppId)}' and receiver = '{str(memId)}') order by curDate desc"
         
         rows = selectAll(sql)
-        print(rows)
         
         return rows
     
     # rows 리스트의 각 요소들에 있는 "date" 키를 기준으로 정렬하는 함수
         
     def getAllChat(memId):
-        sql = f"select  id, receiver, content, curDate from chat where sender = '{str(memId)}' group by receiver"
-        sql2 = f"select id, sender, content, curDate from chat where receiver = '{str(memId)}' group by sender" 
+        # sql = f"select CASE WHEN sender = '{memId}' THEN receiver WHEN receiver = '{memId}' THEN sender END AS other_user, content, curDate from chat WHERE sender = '{memId}' OR receiver = '{memId}' group by other_user"
+        sql = f'''SELECT
+                    other_user,
+                    content,
+                    curDate
+                FROM (
+                    SELECT
+                        CASE WHEN sender = '{memId}' THEN receiver ELSE sender END AS other_user,
+                        content,
+                        curDate,
+                        ROW_NUMBER() OVER (PARTITION BY CASE WHEN sender = '{memId}' THEN receiver ELSE sender END ORDER BY curDate DESC) AS rn
+                    FROM chat
+                    WHERE sender = '{memId}' OR receiver = '{memId}'
+                ) AS chat_with_rn
+                WHERE rn = 1
+                ORDER BY curDate desc'''
 
-        rows1 = selectAll(sql)
-        rows2 = selectAll(sql2)
+        rows = selectAll(sql)
         
-        rows = rows1+rows2
         print(rows)
         
-        def get_datetime_key(row):
-            return row[3]
-        
-        sorted_rows = sorted(rows, key=get_datetime_key, reverse=True)
-        return sorted_rows
+        return rows
     
     
     def chkOppId(oppId):
