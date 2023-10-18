@@ -113,6 +113,27 @@ function App() {
       });
   }
 
+  function payment() {
+    axios({
+      method: "POST",
+      url: "/mentoring-room/4/pay",
+      // headers: {
+      //   "Access-Control-Allow-Origin": "*"
+      // },
+      data: {
+        "classes": 1
+      }
+    })
+      .then(function (response) {
+        console.log(response)
+        console.log(response.data);
+        window.location.href = response.data.data.pay_url;
+      })
+      .catch(function (e) {
+        console.log(e);
+      });
+  }
+
   // access 만료 테스트
   function test() {
     axios({
@@ -364,8 +385,8 @@ function App() {
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    logout();
-                  }} // 소셜 로그인 오류시 임시 로그아웃
+                    payment();
+                  }} // for 결제 시스템 브라우저 테스트
                 >
                   🔍{" "}
                 </div>
@@ -535,6 +556,7 @@ function App() {
           <Route path="/oauth/callback/google" element={<Auth />} />
           <Route path="/oauth/callback/kakao" element={<Auth />} />
           <Route path="/member/login/auth" element={<AuthJoin/>} />
+          <Route path="/mentoring-room/4/pay/success" element={<Auth />} />
           <Route
             path="*"
             element={

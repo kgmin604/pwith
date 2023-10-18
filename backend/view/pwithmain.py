@@ -1,12 +1,22 @@
-from flask import Flask, session, Blueprint, render_template, redirect, request, jsonify, url_for
-from flask_login import login_required, current_user
+from flask import Blueprint
+from flask_login import current_user
 from backend.controller.study_mgmt import studyPost
 from backend.controller.mentor_mgmt import Portfolio
 from backend.controller.alarm_mgmt import alarm
 from backend.model.db_mongo import conn_mongodb
-from backend.view import findNickName
+from backend.view import findNickName, login_required
 
 main_bp = Blueprint('pwithmain', __name__, url_prefix='')
+
+@main_bp.route('/', methods=['GET'])
+@login_required
+def chkLogin(loginMember, new_token):
+
+    return {
+        'status': 200,
+        'message': '로그인 상태',
+        'data': None
+    }
 
 @main_bp.route('/list', methods = ['GET'])
 def showStudy():

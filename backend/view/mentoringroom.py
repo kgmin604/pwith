@@ -2,6 +2,7 @@ from flask import Blueprint, request
 from datetime import datetime
 from bardapi import Bard
 from random import randint
+import requests
 import json
 import os
 
@@ -14,6 +15,114 @@ from backend.controller.review_mgmt import Review
 
 mentoringroom_bp = Blueprint('mentoringRoom', __name__, url_prefix='/mentoring-room')
 
+tid = {}
+classes = {}
+@mentoringroom_bp.route('/<id>/pay', methods=['POST'])
+@login_required
+def payTuition(loginMember, new_token, id) : # 결제
+
+    global tid, classes
+
+    info = MentoringRoom.findById(id)
+
+    if not info:
+        return {
+            'status' : 400,
+            'message' : '없는 멘토링룸',
+            'data' : None,
+            'access_token' : new_token
+        }
+    room = info['room']
+    portfolio = info['portfolio']
+
+    if loginMember.id != room.menti :
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    cl = request.get_json()['classes'] # 결제할 수업 횟수
+    classes[loginMember.id] = cl
+
+    cid = config.KAKAO_PAY_CID
+    ready_url = config.KAKAO_PAY_READY
+    admin_key = config.KAKAO_PAY_ADMIN_KEY
+    success_url = config.KAKAO_PAY_SUCCESS.format(id)
+    cancel_url = config.KAKAO_PAY_CANCEL.format(id)
+    fail_url = config.KAKAO_PAY_FAIL.format(id)
+
+    res = requests.post(
+        ready_url,
+        headers = {
+            'Authorization' : f'KakaoAK {admin_key}',
+            'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
+        },
+        data = dict(
+            cid = cid,
+            partner_order_id = '1018', ## TODO 수정
+            partner_user_id = loginMember.id,
+            item_name = f'{findNickName(room.mento)} 멘토링 수업료',
+            quantity = '1',
+            tax_free_amount = 0,
+            total_amount = cl * portfolio.tuition,
+            approval_url = success_url,
+            cancel_url = cancel_url,
+            fail_url = fail_url
+        )
+    ).json()
+
+    # print(res)
+    tid[loginMember.id] = res['tid']
+
+    redirect_url = res['next_redirect_pc_url']
+    
+    return {
+        'pay_url': redirect_url
+    }
+
+@mentoringroom_bp.route('/<id>/pay/success', methods=['GET'])
+@login_required
+def paySuccess(loginMember, new_token, id):
+
+    global tid, classes
+
+    pg_token = request.args.get('pg_token') # 없으면 ?
+
+    cid = config.KAKAO_PAY_CID
+    admin_key = config.KAKAO_PAY_ADMIN_KEY
+    approve_url = config.KAKAO_PAY_APPROVE
+
+    res = requests.post(
+        approve_url,
+        headers = {
+            'Authorization' : f'KakaoAK {admin_key}',
+            'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
+        },
+        data = dict(
+            cid = cid,
+            tid = tid.get(loginMember.id, ''),
+            partner_order_id = '1018', ## TODO update
+            partner_user_id = loginMember.id,
+            pg_token = pg_token
+        )
+    ).json()
+    # print(res)
+
+    # if res ~~~~ 결제 성공하면 수업 횟수 늘리기
+    MentoringRoom.updateLessonCnt(id, classes.get(loginMember.id, 0))
+
+    del tid[loginMember.id]
+    del classes[loginMember.id]
+
+    # TODO 예외 처리
+    
+    return {
+        'data': None
+    }
+
+# TODO 환급할 때마다 mr.refund_cnt += 환급 횟수
 @mentoringroom_bp.route('/<id>', methods=['PATCH'])
 @login_required
 def updateNotice(loginMember, new_token, id) : # 공지 수정
@@ -131,7 +240,14 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
         })
 
     # 3. review
-    review = Review.findByRoom(id)
+    review = None
+    if rv:= Review.findByRoom(id):
+        review = {
+            'id' : rv.id,
+            'content' : rv.content,
+            'date' : formatYMDHM(rv.curDate),
+            'score' : rv.score
+        }
     
     return {
         'data' : {
@@ -143,11 +259,7 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
                 'menti' : menti,
                 'image' : portfolio.mentoPic
             },
-            'review' : {
-                'id' : review.id if review else None,
-                'content' : review.content if review else None,
-                'date' : formatYMDHM(review.curDate) if review else None
-            },
+            'review' : review,
             'chat' : chats,
             'lesson' : {
                 'total' : room.lesson_cnt,
@@ -158,9 +270,6 @@ def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
         },
         'access_token' : new_token
     }
-
-# TODO 결제할 때마다 mr.lesson_cnt += p.duration
-# TODO 환급할 때마다 mr.refund_cnt += 환급 횟수
 
 @mentoringroom_bp.route('/<id>/lesson', methods=['GET'])
 @login_required
