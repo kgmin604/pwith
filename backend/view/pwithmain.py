@@ -2,6 +2,7 @@ from flask import Blueprint, request
 from flask_login import current_user
 from backend.controller.study_mgmt import studyPost
 from backend.controller.mentor_mgmt import Portfolio
+from backend.controller.community_mgmt import QNAPost
 from backend.controller.alarm_mgmt import alarm
 from backend.model.db_mongo import conn_mongodb
 from backend.view import findNickName, login_required
