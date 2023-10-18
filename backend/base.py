@@ -88,6 +88,7 @@ def sendMessage(data):
 
 
 @socketio.on('connect',namespace='/study-live')
+@socketio.on('connect',namespace='/study-live')
 def test_connect():
     print("========CONNECT live========")
 
@@ -136,8 +137,21 @@ def sendMessage(data):
 
     emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now}, to = roomId)
 
+@socketio.on("codeSend",namespace='/study-live')
+def sendCode(data):
+    print("======SENDCODE live======")
+    print(data['code'])
+    roomId = data['roomId']
+    language=data['language']
+    code = data['code']
+    sender = data['sender']
 
-@socketio.on("leave",namespace='/mentoring-live')
+    now = datetime.now()
+    formatted_now = formatYMDHM(now)
+
+    emit('codeUploadFrom', {'sender': sender, 'language':language, 'code': code}, to = roomId)
+
+@socketio.on("leave",namespace='/live')
 def leaveRoom(data):
     print("=======LEAVEROOM mentoring - live=======")
     roomId = data['roomId']

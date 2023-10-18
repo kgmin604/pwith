@@ -260,3 +260,7 @@ h6{
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.no-drag {
+  user-select: none;
+}

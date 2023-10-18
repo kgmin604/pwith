@@ -15,7 +15,7 @@ function MentoringMain() {
     const [selectPage, setSelectPage] = useState(0);
     const [mentoList, setMentoList] = useState([]);
     const [userinput, setUserinput] = useState('');
-    const [isNext,setIsNext]=useState(false)
+    const [isNext, setIsNext] = useState(false)
     const [myPortfolio, setMyPortfolio] = useState();
 
     useEffect(() => {
@@ -48,7 +48,7 @@ function MentoringMain() {
             url: "/mentoring",
             params: {
                 search: `${userinput}`,
-                page:0,
+                page: 0,
             }
         })
             .then(function (response) {
@@ -106,7 +106,7 @@ function Category({ myPortfolio }) {
         <Nav defaultActiveKey="#" className="flex-column">
             <Link to="#"><div style={{ color: '#282c34' }}>멘토링</div></Link>
             <Link to={user.id === null ? '#' : `../mentoring/create`} ><div className={user.id === null ? 'disabled' : 'category'}>포트폴리오 작성</div></Link>
-            <Link to={user.id === null ? '#' : `../mentoring/${myPortfolio}`}><div className={user.id === null ? 'disabled' : 'category'}>포트폴리오 관리</div></Link>
+            <Link to={user.id === null || !myPortfolio ? '#' : `../mentoring/${myPortfolio}`}><div className={user.id === null|| !myPortfolio? 'disabled' : 'category'}>포트폴리오 관리</div></Link>
         </Nav>
     </>
 }
