@@ -294,14 +294,12 @@ def checkLesson(id, loginMember, new_token): # 수업 횟수 체크
             'access_token' : new_token
         }
 
-    isMentoChk = request.args.get('isMento')
+    checkFrom = request.args.get('check')
 
-    if isMentoChk == True:
+    if checkFrom == 'mento':
         MentoringRoom.updateMentoCheck(id)
-    elif isMentoChk == False:
+    elif checkFrom == 'menti':
         MentoringRoom.updateMentiCheck(id)
-    else:
-        pass
 
     return {
         'data': None

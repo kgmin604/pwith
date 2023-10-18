@@ -55,7 +55,7 @@ function MentoringRoomDetail() {
   let [isOn, setIsOn] = useState(false);
   let [isChange, setIsChange] = useState(false);
 
-  let [newNotice, setNewNotice] = useState("복습해오기");
+  let [newNotice, setNewNotice] = useState("");
 
   // 수업 횟수 체크
   let [numData, setNumData] = useState({
@@ -66,12 +66,15 @@ function MentoringRoomDetail() {
   });
 
   // 리뷰 관리
-  let [review, setReview] = useState({
+  let [review, setReview] = useState(null);
+  /*
+  {
     "content": null,
     "date": null,
     "id": null,
     "score": null
-  })
+  }
+  */
 
   /* 리뷰, 모달창 관리 */
   let [open, setOpen] = useState(false);
@@ -80,8 +83,13 @@ function MentoringRoomDetail() {
       event.stopPropagation();
       setOpen(!open);
       setNewContent('');
-      if(review===null) setReviewType(0);
-      else setReviewType(1);
+      if(review===null){
+        setReviewType(0);
+        setReviewStar(0);
+      }else{
+        setReviewType(1);
+        setReviewStar(review.score);
+      }
   }
   let [reviewStar, setReviewStar] = useState(0);
   let [reviewType, setReviewType] = useState(0); // 0: 리뷰 작성 모드 1: 리뷰 보기 모드
@@ -96,6 +104,7 @@ function MentoringRoomDetail() {
     if(reviewType === 1){
       if (window.confirm("리뷰를 재작성 하시겠습니까?")){
         setReviewType(0);
+        setReviewStar(0);
       }
     }
     else{
@@ -273,16 +282,11 @@ function MentoringRoomDetail() {
       url: `/mentoring-room/${RoomId}`,
     })
       .then(function (response) {
-        console.log("멘토링 룸 정보 get");
-
         setRoomInfo(response.data.data.room); // 룸 기본 정보
         setRoomChat(response.data.data.chat); // 채팅 정보
         setNewNotice(response.data.data.room.notice); // 공지 정보
         setNumData(response.data.data.lesson); // 남은 수업 정보
         setReview(response.data.data.review); // 리뷰 정보
-
-        console.log("리뷰 데이터");
-        console.log(response.data.data.review);
 
         if(response.data.data.review !== null) {
           setReviewStar(response.data.data.review.score);
@@ -370,13 +374,11 @@ function MentoringRoomDetail() {
         method: "GET",
         url: `/mentoring-room/${roomInfo.id}/lesson`,
         params:{
-          isMento : false,
+          check : "menti",
         }
       })
       .then(function (response) {
-        let copy = {...numData};
-        copy.menti = copy.menti+1;
-        setNumData(copy); 
+        setReLoad(reLoad+1);
         alert('수업 완료처리 되었습니다.');
       })
       .catch(function (error) {
@@ -395,13 +397,11 @@ function MentoringRoomDetail() {
         method: "GET",
         url: `/mentoring-room/${roomInfo.id}/lesson`,
         params:{
-          isMento : true,
+          check : "mento",
         }
       })
       .then(function (response) {
-        let copy = {...numData};
-        copy.mento = copy.mento+1;
-        setNumData(copy); 
+        setReLoad(reLoad+1);
         alert('수업 완료처리 되었습니다.');
       })
       .catch(function (error) {
@@ -626,7 +626,7 @@ function MentoringRoomDetail() {
                     </div>
                     :
                     <div className="review-btn no-drag" onClick={(e)=>{e.stopPropagation(); handleModal(e);}}>
-                      {`${review.id === null? "리뷰 작성하기" : "작성한 리뷰 보기"}`}
+                      {`${review === null? "리뷰 작성하기" : "작성한 리뷰 보기"}`}
                     </div>
                   }  
                   </div>
