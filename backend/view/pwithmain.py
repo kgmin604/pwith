@@ -8,7 +8,7 @@ from backend.view import findNickName, login_required
 
 main_bp = Blueprint('pwithmain', __name__, url_prefix='')
 
-@main_bp.route('/', methods=['GET'])
+@main_bp.route('/check', methods=['GET'])
 @login_required
 def chkLogin(loginMember, new_token):
 

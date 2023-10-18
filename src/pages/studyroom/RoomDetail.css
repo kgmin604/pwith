@@ -234,6 +234,7 @@ h3{
     font-family: "Noto Sans KR";
     font-weight: 600;
     margin-top: 10px;
+    
 }
 
 div.room-detail-wrap div.content-area div.bottom div.member-list div.items div.item
@@ -435,6 +436,7 @@ div.room-detail-wrap div.content-area div.bottom div.number-list
 
 div.room-detail-wrap div.content-area div.bottom div.number-list
 .number-items{
+    width: 305px;
     display: flex;
     float: left;
     align-items: center;

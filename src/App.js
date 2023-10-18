@@ -24,6 +24,9 @@ import RoomCreate from "./pages/studyroom/RoomCreate.js";
 import LiveRoom from "./pages/studyroom/LiveRoom";
 import RoomDetail from "./pages/studyroom/RoomDetail.js";
 import MentoringRoomDetail from "./pages/studyroom/MentoringRoomDetail.js";
+import{
+  MentoringRoomPaySuccess,
+} from "./pages/studyroom/MentoringRoomPay.js";
 import CommunityMain from "./pages/community/CommunityMain.js";
 import MentoringMain from "./pages/mentoring/MentoringMain.js";
 import MentoringCreate from "./pages/mentoring/MetoringCreate";
@@ -33,7 +36,6 @@ import Help from "./pages/member/help.js";
 import Mypage from "./pages/member/mypage.js";
 import Auth from "./pages/auth/Auth.js";
 import AuthJoin from "./pages/auth/AuthJoin.js";
-
 import {
   Account,
   WritingList,
@@ -61,6 +63,30 @@ function App() {
   let user = useSelector((state) => state.user);
   let dispatch = useDispatch();
 
+  // 로그인 유지 목적
+  useEffect(()=>{
+    axios({
+      method: "GET",
+      url: "/check"
+    })
+    .then(function (response) {
+      console.log("로그인 요청");
+      console.log(response);
+      if(response.data.status===200){
+        dispatch(
+          loginUser({
+            id: response.data.data.id,
+            name: response.data.data.nickname,
+            isSocial: response.data.data.isSocial
+          })
+        );
+      }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  },[])
+
   //스터디룸에서는 네브바 숨기기
   const location = useLocation();
   const isStudyRoomPath =
@@ -70,32 +96,6 @@ function App() {
 
   let [isModal, setIsModal] = useState(false); // 알림함
   let [isNav, setIsNav] = useState(0);
-
-  // 로그인 유지 목적
-  // useEffect(()=>{
-  //   axios({
-  //     method: "POST",
-  //     url: "/",
-  //     data: {
-  //       chkSession: 1
-  //     },
-  //   })
-  //   .then(function (response) {
-  //     dispatch(
-  //       loginUser({
-  //         id: response.data.id,
-  //         name: response.data.name,
-  //         email: response.data.email
-  //       })
-  //     );
-  //     console.log("로그인 요청");
-  //     console.log(response);
-  //     navigate("/");
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
-  // },[])
 
   function logout() {
     axios({
@@ -113,26 +113,6 @@ function App() {
       });
   }
 
-  function payment() {
-    axios({
-      method: "POST",
-      url: "/mentoring-room/4/pay",
-      // headers: {
-      //   "Access-Control-Allow-Origin": "*"
-      // },
-      data: {
-        "classes": 1
-      }
-    })
-      .then(function (response) {
-        console.log(response)
-        console.log(response.data);
-        window.location.href = response.data.data.pay_url;
-      })
-      .catch(function (e) {
-        console.log(e);
-      });
-  }
 
   // access 만료 테스트
   function test() {
@@ -178,6 +158,7 @@ function App() {
                 className="btn pwith-logo"
                 onClick={(e) => {
                   e.stopPropagation();
+                  alert(user.name);
                   navigate("/");
                 }}
               ></div>
@@ -385,8 +366,7 @@ function App() {
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    payment();
-                  }} // for 결제 시스템 브라우저 테스트
+                  }}
                 >
                   🔍{" "}
                 </div>
@@ -527,6 +507,7 @@ function App() {
           <Route path="/studyroom/:id" element={<RoomDetail />} />
           <Route path="/studyroom/live/:id" element={<LiveRoom />} />
           <Route path="/mentoringroom/:id" element={<MentoringRoomDetail />} />
+          <Route path="/mentoring-room/:id/pay/success" element={<MentoringRoomPaySuccess />} />
           <Route path="/community" element={<CommunityMain />}>
             <Route path="main" element={<CommunityBoard />} />
             <Route path="it" element={<CommunityIT />} />
@@ -556,7 +537,6 @@ function App() {
           <Route path="/oauth/callback/google" element={<Auth />} />
           <Route path="/oauth/callback/kakao" element={<Auth />} />
           <Route path="/member/login/auth" element={<AuthJoin/>} />
-          <Route path="/mentoring-room/4/pay/success" element={<Auth />} />
           <Route
             path="*"
             element={

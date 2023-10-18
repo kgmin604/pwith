@@ -22,6 +22,7 @@ let socket;
 
 function MentoringRoomDetail() {
   
+  /********************* 전 범위에서 사용 *********************/
   let [reLoad, setReLoad] = useState(0);
 
   const chatAreaRef = useRef(null);
@@ -29,7 +30,7 @@ function MentoringRoomDetail() {
   let user = useSelector((state) => state.user);
   let navigate = useNavigate();
 
-  let [roomInfo, setRoomInfo] = useState({ // dummy 데이터
+  let [roomInfo, setRoomInfo] = useState({ 
     id: 0,
     name: "",
     image: "",
@@ -55,18 +56,42 @@ function MentoringRoomDetail() {
   let [isOn, setIsOn] = useState(false);
   let [isChange, setIsChange] = useState(false);
 
-  let [newNotice, setNewNotice] = useState("");
 
-  // 수업 횟수 체크
-  let [numData, setNumData] = useState({
-      total: 0,
-      mento: 0,
-      menti: 0,
-      refund: 0
-  });
+  /********************* 추가 결제 관리 *********************/
+  let [isPay, setIsPay] = useState(false);
+  function PayMouseOver(event){
+    event.stopPropagation();
+    setIsPay(true);
+  }
+  function PayMouseOut(event){
+    event.stopPropagation();
+    setIsPay(false);
+  }
 
-  // 리뷰 관리
-  let [review, setReview] = useState(null);
+  function payment(e) {
+    e.stopPropagation();
+    axios({
+      method: "POST",
+      url: `/mentoring-room/${roomInfo.id}/pay`,
+      // headers: {
+      //   "Access-Control-Allow-Origin": "*"
+      // },
+      data: {
+        "classes": 1 // 나중에 수정
+      }
+    })
+      .then(function (response) {
+        window.location.href = response.data.data.pay_url;
+      })
+      .catch(function (e) {
+        alert('요청에 실패했습니다. 다시 시도해주세요.');
+        console.log(e);
+      });
+  }
+
+  /********************* 리뷰, 모달창 관리 *********************/
+
+  let [review, setReview] = useState(null); // 리뷰 관리
   /*
   {
     "content": null,
@@ -76,7 +101,6 @@ function MentoringRoomDetail() {
   }
   */
 
-  /* 리뷰, 모달창 관리 */
   let [open, setOpen] = useState(false);
   let [newContent,setNewContent] = useState("");
   let handleModal = (event) => {
@@ -93,11 +117,6 @@ function MentoringRoomDetail() {
   }
   let [reviewStar, setReviewStar] = useState(0);
   let [reviewType, setReviewType] = useState(0); // 0: 리뷰 작성 모드 1: 리뷰 보기 모드
-
-  function handleMouseOver(event) {
-    event.stopPropagation();
-    setIsOn(true);
-  }
 
   function writeReview(event){
     event.stopPropagation();
@@ -168,6 +187,15 @@ function MentoringRoomDetail() {
     }
   }
 
+  /********************* 공지 관리 *********************/
+
+  let [newNotice, setNewNotice] = useState("");
+
+  function handleMouseOver(event) {
+    event.stopPropagation();
+    setIsOn(true);
+  }
+
   function handleMouseOut(event) {
     event.stopPropagation();
     setIsOn(false);
@@ -192,10 +220,7 @@ function MentoringRoomDetail() {
       });
   }
 
-  function changeChatInput(event) {
-    event.stopPropagation();
-    setMyChat(event.target.value);
-  }
+  /********************* 룸 삭제(미구현) *********************/
 
   function requestDeleteRoom(event){
     event.stopPropagation();
@@ -235,134 +260,14 @@ function MentoringRoomDetail() {
     */
   }
 
-  // 소켓 통신 함수
+  /********************* 수업 횟수 확인 *********************/
 
-  function sendTo() {
-    const url = window.location.href;
-    const part = url.split("/");
-    const RoomId = part[part.length - 1];
-    let data = {
-      roomId: Number(RoomId),
-      message: myChat,
-      sender: user.name,
-    };
-    socket.emit("sendTo", data);
-    document.getElementById("chat-area").value = "";
-    setMyChat("");
-  }
-
-  function EnterRoom(){
-    const url = window.location.href;
-    const part = url.split("/");
-    const RoomId = part[part.length - 1];
-    let data = {
-      roomId: Number(RoomId)
-    };
-    socket.emit("enter",data);
-  }
-
-  function LeaveRoom(){
-    const url = window.location.href;
-    const part = url.split("/");
-    const RoomId = part[part.length - 1];
-    let data = {
-      roomId: Number(RoomId)
-    };
-    socket.emit("leave",data);
-  }
-
-  
-  useEffect(() => {
-    const url = window.location.href;
-    const part = url.split("/");
-    const RoomId = part[part.length - 1];
-
-    axios({
-      method: "GET",
-      url: `/mentoring-room/${RoomId}`,
-    })
-      .then(function (response) {
-        setRoomInfo(response.data.data.room); // 룸 기본 정보
-        setRoomChat(response.data.data.chat); // 채팅 정보
-        setNewNotice(response.data.data.room.notice); // 공지 정보
-        setNumData(response.data.data.lesson); // 남은 수업 정보
-        setReview(response.data.data.review); // 리뷰 정보
-
-        if(response.data.data.review !== null) {
-          setReviewStar(response.data.data.review.score);
-          setReviewType(1)
-        }
-        else{ // null이라면
-          setReviewStar(0);
-          setReviewType(0);
-        }
-
-        let tmp = {};
-        tmp[response.data.data.room.mento.nickname] = response.data.data.room.mento.image;
-        tmp[response.data.data.room.menti.nickname] = response.data.data.room.menti.image;
-        setImgData(tmp);
-      })
-      .catch(function (error) {
-        alert("요청이 실패했습니다. 다시 시도해주세요.");
-      });
-
-      return () => {
-        // 컴포넌트가 unmount될 때 실행될 코드
-        LeaveRoom();
-      };
-  }, [reLoad]);
-
-  // 소켓 통신하기
-
-  useEffect(() => {
-    // socket = io('http://localhost:5000', {
-    //     cors: {
-    //         origin: '*',
-    //     },
-    //     transports: ["websocket"],
-    // });
-    socket = io("http://localhost:5000/mentoring-ready", {
-      cors: {
-        origin: "*",
-      },
-      transports: ["polling"],
-      autoConnect: false,
-    });
-
-    socket.connect();
-
-    socket.on("connect", (data) => {
-      EnterRoom();
-      console.log("Socket connected");
-    });
-    socket.on("sendFrom", (data) => {
-      setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
-    });
-    socket.on("disconnect", (data)=>{
-      console.log("Socket disconnected")
-    });
-  }, []);
-
-  // 스크롤 영역을 항상 아래로 스크롤하는 함수
-  const scrollToBottom = () => {
-    if (chatAreaRef.current) {
-      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
-    }
-  };
-
-  // 컴포넌트가 업데이트 될 때마다 스크롤을 아래로 이동
-  useEffect(() => {
-    scrollToBottom();
-  }, [roomChat]);
-
-  const pressEnter = (e) => {
-    e.stopPropagation();
-    if (e.key === 'Enter' && e.shiftKey) { // [shift] + [Enter] 치면 그냥 리턴
-      return;
-    } else if (e.key === 'Enter') { 	   // [Enter] 치면 메시지 보내기
-      sendTo();
-    }
-  };
+  let [numData, setNumData] = useState({ // 수업 횟수 체크
+    total: 0,
+    mento: 0,
+    menti: 0,
+    refund: 0
+  });
 
   function MenteeClick(e){
     e.stopPropagation();
@@ -410,6 +315,139 @@ function MentoringRoomDetail() {
       });
     }
   }
+
+  /********************* 채팅 관리 *********************/
+
+  function changeChatInput(event) {
+    event.stopPropagation();
+    setMyChat(event.target.value);
+  }
+
+  function sendTo() {
+    const url = window.location.href;
+    const part = url.split("/");
+    const RoomId = part[part.length - 1];
+    let data = {
+      roomId: Number(RoomId),
+      message: myChat,
+      sender: user.name,
+    };
+    socket.emit("sendTo", data);
+    document.getElementById("chat-area").value = "";
+    setMyChat("");
+  }
+
+  function EnterRoom(){
+    const url = window.location.href;
+    const part = url.split("/");
+    const RoomId = part[part.length - 1];
+    let data = {
+      roomId: Number(RoomId)
+    };
+    socket.emit("enter",data);
+  }
+
+  function LeaveRoom(){
+    const url = window.location.href;
+    const part = url.split("/");
+    const RoomId = part[part.length - 1];
+    let data = {
+      roomId: Number(RoomId)
+    };
+    socket.emit("leave",data);
+  }
+
+  // 스크롤 영역을 항상 아래로 스크롤하는 함수
+  const scrollToBottom = () => {
+    if (chatAreaRef.current) {
+      chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
+    }
+  };
+
+  // 컴포넌트가 업데이트 될 때마다 스크롤을 아래로 이동
+  useEffect(() => {
+    scrollToBottom();
+  }, [roomChat]);
+
+  const pressEnter = (e) => {
+    e.stopPropagation();
+    if (e.key === 'Enter' && e.shiftKey) { // [shift] + [Enter] 치면 그냥 리턴
+      return;
+    } else if (e.key === 'Enter') { 	   // [Enter] 치면 메시지 보내기
+      sendTo();
+    }
+  };
+
+  useEffect(() => {
+    // socket = io('http://localhost:5000', {
+    //     cors: {
+    //         origin: '*',
+    //     },
+    //     transports: ["websocket"],
+    // });
+    socket = io("http://localhost:5000/mentoring-ready", {
+      cors: {
+        origin: "*",
+      },
+      transports: ["polling"],
+      autoConnect: false,
+    });
+
+    socket.connect();
+
+    socket.on("connect", (data) => {
+      EnterRoom();
+      console.log("Socket connected");
+    });
+    socket.on("sendFrom", (data) => {
+      setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
+    });
+    socket.on("disconnect", (data)=>{
+      console.log("Socket disconnected")
+    });
+  }, []);
+
+  /********************* 데이터 받아오기 *********************/
+
+  useEffect(() => {
+    const url = window.location.href;
+    const part = url.split("/");
+    const RoomId = part[part.length - 1];
+
+    axios({
+      method: "GET",
+      url: `/mentoring-room/${RoomId}`,
+    })
+      .then(function (response) {
+        setRoomInfo(response.data.data.room); // 룸 기본 정보
+        setRoomChat(response.data.data.chat); // 채팅 정보
+        setNewNotice(response.data.data.room.notice); // 공지 정보
+        setNumData(response.data.data.lesson); // 남은 수업 정보
+        setReview(response.data.data.review); // 리뷰 정보
+
+        if(response.data.data.review !== null) {
+          setReviewStar(response.data.data.review.score);
+          setReviewType(1)
+        }
+        else{ // null이라면
+          setReviewStar(0);
+          setReviewType(0);
+        }
+
+        let tmp = {};
+        tmp[response.data.data.room.mento.nickname] = response.data.data.room.mento.image;
+        tmp[response.data.data.room.menti.nickname] = response.data.data.room.menti.image;
+        setImgData(tmp);
+      })
+      .catch(function (error) {
+        alert("요청이 실패했습니다. 다시 시도해주세요.");
+      });
+
+      return () => {
+        // 컴포넌트가 unmount될 때 실행될 코드
+        LeaveRoom();
+      };
+  }, [reLoad]);
 
   return (
     <>
@@ -631,11 +669,19 @@ function MentoringRoomDetail() {
                       <div className="review-btn no-drag" onClick={(e)=>{ handleModal(e);}}>
                         {`${review === null? "리뷰 작성하기" : "작성한 리뷰 보기"}`}
                       </div>
-                      <div className="review-btn no-drag" onClick={(e)=>e.stopPropagation()}>
+                      <div 
+                        className="review-btn no-drag" 
+                        onMouseOver={PayMouseOver}
+                        onMouseOut={PayMouseOut}
+                        onClick={e=>payment(e)}
+                      >
                         추가 결제하기
                       </div>
                       {
-                        
+                        isPay ? 
+                        <div>
+                          결제
+                        </div> : null
                       }
                     </>
                   } 
