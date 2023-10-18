@@ -515,4 +515,38 @@ div.room-detail-wrap div.content-area div.bottom
     cursor: pointer;
 }
 
-.yellowStar{ color: #fcc419; }
+.star-items{
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.star-items
+span{
+    font-family: "Noto Sans KR";
+    color: gray;
+    font-weight: 600;
+}
+
+.review-text{
+    padding: 5px;
+    width: 100%;
+    height: 100px;
+    line-height: 20px;
+    border: 1px solid #e3e3e3;
+    box-sizing: border-box;
+    resize: none;
+    color: #292929;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.review-delete-btn{
+    font-size: 11px;
+    color: gray;
+    text-decoration: underline;
+    cursor: pointer;
+    text-align: center;
+    margin: 7px 0;
+}
