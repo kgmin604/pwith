@@ -441,7 +441,7 @@ div.room-detail-wrap div.content-area div.bottom div.number-list
     padding: 10px;
     gap: 10px;
     flex-wrap: wrap; /* 여러 줄에 걸쳐 정렬되도록 설정 */
-    margin: 15px 0;
+    margin-top: 10px;
 }
 
 div.room-detail-wrap div.content-area div.bottom div.number-list
@@ -499,7 +499,15 @@ div.room-detail-wrap div.content-area div.bottom div.number-list div.sign-items
     cursor: pointer;
 }
 
-div.room-detail-wrap div.content-area div.bottom
+.review-btn-container{
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    flex-direction: column;
+    gap: 15px;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.review-btn-container
 .review-btn{
     width: 120px;
     height: 30px;
@@ -511,7 +519,7 @@ div.room-detail-wrap div.content-area div.bottom
     background-color: rgb(61, 105, 144);
     border-radius: 3px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
-    margin: 15px 80px;
+    margin: 0px 80px;
     cursor: pointer;
 }
 

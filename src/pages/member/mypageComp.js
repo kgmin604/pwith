@@ -493,11 +493,11 @@ function Chat() {
                                     {
                                         msgList.length === 0 ? null :
                                             msgList.map((msg, i) => {
-                                                const type = msg['sender'] === user.id ? "보낸 쪽지" : "받은 쪽지";
+                                                const type = msg['sender'] === user.name ? "보낸 쪽지" : "받은 쪽지";
                                                 return (
                                                     <div className="item" key={i}>
                                                         <time>{msg.date}</time>
-                                                        <p className={`type ${msg['sender'] === user.id ? 'colortext2' : 'colortext'}`}>{type}</p>
+                                                        <p className={`type ${msg['sender'] === user.name ? 'colortext2' : 'colortext'}`}>{type}</p>
                                                         <p className="text">{msg.content}</p>
                                                     </div>
                                                 );

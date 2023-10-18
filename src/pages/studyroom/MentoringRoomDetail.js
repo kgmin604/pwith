@@ -619,16 +619,26 @@ function MentoringRoomDetail() {
                       }
                     })
                   }
+                  </div>
+                  <div className="review-btn-container">
                   {
                     roomInfo.mento.nickname === user.name ? 
-                    <div className="review-btn no-drag" onClick={(e)=>handleModal(e)}>
+                    <div className="review-btn no-drag" onClick={(e)=>e.stopPropagation()}>
                       정산 요청하기
                     </div>
                     :
-                    <div className="review-btn no-drag" onClick={(e)=>{e.stopPropagation(); handleModal(e);}}>
-                      {`${review === null? "리뷰 작성하기" : "작성한 리뷰 보기"}`}
-                    </div>
-                  }  
+                    <>
+                      <div className="review-btn no-drag" onClick={(e)=>{ handleModal(e);}}>
+                        {`${review === null? "리뷰 작성하기" : "작성한 리뷰 보기"}`}
+                      </div>
+                      <div className="review-btn no-drag" onClick={(e)=>e.stopPropagation()}>
+                        추가 결제하기
+                      </div>
+                      {
+                        
+                      }
+                    </>
+                  } 
                   </div>
                 </div>
 
