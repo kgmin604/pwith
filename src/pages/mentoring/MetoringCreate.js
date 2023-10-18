@@ -30,6 +30,7 @@ function MentoringCreate() {
     const [selectedFile, setSelectedFile] = useState(null);
     const words = ['웹개발', '모바일 앱 개발', '게임 개발', '프로그래밍 언어', '알고리즘 · 자료구조', '데이터베이스', '자격증', '개발 도구', '데이터 사이언스', '데스크톱 앱 개발', '교양 · 기타'];
     const [selectedWords, setSelectedWords] = useState([]); // 클릭한 단어 배열
+    const [categoryWorning, setCategoryWorning] = useState(false); // 클릭한 단어 배열
     const [isCrop, setIsCrop] = useState(false);
     const [inputImage, setInputImage] = useState(null); // 유저가 첨부한 이미지
     const [imgUrl, setImgUrl] = useState(null);
@@ -80,10 +81,16 @@ function MentoringCreate() {
     };
 
     const handleWordClick = (word) => {
+
         const wordIndex = words.indexOf(word);
         if (selectedWords.includes(wordIndex)) {
             setSelectedWords(prevWords => prevWords.filter(w => w !== wordIndex));
+            if(categoryWorning){setCategoryWorning(false)}
         } else {
+            if (selectedWords.length === 3) {
+                setCategoryWorning(true)
+                return
+            }
             setSelectedWords(prevWords => [...prevWords, wordIndex]);
         }
     };
@@ -121,7 +128,7 @@ function MentoringCreate() {
                         htmlFor="imageUpload"
                         className='btn-area'
                     >
-                       사진 업로드
+                        사진 업로드
                     </label>
                     <input
                         id="imageUpload"
@@ -158,12 +165,18 @@ function MentoringCreate() {
                 <div className='selectSubject'>
                     <hr />
                     <div>카테고리 선택(최대 3개)</div>
+                    {categoryWorning&& <div style={{
+                        color: 'red',
+                        fontWeight: '600',
+                    }}>카테고리는 최대 3개까지 가능합니다.</div>}
                     {words.map((word, index) => (
-                        <span
+                        <span 
                             key={index}
                             style={{
-                                color: selectedWords.includes(index) ? 'blue' : 'gray',
-                                marginRight: index % 3 === 2 ? '10px' : '5px'
+                                color: selectedWords.includes(index) ? 'black' : 'gray',
+                                fontWeight: selectedWords.includes(index) ? '700' : '',
+                                marginRight: index % 3 === 2 ? '10px' : '5px',
+                                cursor:'pointer'
                             }}
                             onClick={() => { handleWordClick(word) }}>
                             #{word}
