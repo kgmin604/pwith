@@ -66,7 +66,13 @@ function MentoringCreate() {
                 })
                 .catch((error) => {
                     console.error(error);
-                    alert("요청을 처리하지 못했습니다.");
+                    if(error.response.status===400){
+                        alert(`${user.name}님의 포트폴리오가 이미 존재합니다.`);
+                    }else if(error.response.status===404){
+                        alert(`내용을 모두 입력해주세요.`);
+                    }else{
+                        alert("요청을 처리하지 못했습니다.");
+                    }
                 });
         })
     }
@@ -96,8 +102,17 @@ function MentoringCreate() {
     };
 
     function checkTitle() {
-        portfolio['title'] === "" || portfolio['content'] === "" ? alert("제목 또는 내용을 입력해주세요.") :
-            postPortfolio();
+        if(portfolio['title'] === "" || portfolio['content'] === "" ){
+            alert("제목 또는 내용을 입력해주세요.") 
+            return
+        }else if(selectedWords.length===0){
+            alert("카테고리를 선택해주세요.") 
+            return 
+        }else if(!cropperRef?.current){
+            alert("사진을 업로드 해주세요.") 
+            return
+        }
+        postPortfolio();
     }
 
     const getValue = e => {

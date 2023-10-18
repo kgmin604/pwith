@@ -100,13 +100,18 @@ function MentoringMain() {
 
 function Category({ myPortfolio }) {
     const user = useSelector((state) => state.user);
+    const checkPortfolio=()=>{
+        if(myPortfolio){
+            alert("포트폴리오가 이미 존재합니다.\n관리탭을 이용해주세요")
+        }
+    }
     return <>
         <h5>Mentoring</h5>
         <hr style={{ width: '60%', margin: '0 auto' }} />
         <Nav defaultActiveKey="#" className="flex-column">
             <Link to="#"><div style={{ color: '#282c34' }}>멘토링</div></Link>
-            <Link to={user.id === null ? '#' : `../mentoring/create`} ><div className={user.id === null ? 'disabled' : 'category'}>포트폴리오 작성</div></Link>
-            <Link to={user.id === null || !myPortfolio ? '#' : `../mentoring/${myPortfolio}`}><div className={user.id === null|| !myPortfolio? 'disabled' : 'category'}>포트폴리오 관리</div></Link>
+            <Link to={user.id === null || myPortfolio ? '#' : `../mentoring/create`} onClick={checkPortfolio} ><div className={user.id === null || myPortfolio ? 'disabled' : 'category'}>포트폴리오 작성</div></Link>
+            <Link to={user.id === null || !myPortfolio ? '#' : `../mentoring/${myPortfolio}`}><div className={user.id === null || !myPortfolio ? 'disabled' : 'category'}>포트폴리오 관리</div></Link>
         </Nav>
     </>
 }
