@@ -32,8 +32,8 @@ def writePortfolio(loginMember, new_token):
     brief = data['brief']
     content = data['content']
     tuition = data['tuition']
-    duration = data['duration']
     subjects = data['subject']
+    duration = 1 # TODO DB 컬럼 삭제 후 수정 (현재는 임시)
     if subjects == []:
         return {
             'status' : 404,
