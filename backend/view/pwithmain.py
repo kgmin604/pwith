@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from flask_login import current_user
 from backend.controller.study_mgmt import studyPost
 from backend.controller.mentor_mgmt import Portfolio
@@ -12,10 +12,18 @@ main_bp = Blueprint('pwithmain', __name__, url_prefix='')
 @login_required
 def chkLogin(loginMember, new_token):
 
+    isSocial = False
+    if request.cookies.get('provider') in ['GOOGLE', 'NAVER', 'KAKAO']:
+        isSocial = True
+
     return {
         'status': 200,
         'message': '로그인 상태',
-        'data': None
+        'data': {
+            'id': loginMember.memId,
+            'nickname': loginMember.nickname,
+            'isSocial': isSocial
+        }
     }
 
 @main_bp.route('/list', methods = ['GET'])
