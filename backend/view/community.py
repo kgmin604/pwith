@@ -1,7 +1,6 @@
 from flask import Flask, session, Blueprint, render_template, redirect, request, jsonify, url_for
 from datetime import datetime
 from backend.model.db_mongo import conn_mongodb
-from backend.model.db_mysql import conn_mysql
 from backend.controller.community_mgmt import QNAPost
 from backend.controller.replyQna_mgmt import ReplyQna
 from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage

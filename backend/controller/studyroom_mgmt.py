@@ -1,4 +1,3 @@
-from backend.model.db_mysql import conn_mysql
 from backend.controller import commit, selectAll, selectOne, commitAndGetId
 from backend.controller.member_mgmt import Member
 import json
