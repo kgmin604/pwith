@@ -28,7 +28,7 @@ def show():
         recStudy.append(rec)
         
     search = request.args.get('search')
-      
+    
     if int(search) == 0:        # 검색 x, 기본 값
 
         posts = []
@@ -49,17 +49,17 @@ def show():
         for i in range(int(page)):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
             studyList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
 
-        for i in range(len(posts)):
+        for i in range(len(studyList)):
             post = {
                 'id': i+1,
-                'studyId': posts[i][0],
-                'title': posts[i][1],
-                'writerId': posts[i][2],
-                'writerNick': findNickName(posts[i][2]),
+                'studyId':studyList[i][0],
+                'title':studyList[i][1],
+                'writerId':studyList[i][2],
+                'writerNick': findNickName(studyList[i][2]),
                 # 'image' : getProfileImage(current_user.id),
-                'curDate': posts[i][3],
-                'likes': posts[i][5],
-                'views': posts[i][6]
+                'curDate': studyList[i][3],
+                'likes': studyList[i][5],
+                'views': studyList[i][6]
             }
             post['curDate'] = mainFormattedDate(posts[i][3])
 
