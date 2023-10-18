@@ -1,4 +1,3 @@
-from backend.model.db_mysql import conn_mysql
 from backend.controller import commit, selectAll, selectOne, rollback
 from datetime import datetime
 from flask import Flask, jsonify

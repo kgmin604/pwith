@@ -1,6 +1,6 @@
 # __name__ = "backend"
 
-from flask import Flask, jsonify, Response, request
+from flask import Flask, jsonify, Response, request, redirect
 from flask_login import login_required as original_login_required
 from flask_login import LoginManager, current_user
 from flask_mail import Mail
@@ -41,6 +41,13 @@ def create_app() :
 
     @app.after_request
     def final_return(resp) :
+
+        # if resp.json.get('message') == 'redirect' : # redirect
+        #     url = resp.json.get('data')
+        #     print('REDIRECT!')
+        #     response = redirect(url)
+        #     response.headers['Access-Control-Allow-Origin'] = '*'
+        #     return response
 
         response = app.response_class(
             response = json.dumps({
