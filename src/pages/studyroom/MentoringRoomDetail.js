@@ -315,7 +315,7 @@ function MentoringRoomDetail() {
   // 소켓 통신하기
 
   useEffect(() => {
-    // socket = io('http://localhost:5000', {
+    // socket = io('http://localhost:5000/mentoring-ready', {
     //     cors: {
     //         origin: '*',
     //     },
