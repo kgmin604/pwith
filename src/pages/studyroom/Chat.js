@@ -8,9 +8,10 @@ import { useSelector } from "react-redux";
 import io from "socket.io-client";
 
 
-function Chat({ roomId,roomChat,setRoomChat, setShowChat, isClicked, handleDivClick }) {
+function Chat({ socketRef,roomId,roomChat,setRoomChat, setShowChat, isClicked, handleDivClick }) {
     const textRef = useRef();
-    const socketRef = useRef(null);
+    // const socketRef = useRef(null);
+
     const chatAreaRef = useRef(null);
     const [myChat, setMyChat] = useState("");
     let user = useSelector((state) => state.user);
@@ -30,50 +31,6 @@ function Chat({ roomId,roomChat,setRoomChat, setShowChat, isClicked, handleDivCl
         document.getElementById("chat-area").value = "";
         setMyChat("");
     }
-
-    function EnterRoom() {
-        let data = {
-            roomId: Number(roomId)
-        };
-        socketRef.current.emit("enter", data);
-    }
-
-    function LeaveRoom() {
-        let data = {
-            roomId: Number(roomId)
-        };
-        socketRef.current?.emit("leave", data);
-    }
-
-    useEffect(() => {
-        // socketRef.current = io('http://localhost:5000/live', {
-        //     cors: {
-        //         origin: '*',
-        //     },
-        //     transports: ["websocketRef.current"],
-        // });
-        socketRef.current = io("http://localhost:5000/live", {
-            cors: {
-                origin: "*",
-            },
-            transports: ["polling"],
-            autoConnect: false,
-        });
-        console.log("연결 시도");
-        socketRef.current.connect();
-
-        socketRef.current.on("connect", (data) => {
-            EnterRoom();
-            console.log("socket connected");
-        });
-        socketRef.current.on("sendFrom", (data) => {
-            setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
-        });
-        socketRef.current.on("disconnect", (data) => {
-            LeaveRoom();
-            console.log("socket disconnected")
-        });
-    }, []);
 
     // 스크롤 영역을 항상 아래로 스크롤하는 함수
     const scrollToBottom = () => {

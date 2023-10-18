@@ -22,10 +22,10 @@ let socket;
 
 function RoomDetail() {
 
-  // const chatAreaRef = useRef(null);
+  const chatAreaRef = useRef(null);
 
-  // let user = useSelector((state) => state.user);
-  // let navigate = useNavigate();
+  let user = useSelector((state) => state.user);
+  let navigate = useNavigate();
 
   let [roomInfo, setRoomInfo] = useState({
     id: 0,
@@ -35,14 +35,14 @@ function RoomDetail() {
     leader: "",
     members: [
       /*
-            {
-                "image": "",
-                "memId": "",
-                "nickname": ""
-            },
-            */
+        nickname : {
+            "image": "",
+            "memId": "",
+        },
+      */
     ],
   });
+  let [imgData, setImgData] = useState({});
 
   let [roomChat, setRoomChat] = useState([]);
   let [myChat, setMyChat] = useState("");
@@ -131,6 +131,24 @@ function RoomDetail() {
     }
   }
 
+  function requestOutRoom(event){
+    event.stopPropagation();
+
+    if (window.confirm("정말로 탈퇴하시겠습니까?")){
+      axios({
+        method: "DELETE",
+        url: `/study-room/${roomInfo.id}/out`,
+      })
+        .then(function (response) {
+          alert('탈퇴가 완료되었습니다.');
+          navigate('./..');
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+  }
+
   // 소켓 통신 함수
 
   function sendTo() {
@@ -157,6 +175,16 @@ function RoomDetail() {
     socket.emit("enter",data);
   }
 
+  function LeaveRoom(){
+    const url = window.location.href;
+    const part = url.split("/");
+    const RoomId = part[part.length - 1];
+    let data = {
+      roomId: Number(RoomId)
+    };
+    socket.emit("leave",data);
+  }
+
   // room data 받아오기
 
   useEffect(() => {
@@ -172,36 +200,42 @@ function RoomDetail() {
         setRoomInfo(response.data.data.room);
         setRoomChat(response.data.data.chat);
         setNewNotice(response.data.data.room.notice);
+
+        let tmp = {};
+        response.data.data.room.members.map((member,i)=>{
+          tmp[member.nickname] = member.image;
+        })
+        setImgData(tmp);
+        console.log(tmp);
       })
       .catch(function (error) {
-        console.log(error);
+        //console.log(error);
       });
+
+      return () => {
+        // 컴포넌트가 unmount될 때 실행될 코드
+        LeaveRoom();
+      };
   }, []);
 
-  // // 소켓 통신하기
+  // 소켓 통신하기
 
   useEffect(() => {
-    // websocket 방식 여기부터
     // socket = io('http://localhost:5000', {
     //     cors: {
     //         origin: '*',
     //     },
     //     transports: ["websocket"],
     // });
-    // 여기까지
-
-    // polling 방식 여기부터
-    socket = io("http://localhost:5000", {
+    socket = io("http://localhost:5000/study-ready", {
       cors: {
         origin: "*",
       },
       transports: ["polling"],
       autoConnect: false,
     });
-    socket.connect();
-    // 여기까지
-
     console.log("연결 시도");
+    socket.connect();
 
     socket.on("connect", (data) => {
       EnterRoom();
@@ -210,9 +244,12 @@ function RoomDetail() {
     socket.on("sendFrom", (data) => {
       setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
     });
+    socket.on("disconnect", (data)=>{
+      console.log("Socket disconnected")
+    });
   }, []);
 
-  // // 스크롤 영역을 항상 아래로 스크롤하는 함수
+  // 스크롤 영역을 항상 아래로 스크롤하는 함수
   const scrollToBottom = () => {
     if (chatAreaRef.current) {
       chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
@@ -232,11 +269,6 @@ function RoomDetail() {
       sendTo();
     }
   };
-
-  // 컴포넌트가 업데이트 될 때마다 스크롤을 아래로 이동
-  useEffect(() => {
-    scrollToBottom();
-  }, [roomChat]);
 
   return (
     <>
@@ -488,7 +520,7 @@ function RoomDetail() {
             </form>
           </>
         ) : null}
-                  </div>
+      </div>
     </>
   );
 }
