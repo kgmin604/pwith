@@ -15,11 +15,13 @@ from backend.controller.review_mgmt import Review
 
 mentoringroom_bp = Blueprint('mentoringRoom', __name__, url_prefix='/mentoring-room')
 
-tid = ''
-classes = -1
+tid = {}
+classes = {}
 @mentoringroom_bp.route('/<id>/pay', methods=['POST'])
 @login_required
 def payTuition(loginMember, new_token, id) : # 결제
+
+    global tid, classes
 
     info = MentoringRoom.findById(id)
 
@@ -41,13 +43,15 @@ def payTuition(loginMember, new_token, id) : # 결제
             'access_token' : new_token
         }
 
-    global classes
-    data = request.get_json()
-    classes = data['classes'] # 결제할 수업 횟수
+    cl = request.get_json()['classes'] # 결제할 수업 횟수
+    classes[loginMember.id] = cl
 
     cid = config.KAKAO_PAY_CID
     ready_url = config.KAKAO_PAY_READY
     admin_key = config.KAKAO_PAY_ADMIN_KEY
+    success_url = config.KAKAO_PAY_SUCCESS.format(id)
+    cancel_url = config.KAKAO_PAY_CANCEL.format(id)
+    fail_url = config.KAKAO_PAY_FAIL.format(id)
 
     res = requests.post(
         ready_url,
@@ -55,37 +59,37 @@ def payTuition(loginMember, new_token, id) : # 결제
             'Authorization' : f'KakaoAK {admin_key}',
             'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
         },
-        data = dict( ##
+        data = dict(
             cid = cid,
-            partner_order_id = '1018',
-            partner_user_id = 'test_user',
-            item_name = '멘토링 수업료',
+            partner_order_id = '1018', ## TODO 수정
+            partner_user_id = loginMember.id,
+            item_name = f'{findNickName(room.mento)} 멘토링 수업료',
             quantity = '1',
-            total_amount = classes * portfolio.tuition,
             tax_free_amount = 0,
-            approval_url = f'http://localhost:3000/mentoring-room/{id}/pay/success',
-            cancel_url = f'http://localhost:3000/mentoring-room/{id}/pay/cancel',
-            fail_url = f'http://localhost:3000/mentoring-room/{id}/pay/fail'
+            total_amount = cl * portfolio.tuition,
+            approval_url = success_url,
+            cancel_url = cancel_url,
+            fail_url = fail_url
         )
     ).json()
-    print(res)
-    global tid
-    tid = res['tid']
+
+    # print(res)
+    tid[loginMember.id] = res['tid']
+
     redirect_url = res['next_redirect_pc_url']
-    print(tid)
-    print(redirect_url)
     
     return {
-        'data': redirect_url # 프론트에서 결제 페이지로 리다이렉트
+        'pay_url': redirect_url
     }
 
 @mentoringroom_bp.route('/<id>/pay/success', methods=['GET'])
 @login_required
 def paySuccess(loginMember, new_token, id):
 
+    global tid, classes
+
     pg_token = request.args.get('pg_token') # 없으면 ?
 
-    global tid
     cid = config.KAKAO_PAY_CID
     admin_key = config.KAKAO_PAY_ADMIN_KEY
     approve_url = config.KAKAO_PAY_APPROVE
@@ -98,20 +102,24 @@ def paySuccess(loginMember, new_token, id):
         },
         data = dict(
             cid = cid,
-            tid = tid,
-            partner_order_id = '1018',
-            partner_user_id = 'test_user',
+            tid = tid.get(loginMember.id, ''),
+            partner_order_id = '1018', ## TODO update
+            partner_user_id = loginMember.id,
             pg_token = pg_token
         )
     ).json()
-    print(res)
+    # print(res)
 
     # if res ~~~~ 결제 성공하면 수업 횟수 늘리기
-    global classes
-    MentoringRoom.updateLessonCnt(id, classes)
+    MentoringRoom.updateLessonCnt(id, classes.get(loginMember.id, 0))
 
+    del tid[loginMember.id]
+    del classes[loginMember.id]
+
+    # TODO 예외 처리
+    
     return {
-        'data': res
+        'data': None
     }
 
 # TODO 환급할 때마다 mr.refund_cnt += 환급 횟수
