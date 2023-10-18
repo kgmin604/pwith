@@ -31,9 +31,8 @@ def showList(loginMember, new_token):     # 1:1 채팅 목록 가져오기
             'date' : chats[4]
         }
         chatting_data['date'] = formatDateToString(chats[4])
-        
         msgList.append(chatting_data)
-    #print(chatlist)
+    print(chatting_data)
     return {
             'data': msgList,
             'access_token' : new_token
@@ -86,17 +85,16 @@ def showAllChat(loginMember, new_token):     #전체 채팅목록 가져오기 (
     chat_data = []
     chattings = chat.getAllChat(postMemId)
 
-    print(chattings)
     for chatting in chattings:
         chatting_data = {
-            'nickname': findNickName((chatting[1])),
-            'content': chatting[2],
-            'date': chatting[3]
+            'nickname': findNickName((chatting[0])),
+            'content': chatting[1],
+            'date': chatting[2]
         }
         #print(chatting_data)
-        chatting_data['date'] = formatDateToString(chatting[3])  #date 출력 형식 변경
+        chatting_data['date'] = formatDateToString(chatting[2])  #date 출력 형식 변경
         chat_data.append(chatting_data)
-    print(chat_data)
+    # print(chat_data)
     return {
             'data' : chat_data,
             'access_token' : new_token
