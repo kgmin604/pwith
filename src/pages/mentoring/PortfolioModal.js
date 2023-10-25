@@ -6,7 +6,7 @@ import { Button } from "react-bootstrap";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-
+import MDEditor from '@uiw/react-md-editor';
 
 const subjectPairs = {
     '0': '웹개발',
@@ -27,10 +27,16 @@ function PortfolioModal(props) {
     const user = useSelector((state) => state.user);
     const [isDisabled, setIsDisabled] = useState(user.id === null);
     const [portfolio, setPortfolio] = useState({})
+    const classes = [1, 2, 4, 8]
+    const [selectedClass, setSelectedClass] = useState(1);
     const id = props.id
     const onClickExit = () => {
         setShowModal(false)
     }
+    const handleClassChange = (e) => {
+        setSelectedClass(parseInt(e.target.value, 10));
+    };
+
     useEffect(() => {
         axios({
             method: "GET",
@@ -47,6 +53,9 @@ function PortfolioModal(props) {
         axios({
             method: "POST",
             url: `/mentoring/${id}/apply`,
+            data:{
+                classes:classes
+            }
         })
             .then(function (response) {
                 if (response.status === 200) {
@@ -76,10 +85,18 @@ function PortfolioModal(props) {
                     ))}
                 </div>
                 <hr />
-                <div>{portfolio.content}</div>
+                <MDEditor.Markdown
+                    style={{ padding: 10 }}
+                    source={portfolio.content}
+                />
             </div>
             <div className="bottom">
-                <div className="price">1회 멘토링 : {portfolio.duration}시간 / {portfolio.tuition}원</div>
+                <div className="price">1회 멘토링 : {portfolio.tuition}원</div>
+                <div className="classes">횟수 선택: <fieldset>{classes.map((item) => <div className="classes-button" key={item} ><label >
+                    <input type="radio" name="item" value={item} defaultchecked={item === 1} onChange={handleClassChange} />
+                    <span>{item}회</span>
+                </label></div>)}</fieldset>
+                </div>
                 <Button variant="blue" className="joinBtn" onClick={onClickJoinBtn} disabled={isDisabled}>신청하기</Button>
             </div>
 
