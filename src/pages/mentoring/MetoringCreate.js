@@ -35,12 +35,12 @@ function MentoringCreate() {
     const [inputImage, setInputImage] = useState(null); // 유저가 첨부한 이미지
     const [imgUrl, setImgUrl] = useState(null);
     const cropperRef = useRef(null); // react-cropper 컴포넌트를 참조
+    const tuitionCheck = /^[0-9]+$/; 
     const [portfolio, setPortfolio] = useState({
         subject: [],
         brief: '',
         content: '',
         tuition: 20000,
-        duration: 1,
     })
 
     function postPortfolio() {
@@ -57,7 +57,6 @@ function MentoringCreate() {
                 'brief': portfolio.brief,
                 'content': portfolio.content,
                 'tuition': portfolio.tuition,
-                'duration': portfolio.duration,
             }));
             axios.post('/mentoring', formData)
                 .then((response) => {
@@ -110,6 +109,8 @@ function MentoringCreate() {
             return 
         }else if(!cropperRef?.current){
             alert("사진을 업로드 해주세요.") 
+            return
+        }else if(!tuitionCheck.test(portfolio.tuition)){
             return
         }
         postPortfolio();
@@ -201,8 +202,8 @@ function MentoringCreate() {
 
                 <div className='selectPrice'>
                     1회당 가격:
-                    <input className="duration-input" type='text' placeholder="1" onChange={getValue} name='duration' />시간 /
                     <input className="tuition-input" type='text' placeholder="20000" onChange={getValue} name='tuition' />원
+                    {!tuitionCheck.test(portfolio.tuition)&&portfolio.tuition&&<div className='tuition-check'>숫자만 입력해주세요</div>}
                 </div>
 
                 <Button className="submit-button" variant="blue" style={{ margin: "5px" }}
