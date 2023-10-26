@@ -57,6 +57,7 @@ import CommunityContent from "./pages/community/CommunityContent";
 import QnaCreate from "./pages/community/QnaCreate";
 import QnaPost from "./pages/community/QnaPost";
 import PortfolioManage from "./pages/mentoring/PortfolioManage";
+import { WebSocketProvider } from "./hooks/WebsocketHooks";
 
 function App() {
   let navigate = useNavigate();
@@ -138,7 +139,7 @@ function App() {
   }
 
   return (
-    <>
+    <WebSocketProvider>
       <div className="wrap">
         {!isStudyRoomPath && (
           <div className="top-area">
@@ -562,7 +563,7 @@ function App() {
           </div>
         </div>
       )}
-    </>
+    </WebSocketProvider>
   );
 }
 export default App;
