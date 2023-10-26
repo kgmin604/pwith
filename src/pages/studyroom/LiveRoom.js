@@ -6,7 +6,7 @@ import { faMicrophone } from "@fortawesome/free-solid-svg-icons/faMicrophone";
 import { faMicrophoneSlash } from "@fortawesome/free-solid-svg-icons/faMicrophoneSlash";
 import { faVideo } from "@fortawesome/free-solid-svg-icons/faVideo";
 import { faVideoSlash } from "@fortawesome/free-solid-svg-icons/faVideoSlash";
-import { faComment } from "@fortawesome/free-solid-svg-icons";
+import { faComment, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { faCode } from "@fortawesome/free-solid-svg-icons";
 import { io } from 'socket.io-client';
@@ -29,6 +29,7 @@ import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/src-noconflict/ace";
 import "ace-builds/src-noconflict/ext-language_tools";
 import 'ace-builds/webpack-resolver';
+import axios from "axios";
 
 
 const pc_config = {
@@ -57,6 +58,9 @@ const LiveRoom = () => {
     const [isClicked, setIsClicked] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState('');
     const [clickedUser, setClickedUser] = useState({})
+    const [bardText, setBardText] = useState('');
+    const [bardAnswer, setBardAnswer] = useState('');
+
 
     const user = useSelector((state) => state.user);
     const roomId = useParams().id;
@@ -172,6 +176,25 @@ const LiveRoom = () => {
             sender: user.name,
         };
         flaskSocketRef.current?.emit("codeSend", data);
+    }
+
+    const askBard=()=>{
+        console.log(bardText)
+        if(!bardText)return
+        axios({
+            method: "POST",
+            url: `/study-room/${roomId}/code-bard`,
+            data:{
+                text:bardText
+            }
+        })
+            .then(function (response) {
+                setBardAnswer(response.data.data.answer);
+                console.log(response.data.data.answer)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
     useEffect(() => {
         socketRef.current = io.connect(SOCKET_SERVER_URL);
@@ -403,10 +426,11 @@ const LiveRoom = () => {
                 </div>
                 {isCodeOn && <div className="ask-bard">
                     <div className="header">
-                        <div>바드에게 질문하기</div>
                         <FontAwesomeIcon icon={faXmark} onClick={() => { setIsCodeOn(false) }} />
                     </div>
-                    <textarea />
+                    <textarea value={bardText} placeholder="바드에게 질문하기"
+                        onChange={(e) => setBardText(e.target.value)} />
+                    <div class="submit-button" onClick={() => {askBard()}}><FontAwesomeIcon icon={faPaperPlane} color="white" size="2x" /></div>
                 </div>}
             </div>
 
