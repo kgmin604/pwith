@@ -17,8 +17,8 @@ import { faVideo } from "@fortawesome/free-solid-svg-icons/faVideo";
 import { faVideoSlash } from "@fortawesome/free-solid-svg-icons/faVideoSlash";
 import { faPencil } from "@fortawesome/free-solid-svg-icons/faPencil";
 import { faStar } from "@fortawesome/free-solid-svg-icons/faStar";
+import { useWebSocket } from "../../hooks/WebsocketHooks";
 
-let socket;
 
 function MentoringRoomDetail() {
   
@@ -55,7 +55,8 @@ function MentoringRoomDetail() {
   let [isCameraOn, setIsCameraOn] = useState(false);
   let [isOn, setIsOn] = useState(false);
   let [isChange, setIsChange] = useState(false);
-
+ /********************* 웹소켓  *********************/
+  const socket = useWebSocket('mentoringReady');
 
   /********************* 추가 결제 관리 *********************/
   let [isPay, setIsPay] = useState(false);
@@ -68,6 +69,12 @@ function MentoringRoomDetail() {
     event.stopPropagation();
     setIsPay(false);
   }
+
+  
+
+
+  
+
 
   function payment(e, classes) {
     e.stopPropagation();
@@ -386,13 +393,13 @@ function MentoringRoomDetail() {
     //     },
     //     transports: ["websocket"],
     // });
-    socket = io("http://localhost:5000/mentoring-ready", {
-      cors: {
-        origin: "*",
-      },
-      transports: ["polling"],
-      autoConnect: false,
-    });
+    // socket = io("http://localhost:5000/mentoring-ready", {
+    //   cors: {
+    //     origin: "*",
+    //   },
+    //   transports: ["polling"],
+    //   autoConnect: false,
+    // });
 
     socket.connect();
 
@@ -406,7 +413,7 @@ function MentoringRoomDetail() {
     socket.on("disconnect", (data)=>{
       console.log("Socket disconnected")
     });
-  }, []);
+  }, [socket]);
 
   /********************* 데이터 받아오기 *********************/
 
