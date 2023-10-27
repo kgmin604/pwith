@@ -64,7 +64,9 @@ def payTuition(loginMember, new_token, id) : # 결제
     redirect_url = response['next_redirect_pc_url']
     
     return {
-        'pay_url': redirect_url,
+        'data': {
+            'pay_url': redirect_url
+        },
         'access_token': new_token
     }
 
@@ -93,7 +95,8 @@ def paySuccess(loginMember, new_token, id):
     del classes[loginMember.id]
 
     return {
-        'data': None
+        'data': None,
+        'access_token': new_token
     }
 
 # TODO 환급할 때마다 mr.refund_cnt += 환급 횟수
