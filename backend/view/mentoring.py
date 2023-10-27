@@ -232,6 +232,14 @@ def applyMentoring(loginMember, new_token, id) :
     mentiId = loginMember.id
     mentoId = Portfolio.findMentoById(id)
 
+    if mentiId == mentoId:
+        return {
+            'status' : 404,
+            'message' : '신청 대상 아님',
+            'data' : None,
+            'access_token' : new_token
+        }
+
     mentiNick = loginMember.nickname
     mentoNick = Member.findById(mentoId).nickname
 
@@ -239,12 +247,16 @@ def applyMentoring(loginMember, new_token, id) :
 
     roomId = MentoringRoom.save(roomName, datetime.now(), mentoId, mentiId, id)
 
-    # 2. 멘토링룸 링크 생성
+    # 2. 결제
+    class_cnt = request.get_json()['classes']
+
+
+    # 3. 멘토링룸 링크 생성
     url = "http://localhost:3000/mentoringroom/" + str(roomId)
 
-    # 3. 쪽지 전송
+    # 4. 쪽지 전송
     menticontent = f"{url}\n다음 스터디룸으로 입장해주세요."
-    mentocontent = f"[{mentiNick}]님이 멘토링을 신청하셨습니다.\n수락하시겠습니까?"
+    mentocontent = f"[{mentiNick}]님이 멘토링을 신청하셨습니다."
     
     done = chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
     done = chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
