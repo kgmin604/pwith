@@ -431,7 +431,7 @@ const LiveRoom = () => {
                 </div>}
             </div>
 
-            {/* {showChat && <Chat socketRef={flaskSocketRef} roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />} */}
+            {showChat && <Chat roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />}
 
 
             <div className="control-bar-wrapper">

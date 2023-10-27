@@ -583,3 +583,39 @@ div.pay-nums
 .pay-num:hover{
     background-color: lightgray;
 }
+
+.payback-item{
+    display: flex;
+    margin: 5px 0;
+    padding: 0 0;
+    height: 30px;
+}
+
+.payback-item
+h4{
+    width: 130px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: medium;
+}
+
+p.payback-items{
+    margin: 30px 0;
+}
+
+p.payback-items div.payback-item
+input{
+    width: 200px;
+    height: 30px;
+    font-size: medium;
+    border-radius: 3px;
+    border: gray 1.5px solid;
+}
+
+p.payback-items div.payback-item
+span{
+    height: 30px;
+    line-height: 30px;
+    margin: 0 5px;
+}

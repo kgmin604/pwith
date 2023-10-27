@@ -21,28 +21,24 @@ export function WebSocketProvider({ children }) {
             cors: {
                 origin: "*",
             },
-            transports: ["polling"],
             autoConnect: false,
         });
         const mentoringReady = io("http://localhost:5000/mentoring-ready", {
             cors: {
                 origin: "*",
             },
-            transports: ["polling"],
             autoConnect: false,
         });
         const studyLive = io("http://localhost:5000/study-live", {
             cors: {
                 origin: "*",
             },
-            transports: ["polling"],
             autoConnect: false,
         });
         const mentoringLive = io("http://localhost:5000/mentoring-live", {
             cors: {
                 origin: "*",
             },
-            transports: ["polling"],
             autoConnect: false,
         });
 

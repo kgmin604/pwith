@@ -18,6 +18,7 @@ import { faVideoSlash } from "@fortawesome/free-solid-svg-icons/faVideoSlash";
 import { faPencil } from "@fortawesome/free-solid-svg-icons/faPencil";
 import { faStar } from "@fortawesome/free-solid-svg-icons/faStar";
 import { useWebSocket } from "../../hooks/WebsocketHooks";
+import { stopPropagation } from "ace-builds/src-noconflict/ace";
 
 
 function MentoringRoomDetail() {
@@ -55,8 +56,49 @@ function MentoringRoomDetail() {
   let [isCameraOn, setIsCameraOn] = useState(false);
   let [isOn, setIsOn] = useState(false);
   let [isChange, setIsChange] = useState(false);
+
  /********************* 웹소켓  *********************/
   const socket = useWebSocket('mentoringReady');
+
+  /********************* 정산 관리 *********************/
+  let [paybackOpen, setPaybackOpen] = useState(false);
+  let [paybackData, setPaybackData] = useState({
+    'bank':'',
+    'account':'',
+    'refund': 0
+  });
+  let handlePaybackModal = (event) => {
+    event.stopPropagation();
+    setPaybackOpen(!paybackOpen);
+  }
+  function inputPaybackData(e){
+    e.stopPropagation();
+    let copy = {...paybackData};
+    copy[e.target.id] = e.target.value;
+    setPaybackData(copy);
+  }
+  function requestPayback(e){
+    e.stopPropagation();
+    if(paybackData.account==='' || paybackData.bank===''){
+      alert('정보를 전부 입력해주세요.');
+      return;
+    }
+    if(paybackData.refund <= 0){
+      alert("정산받을 수업 수가 유효하지 않습니다.");
+      return;
+    }
+    if(paybackData.refund > (numData.menti-numData.refund)){
+      alert(`정산받을 수 있는 수업 수는 최대 ${(numData.menti-numData.refund)}회 입니다.`);
+      return;
+    }
+
+    if (window.confirm("입력한 정보가 맞습니까?")){
+      // axios 요청 추가하기
+      alert("환급 요청이 완료되었습니다. 2~3일 내 해당 계좌로 수업료가 입금될 예정입니다.");
+      // window.location.reload(); // 페이지 새로고침 -> 주연 예외처리 후
+      setPaybackOpen(false); // 임시
+    }
+  }
 
   /********************* 추가 결제 관리 *********************/
   let [isPay, setIsPay] = useState(false);
@@ -662,8 +704,9 @@ function MentoringRoomDetail() {
                   </div>
                   <div className="review-btn-container">
                   {
+                    roomInfo.id === 0 ? null :
                     roomInfo.mento.nickname === user.name ? 
-                    <div className="review-btn no-drag" onClick={(e)=>e.stopPropagation()}>
+                    <div className="review-btn no-drag" onClick={(e)=>handlePaybackModal(e)}>
                       정산 요청하기
                     </div>
                     :
@@ -690,80 +733,46 @@ function MentoringRoomDetail() {
                   } 
                   </div>
                 </div>
-
                 {
-                    open === true ?
-                        <>
-                            <div className="modal-wrap"></div>
-                            {
-
-                            }
-                            <form method='POST'>
-                              <div className="modal">
-                                <a title="닫기" className="close" onClick={(e)=>handleModal(e)}>X</a>
-                                <h3>{`${reviewType === 0 ? "리뷰 작성하기" : "작성한 리뷰"}`}</h3>
-                                <div className="star-items">
-                                {[1,2,3,4,5].map((a, idx) => {
-                                  if(a <= reviewStar){
-                                    return (
-                                      <div key={idx}>
-                                        <FontAwesomeIcon 
-                                          icon={faStar} 
-                                          style={{color: "#fcc419",}}
-                                          onClick={(e) => { e.stopPropagation(); if(reviewType===0) setReviewStar(a); }}
-                                        />
-                                      </div>
-                                    );
-                                    }else{
-                                      return (
-                                        <div key={idx}>
-                                          <FontAwesomeIcon 
-                                            icon={faStar} 
-                                            style={{color: "#b5b5b5",}}
-                                            onClick={(e) => {e.stopPropagation(); if(reviewType===0) setReviewStar(a); }}
-                                          />
-                                        </div>
-                                      );}})}
-                                    <span>{`(${reviewStar}점)`}</span>
-                                  </div>
-                                    <p>
-                                    {
-                                    reviewType === 0 ?
-                                      <form><textarea
-                                        name="message"
-                                        className="text"
-                                        placeholder="내용 입력"
-                                        onChange={e => {e.stopPropagation(); setNewContent(e.target.value); }}>
-                                      </textarea></form>
-                                      :
-                                      <div className="review-text">
-                                        {review.content}
-                                      </div>
-                                    }
-                                    </p>
-                                    <input
-                                        type="button"
-                                        value={`${reviewType === 0 ? "등록하기":"다시쓰기"}`}
-                                        className="button"
-                                        onClick={e => {
-                                          writeReview(e);
-                                        }}
-                                    ></input>
-                                    {
-                                    reviewType === 1 ? 
-                                    <div 
-                                      className="review-delete-btn"
-                                      onClick={e=>deleteReview(e)}
-                                    >리뷰 삭제하기</div> 
-                                    : null
-                                    }
-                                </div>
-                            </form>
-                        </>
-                        :
-                        null
+                  paybackOpen === true ? /* 정산 요청 모달 */
+                  <>
+                    <div className="modal-wrap"></div>
+                    <form method='POST'>
+                    <div className="modal" style={{'height':'280px'}}>
+                      <a title="닫기" className="close" onClick={(e)=>handlePaybackModal(e)}>X</a>
+                      <h3>정산 요청하기</h3>
+                      <p className="payback-items">
+                        <div className="payback-item">
+                          <h4>은행</h4>
+                          <input id="bank" onChange={e=>inputPaybackData(e)}></input>
+                        </div>
+                        <div className="payback-item">
+                          <h4>계좌번호</h4>
+                          <input id="account" onChange={e=>inputPaybackData(e)}></input>
+                        </div>
+                        <div className="payback-item">
+                          <h4>정산받을 수업</h4>
+                          <input 
+                            id="refund" 
+                            onChange={e=>inputPaybackData(e)}
+                            type="number"
+                            style={{'width':'50px'}}
+                          ></input>
+                          <span>회 / {(numData.menti - numData.refund)}회</span>
+                        </div>
+                      </p>
+                      <input
+                        type="button"
+                        value="정산요청"
+                        className="button"
+                        onClick={ e=>requestPayback(e) }
+                      ></input>
+                    </div>
+                    </form>
+                  </>
+                  : null
                 }
-                
+
                 <div className="member-chat">
                   <h2 className="no-drag">Chatting</h2>
                   <hr style={{ margin: "0 0" }}></hr>
