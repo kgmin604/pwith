@@ -87,8 +87,10 @@ def showStudy():
             'contents' : contentsList
         }
         
+
 @main_bp.route('/alarm', methods = ['GET'])
-def showalarm():
+@login_required
+def showalarm(loginMember, new_token):
     # 알림창
     
     #chatAlarm 에서 memId = current_user.id 인 것 select
@@ -96,45 +98,39 @@ def showalarm():
     #qnaReplyAlarm 에서 memId = current_user.id 인 것 select
     #studyAlarm 에서 memId = current_user.id 인 것 select
     
-    memId = current_user.id
+    memId = loginMember.id
     
-    chat = alarm.getChatAlarm(memId)
-    studyReply = alarm.getStudyReplyAlarm(memId)
-    qnaReply = alarm.getQnaReplyAlarm(memId)
-    study = alarm.getStudyAlarm(memId)
     
-    totalAlarm = chat+studyReply+qnaReply+study
     post = []
     alarmList = []
+    alarmLists = []
     
-    print(totalAlarm)
-    print(chat)
-    print(studyReply)
+    alarmList = alarm.getAlarm(memId)
     
-    
-    
-    for row in totalAlarm:
+    print(alarmList)
+    for row in alarmList:
         print(row)
         post = {
             'id' : row['id'],
-            'type' : row['type'],
             'memId': row['memId'],
             'memNick' : findNickName(row['memId']),
             'oppId': row['oppId'],
             'oppNick' : findNickName(row['oppId']),
             'contentId' : row['contentId'],
+            'contentType': row['contentType'],
             'content' : row['content'],
             'reading' : row['reading']
         }
         
-        alarmList.append(post)
+        alarmLists.append(post)
         
         
+    # print(alarmList)
     
-    
-    #return{
-    #    'alarmList': alarmList
-    #}
+    return{
+       'data': alarmLists,
+       'access_token' : new_token
+    }
     
 @main_bp.route('/search', methods = ['GET'])      # 전체 검색
 def search():

@@ -4,6 +4,7 @@ from backend.controller.study_mgmt import studyPost
 from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.studyroom_mgmt import StudyRoom
 from backend.controller.member_mgmt import Member
+from backend.controller.alarm_mgmt import alarm
 from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage, nicknameToId
 from backend.view import login_required
 from datetime import datetime
@@ -142,7 +143,8 @@ def applyStudy(id,  loginMember, new_token ) :
     print(done)
     
     post = studyPost.findById(id) 
-    studyPost.insertStudyAlarm(post.writer, loginMember.id, roomId)
+    alarm.insertAlarm(post.writer, loginMember.id, roomId, 1)
+    print("studyRoom alarm")
 
     return {
         'data' : None,
@@ -273,7 +275,7 @@ def replyPost(studyId,  loginMember, new_token ) :        # 댓글 작성
         replyId = ReplyStudy.writeReply(writer, cnt, date, studyId)
         # studyReplyAlarm 에 추가
         post = studyPost.findById(studyId)
-        studyPost.insertReplyAlarm(post.writer, writer, replyId)
+        alarm.insertAlarm(post.writer, writer, replyId, 3)
         print("insert alarm")
         
     except Exception as ex:
