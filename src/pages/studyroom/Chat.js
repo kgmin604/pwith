@@ -6,12 +6,12 @@ import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { useState,useRef, useCallback ,useEffect} from "react";
 import { useSelector } from "react-redux";
 import io from "socket.io-client";
+import { useWebSocket } from "../../hooks/WebsocketHooks";
 
 
-function Chat({ socketRef,roomId,roomChat,setRoomChat, setShowChat, isClicked, handleDivClick }) {
+function Chat({ roomId,roomChat,setRoomChat, setShowChat, isClicked, handleDivClick }) {
     const textRef = useRef();
-    // const socketRef = useRef(null);
-
+    const studyLiveSocket = useWebSocket('studyLive');
     const chatAreaRef = useRef(null);
     const [myChat, setMyChat] = useState("");
     let user = useSelector((state) => state.user);
@@ -27,7 +27,7 @@ function Chat({ socketRef,roomId,roomChat,setRoomChat, setShowChat, isClicked, h
             message: myChat,
             sender: user.name,
         };
-        socketRef.current?.emit("send", data);
+        studyLiveSocket.emit("send", data);
         document.getElementById("chat-area").value = "";
         setMyChat("");
     }
