@@ -159,7 +159,6 @@ function App() {
                 className="btn pwith-logo"
                 onClick={(e) => {
                   e.stopPropagation();
-                  alert(user.name);
                   navigate("/");
                 }}
               ></div>
@@ -533,6 +532,7 @@ function App() {
             <Route path="commentlist" element={<CommentList />} />
             <Route path="chat" element={<Chat />} />
             <Route path="withdraw" element={<Withdraw />} />
+            <Route path="admin" element={<Withdraw />} /> {/* 변경 필요 */}
           </Route>
           <Route path="/oauth/callback/naver" element={<Auth />} />
           <Route path="/oauth/callback/google" element={<Auth />} />
