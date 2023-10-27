@@ -234,8 +234,8 @@ def applyMentoring(loginMember, new_token, id) :
 
     if mentiId == mentoId:
         return {
-            'status' : 404,
-            'message' : '신청 대상 아님',
+            'status' : 403,
+            'message' : '권한 없는 사용자',
             'data' : None,
             'access_token' : new_token
         }
