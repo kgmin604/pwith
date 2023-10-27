@@ -21,7 +21,12 @@ function Mypage(){
                     <li className="mypageList-btn" onClick={()=>navigate('./chat')}>쪽지함</li>
                     <li className="mypageList-btn" onClick={()=>navigate('./writinglist')}>내 글 목록</li>
                     <li className="mypageList-btn" onClick={()=>navigate('./commentlist')}>댓글 목록</li>
-                    <li className="mypageList-btn" onClick={()=>navigate('./withdraw')}>회원 탈퇴</li>
+                    {
+                        user.id==="admin"? 
+                        <li className="mypageList-btn" onClick={()=>navigate('./admin')}>관리하기</li>
+                        :
+                        <li className="mypageList-btn" onClick={()=>navigate('./withdraw')}>회원 탈퇴</li>
+                    }
                 </ul>
                 <div className="mypage-area"> 
                     <Outlet></Outlet>
