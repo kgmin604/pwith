@@ -149,6 +149,66 @@ def updateAccessToken(refresh_token, provider) :
 
     return resp.json().get('access_token')
 
+def payKakao(roomId, loginMember, item_name, total_tuition, isApply=False):
+
+    # TODO refactoring
+
+    cid = config.KAKAO_PAY_CID
+    ready_url = config.KAKAO_PAY_READY
+    admin_key = config.KAKAO_PAY_ADMIN_KEY
+
+    if isApply:
+        success_url = config.KAKAO_PAY_SUCCESS_APPLY.format(roomId)
+        cancel_url = config.KAKAO_PAY_CANCEL_APPLY.format(roomId)
+        fail_url = config.KAKAO_PAY_FAIL_APPLY.format(roomId)
+    else:
+        success_url = config.KAKAO_PAY_SUCCESS.format(roomId)
+        cancel_url = config.KAKAO_PAY_CANCEL.format(roomId)
+        fail_url = config.KAKAO_PAY_FAIL.format(roomId)
+
+    response = requests.post(
+        ready_url,
+        headers = {
+            'Authorization' : f'KakaoAK {admin_key}',
+            'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
+        },
+        data = dict(
+            cid = cid,
+            partner_order_id = '1000', ## TODO update
+            partner_user_id = loginMember.id,
+            item_name = item_name,
+            quantity = '1',
+            tax_free_amount = 0,
+            total_amount = total_tuition,
+            approval_url = success_url,
+            cancel_url = cancel_url,
+            fail_url = fail_url
+        )
+    ).json()
+    return response
+
+def payKakaoSuccess(loginMember, pg_token, tid):
+
+    cid = config.KAKAO_PAY_CID
+    admin_key = config.KAKAO_PAY_ADMIN_KEY
+    approve_url = config.KAKAO_PAY_APPROVE
+
+    response = requests.post(
+        approve_url,
+        headers = {
+            'Authorization' : f'KakaoAK {admin_key}',
+            'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
+        },
+        data = dict(
+            cid = cid,
+            tid = tid,
+            partner_order_id = '1000', ## TODO update
+            partner_user_id = loginMember.id,
+            pg_token = pg_token
+        )
+    ).json()
+    return response
+
 def formatDateToString(date): # 타입 변경 datetime -> string
     return datetime.strftime(date, "%Y-%m-%d %H:%M:%S")
 
