@@ -12,13 +12,15 @@ function MentoringRoomPaySuccess() {
 
     const location = useLocation();
     const currentPath = location.pathname;
+    const currentPathWithQuery = location.pathname + location.search;
+
     const regex = /\/mentoring-room\/\d+/;
     const result = currentPath.match(regex)[0];
 
     useEffect(() => {
         axios({
             method: "GET",
-            url: "/",
+            url: `${currentPathWithQuery}`,
         })
         .then(function (response) {
             alert("결제가 완료되었습니다.");

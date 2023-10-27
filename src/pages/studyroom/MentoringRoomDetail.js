@@ -55,8 +55,16 @@ function MentoringRoomDetail() {
   let [isCameraOn, setIsCameraOn] = useState(false);
   let [isOn, setIsOn] = useState(false);
   let [isChange, setIsChange] = useState(false);
+
  /********************* 웹소켓  *********************/
   const socket = useWebSocket('mentoringReady');
+
+  /********************* 정산 관리 *********************/
+  let [paybackOpen, setPaybackOpen] = useState(false);
+  let handlePaybackModal = (event) => {
+    event.stopPropagation();
+    setPaybackOpen(!paybackOpen);
+  }
 
   /********************* 추가 결제 관리 *********************/
   let [isPay, setIsPay] = useState(false);
@@ -662,8 +670,9 @@ function MentoringRoomDetail() {
                   </div>
                   <div className="review-btn-container">
                   {
+                    roomInfo.id === 0 ? null :
                     roomInfo.mento.nickname === user.name ? 
-                    <div className="review-btn no-drag" onClick={(e)=>e.stopPropagation()}>
+                    <div className="review-btn no-drag" onClick={(e)=>handlePaybackModal(e)}>
                       정산 요청하기
                     </div>
                     :
@@ -690,14 +699,80 @@ function MentoringRoomDetail() {
                   } 
                   </div>
                 </div>
-
                 {
-                    open === true ?
+                    paybackOpen === true ? /* 정산 요청 모달 */
                         <>
                             <div className="modal-wrap"></div>
-                            {
-
-                            }
+                            <form method='POST'>
+                              <div className="modal">
+                                <a title="닫기" className="close" onClick={(e)=>handlePaybackModal(e)}>X</a>
+                                <h3>{`${reviewType === 0 ? "리뷰 작성하기" : "작성한 리뷰"}`}</h3>
+                                <div className="star-items">
+                                {[1,2,3,4,5].map((a, idx) => {
+                                  if(a <= reviewStar){
+                                    return (
+                                      <div key={idx}>
+                                        <FontAwesomeIcon 
+                                          icon={faStar} 
+                                          style={{color: "#fcc419",}}
+                                          onClick={(e) => { e.stopPropagation(); if(reviewType===0) setReviewStar(a); }}
+                                        />
+                                      </div>
+                                    );
+                                    }else{
+                                      return (
+                                        <div key={idx}>
+                                          <FontAwesomeIcon 
+                                            icon={faStar} 
+                                            style={{color: "#b5b5b5",}}
+                                            onClick={(e) => {e.stopPropagation(); if(reviewType===0) setReviewStar(a); }}
+                                          />
+                                        </div>
+                                      );}})}
+                                    <span>{`(${reviewStar}점)`}</span>
+                                  </div>
+                                    <p>
+                                    {
+                                    reviewType === 0 ?
+                                      <form><textarea
+                                        name="message"
+                                        className="text"
+                                        placeholder="내용 입력"
+                                        onChange={e => {e.stopPropagation(); setNewContent(e.target.value); }}>
+                                      </textarea></form>
+                                      :
+                                      <div className="review-text">
+                                        {review.content}
+                                      </div>
+                                    }
+                                    </p>
+                                    <input
+                                        type="button"
+                                        value={`${reviewType === 0 ? "등록하기":"다시쓰기"}`}
+                                        className="button"
+                                        onClick={e => {
+                                          writeReview(e);
+                                        }}
+                                    ></input>
+                                    {
+                                    reviewType === 1 ? 
+                                    <div 
+                                      className="review-delete-btn"
+                                      onClick={e=>deleteReview(e)}
+                                    >리뷰 삭제하기</div> 
+                                    : null
+                                    }
+                                </div>
+                            </form>
+                        </>
+                        :
+                        null
+                }
+                
+                {
+                    open === true ? /* 리뷰 모달 */
+                        <>
+                            <div className="modal-wrap"></div>
                             <form method='POST'>
                               <div className="modal">
                                 <a title="닫기" className="close" onClick={(e)=>handleModal(e)}>X</a>
@@ -763,7 +838,7 @@ function MentoringRoomDetail() {
                         :
                         null
                 }
-                
+
                 <div className="member-chat">
                   <h2 className="no-drag">Chatting</h2>
                   <hr style={{ margin: "0 0" }}></hr>
