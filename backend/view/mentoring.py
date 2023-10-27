@@ -113,6 +113,10 @@ def showPortfolio(loginMember, new_token, id) :
             'access_token' : new_token
         }
 
+    mentoId = portfolio.mento
+    mentiId = loginMember.id
+    isJoining = MentoringRoom.existsByMentoMenti(mentoId, mentiId)
+
     result = {
         'mentoId' : portfolio[0],
         'mentoNick' : portfolio[1],
@@ -123,7 +127,8 @@ def showPortfolio(loginMember, new_token, id) :
         'duration' : portfolio[6],
         'isOpen' : portfolio[7],
         'score' : portfolio[8],
-        'subject' : list(map(int, portfolio[9].split(',')))
+        'subject' : list(map(int, portfolio[9].split(','))),
+        'isJoining' : isJoining
     }
 
     return {
