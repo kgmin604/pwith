@@ -3,6 +3,7 @@ from datetime import datetime
 from backend.model.db_mongo import conn_mongodb
 from backend.controller.community_mgmt import QNAPost
 from backend.controller.replyQna_mgmt import ReplyQna
+from backend.controller.alarm_mgmt import alarm
 from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage
 from backend.view import login_required
 
@@ -126,7 +127,7 @@ def show():     # 전체 글 출력
         
         for i in range(len(posts)):
             post = {
-                    'id' : i+1,
+                    'id' : ((int(page)-1)*10)+i+1,
                     'qnaId' : posts[i][0],
                     'title' : posts[i][1],
                     'writer' : findNickName(posts[i][2]),
@@ -172,7 +173,7 @@ def show():     # 전체 글 출력
             
             for i in range(len(posts)) :
                 post = {
-                    'id': i+1,
+                    'id': ((int(page)-1)*10)+i+1,
                     'qnaId' : posts[i][0],
                     'title' : posts[i][1],
                     'writer' : findNickName(posts[i][2]),
@@ -299,7 +300,7 @@ def replyPost(id, loginMember, new_token) :      # 댓글 작성
             # qnaReplyAlarm 에 추가
             post = QNAPost.findById(id)
             
-            QNAPost.insertReplyAlarm(post.__writer, writer, pk)
+            alarm.insertAlarm(post.__writer, writer, pk, 4)
             
         except Exception as ex:
             print("에러 이유 : " + str(ex))
