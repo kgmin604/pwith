@@ -70,12 +70,6 @@ function MentoringRoomDetail() {
     setIsPay(false);
   }
 
-  
-
-
-  
-
-
   function payment(e, classes) {
     e.stopPropagation();
     axios({
