@@ -198,6 +198,24 @@ class Portfolio() :
             return None
 
         return result[0]
+    
+    @staticmethod
+    def findByTitle(title) :
+        
+        sql = f"SELECT id, mento, brief FROM portfolio WHERE brief LIKE '%{title}%'"
+        
+        listP = selectAll(sql)
+        
+        return listP
+        
+    @staticmethod
+    def findByMento(mento) : 
+        
+        sql = f"SELECT portfolio.id, mento, brief FROM member, portfolio WHERE member.id = portfolio.mento and member.nickname LIKE '%{mento}%'"
+        
+        listP = selectAll(sql)
+        
+        return listP
 
     @staticmethod
     def getNmentoring() :
