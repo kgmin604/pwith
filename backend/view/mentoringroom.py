@@ -50,14 +50,6 @@ def payTuition(loginMember, new_token, id) : # 결제
     response = payKakao(id, loginMember, item_name, total_tuition)
     print(response)
 
-    if response.get('code', None):
-        return {
-            'status': 404,
-            'message': '결제 실패',
-            'data': None,
-            'access_token': new_token
-        }
-
     classes[loginMember.id] = class_cnt
     tids[loginMember.id] = response['tid']
 
@@ -84,7 +76,7 @@ def paySuccess(loginMember, new_token, id):
     if response.get('code', None):
         return {
             'status': 404,
-            'message': '결제 실패',
+            'message': '결제 승인 요청 실패',
             'data': None,
             'access_token': new_token
         }
