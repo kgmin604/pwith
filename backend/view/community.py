@@ -127,7 +127,7 @@ def show():     # 전체 글 출력
         
         for i in range(len(posts)):
             post = {
-                    'id' : i+1,
+                    'id' : ((int(page)-1)*10)+i+1,
                     'qnaId' : posts[i][0],
                     'title' : posts[i][1],
                     'writer' : findNickName(posts[i][2]),
@@ -173,7 +173,7 @@ def show():     # 전체 글 출력
             
             for i in range(len(posts)) :
                 post = {
-                    'id': i+1,
+                    'id': ((int(page)-1)*10)+i+1,
                     'qnaId' : posts[i][0],
                     'title' : posts[i][1],
                     'writer' : findNickName(posts[i][2]),

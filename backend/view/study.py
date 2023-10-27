@@ -52,7 +52,7 @@ def show():
 
         for i in range(len(studyList)):
             post = {
-                'id': i+1,
+                'id': ((int(page)-1)*10)+i+1,
                 'studyId':studyList[i][0],
                 'title':studyList[i][1],
                 'writerId':studyList[i][2],
@@ -113,7 +113,7 @@ def show():
                 
             for i in range(len(posts)) :
                 post = {
-                    'id' : i+1,
+                    'id' : ((page-1)*10)+i+1,
                     'studyId' : posts[i][0],
                     'title' : posts[i][1],
                     'writerId': posts[i][2],
