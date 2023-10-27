@@ -62,7 +62,7 @@ def payTuition(loginMember, new_token, id) : # 결제
         'access_token': new_token
     }
 
-@mentoringroom_bp.route('/<id>/pay/success', methods=['GET'])
+@mentoringroom_bp.route('/<id>/pay/success', methods=['GET']) # 결제 성공
 @login_required
 def paySuccess(loginMember, new_token, id):
 
