@@ -6,7 +6,7 @@ import { faMicrophone } from "@fortawesome/free-solid-svg-icons/faMicrophone";
 import { faMicrophoneSlash } from "@fortawesome/free-solid-svg-icons/faMicrophoneSlash";
 import { faVideo } from "@fortawesome/free-solid-svg-icons/faVideo";
 import { faVideoSlash } from "@fortawesome/free-solid-svg-icons/faVideoSlash";
-import { faComment } from "@fortawesome/free-solid-svg-icons";
+import { faComment, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { faCode } from "@fortawesome/free-solid-svg-icons";
 import { io } from 'socket.io-client';
@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import Video from "./Video";
 import Chat from "./Chat";
 import AceEditor from "react-ace";
+import { useWebSocket } from "../../hooks/WebsocketHooks";
 
 import "ace-builds/src-noconflict/mode-java";
 import "ace-builds/src-noconflict/mode-javascript";
@@ -29,6 +30,7 @@ import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/src-noconflict/ace";
 import "ace-builds/src-noconflict/ext-language_tools";
 import 'ace-builds/webpack-resolver';
+import axios from "axios";
 
 
 const pc_config = {
@@ -42,7 +44,7 @@ const pc_config = {
 const SOCKET_SERVER_URL = 'http://localhost:8080';
 const LiveRoom = () => {
     const socketRef = useRef();
-    const flaskSocketRef = useRef(null);
+    const studyLiveSocket = useWebSocket('studyLive');
     const pcsRef = useRef({});
     const textRef = useRef(null);
     const localVideoRef = useRef(null);
@@ -57,6 +59,9 @@ const LiveRoom = () => {
     const [isClicked, setIsClicked] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState('');
     const [clickedUser, setClickedUser] = useState({})
+    const [bardText, setBardText] = useState('');
+    const [bardAnswer, setBardAnswer] = useState('');
+
 
     const user = useSelector((state) => state.user);
     const roomId = useParams().id;
@@ -169,46 +174,38 @@ const LiveRoom = () => {
             roomId: Number(roomId),
             language: selectedLanguage,
             code: myCode.content,
-            sender: user.name,
+            sender: user.id,
         };
-        flaskSocketRef.current?.emit("codeSend", data);
+        studyLiveSocket?.emit("codeSend", data);
+    }
+
+    const askBard = () => {
+        console.log(bardText)
+        if (!bardText) return
+        axios({
+            method: "POST",
+            url: `/study-room/${roomId}/code-bard`,
+            data: {
+                text: bardText
+            }
+        })
+            .then(function (response) {
+                setBardAnswer(response.data.data.answer);
+                console.log(response.data.data.answer)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
     useEffect(() => {
         socketRef.current = io.connect(SOCKET_SERVER_URL);
-        // socketRef.current = io('http://localhost:5000/live', {
+        // studyLiveSocket = io("http://localhost:5000/study-live", {
         //     cors: {
-        //         origin: '*',
+        //         origin: "*",
         //     },
-        //     transports: ["websocketRef.current"],
+        //     transports: ["polling"],
+        //     autoConnect: false,
         // });
-        flaskSocketRef.current = io("http://localhost:5000/study-live", {
-            cors: {
-                origin: "*",
-            },
-            transports: ["polling"],
-            autoConnect: false,
-        });
-        flaskSocketRef.current.connect();
-
-        flaskSocketRef.current.on("connect", (data) => {
-            EnterRoom();
-            console.log("socket connected");
-        });
-        flaskSocketRef.current.on("codeUploadFrom", (data) => {
-            console.log(data)
-            setUsers(users => {
-                return users.map(user => {
-                    if (user.name === data.sender) {
-                        return { ...user, language: data.language, code: data.code };
-                    }
-                    return user;
-                });
-            });
-        });
-        flaskSocketRef.current.on("disconnect", (data) => {
-            LeaveRoom();
-            console.log("socket disconnected")
-        });
         getLocalStream();
 
         socketRef.current.on('all_users', (allUsers) => {
@@ -312,6 +309,29 @@ const LiveRoom = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [createPeerConnection, getLocalStream]);
 
+    useEffect(() => {
+        studyLiveSocket?.connect();
+        studyLiveSocket.on("connect", (data) => {
+            EnterRoom();
+            console.log("socket connected");
+        });
+        studyLiveSocket.on("codeUploadFrom", (data) => {
+            console.log(data)
+            setUsers(users => {
+                return users.map(user => {
+                    if (user.name === data.sender) {
+                        return { ...user, language: data.language, code: data.code };
+                    }
+                    return user;
+                });
+            });
+        });
+        studyLiveSocket.on("disconnect", (data) => {
+            LeaveRoom();
+            console.log("socket disconnected")
+        });
+    }, [studyLiveSocket])
+
     const onClickMike = async () => {
         if (!localVideoRef.current) return
         localVideoRef.current.srcObject
@@ -403,14 +423,15 @@ const LiveRoom = () => {
                 </div>
                 {isCodeOn && <div className="ask-bard">
                     <div className="header">
-                        <div>바드에게 질문하기</div>
                         <FontAwesomeIcon icon={faXmark} onClick={() => { setIsCodeOn(false) }} />
                     </div>
-                    <textarea />
+                    <textarea value={bardText} placeholder="바드에게 질문하기"
+                        onChange={(e) => setBardText(e.target.value)} />
+                    <div class="submit-button" onClick={() => { askBard() }}><FontAwesomeIcon icon={faPaperPlane} color="white" size="2x" /></div>
                 </div>}
             </div>
 
-            {showChat && <Chat socketRef={flaskSocketRef} roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />}
+            {/* {showChat && <Chat socketRef={flaskSocketRef} roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />} */}
 
 
             <div className="control-bar-wrapper">

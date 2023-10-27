@@ -18,7 +18,7 @@ import { faVideoSlash } from "@fortawesome/free-solid-svg-icons/faVideoSlash";
 import { faPencil } from "@fortawesome/free-solid-svg-icons/faPencil";
 import { faMessage } from "@fortawesome/free-solid-svg-icons/faMessage";
 
-let socket;
+import { useWebSocket } from "../../hooks/WebsocketHooks";
 
 function RoomDetail() {
 
@@ -59,6 +59,8 @@ function RoomDetail() {
   let [chatName, setChatName] = useState("");
   let [chatContent, setChatContent] = useState("");
   let [msg, setMsg] = useState("");
+
+  const socket = useWebSocket('studyReady');
 
   function handleMouseOver(event) {
     event.stopPropagation();
@@ -227,13 +229,13 @@ function RoomDetail() {
     //     },
     //     transports: ["websocket"],
     // });
-    socket = io("http://localhost:5000/study-ready", {
-      cors: {
-        origin: "*",
-      },
-      transports: ["polling"],
-      autoConnect: false,
-    });
+    // socket = io("http://localhost:5000/study-ready", {
+    //   cors: {
+    //     origin: "*",
+    //   },
+    //   transports: ["polling"],
+    //   autoConnect: false,
+    // });
     console.log("연결 시도");
     socket.connect();
 
@@ -247,7 +249,7 @@ function RoomDetail() {
     socket.on("disconnect", (data)=>{
       console.log("Socket disconnected")
     });
-  }, []);
+  }, [socket]);
 
   // 스크롤 영역을 항상 아래로 스크롤하는 함수
   const scrollToBottom = () => {

@@ -30,16 +30,17 @@ function MentoringCreate() {
     const [selectedFile, setSelectedFile] = useState(null);
     const words = ['웹개발', '모바일 앱 개발', '게임 개발', '프로그래밍 언어', '알고리즘 · 자료구조', '데이터베이스', '자격증', '개발 도구', '데이터 사이언스', '데스크톱 앱 개발', '교양 · 기타'];
     const [selectedWords, setSelectedWords] = useState([]); // 클릭한 단어 배열
+    const [categoryWorning, setCategoryWorning] = useState(false); // 클릭한 단어 배열
     const [isCrop, setIsCrop] = useState(false);
     const [inputImage, setInputImage] = useState(null); // 유저가 첨부한 이미지
     const [imgUrl, setImgUrl] = useState(null);
     const cropperRef = useRef(null); // react-cropper 컴포넌트를 참조
+    const tuitionCheck = /^[0-9]+$/; 
     const [portfolio, setPortfolio] = useState({
         subject: [],
         brief: '',
         content: '',
         tuition: 20000,
-        duration: 1,
     })
 
     function postPortfolio() {
@@ -56,7 +57,6 @@ function MentoringCreate() {
                 'brief': portfolio.brief,
                 'content': portfolio.content,
                 'tuition': portfolio.tuition,
-                'duration': portfolio.duration,
             }));
             axios.post('/mentoring', formData)
                 .then((response) => {
@@ -65,7 +65,13 @@ function MentoringCreate() {
                 })
                 .catch((error) => {
                     console.error(error);
-                    alert("요청을 처리하지 못했습니다.");
+                    if(error.response.status===400){
+                        alert(`${user.name}님의 포트폴리오가 이미 존재합니다.`);
+                    }else if(error.response.status===404){
+                        alert(`내용을 모두 입력해주세요.`);
+                    }else{
+                        alert("요청을 처리하지 못했습니다.");
+                    }
                 });
         })
     }
@@ -80,17 +86,34 @@ function MentoringCreate() {
     };
 
     const handleWordClick = (word) => {
+
         const wordIndex = words.indexOf(word);
         if (selectedWords.includes(wordIndex)) {
             setSelectedWords(prevWords => prevWords.filter(w => w !== wordIndex));
+            if(categoryWorning){setCategoryWorning(false)}
         } else {
+            if (selectedWords.length === 3) {
+                setCategoryWorning(true)
+                return
+            }
             setSelectedWords(prevWords => [...prevWords, wordIndex]);
         }
     };
 
     function checkTitle() {
-        portfolio['title'] === "" || portfolio['content'] === "" ? alert("제목 또는 내용을 입력해주세요.") :
-            postPortfolio();
+        if(portfolio['title'] === "" || portfolio['content'] === "" ){
+            alert("제목 또는 내용을 입력해주세요.") 
+            return
+        }else if(selectedWords.length===0){
+            alert("카테고리를 선택해주세요.") 
+            return 
+        }else if(!cropperRef?.current){
+            alert("사진을 업로드 해주세요.") 
+            return
+        }else if(!tuitionCheck.test(portfolio.tuition)){
+            return
+        }
+        postPortfolio();
     }
 
     const getValue = e => {
@@ -121,7 +144,7 @@ function MentoringCreate() {
                         htmlFor="imageUpload"
                         className='btn-area'
                     >
-                       사진 업로드
+                        사진 업로드
                     </label>
                     <input
                         id="imageUpload"
@@ -158,12 +181,18 @@ function MentoringCreate() {
                 <div className='selectSubject'>
                     <hr />
                     <div>카테고리 선택(최대 3개)</div>
+                    {categoryWorning&& <div style={{
+                        color: 'red',
+                        fontWeight: '600',
+                    }}>카테고리는 최대 3개까지 가능합니다.</div>}
                     {words.map((word, index) => (
-                        <span
+                        <span 
                             key={index}
                             style={{
-                                color: selectedWords.includes(index) ? 'blue' : 'gray',
-                                marginRight: index % 3 === 2 ? '10px' : '5px'
+                                color: selectedWords.includes(index) ? 'black' : 'gray',
+                                fontWeight: selectedWords.includes(index) ? '700' : '',
+                                marginRight: index % 3 === 2 ? '10px' : '5px',
+                                cursor:'pointer'
                             }}
                             onClick={() => { handleWordClick(word) }}>
                             #{word}
@@ -173,8 +202,8 @@ function MentoringCreate() {
 
                 <div className='selectPrice'>
                     1회당 가격:
-                    <input className="duration-input" type='text' placeholder="1" onChange={getValue} name='duration' />시간 /
                     <input className="tuition-input" type='text' placeholder="20000" onChange={getValue} name='tuition' />원
+                    {!tuitionCheck.test(portfolio.tuition)&&portfolio.tuition&&<div className='tuition-check'>숫자만 입력해주세요</div>}
                 </div>
 
                 <Button className="submit-button" variant="blue" style={{ margin: "5px" }}

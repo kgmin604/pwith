@@ -132,16 +132,6 @@
     margin-top: 20px;
 }
 
-.duration-input {
-    width: 50px;
-    height: 30px;
-    margin: 10px;
-    border: 1px solid #d1d1d1;
-    padding-left: 10px;
-    text-align: left;
-    color: gray;
-}
-
 .tuition-input {
     width: 80px;
     height: 30px;
@@ -150,6 +140,12 @@
     padding-left: 10px;
     text-align: left;
     color: gray;
+}
+
+.tuition-check {
+    font-size: 13px;
+    margin-top: -10px;
+    color: red;
 }
 
 .disabled {
@@ -192,21 +188,63 @@
 
 .card-subject>div {
     color: rgba(77, 78, 84, 1);
-    font-size: 12px;
+    font-size: 10px;
     font-style: normal;
     font-weight: 700;
     line-height: 20px;
     letter-spacing: -0.32px;
 }
 
-.mentoPic-area{
-margin-top: 20px;
-width: 100%;
+.mentoPic-area {
+    margin-top: 20px;
+    width: 100%;
 }
 
-.mentoPic-area > form {
+.mentoPic-area>form {
     cursor: pointer;
     width: 100px;
     margin: auto;
 
+}
+
+.classes {
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.classes>fieldset {
+    display: flex;
+    align-items: center;
+}
+
+.classes-button {
+    margin: 0px 5px;
+}
+
+[type="radio"] {
+    vertical-align: middle;
+    appearance: none;
+    border: max(2px, 0.1em) solid gray;
+    border-radius: 50%;
+    width: 1.25em;
+    height: 1.25em;
+}
+
+[type="radio"]:checked {
+    border: 0.4em solid rgb(152, 175, 202);
+}
+
+[type="radio"]:focus-visible {
+    outline: max(2px, 0.1em) dotted rgb(152, 175, 202);
+    outline-offset: max(2px, 0.1em);
+}
+
+[type="radio"]:hover {
+    box-shadow: 0 0 0 max(4px, 0.2em) lightgray;
+    cursor: pointer;
+}
+
+[type="radio"]:hover+span {
+    cursor: pointer;
 }

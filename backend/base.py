@@ -140,7 +140,7 @@ def sendMessage(data):
 @socketio.on("codeSend",namespace='/study-live')
 def sendCode(data):
     print("======SENDCODE live======")
-    print(data['code'])
+    print(data)
     roomId = data['roomId']
     language=data['language']
     code = data['code']
