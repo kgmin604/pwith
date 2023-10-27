@@ -2,6 +2,7 @@ import React from 'react';
 import axios from "axios";
 import "./member.css";
 import "./writinglist.css";
+import "./admin.css";
 import "../../assets/modal.css";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
@@ -895,4 +896,74 @@ function NameChange() {
     );
 }
 
-export { Account, WritingList, Chat, PwChange, Withdraw, CommentList, NameChange }
+function Admin() {
+
+    let user = useSelector((state) => state.user);
+    let navigate = useNavigate();
+    let [clickNum, setClickNum] = useState(0);
+
+    let [list, setList] = useState([
+        {id:1, title:'수업료 환급 요청', sender:'kkm5424' , date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
+        {id:2, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
+        {id:3, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: true, content:'우리은행 0000 3만원 환급요청합니다.'},
+        {id:4, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
+        {id:5, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
+        {id:6, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
+        {id:7, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
+        {id:8, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
+        {id:9, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
+        {id:10, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
+    ]);
+
+    useEffect(() => {
+        if(user.name !== '관리자'){
+            alert('비정상적 접근입니다.');
+            navigate('/');
+        }
+    }, []);
+
+    return (
+    <>
+        <h3 className="my-header">관리하기</h3>
+        <div className="admin-wrap scroll-area">
+            <div className="admin-items">
+                <div className="admin-header">
+                    <div className="admin-id">ID</div>
+                    <div className="admin-title">제목</div>
+                    <div className="admin-sender">송신자</div>
+                    <div className="admin-date">날짜</div>
+                    <div className="admin-check">처리여부</div>
+                </div>
+            {
+            list.length === 0 ? null :
+            list.map((item,i)=>{
+            return(
+                <>
+                <div className="admin-item" onClick={e=>{e.stopPropagation(); setClickNum(item.id);}}>
+                    <div className="admin-id">{item.id}</div>
+                    <div className="admin-title">{item.title}</div>
+                    <div className="admin-sender">{item.sender}</div>
+                    <div className="admin-date">{item.date}</div>
+                    <div className="admin-check">{`${item.check?'확인':'미확인'}`}</div>
+                </div>
+                {
+                    clickNum === item.id ?
+                    <div className="admin-content">
+                        {item.content}
+                        <br></br>
+                        {
+                            !item.check? <input className="admin-btn" type="button" value="확인"></input> : null
+                        }
+                    </div>
+                    : null
+                }
+                </>
+            );})
+            }
+            </div>
+        </div>
+    </>
+    );
+}
+
+export { Account, WritingList, Chat, PwChange, Withdraw, CommentList, NameChange, Admin }

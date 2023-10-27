@@ -44,6 +44,7 @@ import {
   PwChange,
   Withdraw,
   NameChange,
+  Admin,
 } from "./pages/member/mypageComp.js";
 import { HelpId, HelpPw, ResetPw } from "./pages/member/help.js";
 import { loginUser, clearUser } from "./store.js";
@@ -532,7 +533,7 @@ function App() {
             <Route path="commentlist" element={<CommentList />} />
             <Route path="chat" element={<Chat />} />
             <Route path="withdraw" element={<Withdraw />} />
-            <Route path="admin" element={<Withdraw />} /> {/* 변경 필요 */}
+            <Route path="admin" element={<Admin />} />
           </Route>
           <Route path="/oauth/callback/naver" element={<Auth />} />
           <Route path="/oauth/callback/google" element={<Auth />} />
