@@ -560,3 +560,26 @@ span{
     text-align: center;
     margin: 7px 0;
 }
+
+.pay-nums{
+    display: flex;
+    flex-direction: column;
+    width: 120px;
+    background-color: rgb(240, 240, 240);
+    margin-top: 0px;
+}
+
+div.pay-nums
+.pay-num{
+    text-align: center;
+    border: 2px gray;
+    height: 30px;
+    line-height: 30px;
+    cursor: pointer;
+    color: gray;
+}
+
+div.pay-nums
+.pay-num:hover{
+    background-color: lightgray;
+}

@@ -60,6 +60,7 @@ function MentoringRoomDetail() {
 
   /********************* 추가 결제 관리 *********************/
   let [isPay, setIsPay] = useState(false);
+
   function PayMouseOver(event){
     event.stopPropagation();
     setIsPay(true);
@@ -69,10 +70,7 @@ function MentoringRoomDetail() {
     setIsPay(false);
   }
 
-  
-
-
-  function payment(e) {
+  function payment(e, classes) {
     e.stopPropagation();
     axios({
       method: "POST",
@@ -81,7 +79,7 @@ function MentoringRoomDetail() {
       //   "Access-Control-Allow-Origin": "*"
       // },
       data: {
-        "classes": 1 // 나중에 수정
+        "classes": classes // 나중에 수정
       }
     })
       .then(function (response) {
@@ -677,16 +675,17 @@ function MentoringRoomDetail() {
                         className="review-btn no-drag" 
                         onMouseOver={PayMouseOver}
                         onMouseOut={PayMouseOut}
-                        onClick={e=>payment(e)}
                       >
                         추가 결제하기
-                      </div>
                       {
                         isPay ? 
-                        <div>
-                          결제
+                        <div className="pay-nums">
+                          <div className="pay-num" onClick={e=>payment(e,1)}>1회</div>
+                          <div className="pay-num" onClick={e=>payment(e,2)}>2회</div>
+                          <div className="pay-num" onClick={e=>payment(e,4)}>4회</div>
                         </div> : null
                       }
+                      </div>
                     </>
                   } 
                   </div>
