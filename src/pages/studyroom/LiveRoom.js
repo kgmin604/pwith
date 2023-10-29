@@ -115,7 +115,6 @@ const LiveRoom = () => {
 
             pc.onicecandidate = (e) => {
                 if (!(socketRef.current && e.candidate)) return;
-                console.log('onicecandidate');
                 socketRef.current.emit('candidate', {
                     candidate: e.candidate,
                     candidateSendID: socketRef.current.id,
@@ -128,7 +127,6 @@ const LiveRoom = () => {
             };
 
             pc.ontrack = (e) => {
-                console.log('ontrack success');
                 setUsers((oldUsers) =>
                     oldUsers
                         .filter((user) => user.id !== socketID)
@@ -141,7 +139,6 @@ const LiveRoom = () => {
             };
 
             if (localStreamRef.current) {
-                console.log('localstream add');
                 localStreamRef.current.getTracks().forEach((track) => {
                     if (!localStreamRef.current) return;
                     pc.addTrack(track, localStreamRef.current);
@@ -211,9 +208,7 @@ const LiveRoom = () => {
         getLocalStream();
 
         socketRef.current.on('all_users', (allUsers) => {
-            console.log(allUsers,allUsers )
             allUsers.forEach(async (user) => {
-                console.log(user,'user')
                 if (!localStreamRef.current) return;
                 const pc = createPeerConnection(user.id, user.name);
                 if (!(pc && socketRef.current)) return;
@@ -223,7 +218,6 @@ const LiveRoom = () => {
                         offerToReceiveAudio: true,
                         offerToReceiveVideo: true,
                     });
-                    console.log('create offer success',socketRef.current.id);
                     await pc.setLocalDescription(new RTCSessionDescription(localSdp));
                     socketRef.current.emit('offer', {
                         sdp: localSdp,
@@ -247,7 +241,6 @@ const LiveRoom = () => {
                 pcsRef.current = { ...pcsRef.current, [offerSendID]: pc };
                 try {
                     await pc.setRemoteDescription(new RTCSessionDescription(sdp));
-                    console.log('answer set remote description success');
                     const localSdp = await pc.createAnswer({
                         offerToReceiveVideo: true,
                         offerToReceiveAudio: true,
@@ -268,7 +261,6 @@ const LiveRoom = () => {
             'getAnswer',
             (data) => {
                 const { sdp, answerSendID } = data;
-                console.log('get answer');
                 const pc = pcsRef.current[answerSendID];
                 if (!pc) return;
                 pc.setRemoteDescription(new RTCSessionDescription(sdp));
@@ -278,11 +270,9 @@ const LiveRoom = () => {
         socketRef.current.on(
             'getCandidate',
             async (data) => {
-                console.log('get candidate');
                 const pc = pcsRef.current[data.candidateSendID];
                 if (!pc) return;
                 await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-                console.log('candidate add success');
             },
         );
 
@@ -312,11 +302,14 @@ const LiveRoom = () => {
     }, [createPeerConnection, getLocalStream]);
 
     useEffect(() => {
+        if(!studyLiveSocket) return
         studyLiveSocket?.connect();
         studyLiveSocket.on("connect", (data) => {
             EnterRoom();
-            console.log("socket connected");
         });
+        studyLiveSocket.on("sendFrom", (data) => {
+            setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
+          });
         studyLiveSocket.on("codeUploadFrom", (data) => {
             console.log(data)
             setUsers(users => {
@@ -330,7 +323,6 @@ const LiveRoom = () => {
         });
         studyLiveSocket.on("disconnect", (data) => {
             LeaveRoom();
-            console.log("socket disconnected")
         });
     }, [studyLiveSocket])
 
@@ -353,7 +345,6 @@ const LiveRoom = () => {
     }
 
     const onClickSomeone = (user) => {
-        console.log(user)
         setClickedUser(user)
     }
 
@@ -433,7 +424,7 @@ const LiveRoom = () => {
                 </div>}
             </div>
 
-            {showChat && <Chat roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />}
+            {showChat && <Chat roomId={roomId} roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />}
 
 
             <div className="control-bar-wrapper">

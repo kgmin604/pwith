@@ -423,19 +423,7 @@ function MentoringRoomDetail() {
   };
 
   useEffect(() => {
-    // socket = io('http://localhost:5000', {
-    //     cors: {
-    //         origin: '*',
-    //     },
-    //     transports: ["websocket"],
-    // });
-    // socket = io("http://localhost:5000/mentoring-ready", {
-    //   cors: {
-    //     origin: "*",
-    //   },
-    //   transports: ["polling"],
-    //   autoConnect: false,
-    // });
+    if(!socket) return
 
     socket.connect();
 

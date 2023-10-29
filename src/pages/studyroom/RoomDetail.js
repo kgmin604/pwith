@@ -223,19 +223,7 @@ function RoomDetail() {
   // 소켓 통신하기
 
   useEffect(() => {
-    // socket = io('http://localhost:5000', {
-    //     cors: {
-    //         origin: '*',
-    //     },
-    //     transports: ["websocket"],
-    // });
-    // socket = io("http://localhost:5000/study-ready", {
-    //   cors: {
-    //     origin: "*",
-    //   },
-    //   transports: ["polling"],
-    //   autoConnect: false,
-    // });
+   if(!socket) return
     console.log("연결 시도");
     socket.connect();
 
