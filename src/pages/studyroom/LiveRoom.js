@@ -64,6 +64,8 @@ const LiveRoom = () => {
 
 
     const user = useSelector((state) => state.user);
+    const currentUser = useSelector((state) => state.user);
+
     const roomId = useParams().id;
 
     const handleDivClick = () => {
@@ -159,14 +161,14 @@ const LiveRoom = () => {
         let data = {
             roomId: Number(roomId)
         };
-        socketRef.current.emit("enter", data);
+        studyLiveSocket?.emit("enter", data);
     }
 
     function LeaveRoom() {
         let data = {
             roomId: Number(roomId)
         };
-        socketRef.current?.emit("leave", data);
+        studyLiveSocket?.emit("leave", data);
     }
 
     function uploadCode() {
@@ -209,8 +211,9 @@ const LiveRoom = () => {
         getLocalStream();
 
         socketRef.current.on('all_users', (allUsers) => {
-            console.log(allUsers)
+            console.log(allUsers,allUsers )
             allUsers.forEach(async (user) => {
+                console.log(user,'user')
                 if (!localStreamRef.current) return;
                 const pc = createPeerConnection(user.id, user.name);
                 if (!(pc && socketRef.current)) return;
@@ -220,12 +223,12 @@ const LiveRoom = () => {
                         offerToReceiveAudio: true,
                         offerToReceiveVideo: true,
                     });
-                    console.log('create offer success');
+                    console.log('create offer success',socketRef.current.id);
                     await pc.setLocalDescription(new RTCSessionDescription(localSdp));
                     socketRef.current.emit('offer', {
                         sdp: localSdp,
                         offerSendID: socketRef.current.id,
-                        offerSendName: user.name,
+                        offerSendName: currentUser.name,
                         offerReceiveID: user.id,
                     });
                 } catch (e) {
@@ -238,7 +241,6 @@ const LiveRoom = () => {
             'getOffer',
             async (data) => {
                 const { sdp, offerSendID, offerSendName } = data;
-                console.log('get offer');
                 if (!localStreamRef.current) return;
                 const pc = createPeerConnection(offerSendID, offerSendName);
                 if (!(pc && socketRef.current)) return;
