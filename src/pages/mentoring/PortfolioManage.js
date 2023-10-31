@@ -144,6 +144,13 @@ function PortfolioManage() {
             })
             .catch(function (error) {
                 console.log(error);
+                if(error.response.status===400){
+                    alert(`없는 포트폴리오입니다.`);
+                }else if(error.response.status===403){
+                    alert(`로그인이 필요합니다.`);
+                }else{
+                    alert("요청을 처리하지 못했습니다.");
+                }
             });
     }
     const getValue = e => {
