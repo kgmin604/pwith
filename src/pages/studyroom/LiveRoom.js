@@ -11,6 +11,7 @@ import { faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { faCode } from "@fortawesome/free-solid-svg-icons";
 import { io } from 'socket.io-client';
 import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
+import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons/faArrowsRotate";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Video from "./Video";
@@ -53,7 +54,7 @@ const LiveRoom = () => {
     const [roomChat, setRoomChat] = useState([]);
     const [isMikeOn, setIsMikeOn] = useState(undefined);
     const [isCameraOn, setIsCameraOn] = useState(undefined);
-    const [isCodeOn, setIsCodeOn] = useState(true);
+    const [isCodeOn, setIsCodeOn] = useState(false);
     const [showChat, setShowChat] = useState(false);
     const [myCode, setMyCode] = useState({ language: '', content: '' });
     const [isClicked, setIsClicked] = useState(false);
@@ -173,38 +174,31 @@ const LiveRoom = () => {
             roomId: Number(roomId),
             language: selectedLanguage,
             code: myCode.content,
-            sender: user.id,
+            sender: user.name,
         };
         studyLiveSocket?.emit("codeSend", data);
     }
 
     const askBard = () => {
-        console.log(bardText)
         if (!bardText) return
-        axios({
-            method: "POST",
-            url: `/study-room/${roomId}/code-bard`,
-            data: {
-                text: bardText
-            }
-        })
-            .then(function (response) {
-                setBardAnswer(response.data.data.answer);
-                console.log(response.data.data.answer)
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        setBardAnswer("예시 답변입니다")
+        // axios({
+        //     method: "POST",
+        //     url: `/study-room/${roomId}/code-bard`,
+        //     data: {
+        //         text: bardText
+        //     }
+        // })
+        //     .then(function (response) {
+        //         setBardAnswer(response.data.data.answer);
+        //         console.log(response.data.data.answer)
+        //     })
+        //     .catch(function (error) {
+        //         console.log(error);
+        //     });
     }
     useEffect(() => {
         socketRef.current = io.connect(SOCKET_SERVER_URL);
-        // studyLiveSocket = io("http://localhost:5000/study-live", {
-        //     cors: {
-        //         origin: "*",
-        //     },
-        //     transports: ["polling"],
-        //     autoConnect: false,
-        // });
         getLocalStream();
 
         socketRef.current.on('all_users', (allUsers) => {
@@ -302,14 +296,14 @@ const LiveRoom = () => {
     }, [createPeerConnection, getLocalStream]);
 
     useEffect(() => {
-        if(!studyLiveSocket) return
+        if (!studyLiveSocket) return
         studyLiveSocket?.connect();
         studyLiveSocket.on("connect", (data) => {
             EnterRoom();
         });
         studyLiveSocket.on("sendFrom", (data) => {
             setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
-          });
+        });
         studyLiveSocket.on("codeUploadFrom", (data) => {
             console.log(data)
             setUsers(users => {
@@ -418,9 +412,12 @@ const LiveRoom = () => {
                     <div className="header">
                         <FontAwesomeIcon icon={faXmark} onClick={() => { setIsCodeOn(false) }} />
                     </div>
-                    <textarea value={bardText} placeholder="바드에게 질문하기"
-                        onChange={(e) => setBardText(e.target.value)} />
-                    <div class="submit-button" onClick={() => { askBard() }}><FontAwesomeIcon icon={faPaperPlane} color="white" size="2x" /></div>
+                    {!bardAnswer && <textarea className="question" value={bardText} placeholder="바드에게 질문하기"
+                        onChange={(e) => setBardText(e.target.value)} />}
+                    {!bardAnswer &&<div class="submit-button" onClick={() => { askBard() }}><FontAwesomeIcon icon={faPaperPlane} color="white" size="2x" /></div>}
+
+                    {bardAnswer&&<div className="answer" >{bardAnswer}</div>}
+                    {bardAnswer&&<div class="refresh-button" onClick={() => { setBardAnswer('') }}><FontAwesomeIcon icon={faArrowsRotate} color="white" size="2x" /></div>}
                 </div>}
             </div>
 
