@@ -57,6 +57,7 @@ const LiveRoom = () => {
     const [isCodeOn, setIsCodeOn] = useState(false);
     const [showChat, setShowChat] = useState(false);
     const [myCode, setMyCode] = useState({ language: '', content: '' });
+    const [isMyCodeUpload,setIsMyCodeUpload]=useState(false)
     const [isClicked, setIsClicked] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState('');
     const [clickedUser, setClickedUser] = useState({})
@@ -106,10 +107,6 @@ const LiveRoom = () => {
         }
     }, []);
 
-    useEffect(() => {
-        console.log(users)
-    }, [users])
-
     const createPeerConnection = useCallback((socketID, name) => {
         try {
             const pc = new RTCPeerConnection(pc_config);
@@ -124,7 +121,6 @@ const LiveRoom = () => {
             };
 
             pc.oniceconnectionstatechange = (e) => {
-                console.log(e);
             };
 
             pc.ontrack = (e) => {
@@ -170,6 +166,13 @@ const LiveRoom = () => {
     }
 
     function uploadCode() {
+        if(!selectedLanguage) {
+            alert("언어를 선택해주세요")
+            return
+        }else if(!myCode.content){
+            alert("코드를 입력해주세요")
+            return
+        }
         const data = {
             roomId: Number(roomId),
             language: selectedLanguage,
@@ -177,6 +180,7 @@ const LiveRoom = () => {
             sender: user.name,
         };
         studyLiveSocket?.emit("codeSend", data);
+        setIsMyCodeUpload(true)
     }
 
     const askBard = () => {
@@ -305,7 +309,6 @@ const LiveRoom = () => {
             setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
         });
         studyLiveSocket.on("codeUploadFrom", (data) => {
-            console.log(data)
             setUsers(users => {
                 return users.map(user => {
                     if (user.name === data.sender) {
@@ -346,7 +349,7 @@ const LiveRoom = () => {
         <div className="live-room" ref={ref}>
             <div className="left-space">
                 <div className="people-list">
-                    <div>
+                    <div onClick={() => onClickSomeone({})}>
                         <video
                             style={{
                                 width: 150,
@@ -363,14 +366,14 @@ const LiveRoom = () => {
 
                     {users.map((user, index) => (
                         <div onClick={() => onClickSomeone(user)} >
-                            <Video key={index} name={user.name} stream={user.stream} />
+                            <Video  key={index} user={user} clickedUser={clickedUser} stream={user.stream}  />
                         </div>
 
                     ))}
                 </div>
 
                 <div className="screen">
-                    <div className="header">
+                    {!clickedUser?.id && <><div className="header">
                         <div class="language-select">
                             <div>코드 업로드</div>
                             <select value={selectedLanguage} onChange={handleLanguageChange}>
@@ -386,27 +389,44 @@ const LiveRoom = () => {
                             </select>
                         </div>
                         <div class="upload-button" onClick={uploadCode}>
-                            <div>업로드 하기</div>
+                            <div>{isMyCodeUpload?'재업로드':'업로드 하기'}</div>
                             <FontAwesomeIcon icon={faArrowUpFromBracket} color={'white'} size={'1x'} />
                         </div>
                     </div>
-                    <AceEditor
-                        placeholder="코드를 입력하세요"
-                        mode={selectedLanguage}
-                        theme="monokai"
-                        name="blah2"
-                        ref={textRef}
-                        onChange={(evn) => setMyCode({ ...myCode, content: evn })}
-                        fontSize={14}
-                        showPrintMargin={true}
-                        showGutter={true}
-                        highlightActiveLine={true}
-                        value={myCode?.content}
-                        style={{ 'width': '100%' }}
-                        setOptions={{
-                            tabSize: 2,
-                            useWorker: false
-                        }} />
+                        <AceEditor
+                            placeholder="코드를 입력하세요"
+                            mode={selectedLanguage}
+                            theme="monokai"
+                            name="blah2"
+                            ref={textRef}
+                            onChange={(evn) => setMyCode({ ...myCode, content: evn })}
+                            fontSize={14}
+                            showPrintMargin={true}
+                            showGutter={true}
+                            highlightActiveLine={true}
+                            value={myCode?.content}
+                            style={{ 'width': '100%' }}
+                            setOptions={{
+                                tabSize: 2,
+                                useWorker: false
+                            }} /></>}
+                    {clickedUser?.id && clickedUser?.language && clickedUser?.code&&
+                        <AceEditor
+                            placeholder="코드를 입력하세요"
+                            mode={clickedUser.language}
+                            theme="monokai"
+                            name="blah2"
+                            ref={textRef}
+                            fontSize={14}
+                            showPrintMargin={true}
+                            showGutter={true}
+                            highlightActiveLine={true}
+                            value={clickedUser.code}
+                            style={{ 'width': '100%' }}
+                            setOptions={{
+                                tabSize: 2,
+                                useWorker: false
+                            }} />}
                 </div>
                 {isCodeOn && <div className="ask-bard">
                     <div className="header">
@@ -414,10 +434,10 @@ const LiveRoom = () => {
                     </div>
                     {!bardAnswer && <textarea className="question" value={bardText} placeholder="바드에게 질문하기"
                         onChange={(e) => setBardText(e.target.value)} />}
-                    {!bardAnswer &&<div class="submit-button" onClick={() => { askBard() }}><FontAwesomeIcon icon={faPaperPlane} color="white" size="2x" /></div>}
+                    {!bardAnswer && <div class="submit-button" onClick={() => { askBard() }}><FontAwesomeIcon icon={faPaperPlane} color="white" size="2x" /></div>}
 
-                    {bardAnswer&&<div className="answer" >{bardAnswer}</div>}
-                    {bardAnswer&&<div class="refresh-button" onClick={() => { setBardAnswer('') }}><FontAwesomeIcon icon={faArrowsRotate} color="white" size="2x" /></div>}
+                    {bardAnswer && <div className="answer" >{bardAnswer}</div>}
+                    {bardAnswer && <div class="refresh-button" onClick={() => { setBardAnswer('') }}><FontAwesomeIcon icon={faArrowsRotate} color="white" size="2x" /></div>}
                 </div>}
             </div>
 
@@ -444,23 +464,6 @@ const LiveRoom = () => {
                     </div>
                 </div>
             </div>
-            {clickedUser && clickedUser?.language && clickedUser?.code &&
-                <AceEditor
-                    placeholder="코드를 입력하세요"
-                    mode={clickedUser.language}
-                    theme="monokai"
-                    name="blah2"
-                    ref={textRef}
-                    fontSize={14}
-                    showPrintMargin={true}
-                    showGutter={true}
-                    highlightActiveLine={true}
-                    value={clickedUser.code}
-                    style={{ 'width': '100%' }}
-                    setOptions={{
-                        tabSize: 2,
-                        useWorker: false
-                    }} />}
         </div >
     )
 }
