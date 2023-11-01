@@ -131,11 +131,12 @@ def sendCode(data):
     language=data['language']
     code = data['code']
     sender = data['sender']
+    marker=data['marker']
 
     now = datetime.now()
     formatted_now = formatYMDHM(now)
 
-    emit('codeUploadFrom', {'sender': sender, 'language':language, 'code': code}, to = roomId)
+    emit('codeUploadFrom', {'sender': sender, 'language':language, 'code': code,'marker':marker}, to = roomId)
     
 @socketio.on('connect',namespace='/mentoring-live')
 def test_connect():

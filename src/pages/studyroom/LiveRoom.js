@@ -50,6 +50,7 @@ const LiveRoom = () => {
     const textRef = useRef(null);
     const localVideoRef = useRef(null);
     const localStreamRef = useRef();
+    const editorRef = useRef(null)
     const [users, setUsers] = useState([]);
     const [roomChat, setRoomChat] = useState([]);
     const [isMikeOn, setIsMikeOn] = useState(undefined);
@@ -57,12 +58,20 @@ const LiveRoom = () => {
     const [isCodeOn, setIsCodeOn] = useState(false);
     const [showChat, setShowChat] = useState(false);
     const [myCode, setMyCode] = useState({ language: '', content: '' });
-    const [isMyCodeUpload,setIsMyCodeUpload]=useState(false)
+    const [isMyCodeUpload, setIsMyCodeUpload] = useState(false)
     const [isClicked, setIsClicked] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState('');
     const [clickedUser, setClickedUser] = useState({})
     const [bardText, setBardText] = useState('');
     const [bardAnswer, setBardAnswer] = useState('');
+    const [marker, setMarker] = useState({
+        startRow: 0,
+        startCol: 0,
+        endRow: 0,
+        endCol: 0,
+        className: 'error-marker',
+        type: 'background'
+    })
 
 
     const user = useSelector((state) => state.user);
@@ -166,10 +175,10 @@ const LiveRoom = () => {
     }
 
     function uploadCode() {
-        if(!selectedLanguage) {
+        if (!selectedLanguage) {
             alert("언어를 선택해주세요")
             return
-        }else if(!myCode.content){
+        } else if (!myCode.content) {
             alert("코드를 입력해주세요")
             return
         }
@@ -201,6 +210,29 @@ const LiveRoom = () => {
         //         console.log(error);
         //     });
     }
+
+    const onChangeSelection = (e) => {
+        setMarker({
+            startRow: e?.anchor?.row,
+            startCol: e?.anchor?.column,
+            endRow: e?.cursor?.row,
+            endCol: e?.cursor?.column,
+            className: 'error-marker',
+            type: 'background'
+        })
+    }
+
+    const markCode = (language, code, writer) => {
+        const data = {
+            roomId: Number(roomId),
+            language: language,
+            code: code,
+            sender: writer,
+            marker: marker
+        };
+        studyLiveSocket?.emit("codeSend", data);
+    }
+
     useEffect(() => {
         socketRef.current = io.connect(SOCKET_SERVER_URL);
         getLocalStream();
@@ -312,7 +344,7 @@ const LiveRoom = () => {
             setUsers(users => {
                 return users.map(user => {
                     if (user.name === data.sender) {
-                        return { ...user, language: data.language, code: data.code };
+                        return { ...user, language: data.language, code: data.code,marker:data.marker };
                     }
                     return user;
                 });
@@ -366,7 +398,7 @@ const LiveRoom = () => {
 
                     {users.map((user, index) => (
                         <div onClick={() => onClickSomeone(user)} >
-                            <Video  key={index} user={user} clickedUser={clickedUser} stream={user.stream}  />
+                            <Video key={index} user={user} clickedUser={clickedUser} stream={user.stream} />
                         </div>
 
                     ))}
@@ -389,7 +421,7 @@ const LiveRoom = () => {
                             </select>
                         </div>
                         <div class="upload-button" onClick={uploadCode}>
-                            <div>{isMyCodeUpload?'재업로드':'업로드 하기'}</div>
+                            <div>{isMyCodeUpload ? '재업로드' : '업로드 하기'}</div>
                             <FontAwesomeIcon icon={faArrowUpFromBracket} color={'white'} size={'1x'} />
                         </div>
                     </div>
@@ -410,23 +442,29 @@ const LiveRoom = () => {
                                 tabSize: 2,
                                 useWorker: false
                             }} /></>}
-                    {clickedUser?.id && clickedUser?.language && clickedUser?.code&&
-                        <AceEditor
-                            placeholder="코드를 입력하세요"
-                            mode={clickedUser.language}
-                            theme="monokai"
-                            name="blah2"
-                            ref={textRef}
-                            fontSize={14}
-                            showPrintMargin={true}
-                            showGutter={true}
-                            highlightActiveLine={true}
-                            value={clickedUser.code}
-                            style={{ 'width': '100%' }}
-                            setOptions={{
-                                tabSize: 2,
-                                useWorker: false
-                            }} />}
+                    {clickedUser?.id && clickedUser?.language && clickedUser?.code &&
+                        <>
+                            <div onClick={() => markCode(clickedUser?.language, clickedUser?.code, clickedUser?.name)}>코드 하이라이트</div>
+                            <AceEditor
+                                mode={clickedUser.language}
+                                theme="monokai"
+                                name="blah2"
+                                ref={editorRef}
+                                fontSize={14}
+                                showPrintMargin={true}
+                                showGutter={true}
+                                highlightActiveLine={true}
+                                value={clickedUser.code}
+                                style={{ 'width': '100%' }}
+                                setOptions={{
+                                    tabSize: 2,
+                                    useWorker: false
+                                }}
+                                readOnly={true}
+                                markers={[clickedUser.marker??marker]}
+                                onSelectionChange={onChangeSelection} />
+                        </>
+                    }
                 </div>
                 {isCodeOn && <div className="ask-bard">
                     <div className="header">
