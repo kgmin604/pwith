@@ -32,13 +32,18 @@ class Review :
         return self.__room
         
     @staticmethod
-    def showReview(mentoId) :
+    def findByMentoId(mentoId) :
 
-        sql = f"SELECT * FROM review WHERE mento = '{mentoId}'"
+        sql = f"SELECT * FROM review WHERE mento = '{mentoId}' ORDER BY curDate DESC"
 
         reviews = selectAll(sql)
 
-        return reviews
+        result = []
+        
+        for r in reviews:
+            result.append(Review(r[0],r[1],r[2],r[3],r[4],r[5],r[6]))
+
+        return result
 
     @staticmethod
     def save(writerId, content, score, curDate, mentoId, roomId):

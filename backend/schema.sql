@@ -224,54 +224,30 @@ create table qnaLike
     FOREIGN KEY(qnaId) REFERENCES qna(id) ON DELETE CASCADE
 );
 
-create table chatAlarm
-(
-    id BIGINT AUTO_INCREMENT,
-    memId BIGINT NOT NULL,
-    oppId BIGINT NOT NULL,
-    contentId BIGINT NOT NULL,
-    reading BOOLEAN DEFAULT FALSE,
-    PRIMARY KEY(id),
-    FOREIGN KEY(memId) REFERENCES member(id) on delete cascade on update cascade,
-    FOREIGN KEY(oppId) REFERENCES member(id) on delete cascade on update cascade,
-    FOREIGN KEY(contentId) REFERENCES chat(id) on delete cascade on update cascade
-);
 
-create table replyStudyAlarm
+create table alarm
 (
     id BIGINT AUTO_INCREMENT,
     memId BIGINT NOT NULL,
     oppId BIGINT NOT NULL,
     contentId BIGINT NOT NULL,
-    reading BOOLEAN DEFAULT FALSE,
-    PRIMARY KEY(id),
-    FOREIGN KEY(memId) REFERENCES member(id) on delete cascade on update cascade,
-    FOREIGN KEY(oppId) REFERENCES member(id) on delete cascade on update cascade,
-    FOREIGN KEY(contentId) REFERENCES replyStudy(id) on delete cascade on update cascade
-);
-
-create table replyQnaAlarm
-(
-    id BIGINT AUTO_INCREMENT,
-    memId BIGINT NOT NULL,
-    oppId BIGINT NOT NULL,
-    contentId BIGINT NOT NULL,
-    reading BOOLEAN DEFAULT FALSE,
-    PRIMARY KEY(id),
-    FOREIGN KEY(memId) REFERENCES member(id) on delete cascade on update cascade,
-    FOREIGN KEY(oppId) REFERENCES member(id) on delete cascade on update cascade,
-    FOREIGN KEY(contentId) REFERENCES replyQna(id) on delete cascade on update cascade
-);
-
-create table studyAlarm
-(
-    id BIGINT AUTO_INCREMENT,
-    memId BIGINT NOT NULL,
-    oppId BIGINT NOT NULL,
-    contentId BIGINT NOT NULL,
+    contentType BIGINT NOT NULL,
     reading BOOLEAN DEFAULT FALSE,
     PRIMARY KEY(id),
     FOREIGN KEY(memId) REFERENCES member(id) on delete cascade on update cascade,
     FOREIGN KEY(oppId) REFERENCES member(id) on delete cascade on update cascade,
     FOREIGN KEY(contentId) REFERENCES studyRoom(id) on delete cascade on update cascade
+);
+
+create table refund
+(
+    id BIGINT AUTO_INCREMENT,
+    memId BIGINT NOT NULL,
+    bank VARCHAR(20) NOT NULL,
+    account VARCHAR(20) NOT NULL,
+    balance BIGINT NOT NULL,
+    curDate DATETIME NOT NULL,
+    checked BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY(id),
+    FOREIGN KEY(memId) REFERENCES member(id) on delete cascade on update cascade
 );

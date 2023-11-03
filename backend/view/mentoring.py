@@ -5,9 +5,10 @@ import json
 
 from backend.controller.member_mgmt import Member
 from backend.controller.mentor_mgmt import Portfolio
+from backend.controller.review_mgmt import Review
 from backend.controller.mentoringroom_mgmt import MentoringRoom
 from backend.controller.chat_mgmt import chat
-from backend.view import uploadFileS3, login_required, findSocialLoginMember
+from backend.view import uploadFileS3, login_required, findSocialLoginMember, payKakao, payKakaoSuccess, findNickName, formatYMDHM
 
 mento_bp = Blueprint('mentoring', __name__, url_prefix='/mentoring')
 
@@ -32,8 +33,8 @@ def writePortfolio(loginMember, new_token):
     brief = data['brief']
     content = data['content']
     tuition = data['tuition']
-    duration = data['duration']
     subjects = data['subject']
+    duration = 1 # TODO DB 컬럼 삭제 후 수정 (현재는 임시)
     if subjects == []:
         return {
             'status' : 404,
@@ -113,6 +114,10 @@ def showPortfolio(loginMember, new_token, id) :
             'access_token' : new_token
         }
 
+    mentoId = portfolio.mento
+    mentiId = loginMember.id
+    isJoining = MentoringRoom.existsByMentoMenti(mentoId, mentiId)
+
     result = {
         'mentoId' : portfolio[0],
         'mentoNick' : portfolio[1],
@@ -123,7 +128,8 @@ def showPortfolio(loginMember, new_token, id) :
         'duration' : portfolio[6],
         'isOpen' : portfolio[7],
         'score' : portfolio[8],
-        'subject' : list(map(int, portfolio[9].split(',')))
+        'subject' : list(map(int, portfolio[9].split(','))),
+        'isJoining' : isJoining
     }
 
     return {
@@ -216,7 +222,40 @@ def changeState(loginMember, new_token, id) :
         'access_token' : new_token
     }
 
-@mento_bp.route('/<id>/apply', methods=['POST']) # 멘토링 신청
+@mento_bp.route('/<id>/review', methods = ['GET']) # 후기 조회
+@login_required
+def showReview(loginMember, new_token, id):
+
+    if not Portfolio.existsById(id):
+        return {
+            'status' : 400,
+            'message' : '없는 포트폴리오',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    mentoId = Portfolio.findMentoById(id)
+
+    reviews = Review.findByMentoId(mentoId)
+
+    result = []
+
+    for review in reviews:
+        result.append({
+            'writer': findNickName(review.writer),
+            'content': review.content,
+            'score': review.score,
+            'date': formatYMDHM(review.curDate)
+        })
+
+    return {
+        'data' : result,
+        'access_token' : new_token
+    }
+
+tids = {}
+classes = {}
+@mento_bp.route('/<id>/apply', methods=['POST']) # 멘토링 신청 + 결제
 @login_required
 def applyMentoring(loginMember, new_token, id) :
 
@@ -228,28 +267,94 @@ def applyMentoring(loginMember, new_token, id) :
             'access_token' : new_token
         }
     
-    # 1. 룸 생성
+    mentiId = loginMember.id
+    mentoId = Portfolio.findMentoById(id)
+    if mentiId == mentoId:
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    # 1. 결제
+    global tids, classes
+
+    class_cnt = request.get_json()['classes']
+
+    portfolio_tuition = Portfolio.findById(id)[5] # TODO refactoring
+
+    item_name = f'{findNickName(mentoId)} 멘토링 수업료'
+    total_tuition = class_cnt * portfolio_tuition
+    response = payKakao(id, loginMember, item_name, total_tuition, True)
+    # print(response)
+
+    if response.get('code', None):
+        return {
+            'status': 404,
+            'message': '결제 실패',
+            'data': None,
+            'access_token': new_token
+        }
+
+    classes[loginMember.id] = class_cnt
+    tids[loginMember.id] = response['tid']
+
+    redirect_url = response['next_redirect_pc_url']
+
+    return {
+        'data': {
+            'pay_url': redirect_url
+        },
+        'access_token': new_token
+    }
+
+@mento_bp.route('/<id>/pay/success', methods=['GET']) # 결제 성공 시 방 생성 & 쪽지 전송
+def applySuccess(loginMember, new_token, id):
+
+    global tids, classes
+
+    pg_token = request.args.get('pg_token')
+
+    response = payKakaoSuccess(loginMember, pg_token, tids.get(loginMember.id, ''))
+    print(response)
+
+    if response.get('code', None):
+        return {
+            'status': 404,
+            'message': '결제 승인 요청 실패',
+            'data': None,
+            'access_token': new_token
+        }
+
+    # 2. 룸 생성
     mentiId = loginMember.id
     mentoId = Portfolio.findMentoById(id)
 
     mentiNick = loginMember.nickname
-    mentoNick = Member.findById(mentoId).nickname
+    mentoNick = findNickName(mentoId)
 
     roomName = f"멘토 {mentoNick}와 멘티 {mentiNick}의 공부방"
 
-    roomId = MentoringRoom.save(roomName, datetime.now(), mentoId, mentiId, id)
+    MentoringRoom.save(roomName, datetime.now(), mentoId, mentiId, id)
 
-    # 2. 멘토링룸 링크 생성
-    url = "http://localhost:3000/mentoringroom/" + str(roomId)
+    # 3. 멘토링룸 링크 생성
+    room_url = "http://localhost:3000/mentoringroom/" + str(roomId)
 
-    # 3. 쪽지 전송
-    menticontent = f"{url}\n다음 스터디룸으로 입장해주세요."
-    mentocontent = f"[{mentiNick}]님이 멘토링을 신청하셨습니다.\n수락하시겠습니까?"
+    # 4. 쪽지 전송
+    menticontent = f"<a href={room_url}>스터디룸</a>으로 입장해주세요."
+    mentocontent = f"[{mentiNick}]님과 멘토링을 진행합니다."
     
-    done = chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
-    done = chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
+    chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
+    chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
+
+    # 5. 수업 횟수 증가
+    MentoringRoom.updateLessonCnt(id, classes.get(mentiId, 0))
+
+    del tids[mentiId]
+    del classes[mentiId]
 
     return {
-        'data' : None,
-        'access_token' : new_token
+        'data': None,
+        'access_token': new_token
     }
