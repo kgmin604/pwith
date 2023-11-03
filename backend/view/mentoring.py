@@ -114,7 +114,7 @@ def showPortfolio(loginMember, new_token, id) :
             'access_token' : new_token
         }
 
-    mentoId = portfolio.mento
+    mentoId = portfolio[10]
     mentiId = loginMember.id
     isJoining = MentoringRoom.existsByMentoMenti(mentoId, mentiId)
 
