@@ -120,7 +120,7 @@ class MentoringRoom() :
         return result
 
     @staticmethod
-    def existsByMentoMenti(mento_id, menti_id) : # 첫수업인지 -> 삭제
+    def existsByMentoMenti(mento_id, menti_id) : # 이미 참여 중인지
 
         sql = f"SELECT EXISTS (SELECT id FROM mentoringRoom WHERE mento = {mento_id} AND menti = {menti_id})"
 
