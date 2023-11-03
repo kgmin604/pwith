@@ -93,7 +93,7 @@ function PortfolioModal(props) {
             <div className="bottom">
                 <div className="price">1회 멘토링 : {portfolio.tuition}원</div>
                 <div className="classes">횟수 선택: <fieldset>{classes.map((item) => <div className="classes-button" key={item} ><label >
-                    <input type="radio" name="classes" value={item} checked={item===1} onChange={handleClassChange} />
+                    <input type="radio" name="classes" value={item} defaultChecked={item===1} onChange={handleClassChange} />
                     <span>{item}회</span>
                 </label></div>)}</fieldset>
                 </div>
