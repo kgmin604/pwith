@@ -310,6 +310,7 @@ def applyMentoring(loginMember, new_token, id) :
     }
 
 @mento_bp.route('/<id>/pay/success', methods=['GET']) # 결제 성공 시 방 생성 & 쪽지 전송
+@login_required
 def applySuccess(loginMember, new_token, id):
 
     global tids, classes
