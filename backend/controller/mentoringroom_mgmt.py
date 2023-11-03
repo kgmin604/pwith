@@ -63,6 +63,7 @@ class MentoringRoom() :
         sql = f"SELECT EXISTS (SELECT id FROM mentoringRoom WHERE id = {id})"
 
         result = selectOne(sql)[0]
+        print(result)
 
         return True if result == 1 else False
 
@@ -127,6 +128,15 @@ class MentoringRoom() :
         result = selectOne(sql)[0]
 
         return True if result == 1 else False
+
+    @staticmethod
+    def existsByIdAndMenti(id, mentiId) : # 참여 중인 멘티인지
+
+        sql = f"SELECT EXISTS (SELECT id FROM mentoringRoom WHERE id = {id} AND menti = {mentiId})"
+
+        result = selectOne(sql)[0]
+
+        return result == 1
 
     @staticmethod
     def updateMentoCheck(id) : # 멘토 수업 횟수 증가

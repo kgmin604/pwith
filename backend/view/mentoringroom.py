@@ -124,36 +124,6 @@ def updateNotice(loginMember, new_token, id) : # 공지 수정
         'access_token' : new_token
     }
 
-@mentoringroom_bp.route('/<id>', methods=['DELETE']) # TODO 결제 관련 코드 추가
-@login_required
-def deleteRoom(loginMember, new_token, id) : # 룸 삭제
-
-    info = MentoringRoom.findById(id)
-
-    if not info:
-        return {
-            'status' : 400,
-            'message' : '없는 멘토링룸',
-            'data' : None,
-            'access_token' : new_token
-        }
-
-    mentoId = info['room'].mento
-    if loginMember.id != mentoId :
-        return {
-            'status' : 403,
-            'message' : '권한 없는 사용자',
-            'data' : None,
-            'access_token' : new_token
-        }
-
-    MentoringRoom.delete(id)
-
-    return {
-        'data' : None,
-        'access_token' : new_token
-    }
-
 @mentoringroom_bp.route('/<id>', methods=['GET'])
 @login_required
 def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
@@ -274,33 +244,79 @@ def checkLesson(id, loginMember, new_token): # 수업 횟수 체크
         'data': None
     }
 
-@mentoringroom_bp.route('/<id>/out', methods=['DELETE']) # TODO 결제 관련 코드 추가
+@mentoringroom_bp.route('/<id>', methods=['DELETE'])
 @login_required
-def studyOut(id, loginMember, new_token) : # 스터디 그만두기
-    pass
+def deleteRoom(loginMember, new_token, id) : # 룸 삭제 (멘토)
 
-    # if not MentoringRoom.existByMemberAndRoom(loginMember.id, id):
-    #     return {
-    #         'status': 403,
-    #         'message': '탈퇴 대상자 아님',
-    #         'data': None,
-    #         'access_token': new_token
-    #     }
+    info = MentoringRoom.findById(id)
+
+    if not info:
+        return {
+            'status' : 400,
+            'message' : '없는 멘토링룸',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    room = info['room']
+    mentoId = room.mento
+
+    if loginMember.id != mentoId :
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    # 1. 멘티의 알림창으로 스터디룸 삭제되었다는 알림 보내기
+
+    # 2. 환급해야할 금액 환급하기
+    # Refund.save()
+
+    MentoringRoom.delete(id)
+
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
+
+@mentoringroom_bp.route('/<id>/out', methods=['DELETE'])
+@login_required
+def studyOut(loginMember, new_token, id) : # 스터디 그만두기 (멘티)
+
+    info = MentoringRoom.findById(id)
+
+    if not info:
+        return {
+            'status' : 400,
+            'message' : '없는 멘토링룸',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    room = info['room']
+    mentiId = room.menti
+
+    if loginMember.id != mentiId :
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    # 1. 멘토의 알림창으로 스터디 그만뒀다는 알림 보내기
+
+    # 2. 환급해야할 금액 환급하기
+    # Refund.save()
     
-    # done = MentoringRoom.deleteStudent(loginMember.id, id)
+    MentoringRoom.delete(id)
     
-    # if done == 0 :
-    #     return {
-    #         'status' : 400,
-    #         'message' : "스터디를 삭제할 수 없습니다.",
-    #         'data' : None,
-    #         'access_token' : new_token
-    #     }
-    # else: 
-    #     return {
-    #         'data' : None,
-    #         'access_token' : new_token
-    #     }
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
 
 @mentoringroom_bp.route('/<id>', methods=['POST'])
 @login_required
