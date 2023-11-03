@@ -267,10 +267,8 @@ def applyMentoring(loginMember, new_token, id) :
             'access_token' : new_token
         }
     
-    # 1. 룸 생성
     mentiId = loginMember.id
     mentoId = Portfolio.findMentoById(id)
-
     if mentiId == mentoId:
         return {
             'status' : 403,
@@ -279,25 +277,17 @@ def applyMentoring(loginMember, new_token, id) :
             'access_token' : new_token
         }
 
-    mentiNick = loginMember.nickname
-    mentoNick = Member.findById(mentoId).nickname
-
-    roomName = f"멘토 {mentoNick}와 멘티 {mentiNick}의 공부방"
-
-    roomId = MentoringRoom.save(roomName, datetime.now(), mentoId, mentiId, id)
-
-    # 2. 결제
-
+    # 1. 결제
     global tids, classes
 
     class_cnt = request.get_json()['classes']
 
     portfolio_tuition = Portfolio.findById(id)[5] # TODO refactoring
 
-    item_name = f'{findNickName(room.mento)} 멘토링 수업료'
+    item_name = f'{findNickName(mentoId)} 멘토링 수업료'
     total_tuition = class_cnt * portfolio_tuition
     response = payKakao(id, loginMember, item_name, total_tuition, True)
-    print(response)
+    # print(response)
 
     if response.get('code', None):
         return {
@@ -319,7 +309,7 @@ def applyMentoring(loginMember, new_token, id) :
         'access_token': new_token
     }
 
-@mento_bp.route('/<id>/pay/success', methods=['GET']) # 결제 성공 시 쪽지 전송
+@mento_bp.route('/<id>/pay/success', methods=['GET']) # 결제 성공 시 방 생성 & 쪽지 전송
 def applySuccess(loginMember, new_token, id):
 
     global tids, classes
@@ -337,25 +327,32 @@ def applySuccess(loginMember, new_token, id):
             'access_token': new_token
         }
 
+    # 2. 룸 생성
+    mentiId = loginMember.id
+    mentoId = Portfolio.findMentoById(id)
+
+    mentiNick = loginMember.nickname
+    mentoNick = findNickName(mentoId)
+
+    roomName = f"멘토 {mentoNick}와 멘티 {mentiNick}의 공부방"
+
+    MentoringRoom.save(roomName, datetime.now(), mentoId, mentiId, id)
+
     # 3. 멘토링룸 링크 생성
     room_url = "http://localhost:3000/mentoringroom/" + str(roomId)
 
     # 4. 쪽지 전송
-
-    mentiId = loginMember.id
-    mentoId = Portfolio.findMentoById(id)
-    
     menticontent = f"<a href={room_url}>스터디룸</a>으로 입장해주세요."
-    mentocontent = f"[{loginMember.nickname}]님과 멘토링을 진행합니다."
+    mentocontent = f"[{mentiNick}]님과 멘토링을 진행합니다."
     
-    done = chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
-    done = chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
+    chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
+    chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
 
     # 5. 수업 횟수 증가
-    MentoringRoom.updateLessonCnt(id, classes.get(loginMember.id, 0))
+    MentoringRoom.updateLessonCnt(id, classes.get(mentiId, 0))
 
-    del tids[loginMember.id]
-    del classes[loginMember.id]
+    del tids[mentiId]
+    del classes[mentiId]
 
     return {
         'data': None,
