@@ -64,7 +64,16 @@ const LiveRoom = () => {
     const [clickedUser, setClickedUser] = useState({})
     const [bardText, setBardText] = useState('');
     const [bardAnswer, setBardAnswer] = useState('');
+    const [isBardLoading, setIsBardLoading] = useState(false)
     const [marker, setMarker] = useState({
+        startRow: 0,
+        startCol: 0,
+        endRow: 0,
+        endCol: 0,
+        className: 'error-marker',
+        type: 'background'
+    })
+    const [myMarker, setMyMarker] = useState({
         startRow: 0,
         startCol: 0,
         endRow: 0,
@@ -107,7 +116,7 @@ const LiveRoom = () => {
             localStreamRef.current = localStream;
             if (localVideoRef.current) localVideoRef.current.srcObject = localStream;
             if (!socketRef.current) return;
-            socketRef.current.emit('join_room', {
+            socketRef.current?.emit('join_room', {
                 room: roomId,
                 name: user.name,
             });
@@ -194,21 +203,28 @@ const LiveRoom = () => {
 
     const askBard = () => {
         if (!bardText) return
-        setBardAnswer("예시 답변입니다")
-        // axios({
-        //     method: "POST",
-        //     url: `/study-room/${roomId}/code-bard`,
-        //     data: {
-        //         text: bardText
-        //     }
-        // })
-        //     .then(function (response) {
-        //         setBardAnswer(response.data.data.answer);
-        //         console.log(response.data.data.answer)
-        //     })
-        //     .catch(function (error) {
-        //         console.log(error);
-        //     });
+        setIsBardLoading(true)
+        axios({
+            method: "POST",
+            url: `/study-room/${roomId}/code-bard`,
+            data: {
+                text: bardText
+            }
+        })
+            .then(async (response) => {
+                try {
+                    await setBardAnswer(response.data.data.answer);
+                    setIsBardLoading(false)
+                    setBardText('')
+                } catch {
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+                setIsBardLoading(false)
+                alert("요청을 처리하지 못했습니다")
+            });
+
     }
 
     const onChangeSelection = (e) => {
@@ -249,7 +265,7 @@ const LiveRoom = () => {
                         offerToReceiveVideo: true,
                     });
                     await pc.setLocalDescription(new RTCSessionDescription(localSdp));
-                    socketRef.current.emit('offer', {
+                    socketRef.current?.emit('offer', {
                         sdp: localSdp,
                         offerSendID: socketRef.current.id,
                         offerSendName: currentUser.name,
@@ -276,7 +292,7 @@ const LiveRoom = () => {
                         offerToReceiveAudio: true,
                     });
                     await pc.setLocalDescription(new RTCSessionDescription(localSdp));
-                    socketRef.current.emit('answer', {
+                    socketRef.current?.emit('answer', {
                         sdp: localSdp,
                         answerSendID: socketRef.current.id,
                         answerReceiveID: offerSendID,
@@ -341,10 +357,19 @@ const LiveRoom = () => {
             setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
         });
         studyLiveSocket.on("codeUploadFrom", (data) => {
+            console.log(data)
+
+            if (data.sender === currentUser.name) {
+                console.log(data)
+                if (data.marker) {
+                    setMyMarker(data.marker)
+                }
+                return
+            }
             setUsers(users => {
                 return users.map(user => {
                     if (user.name === data.sender) {
-                        return { ...user, language: data.language, code: data.code,marker:data.marker };
+                        return { ...user, language: data.language, code: data.code, marker: data.marker };
                     }
                     return user;
                 });
@@ -436,6 +461,7 @@ const LiveRoom = () => {
                             showPrintMargin={true}
                             showGutter={true}
                             highlightActiveLine={true}
+                            markers={[myMarker]}
                             value={myCode?.content}
                             style={{ 'width': '100%' }}
                             setOptions={{
@@ -461,14 +487,15 @@ const LiveRoom = () => {
                                     useWorker: false
                                 }}
                                 readOnly={true}
-                                markers={[clickedUser.marker??marker]}
+                                markers={[clickedUser.marker ?? marker]}
                                 onSelectionChange={onChangeSelection} />
                         </>
                     }
                 </div>
                 {isCodeOn && <div className="ask-bard">
                     <div className="header">
-                        <FontAwesomeIcon icon={faXmark} onClick={() => { setIsCodeOn(false) }} />
+                        {isBardLoading && <div className="bard-loading">바드가 답변을 작성하고 있습니다...</div>}
+                        <FontAwesomeIcon className="close-button" icon={faXmark} onClick={() => { setIsCodeOn(false) }} />
                     </div>
                     {!bardAnswer && <textarea className="question" value={bardText} placeholder="바드에게 질문하기"
                         onChange={(e) => setBardText(e.target.value)} />}

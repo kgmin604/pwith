@@ -50,9 +50,16 @@
     font-size: 20px;
     font-weight: 600;
     color: #414141;
-    display: flex;
-    justify-content: flex-end;
+    position: relative;
     padding: 0px 10px;
+}
+.bard-loading{
+
+}
+.ask-bard > .header > .close-button{
+    position: absolute;
+    right: 20px;
+    top: 10px;
 }
 .error-marker {
     position: absolute;

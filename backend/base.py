@@ -94,6 +94,7 @@ def test_connect():
     
 @socketio.on('enter',namespace='/study-live')
 def enterRoom(data):
+    print(data)
     print("======ENTERROOM study-live======")
     roomId = data['roomId']
     print(roomId)
@@ -131,7 +132,9 @@ def sendCode(data):
     language=data['language']
     code = data['code']
     sender = data['sender']
-    marker=data['marker']
+    marker = None
+    if 'marker' in data:
+        marker = data['marker']
 
     now = datetime.now()
     formatted_now = formatYMDHM(now)

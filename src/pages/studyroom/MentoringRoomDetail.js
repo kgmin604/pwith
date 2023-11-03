@@ -388,7 +388,7 @@ function MentoringRoomDetail() {
     let data = {
       roomId: Number(RoomId)
     };
-    socket.emit("enter",data);
+    socket?.emit("enter",data);
   }
 
   function LeaveRoom(){
@@ -398,7 +398,7 @@ function MentoringRoomDetail() {
     let data = {
       roomId: Number(RoomId)
     };
-    socket.emit("leave",data);
+    socket?.emit("leave",data);
   }
 
   // 스크롤 영역을 항상 아래로 스크롤하는 함수
