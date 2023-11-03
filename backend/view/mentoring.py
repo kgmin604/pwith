@@ -5,9 +5,10 @@ import json
 
 from backend.controller.member_mgmt import Member
 from backend.controller.mentor_mgmt import Portfolio
+from backend.controller.review_mgmt import Review
 from backend.controller.mentoringroom_mgmt import MentoringRoom
 from backend.controller.chat_mgmt import chat
-from backend.view import uploadFileS3, login_required, findSocialLoginMember, payKakao, payKakaoSuccess
+from backend.view import uploadFileS3, login_required, findSocialLoginMember, payKakao, payKakaoSuccess, findNickName, formatYMDHM
 
 mento_bp = Blueprint('mentoring', __name__, url_prefix='/mentoring')
 
@@ -218,6 +219,37 @@ def changeState(loginMember, new_token, id) :
 
     return {
         'data' : None,
+        'access_token' : new_token
+    }
+
+@mento_bp.route('/<id>/review', methods = ['GET']) # 후기 조회
+@login_required
+def showReview(loginMember, new_token, id):
+
+    if not Portfolio.existsById(id):
+        return {
+            'status' : 400,
+            'message' : '없는 포트폴리오',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    mentoId = Portfolio.findMentoById(id)
+
+    reviews = Review.findByMentoId(mentoId)
+
+    result = []
+
+    for review in reviews:
+        result.append({
+            'writer': findNickName(review.writer),
+            'content': review.content,
+            'score': review.score,
+            'date': formatYMDHM(review.curDate)
+        })
+
+    return {
+        'data' : result,
         'access_token' : new_token
     }
 
