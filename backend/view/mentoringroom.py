@@ -283,7 +283,7 @@ def deleteRoom(loginMember, new_token, id) : # 룸 삭제 (멘토)
 
 @mentoringroom_bp.route('/<id>/out', methods=['DELETE'])
 @login_required
-def studyOut(loginMember, new_token, id) : # 스터디 그만두기 (멘티)
+def quitRoom(loginMember, new_token, id) : # 스터디 그만두기 (멘티)
 
     info = MentoringRoom.findById(id)
 
