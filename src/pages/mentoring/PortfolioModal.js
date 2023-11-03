@@ -49,12 +49,12 @@ function PortfolioModal(props) {
             });
     }, []);
     const onClickJoinBtn = () => {
-        if(!user?.id||portfolio?.isJoining){return}
+        if (!user?.id || portfolio?.isJoining) { return }
         axios({
             method: "POST",
             url: `/mentoring/${id}/apply`,
-            data:{
-                classes:selectedClass
+            data: {
+                classes: selectedClass
             }
         })
             .then(function (response) {
@@ -93,12 +93,11 @@ function PortfolioModal(props) {
             <div className="bottom">
                 <div className="price">1회 멘토링 : {portfolio.tuition}원</div>
                 <div className="classes">횟수 선택: <fieldset>{classes.map((item) => <div className="classes-button" key={item} ><label >
-                    <input type="radio" name="classes" value={item} defaultChecked={item===1} onChange={handleClassChange} />
+                    <input type="radio" name="classes" value={item} defaultChecked={item === 1} onChange={handleClassChange} />
                     <span>{item}회</span>
                 </label></div>)}</fieldset>
                 </div>
-                <Button variant="blue" className="joinBtn" onClick={onClickJoinBtn} disabled={!user?.id||portfolio?.isJoining}>신청하기</Button>
-            </div>
+                {portfolio.mentoId && <Button variant="blue" className="joinBtn" onClick={onClickJoinBtn} disabled={!user?.id || portfolio?.isJoining}>신청하기</Button>}            </div>
 
         </div>
     </div>
