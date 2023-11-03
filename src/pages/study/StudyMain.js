@@ -41,7 +41,7 @@ function StudyMain() {
           <hr style={{ width: '60%', margin: '0 auto', marginBottom: '10px' }} />
           <div className="rec-items">
             {
-              recStudyList === [] ? null :
+              recStudyList.Length === 0 ? null :
                 recStudyList.map((study, i) => {
                   return (
                     <div className="rec-item" key={i}>

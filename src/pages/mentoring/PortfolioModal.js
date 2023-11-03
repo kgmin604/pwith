@@ -58,13 +58,10 @@ function PortfolioModal(props) {
             }
         })
             .then(function (response) {
-                if (response.status === 200) {
-                    alert("멘토링 신청 성공!")
-                    navigate("/mypage/chat")
-                }
+                window.location.href = response.data.data.pay_url;
             })
             .catch(function (error) {
-                console.log(error);
+                alert('요청에 실패했습니다. 다시 시도해주세요.');
             });
     }
 
@@ -97,7 +94,12 @@ function PortfolioModal(props) {
                     <span>{item}회</span>
                 </label></div>)}</fieldset>
                 </div>
-                <Button variant="blue" className="joinBtn" onClick={onClickJoinBtn} disabled={!user?.id||portfolio?.isJoining}>신청하기</Button>
+                <Button 
+                    variant="blue" 
+                    className="joinBtn" 
+                    onClick={onClickJoinBtn} 
+                    disabled={!user?.id||portfolio?.isJoining}
+                >신청하기</Button>
             </div>
 
         </div>
