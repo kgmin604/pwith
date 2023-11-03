@@ -7,10 +7,13 @@ from flask_mail import Mail
 from flask_socketio import SocketIO
 from functools import wraps
 from botocore.client import Config
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime
 import boto3 
 import json
 
 from backend.view import member, study, studyroom, mypage, mentoring, mentoringroom, community, pwithmain, chat, oauth_server, oauth_member
+from backend.view.crawling.IT_news import crawlingNews
 from backend.controller.member_mgmt import Member
 from backend import config
 
@@ -85,6 +88,11 @@ def create_app() :
     return app
     
 app = create_app()
+
+now = datetime.now().strftime("%Y%m%d")
+scheduler = BackgroundScheduler(daemon=True, timezone='Asia/Seoul')
+scheduler.add_job(crawlingNews, 'cron', [now], hour=7, minute=0)
+scheduler.start()
 
 mail = Mail(app)
 
