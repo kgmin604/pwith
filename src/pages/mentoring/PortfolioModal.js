@@ -25,7 +25,6 @@ function PortfolioModal(props) {
     const setShowModal = props.setShowModal
     const navigate = useNavigate();
     const user = useSelector((state) => state.user);
-    const [isDisabled, setIsDisabled] = useState(user.id === null);
     const [portfolio, setPortfolio] = useState({})
     const classes = [1, 2, 4, 8]
     const [selectedClass, setSelectedClass] = useState(1);
@@ -50,11 +49,12 @@ function PortfolioModal(props) {
             });
     }, []);
     const onClickJoinBtn = () => {
+        if(!user?.id||portfolio?.isJoining){return}
         axios({
             method: "POST",
             url: `/mentoring/${id}/apply`,
             data:{
-                classes:classes
+                classes:selectedClass
             }
         })
             .then(function (response) {
@@ -93,11 +93,11 @@ function PortfolioModal(props) {
             <div className="bottom">
                 <div className="price">1회 멘토링 : {portfolio.tuition}원</div>
                 <div className="classes">횟수 선택: <fieldset>{classes.map((item) => <div className="classes-button" key={item} ><label >
-                    <input type="radio" name="item" value={item} defaultchecked={item === 1} onChange={handleClassChange} />
+                    <input type="radio" name="classes" value={item} checked={item===1} onChange={handleClassChange} />
                     <span>{item}회</span>
                 </label></div>)}</fieldset>
                 </div>
-                <Button variant="blue" className="joinBtn" onClick={onClickJoinBtn} disabled={isDisabled}>신청하기</Button>
+                <Button variant="blue" className="joinBtn" onClick={onClickJoinBtn} disabled={!user?.id||portfolio?.isJoining}>신청하기</Button>
             </div>
 
         </div>

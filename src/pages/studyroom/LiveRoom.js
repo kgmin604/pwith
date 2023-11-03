@@ -11,6 +11,7 @@ import { faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { faCode } from "@fortawesome/free-solid-svg-icons";
 import { io } from 'socket.io-client';
 import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
+import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons/faArrowsRotate";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Video from "./Video";
@@ -49,21 +50,33 @@ const LiveRoom = () => {
     const textRef = useRef(null);
     const localVideoRef = useRef(null);
     const localStreamRef = useRef();
+    const editorRef = useRef(null)
     const [users, setUsers] = useState([]);
     const [roomChat, setRoomChat] = useState([]);
     const [isMikeOn, setIsMikeOn] = useState(undefined);
     const [isCameraOn, setIsCameraOn] = useState(undefined);
-    const [isCodeOn, setIsCodeOn] = useState(true);
+    const [isCodeOn, setIsCodeOn] = useState(false);
     const [showChat, setShowChat] = useState(false);
     const [myCode, setMyCode] = useState({ language: '', content: '' });
+    const [isMyCodeUpload, setIsMyCodeUpload] = useState(false)
     const [isClicked, setIsClicked] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState('');
     const [clickedUser, setClickedUser] = useState({})
     const [bardText, setBardText] = useState('');
     const [bardAnswer, setBardAnswer] = useState('');
+    const [marker, setMarker] = useState({
+        startRow: 0,
+        startCol: 0,
+        endRow: 0,
+        endCol: 0,
+        className: 'error-marker',
+        type: 'background'
+    })
 
 
     const user = useSelector((state) => state.user);
+    const currentUser = useSelector((state) => state.user);
+
     const roomId = useParams().id;
 
     const handleDivClick = () => {
@@ -103,17 +116,12 @@ const LiveRoom = () => {
         }
     }, []);
 
-    useEffect(() => {
-        console.log(users)
-    }, [users])
-
     const createPeerConnection = useCallback((socketID, name) => {
         try {
             const pc = new RTCPeerConnection(pc_config);
 
             pc.onicecandidate = (e) => {
                 if (!(socketRef.current && e.candidate)) return;
-                console.log('onicecandidate');
                 socketRef.current.emit('candidate', {
                     candidate: e.candidate,
                     candidateSendID: socketRef.current.id,
@@ -122,11 +130,9 @@ const LiveRoom = () => {
             };
 
             pc.oniceconnectionstatechange = (e) => {
-                console.log(e);
             };
 
             pc.ontrack = (e) => {
-                console.log('ontrack success');
                 setUsers((oldUsers) =>
                     oldUsers
                         .filter((user) => user.id !== socketID)
@@ -139,7 +145,6 @@ const LiveRoom = () => {
             };
 
             if (localStreamRef.current) {
-                console.log('localstream add');
                 localStreamRef.current.getTracks().forEach((track) => {
                     if (!localStreamRef.current) return;
                     pc.addTrack(track, localStreamRef.current);
@@ -159,57 +164,80 @@ const LiveRoom = () => {
         let data = {
             roomId: Number(roomId)
         };
-        socketRef.current.emit("enter", data);
+        studyLiveSocket?.emit("enter", data);
     }
 
     function LeaveRoom() {
         let data = {
             roomId: Number(roomId)
         };
-        socketRef.current?.emit("leave", data);
+        studyLiveSocket?.emit("leave", data);
     }
 
     function uploadCode() {
+        if (!selectedLanguage) {
+            alert("언어를 선택해주세요")
+            return
+        } else if (!myCode.content) {
+            alert("코드를 입력해주세요")
+            return
+        }
         const data = {
             roomId: Number(roomId),
             language: selectedLanguage,
             code: myCode.content,
-            sender: user.id,
+            sender: user.name,
+        };
+        studyLiveSocket?.emit("codeSend", data);
+        setIsMyCodeUpload(true)
+    }
+
+    const askBard = () => {
+        if (!bardText) return
+        setBardAnswer("예시 답변입니다")
+        // axios({
+        //     method: "POST",
+        //     url: `/study-room/${roomId}/code-bard`,
+        //     data: {
+        //         text: bardText
+        //     }
+        // })
+        //     .then(function (response) {
+        //         setBardAnswer(response.data.data.answer);
+        //         console.log(response.data.data.answer)
+        //     })
+        //     .catch(function (error) {
+        //         console.log(error);
+        //     });
+    }
+
+    const onChangeSelection = (e) => {
+        setMarker({
+            startRow: e?.anchor?.row,
+            startCol: e?.anchor?.column,
+            endRow: e?.cursor?.row,
+            endCol: e?.cursor?.column,
+            className: 'error-marker',
+            type: 'background'
+        })
+    }
+
+    const markCode = (language, code, writer) => {
+        const data = {
+            roomId: Number(roomId),
+            language: language,
+            code: code,
+            sender: writer,
+            marker: marker
         };
         studyLiveSocket?.emit("codeSend", data);
     }
 
-    const askBard = () => {
-        console.log(bardText)
-        if (!bardText) return
-        axios({
-            method: "POST",
-            url: `/study-room/${roomId}/code-bard`,
-            data: {
-                text: bardText
-            }
-        })
-            .then(function (response) {
-                setBardAnswer(response.data.data.answer);
-                console.log(response.data.data.answer)
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
     useEffect(() => {
         socketRef.current = io.connect(SOCKET_SERVER_URL);
-        // studyLiveSocket = io("http://localhost:5000/study-live", {
-        //     cors: {
-        //         origin: "*",
-        //     },
-        //     transports: ["polling"],
-        //     autoConnect: false,
-        // });
         getLocalStream();
 
         socketRef.current.on('all_users', (allUsers) => {
-            console.log(allUsers)
             allUsers.forEach(async (user) => {
                 if (!localStreamRef.current) return;
                 const pc = createPeerConnection(user.id, user.name);
@@ -220,12 +248,11 @@ const LiveRoom = () => {
                         offerToReceiveAudio: true,
                         offerToReceiveVideo: true,
                     });
-                    console.log('create offer success');
                     await pc.setLocalDescription(new RTCSessionDescription(localSdp));
                     socketRef.current.emit('offer', {
                         sdp: localSdp,
                         offerSendID: socketRef.current.id,
-                        offerSendName: user.name,
+                        offerSendName: currentUser.name,
                         offerReceiveID: user.id,
                     });
                 } catch (e) {
@@ -238,14 +265,12 @@ const LiveRoom = () => {
             'getOffer',
             async (data) => {
                 const { sdp, offerSendID, offerSendName } = data;
-                console.log('get offer');
                 if (!localStreamRef.current) return;
                 const pc = createPeerConnection(offerSendID, offerSendName);
                 if (!(pc && socketRef.current)) return;
                 pcsRef.current = { ...pcsRef.current, [offerSendID]: pc };
                 try {
                     await pc.setRemoteDescription(new RTCSessionDescription(sdp));
-                    console.log('answer set remote description success');
                     const localSdp = await pc.createAnswer({
                         offerToReceiveVideo: true,
                         offerToReceiveAudio: true,
@@ -266,7 +291,6 @@ const LiveRoom = () => {
             'getAnswer',
             (data) => {
                 const { sdp, answerSendID } = data;
-                console.log('get answer');
                 const pc = pcsRef.current[answerSendID];
                 if (!pc) return;
                 pc.setRemoteDescription(new RTCSessionDescription(sdp));
@@ -276,11 +300,9 @@ const LiveRoom = () => {
         socketRef.current.on(
             'getCandidate',
             async (data) => {
-                console.log('get candidate');
                 const pc = pcsRef.current[data.candidateSendID];
                 if (!pc) return;
                 await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-                console.log('candidate add success');
             },
         );
 
@@ -310,17 +332,19 @@ const LiveRoom = () => {
     }, [createPeerConnection, getLocalStream]);
 
     useEffect(() => {
+        if (!studyLiveSocket) return
         studyLiveSocket?.connect();
         studyLiveSocket.on("connect", (data) => {
             EnterRoom();
-            console.log("socket connected");
+        });
+        studyLiveSocket.on("sendFrom", (data) => {
+            setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
         });
         studyLiveSocket.on("codeUploadFrom", (data) => {
-            console.log(data)
             setUsers(users => {
                 return users.map(user => {
                     if (user.name === data.sender) {
-                        return { ...user, language: data.language, code: data.code };
+                        return { ...user, language: data.language, code: data.code,marker:data.marker };
                     }
                     return user;
                 });
@@ -328,7 +352,6 @@ const LiveRoom = () => {
         });
         studyLiveSocket.on("disconnect", (data) => {
             LeaveRoom();
-            console.log("socket disconnected")
         });
     }, [studyLiveSocket])
 
@@ -351,7 +374,6 @@ const LiveRoom = () => {
     }
 
     const onClickSomeone = (user) => {
-        console.log(user)
         setClickedUser(user)
     }
 
@@ -359,7 +381,7 @@ const LiveRoom = () => {
         <div className="live-room" ref={ref}>
             <div className="left-space">
                 <div className="people-list">
-                    <div>
+                    <div onClick={() => onClickSomeone({})}>
                         <video
                             style={{
                                 width: 150,
@@ -376,14 +398,14 @@ const LiveRoom = () => {
 
                     {users.map((user, index) => (
                         <div onClick={() => onClickSomeone(user)} >
-                            <Video key={index} name={user.name} stream={user.stream} />
+                            <Video key={index} user={user} clickedUser={clickedUser} stream={user.stream} />
                         </div>
 
                     ))}
                 </div>
 
                 <div className="screen">
-                    <div className="header">
+                    {!clickedUser?.id && <><div className="header">
                         <div class="language-select">
                             <div>코드 업로드</div>
                             <select value={selectedLanguage} onChange={handleLanguageChange}>
@@ -399,39 +421,65 @@ const LiveRoom = () => {
                             </select>
                         </div>
                         <div class="upload-button" onClick={uploadCode}>
-                            <div>업로드 하기</div>
+                            <div>{isMyCodeUpload ? '재업로드' : '업로드 하기'}</div>
                             <FontAwesomeIcon icon={faArrowUpFromBracket} color={'white'} size={'1x'} />
                         </div>
                     </div>
-                    <AceEditor
-                        placeholder="코드를 입력하세요"
-                        mode={selectedLanguage}
-                        theme="monokai"
-                        name="blah2"
-                        ref={textRef}
-                        onChange={(evn) => setMyCode({ ...myCode, content: evn })}
-                        fontSize={14}
-                        showPrintMargin={true}
-                        showGutter={true}
-                        highlightActiveLine={true}
-                        value={myCode?.content}
-                        style={{ 'width': '100%' }}
-                        setOptions={{
-                            tabSize: 2,
-                            useWorker: false
-                        }} />
+                        <AceEditor
+                            placeholder="코드를 입력하세요"
+                            mode={selectedLanguage}
+                            theme="monokai"
+                            name="blah2"
+                            ref={textRef}
+                            onChange={(evn) => setMyCode({ ...myCode, content: evn })}
+                            fontSize={14}
+                            showPrintMargin={true}
+                            showGutter={true}
+                            highlightActiveLine={true}
+                            value={myCode?.content}
+                            style={{ 'width': '100%' }}
+                            setOptions={{
+                                tabSize: 2,
+                                useWorker: false
+                            }} /></>}
+                    {clickedUser?.id && clickedUser?.language && clickedUser?.code &&
+                        <>
+                            <div onClick={() => markCode(clickedUser?.language, clickedUser?.code, clickedUser?.name)}>코드 하이라이트</div>
+                            <AceEditor
+                                mode={clickedUser.language}
+                                theme="monokai"
+                                name="blah2"
+                                ref={editorRef}
+                                fontSize={14}
+                                showPrintMargin={true}
+                                showGutter={true}
+                                highlightActiveLine={true}
+                                value={clickedUser.code}
+                                style={{ 'width': '100%' }}
+                                setOptions={{
+                                    tabSize: 2,
+                                    useWorker: false
+                                }}
+                                readOnly={true}
+                                markers={[clickedUser.marker??marker]}
+                                onSelectionChange={onChangeSelection} />
+                        </>
+                    }
                 </div>
                 {isCodeOn && <div className="ask-bard">
                     <div className="header">
                         <FontAwesomeIcon icon={faXmark} onClick={() => { setIsCodeOn(false) }} />
                     </div>
-                    <textarea value={bardText} placeholder="바드에게 질문하기"
-                        onChange={(e) => setBardText(e.target.value)} />
-                    <div class="submit-button" onClick={() => { askBard() }}><FontAwesomeIcon icon={faPaperPlane} color="white" size="2x" /></div>
+                    {!bardAnswer && <textarea className="question" value={bardText} placeholder="바드에게 질문하기"
+                        onChange={(e) => setBardText(e.target.value)} />}
+                    {!bardAnswer && <div class="submit-button" onClick={() => { askBard() }}><FontAwesomeIcon icon={faPaperPlane} color="white" size="2x" /></div>}
+
+                    {bardAnswer && <div className="answer" >{bardAnswer}</div>}
+                    {bardAnswer && <div class="refresh-button" onClick={() => { setBardAnswer('') }}><FontAwesomeIcon icon={faArrowsRotate} color="white" size="2x" /></div>}
                 </div>}
             </div>
 
-            {showChat && <Chat roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />}
+            {showChat && <Chat roomId={roomId} roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />}
 
 
             <div className="control-bar-wrapper">
@@ -454,23 +502,6 @@ const LiveRoom = () => {
                     </div>
                 </div>
             </div>
-            {clickedUser && clickedUser?.language && clickedUser?.code &&
-                <AceEditor
-                    placeholder="코드를 입력하세요"
-                    mode={clickedUser.language}
-                    theme="monokai"
-                    name="blah2"
-                    ref={textRef}
-                    fontSize={14}
-                    showPrintMargin={true}
-                    showGutter={true}
-                    highlightActiveLine={true}
-                    value={clickedUser.code}
-                    style={{ 'width': '100%' }}
-                    setOptions={{
-                        tabSize: 2,
-                        useWorker: false
-                    }} />}
         </div >
     )
 }

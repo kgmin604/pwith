@@ -87,10 +87,18 @@ def sendMessage(data):
     emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now}, to = 'm'+str(roomId))
 
 
-@socketio.on('connect',namespace='/study-live')
+
 @socketio.on('connect',namespace='/study-live')
 def test_connect():
     print("========CONNECT live========")
+    
+@socketio.on('enter',namespace='/study-live')
+def enterRoom(data):
+    print("======ENTERROOM study-live======")
+    roomId = data['roomId']
+    print(roomId)
+    join_room(roomId)
+    print(rooms())
 
 @socketio.on("send",namespace='/study-live')
 def sendMessage(data):
@@ -103,6 +111,7 @@ def sendMessage(data):
     formatted_now = formatYMDHM(now)
 
     emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now}, to = roomId)
+    print(roomId, message, sender, formatted_now)
 
 
 @socketio.on("leave",namespace='/study-live')
@@ -113,13 +122,21 @@ def leaveRoom(data):
     leave_room(roomId)
     print(rooms())
 
-@socketio.on('enter',namespace='/study-live')
-def enterRoom(data):
-    print("======ENTERROOM study-live======")
+    
+@socketio.on("codeSend",namespace='/study-live')
+def sendCode(data):
+    print("======SENDCODE live======")
+    print(data)
     roomId = data['roomId']
-    print(roomId)
-    join_room(roomId)
-    print(rooms())
+    language=data['language']
+    code = data['code']
+    sender = data['sender']
+    marker=data['marker']
+
+    now = datetime.now()
+    formatted_now = formatYMDHM(now)
+
+    emit('codeUploadFrom', {'sender': sender, 'language':language, 'code': code,'marker':marker}, to = roomId)
     
 @socketio.on('connect',namespace='/mentoring-live')
 def test_connect():
@@ -137,21 +154,8 @@ def sendMessage(data):
 
     emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now}, to = roomId)
 
-@socketio.on("codeSend",namespace='/study-live')
-def sendCode(data):
-    print("======SENDCODE live======")
-    print(data)
-    roomId = data['roomId']
-    language=data['language']
-    code = data['code']
-    sender = data['sender']
 
-    now = datetime.now()
-    formatted_now = formatYMDHM(now)
-
-    emit('codeUploadFrom', {'sender': sender, 'language':language, 'code': code}, to = roomId)
-
-@socketio.on("leave",namespace='/live')
+@socketio.on("leave",namespace='/mentoring-live')
 def leaveRoom(data):
     print("=======LEAVEROOM mentoring - live=======")
     roomId = data['roomId']

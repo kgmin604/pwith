@@ -609,6 +609,7 @@ textarea{
 }
 
 .scroll-area {
+    overflow-x: hidden;
   overflow-y: scroll;
   scrollbar-width: thin; /* for Firefox */
   -ms-overflow-style: scrollbar; /* for Internet Explorer, Edge */
