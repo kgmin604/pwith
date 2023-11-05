@@ -1,0 +1,43 @@
+.review-container{
+    text-align: start;
+}
+
+.review-container >.row-wrapper{
+display: flex;
+align-items: center;
+}
+.writer{
+    font-weight: 600;
+    margin-right: 5px;
+}
+
+.divider{
+    width: 100%;
+    height: 1px;
+    background-color: #D6D6D6;
+    margin:10px 0;
+}
+.review-content{
+    margin-top: 5px;
+}
+.review-date{
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.review-scroll-box {
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+}
+.review-title{
+    font-size: 18px;
+    font-weight: 600;
+}
+.review-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom:12px;
+}

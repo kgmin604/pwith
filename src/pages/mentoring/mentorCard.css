@@ -46,6 +46,10 @@
     align-items: center;
 }
 
+.mentoInfo> .review {
+    cursor: pointer;
+}
+
 .mentoScore {
     color: rgba(77, 78, 84, 0.5);
     font-size: 14px;
@@ -54,6 +58,7 @@
     letter-spacing: -0.32px;
     margin-left: 2px;
     white-space: nowrap;
+    margin-right: 2px;
 }
 
 .mento-subject {

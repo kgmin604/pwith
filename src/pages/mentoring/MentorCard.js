@@ -5,7 +5,9 @@ import "./mentorCard.css";
 import { Card, Col } from "react-bootstrap";
 import PortfolioModal from './PortfolioModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar } from '@fortawesome/free-solid-svg-icons/faStar';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
+import ReviewModal from './ReviewModal';
 
 const subjectPairs = {
     '0': '웹개발',
@@ -23,23 +25,36 @@ const subjectPairs = {
 function MentorCard(props) {
     const { mento } = props
     const [showModal, setShowModal] = useState(false);
-    const score = [1, 2, 3, 4, 5]
+    const [showReviewModal, setShowReviewModal] = useState(false);
+
+    const onClickCard=()=>{
+        if(showReviewModal){return}
+        setShowModal(true)
+    }
+    const onClickScore=(score,event)=>{
+        event.stopPropagation();
+        if(score===-1) return
+        setShowReviewModal(true)
+    }
+
     return <>
         {showModal && mento && <PortfolioModal id={mento.id} setShowModal={setShowModal} />}
+        {showReviewModal && mento && <ReviewModal id={mento.id} setShowModal={setShowReviewModal} />}
         <Col key={mento.writer} xs={12} sm={4} md={3} className="mb-2" >
-            <div className='mento-card' onClick={() => setShowModal(true)}>
+            <div className='mento-card' onClick={onClickCard}>
                 <div>
                     <div className='mentoInfo'>
                         <div>
                             {mento.mentoPic && <img variant="top" className='mentoPic' src={`${mento.mentoPic}?version=${Math.random()}`} />}
                             <div className='mentorNick'>{mento.mentoNick}</div>
                         </div>
-                        <div>
-                            <FontAwesomeIcon icon={faStar} className='Score' color='#FFD80C' /><div className='mentoScore'>
+                        <div className='review' onClick={(event)=>onClickScore(mento.score,event)}>
+                            <FontAwesomeIcon icon={faStar} className='Score' color='#FFD80C' />
+                            <div className='mentoScore'>
                                 {mento.score === -1 ? '평가 전' : mento.score}
                             </div>
+                            {mento.score !== -1 && <FontAwesomeIcon icon={faChevronRight} color='#D6D6D6' />}
                         </div>
-
                     </div>
                     <div className='cardBrief'>{mento.brief}</div>
                 </div>
