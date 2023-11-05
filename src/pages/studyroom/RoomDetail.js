@@ -146,6 +146,12 @@ function RoomDetail() {
           navigate('./..');
         })
         .catch(function (error) {
+          if(error.response.data.status === 403){
+            alert("탈퇴 대상자가 아닙니다.");
+          }
+          if(error.response.data.status === 400){
+            alert("스터디 탈퇴가 불가합니다.");
+          }
           console.log(error);
         });
     }

@@ -30,6 +30,9 @@ import{
 import CommunityMain from "./pages/community/CommunityMain.js";
 import MentoringMain from "./pages/mentoring/MentoringMain.js";
 import MentoringCreate from "./pages/mentoring/MetoringCreate";
+
+import MentoringPaySuccess from "./pages/mentoring/MentoringPay.js";
+
 import Login from "./pages/member/login.js";
 import Join from "./pages/member/join.js";
 import Help from "./pages/member/help.js";
@@ -520,6 +523,7 @@ function App() {
           <Route path="/mentoring/main" element={<MentoringMain />} />
           <Route path="/mentoring/create" element={<MentoringCreate />} />
           <Route path="/mentoring/:myPortfolio" element={<PortfolioManage />} />
+          <Route path="/mentoring/:id/pay/success" element={<MentoringPaySuccess />} />
           <Route path="member/login" element={<Login />} />
           <Route path="member/join" element={<Join />} />
           <Route path="member/id" element={<HelpId />} />
