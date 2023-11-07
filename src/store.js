@@ -72,6 +72,6 @@ export default configureStore({
     recStudyList: recStudyList.reducer,
     studyCategory: studyCategory.reducer,
     qnaCategory: qnaCategory.reducer,
-    contentCategory: qnaCategory.reducer
+    contentCategory: contentCategory.reducer
   }
 })

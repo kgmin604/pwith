@@ -301,7 +301,7 @@ function Category({ type }) {//카테고리
                 })}
             </Nav> : <Nav defaultActiveKey="#" className="flex-column">
                 {bookCategory.map((category, index) => {
-                    return <Nav.Link href="#"><div style={{ color: '#282c34' }}>{category.firstCategory}</div></Nav.Link>
+                    return <SecondCategory category={category} />
                 })}
             </Nav>}
         </>
@@ -313,7 +313,7 @@ function SecondCategory({ category }) {
     return <>
         <Nav.Link href="#" onClick={()=>setShowSecondCategory((prev)=>!prev)}><div style={{ color: '#282c34' }}>{category.firstCategory}</div></Nav.Link>
         {showSecondCategory&&category.secondCategory.map((category,index)=>{
-            return <div>{category}</div>
+            return <div className="second-category">{category}</div>
         })
         }
     </>
