@@ -340,7 +340,7 @@ def applySuccess(loginMember, new_token, id):
     MentoringRoom.save(roomName, datetime.now(), mentoId, mentiId, id)
 
     # 3. 멘토링룸 링크 생성
-    room_url = "http://localhost:3000/mentoringroom/" + str(roomId)
+    room_url = "http://localhost:3000/mentoringroom/" + str(id)
 
     # 4. 쪽지 전송
     menticontent = f"<a href={room_url}>스터디룸</a>으로 입장해주세요."
