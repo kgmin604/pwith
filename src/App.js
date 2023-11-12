@@ -63,10 +63,15 @@ import QnaPost from "./pages/community/QnaPost";
 import PortfolioManage from "./pages/mentoring/PortfolioManage";
 import { WebSocketProvider } from "./hooks/WebsocketHooks";
 
+const alramType = ["새로운 스터디 신청입니다", "새로운 멘토링 신청입니다", "새로운 댓글이 달렸어요!", "새로운 댓글이 달렸어요!", "새로운 쪽지가 왔어요!", "멘토링이 삭제됐습니다."]
+const alramMoveTo = ["/studyroom/", "/mentoring/", "/study/", "/community/qna/", "/mypage/chat", "/mentoring/"]
+
 function App() {
   let navigate = useNavigate();
   let user = useSelector((state) => state.user);
   let dispatch = useDispatch();
+  const [alarmList, setAlarmList] = useState([])
+  const [unread, setUnread] = useState(false)
 
   // 로그인 유지 목적
   useEffect(() => {
@@ -90,17 +95,34 @@ function App() {
       .catch(function (error) {
         console.log(error);
       });
+
+    axios({
+      method: "GET",
+      url: "/alarm"
+    })
+      .then(function (response) {
+        console.log("알림 가져오기");
+        console.log(response);
+        if (response.data.status === 200) {
+          const data = response.data.data
+          setAlarmList(data.alarmList)
+          setUnread(data.unread)
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }, [])
 
   //스터디룸에서는 네브바 숨기기
   const location = useLocation();
   const isStudyRoomPath =
-    ((location.pathname.startsWith(`/studyroom/live`)|| location.pathname.startsWith(`/mentoringroom/live`) ) &&
+    ((location.pathname.startsWith(`/studyroom/live`) || location.pathname.startsWith(`/mentoringroom/live`)) &&
       !location.pathname.includes("main") &&
-      !location.pathname.includes("create")) 
+      !location.pathname.includes("create"))
 
 
-    let[isModal, setIsModal] = useState(false); // 알림함
+  let [isModal, setIsModal] = useState(false); // 알림함
   let [isNav, setIsNav] = useState(0);
 
   function logout() {
@@ -411,76 +433,20 @@ function App() {
                       }}
                     >
                       알림함
-                      {
-                        // 조건 추가 필요
-                        <>
-                          <div className="notice_new">N</div>
-                        </>
-                      }
+                      {unread&&<div className="notice_new">N</div>}
                       {!isModal ? null : (
                         <>
                           <div
                             className="drop-down"
                             onClick={(e) => {
                               e.stopPropagation();
-                            }}
-                          >
-                            <div className="item">
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>
-                                {
-                                  "저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"
-                                }
-                              </h6>
-                            </div>
-                            <div className="item">
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>
-                                {
-                                  "저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"
-                                }
-                              </h6>
-                            </div>
-                            <div className="item">
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>
-                                {
-                                  "저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"
-                                }
-                              </h6>
-                            </div>
-                            <div className="item">
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>
-                                {
-                                  "저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"
-                                }
-                              </h6>
-                            </div>
-                            <div className="item">
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>
-                                {
-                                  "저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"
-                                }
-                              </h6>
-                            </div>
-                            <div className="item">
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>
-                                {
-                                  "저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"
-                                }
-                              </h6>
-                            </div>
-                            <div className="item">
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>
-                                {
-                                  "저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"
-                                }
-                              </h6>
-                            </div>
+                            }}>
+                            {alarmList?.map((item, index) => {
+                                return <div onClick={() => { navigate(`${alramMoveTo[item.type]}${item.contentId}`) }} className={`alram-${index}`}>
+                                  <h5>{alramType[item.type - 1]}</h5>
+                                  <h6>{item.content}</h6>
+                                </div>
+                              })}
                           </div>
                         </>
                       )}
@@ -512,7 +478,7 @@ function App() {
           <Route path="/studyroom" element={<RoomMain />} />
           <Route path="/studyroom/create" element={<RoomCreate />} />
           <Route path="/studyroom/:id" element={<RoomDetail />} />
-          <Route path="/studyroom/live/:id" element={<LiveRoom type={'study'}/>} />
+          <Route path="/studyroom/live/:id" element={<LiveRoom type={'study'} />} />
           <Route path="/mentoringroom/:id" element={<MentoringRoomDetail type={'mentoring'} />} />
           <Route path="/mentoringroom/live/:id" element={<LiveRoom />} />
           <Route path="/mentoring-room/:id/pay/success" element={<MentoringRoomPaySuccess />} />
