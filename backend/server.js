@@ -21,6 +21,7 @@ let socketToRoom = {};
 const maximum = process.env.MAXIMUM || 4;
 
 io.on('connection', socket => {
+    let index
     socket.on('join_room', data => {
         if (users[data.room]) {
             const length = users[data.room].length;
@@ -28,9 +29,11 @@ io.on('connection', socket => {
                 socket.to(socket.id).emit('room_full');
                 return;
             }
-            users[data.room].push({id: socket.id, name: data.name});
+            index=length
+            users[data.room].push({id: socket.id, name: data.name,index});
         } else {
-            users[data.room] = [{id: socket.id, name: data.name}];
+            index=0
+            users[data.room] = [{id: socket.id, name: data.name,index}];
         }
         socketToRoom[socket.id] = data.room;
 
@@ -39,13 +42,13 @@ io.on('connection', socket => {
 
         const usersInThisRoom = users[data.room].filter(user => user.id !== socket.id);
 
-        console.log(usersInThisRoom);
-
+        console.log(users[data.room]);
+        io.sockets.to(socket.id).emit('index', {index});
         io.sockets.to(socket.id).emit('all_users', usersInThisRoom);
     });
 
     socket.on('offer', data => {
-        socket.to(data.offerReceiveID).emit('getOffer', {sdp: data.sdp, offerSendID: data.offerSendID, offerSendName: data.offerSendName});
+        socket.to(data.offerReceiveID).emit('getOffer', {sdp: data.sdp, offerSendID: data.offerSendID, offerSendName: data.offerSendName,});
     });
 
     socket.on('answer', data => {
