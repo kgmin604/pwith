@@ -105,33 +105,37 @@ def showalarm(loginMember, new_token):
     alarmList = []
     alarmLists = []
     
-    alarmList = Alarm.getAlarm(memId)
+    alarmLists = Alarm.getAlarm(memId)
     
     print(alarmList)
-    for row in alarmList:
+    for row in alarmLists:
         print(row)
         post = {
-            'id' : row['id'],
-            'memId': row['memId'],
-            'memNick' : findNickName(row['memId']),
-            'oppId': row['oppId'],
-            'oppNick' : findNickName(row['oppId']),
+            #'id' : row['id'],
             'contentId' : row['contentId'],
-            'contentType': row['contentType'],
+            'type': row['contentType'],
             'content' : row['content'],
-            'reading' : row['reading']
         }
         
-        alarmLists.append(post)
+        alarmList.append(post)
         
-        
+    # unread 여부 확인
+    
+    unread = Alarm.chkAlarm()
+    Alarm.readAlarm()
+    
     # print(alarmList)
     
     return{
-       'data': alarmLists,
+       'data': {
+           'alarmList' : alarmList,
+           'unread' : unread
+       },
        'access_token' : new_token
     }
     
+    
+    # 전체 검색 페이지네이션 - 정윤
 @main_bp.route('/search', methods = ['GET'])      # 전체 검색
 def search():
         
@@ -152,6 +156,7 @@ def search():
 
     page = int(page)
     posts = []
+    
     
     if searchCategory == "study":
         if int(searchType) == 0: # 제목으로 검색
@@ -253,19 +258,31 @@ def search():
     else:
         requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
     result = []
-    print(posts)
+    #print(posts)
 
     if posts is None :
         pass # 결과 없을 시 empty list
     else :
-        for i in range(page):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
+        print("posts is not None")
+        print(page)
+        for i in range(requiredPage):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
             requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
+            print(i)
+            print(len(posts))
             # searchList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
+            for j in range(10):
+                print(i+page)
+                if i+j > len(posts):
+                    pass
+                else:
+                    print(posts[i + j])
+                    result.append(posts[i + j])
             
-
+    print(requiredPage)
+    print(posts[0])
     return {
         'data':{
-            'searchList' : posts,
+            'searchList' : result,
             'totalPage': requiredPage
         }
     

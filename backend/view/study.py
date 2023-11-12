@@ -12,10 +12,8 @@ import json
 
 study_bp = Blueprint('study', __name__, url_prefix='/study')
 
-    
-@study_bp.route('', methods=['GET'])
-def show(): 
-    
+@study_bp.route('/recommend', methods=['GET'])
+def recommend():
     recStudy=[]
     recommendStudy = studyPost.getNStudy(3)
     
@@ -27,6 +25,14 @@ def show():
             'image' : studyPost.getRoomImage(roomId)
         }
         recStudy.append(rec)
+        
+        
+    return{
+        'rec' : recStudy
+    }    
+    
+@study_bp.route('', methods=['GET'])
+def show(): 
         
     search = request.args.get('search')
     
@@ -69,7 +75,6 @@ def show():
         return{
             'posts': result,
             'num': requiredPage,
-            'rec' : recStudy
         }
         
     else:
@@ -129,8 +134,7 @@ def show():
 
         return {
             'posts' : result,
-            'num': requiredPage,
-            'rec' : recStudy
+            'num': requiredPage
             }
 
 @study_bp.route('/<int:id>/apply', methods=['POST']) # 스터디 신청
