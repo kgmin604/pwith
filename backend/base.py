@@ -114,10 +114,10 @@ def test_connect():
     
 @socketio.on('enter',namespace='/study-live')
 def enterRoom(data):
-    print(data)
-    print("스터디룸 준비 페이지 입장")
+    print("스터디룸 메인 페이지 입장")
     roomId = data['roomId']
-    join_room(roomId)
+    print(roomId)
+    join_room('s'+str(roomId))
     print(rooms())
 
 @socketio.on("send",namespace='/study-live')
@@ -130,14 +130,15 @@ def sendMessage(data):
     now = datetime.now()
     formatted_now = formatYMDHM(now)
 
-    emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now}, to = roomId)
+    emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now}, to = 's'+str(roomId))
     print(roomId, message, sender, formatted_now)
 
 @socketio.on("leave",namespace='/study-live')
 def leaveRoom(data):
     print("스터디룸 메인 페이지 나감")
     roomId = data['roomId']
-    leave_room(roomId)
+    print(roomId)
+    leave_room('s'+str(roomId))
     print(rooms())
 
 @socketio.on("codeSend",namespace='/study-live')
@@ -154,13 +155,20 @@ def sendCode(data):
     now = datetime.now()
     formatted_now = formatYMDHM(now)
 
-    emit('codeUploadFrom', {'sender': sender, 'language':language, 'code': code,'marker':marker}, to = roomId)
+    emit('codeUploadFrom', {'sender': sender, 'language':language, 'code': code,'marker':marker}, to = 's'+str(roomId))
 
 # 멘토링룸 메인 페이지
     
 @socketio.on('connect',namespace='/mentoring-live')
 def test_connect():
     print("멘토링룸 메인 페이지 연결")
+    
+@socketio.on('enter',namespace='/mentoring-live')
+def enterRoom(data):
+    print("멘토링룸 메인 페이지 입장")
+    roomId = data['roomId']
+    join_room('m'+str(roomId))
+    print(rooms())
 
 @socketio.on("send",namespace='/mentoring-live')
 def sendMessage(data):
@@ -173,18 +181,11 @@ def sendMessage(data):
     now = datetime.now()
     formatted_now = formatYMDHM(now)
 
-    emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now}, to = roomId)
+    emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now}, to = 'm'+str(roomId))
 
 @socketio.on("leave",namespace='/mentoring-live')
 def leaveRoom(data):
     print("멘토링룸 메인 페이지 나감")
     roomId = data['roomId']
-    leave_room(roomId)
-    print(rooms())
-
-@socketio.on('enter',namespace='/mentoring-live')
-def enterRoom(data):
-    print("멘토링룸 메인 페이지 입장")
-    roomId = data['roomId']
-    join_room(roomId)
+    leave_room('m'+str(roomId))
     print(rooms())
