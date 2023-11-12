@@ -19,13 +19,14 @@
     margin: 10px;
 }
 
-.language-select{
+.language-select {
     display: flex;
 }
 
-.language-select >select{
+.language-select>select {
     cursor: pointer;
 }
+
 .ask-bard {
     width: 96%;
     display: flex;
@@ -44,7 +45,7 @@
     min-height: 300px;
 }
 
-.ask-bard >.header{
+.ask-bard>.header {
     width: 100%;
     margin: 0px 0px 10px;
     font-size: 20px;
@@ -53,21 +54,39 @@
     position: relative;
     padding: 0px 10px;
 }
-.bard-loading{
 
-}
-.ask-bard > .header > .close-button{
+.bard-loading {}
+
+.ask-bard>.header>.close-button {
     position: absolute;
     right: 20px;
     top: 10px;
 }
-.error-marker {
-    position: absolute;
-    background-color: rgba(255, 213, 0, 0.7); /* 예시: 마커의 배경 색상을 빨간색으로 설정 */
-    /* 추가적인 마커 스타일을 정의할 수 있음 */
-  }
 
-.ask-bard >.question{
+.error-marker-0  {
+    position: absolute;
+    background-color: rgba(255, 213, 0, 0.7);
+}
+
+.error-marker-1 {
+    position: absolute;
+    background-color: rgba(255, 0, 0, 0.7);
+}
+
+.error-marker-2 {
+    position: absolute;
+    background-color: rgba(0, 255, 10, 0.7);
+}
+
+
+.error-marker-3 {
+    position: absolute;
+    background-color: rgba(128, 0, 255, 0.7);
+}
+
+
+
+.ask-bard>.question {
     width: 100%;
     outline: none;
     padding: 5px;
@@ -81,7 +100,8 @@
     min-height: 300px;
     font-weight: 600;
 }
-.ask-bard >.answer{
+
+.ask-bard>.answer {
     width: 100%;
     outline: none;
     padding: 5px;
@@ -94,11 +114,11 @@
     line-height: 150%;
     min-height: 300px;
     font-weight: 600;
-    color:#427ED9;
+    color: #427ED9;
     overflow: scroll;
 }
 
-.ask-bard>.submit-button{
+.ask-bard>.submit-button {
     background-color: #98afca;
     width: 60px;
     height: 60px;
@@ -112,7 +132,7 @@
     bottom: 20px;
 }
 
-.ask-bard>.refresh-button{
+.ask-bard>.refresh-button {
     background-color: #848484;
     width: 60px;
     height: 60px;
@@ -125,17 +145,19 @@
     right: 20px;
     bottom: 20px;
 }
-.upload-button{
+
+.upload-button {
     padding: 5px;
     background-color: rgba(0, 134, 255, 1);
     border-radius: 10px;
-    color:#F7F7F7;
-    gap:5px;
+    color: #F7F7F7;
+    gap: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
 }
+
 div.screen>.header {
     width: 100%;
     margin: 5px;
@@ -149,12 +171,14 @@ div.screen>.header {
     padding: 0px 10px;
 }
 
-.language-select > select{
+.language-select>select {
     margin-left: 20px;
 }
-.screen{
+
+.screen {
     border-radius: 10px;
 }
+
 div.right-space .header {
     margin: 0px 0px 10px;
     font-size: 20px;
@@ -300,10 +324,10 @@ div.right-space .header {
     padding-left: 3px;
     background-color: #0000005A;
     z-index: 100;
-    overflow:hidden;
-    white-space:nowrap;
-    text-overflow:ellipsis;
-    left:5px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    left: 5px;
 }
 
 .my-camera {}

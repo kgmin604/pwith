@@ -385,6 +385,8 @@ function Chat() {
 
     let [msg, setMsg] = useState('');
 
+    const parse = require('html-react-parser');//html 파싱
+
     /* 모달창 관리 */
     let [open, setOpen] = useState(false);
     let handleModal = (event) => {
@@ -467,7 +469,7 @@ function Chat() {
                                         >
                                             <time>{item.date}</time>
                                             <h3>{item.nickname}</h3>
-                                            <p>{item.content}</p>
+                                            <p>{parse(item.content)}</p>
                                         </a>
                                     );
                                 })
@@ -499,7 +501,7 @@ function Chat() {
                                                     <div className="item" key={i}>
                                                         <time>{msg.date}</time>
                                                         <p className={`type ${msg['sender'] === user.name ? 'colortext2' : 'colortext'}`}>{type}</p>
-                                                        <p className="text">{msg.content}</p>
+                                                        <p className="text">{parse(msg.content)}</p>
                                                     </div>
                                                 );
                                             })

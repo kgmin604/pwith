@@ -58,6 +58,7 @@ const LiveRoom = () => {
     const [isCodeOn, setIsCodeOn] = useState(false);
     const [showChat, setShowChat] = useState(false);
     const [myCode, setMyCode] = useState({ language: '', content: '' });
+    const [myIndex, setMyIndex] = useState(0);
     const [isMyCodeUpload, setIsMyCodeUpload] = useState(false)
     const [isClicked, setIsClicked] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState('');
@@ -65,22 +66,22 @@ const LiveRoom = () => {
     const [bardText, setBardText] = useState('');
     const [bardAnswer, setBardAnswer] = useState('');
     const [isBardLoading, setIsBardLoading] = useState(false)
-    const [marker, setMarker] = useState({
+    const [marker, setMarker] = useState([{
         startRow: 0,
         startCol: 0,
         endRow: 0,
         endCol: 0,
-        className: 'error-marker',
+        className: `error-marker-${myIndex}`,
         type: 'background'
-    })
-    const [myMarker, setMyMarker] = useState({
+    }])
+    const [myMarker, setMyMarker] = useState([{
         startRow: 0,
         startCol: 0,
         endRow: 0,
         endCol: 0,
-        className: 'error-marker',
+        className: `error-marker-${myIndex}`,
         type: 'background'
-    })
+    }])
 
 
     const user = useSelector((state) => state.user);
@@ -125,7 +126,7 @@ const LiveRoom = () => {
         }
     }, []);
 
-    const createPeerConnection = useCallback((socketID, name) => {
+    const createPeerConnection = useCallback((socketID, name, index) => {
         try {
             const pc = new RTCPeerConnection(pc_config);
 
@@ -148,6 +149,7 @@ const LiveRoom = () => {
                         .concat({
                             id: socketID,
                             name,
+                            index,
                             stream: e.streams[0],
                         }),
                 );
@@ -233,30 +235,48 @@ const LiveRoom = () => {
             startCol: e?.anchor?.column,
             endRow: e?.cursor?.row,
             endCol: e?.cursor?.column,
-            className: 'error-marker',
+            className: `error-marker-${myIndex}`,
             type: 'background'
         })
     }
 
-    const markCode = (language, code, writer) => {
-        const data = {
-            roomId: Number(roomId),
-            language: language,
-            code: code,
-            sender: writer,
-            marker: marker
-        };
-        studyLiveSocket?.emit("codeSend", data);
+    const markCode = (language, code, writer, prevMarker) => {
+        if (prevMarker) {
+            const data = {
+                roomId: Number(roomId),
+                language: language,
+                code: code,
+                sender: writer,
+                marker: [...prevMarker, marker]
+            };
+            studyLiveSocket?.emit("codeSend", data);
+        }
+        else {
+            const data = {
+                roomId: Number(roomId),
+                language: language,
+                code: code,
+                sender: writer,
+                marker: [marker]
+            };
+            studyLiveSocket?.emit("codeSend", data);
+
+        }
+        console.log(prevMarker)
     }
 
     useEffect(() => {
         socketRef.current = io.connect(SOCKET_SERVER_URL);
         getLocalStream();
 
+        socketRef.current.on('index', (data) => {
+            setMyIndex(data.index)
+        });
+
         socketRef.current.on('all_users', (allUsers) => {
             allUsers.forEach(async (user) => {
                 if (!localStreamRef.current) return;
-                const pc = createPeerConnection(user.id, user.name);
+                const pc = createPeerConnection(user.id, user.name, user.index);
                 if (!(pc && socketRef.current)) return;
                 pcsRef.current = { ...pcsRef.current, [user.id]: pc };
                 try {
@@ -282,7 +302,7 @@ const LiveRoom = () => {
             async (data) => {
                 const { sdp, offerSendID, offerSendName } = data;
                 if (!localStreamRef.current) return;
-                const pc = createPeerConnection(offerSendID, offerSendName);
+                const pc = createPeerConnection(offerSendID, offerSendName,);
                 if (!(pc && socketRef.current)) return;
                 pcsRef.current = { ...pcsRef.current, [offerSendID]: pc };
                 try {
@@ -357,10 +377,9 @@ const LiveRoom = () => {
             setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
         });
         studyLiveSocket.on("codeUploadFrom", (data) => {
-            console.log(data)
+            console.log('codeUploadFrom', data.marker)
 
             if (data.sender === currentUser.name) {
-                console.log(data)
                 if (data.marker) {
                     setMyMarker(data.marker)
                 }
@@ -461,7 +480,7 @@ const LiveRoom = () => {
                             showPrintMargin={true}
                             showGutter={true}
                             highlightActiveLine={true}
-                            markers={[myMarker]}
+                            markers={myMarker}
                             value={myCode?.content}
                             style={{ 'width': '100%' }}
                             setOptions={{
@@ -470,7 +489,7 @@ const LiveRoom = () => {
                             }} /></>}
                     {clickedUser?.id && clickedUser?.language && clickedUser?.code &&
                         <>
-                            <div onClick={() => markCode(clickedUser?.language, clickedUser?.code, clickedUser?.name)}>코드 하이라이트</div>
+                            <div onClick={() => markCode(clickedUser?.language, clickedUser?.code, clickedUser?.name, clickedUser?.marker)}>코드 하이라이트</div>
                             <AceEditor
                                 mode={clickedUser.language}
                                 theme="monokai"
@@ -487,7 +506,7 @@ const LiveRoom = () => {
                                     useWorker: false
                                 }}
                                 readOnly={true}
-                                markers={[clickedUser.marker ?? marker]}
+                                markers={clickedUser.marker ?? marker}
                                 onSelectionChange={onChangeSelection} />
                         </>
                     }
