@@ -507,6 +507,13 @@ div.chat-bottom div.chat-box div.content div.item
     word-wrap: break-word;
 }
 
+div.chat-bottom div.chat-box div.content div.item
+.text >a{
+    color:#6666FF;
+    font-weight: 700;
+}
+
+
 div.mypage-chat
 .my-header{
     float: left;
