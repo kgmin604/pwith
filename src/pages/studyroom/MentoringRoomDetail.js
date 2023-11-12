@@ -93,10 +93,22 @@ function MentoringRoomDetail() {
     }
 
     if (window.confirm("입력한 정보가 맞습니까?")){
-      // axios 요청 추가하기
-      alert("환급 요청이 완료되었습니다. 2~3일 내 해당 계좌로 수업료가 입금될 예정입니다.");
-      // window.location.reload(); // 페이지 새로고침 -> 주연 예외처리 후
-      setPaybackOpen(false); // 임시
+      axios({
+        method: "POST",
+        url: `/mentoring-room/${roomInfo.id}/refund`,
+        data: {
+          bank: paybackData.bank,
+          account: paybackData.account,
+          classes: Number(paybackData.refund)
+        }
+      })
+        .then(function (response) {
+          alert("환급 요청이 완료되었습니다. 2~3일 내 해당 계좌로 수업료가 입금될 예정입니다.");
+          window.location.reload();
+        })
+        .catch(function (e) {
+          alert('요청에 실패했습니다. 다시 시도해주세요.');
+        });
     }
   }
 
@@ -264,46 +276,6 @@ function MentoringRoomDetail() {
       });
   }
 
-  /********************* 룸 삭제(미구현) *********************/
-
-  function requestDeleteRoom(event){
-    event.stopPropagation();
-    /*
-    if (window.confirm("정말로 삭제하시겠습니까?")){
-      axios({
-        method: "DELETE",
-        url: `/study-room/${roomInfo.id}`,
-      })
-        .then(function (response) {
-          alert('삭제가 완료되었습니다.');
-          navigate('./..');
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
-    */
-  }
-
-  function requestOutRoom(event){
-    event.stopPropagation();
-    /*
-    if (window.confirm("정말로 탈퇴하시겠습니까?")){
-      axios({
-        method: "DELETE",
-        url: `/study-room/${roomInfo.id}/out`,
-      })
-        .then(function (response) {
-          alert('탈퇴가 완료되었습니다.');
-          navigate('./..');
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
-    */
-  }
-
   /********************* 수업 횟수 확인 *********************/
 
   let [numData, setNumData] = useState({ // 수업 횟수 체크
@@ -358,6 +330,33 @@ function MentoringRoomDetail() {
         alert(`${error.response.data.message}입니다.`)
       });
     }
+  }
+
+  /********************* 룸 삭제 *********************/
+
+  function requestDeleteRoom(event){
+    event.stopPropagation();
+    
+    if (window.confirm("정말로 삭제하시겠습니까?")){
+
+      if(numData.total !== numData.refund){
+        alert("멘토링을 완료한 후 삭제할 수 있습니다. (모든 수업을 요청하고 환급을 완료하십시오.)");
+        return;
+      }
+
+      axios({
+        method: "DELETE",
+        url: `/mentoring-room/${roomInfo.id}`,
+      })
+        .then(function (response) {
+          alert('삭제가 완료되었습니다.');
+          navigate('./..');
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+    
   }
 
   /********************* 채팅 관리 *********************/
@@ -555,20 +554,13 @@ function MentoringRoomDetail() {
               (
                 <span
                   className="room-delete-btn"
-                  onClick={e=>e.stopPropagation()} // API 연결
+                  onClick={e=>requestDeleteRoom(e)} // API 연결
                 >
                   멘토링 삭제하기
                 </span>
               )
                : 
-               (
-                <span
-                  className="room-delete-btn"
-                  onClick={e=>e.stopPropagation()} // API 연결
-                >
-                  멘토링 그만두기
-                </span>
-              )
+               null
               }
             </div>
           </div>
