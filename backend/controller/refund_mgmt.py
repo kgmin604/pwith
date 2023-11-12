@@ -39,11 +39,18 @@ class Refund() :
         done = commit(sql)
         
         return done
-    
+     
     def getAllInfo():
-        sql = f"select member.memId, bank, account, balance, curDate, checked from refund, member where refund.memId = member.id"
+        sql = f"select refund.id, member.memId, bank, account, balance, curDate, checked from refund, member where refund.memId = member.id"
         
         rows = selectAll(sql)
         
         return rows
+    
+    def chkRefund(id):
+        sql = f"UPDATE refund SET checked = True WHERE id = {id}"
+        
+        done = commit(sql)
+        
+        return done
     
