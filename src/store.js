@@ -50,12 +50,30 @@ const qnaCategory = createSlice({
     }
   }
 })
-const contentCategory = createSlice({
-  name: 'contentCategory',
-  initialState: null,
+const lectureCategory = createSlice({
+  name: 'lectureCategory',
+  initialState: {
+    firstCategory: null,
+    secondCategory: null
+  },
   reducers: {
-    setContentCategory: (state, action) => {
-      return action.payload;
+    setLectureCategory: (state, action) => {
+      state.firstCategory = action.payload.firstCategory;
+      state.secondCategory = action.payload.secondCategory;
+    }
+  }
+})
+
+const bookCategory = createSlice({
+  name: 'bookCategory',
+  initialState: {
+    firstCategory: null,
+    secondCategory: null
+  },
+  reducers: {
+    setBookCategory: (state, action) => {
+      state.firstCategory = action.payload.firstCategory;
+      state.secondCategory = action.payload.secondCategory;
     }
   }
 })
@@ -64,7 +82,9 @@ export let { loginUser, clearUser } = user.actions;
 export const { updateRecStudyList } = recStudyList.actions;
 export const { setStudyCategory } = studyCategory.actions;
 export const { setQnaCategory } = qnaCategory.actions;
-export const { setContentCategory } = contentCategory.actions;
+export const { setLectureCategory } = lectureCategory.actions;
+export const { setBookCategory } = bookCategory.actions;
+
 
 export default configureStore({
   reducer: {
@@ -72,6 +92,7 @@ export default configureStore({
     recStudyList: recStudyList.reducer,
     studyCategory: studyCategory.reducer,
     qnaCategory: qnaCategory.reducer,
-    contentCategory: contentCategory.reducer
+    lectureCategory:lectureCategory.reducer,
+    bookCategory: bookCategory.reducer
   }
 })

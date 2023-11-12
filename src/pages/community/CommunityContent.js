@@ -2,18 +2,18 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./community-content.css";
 import "../../App.css";
 import React, { useState, useEffect } from 'react';
-import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
+import { Nav } from "react-bootstrap";
 import axios from "axios";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { setBookCategory,setLectureCategory } from "../../store";
+import { useDispatch,useSelector } from "react-redux";
+
 
 function CommunityContent() {
-
     let [type, setType] = useState('책'); // 책 또는 강의
-
-    const [pages, setPages] = useState([]); // 임시
+    const lectureCategory = useSelector((state) => state.lectureCategory);
+    const bookCategory = useSelector((state) => state.bookCategory);
     const [selectBookPage, setSelectBookPage] = useState(1);
     const [selectLecturePage, setSelectLecturePage] = useState(1);
-    const [category, setCategory] = useState(null);
     const [bookIsNext, setBookIsNext] = useState(true)
     const [lectureIsNext, setLectureIsNext] = useState(true)
 
@@ -26,7 +26,8 @@ function CommunityContent() {
             url: "/community/contents/book",
             params: {
                 page: selectBookPage,
-                category: category
+                firstCategory:bookCategory.firstCategory,
+                secondCategory:bookCategory.secondCategory
             }
         })
             .then(function (response) {
@@ -37,13 +38,33 @@ function CommunityContent() {
             .catch(function (error) {
             });
     }, [selectBookPage]);
+
+    useEffect(() => {
+        axios({
+            method: "GET",
+            url: "/community/contents/book",
+            params: {
+                page: 1,
+                firstCategory:bookCategory.firstCategory,
+                secondCategory:bookCategory.secondCategory
+            }
+        })
+            .then(function (response) {
+                const data = response.data.data
+                setBookList(data.book)
+                setBookIsNext(data.isNext)
+            })
+            .catch(function (error) {
+            });
+    }, [bookCategory]);
     useEffect(() => {
         axios({
             method: "GET",
             url: "/community/contents/lecture",
             params: {
                 page: selectLecturePage,
-                category: category
+                firstCategory:lectureCategory.firstCategory,
+                secondCategory:lectureCategory.secondCategory
             }
         })
             .then(function (response) {
@@ -54,6 +75,26 @@ function CommunityContent() {
             .catch(function (error) {
             });
     }, [selectLecturePage]);
+
+    useEffect(() => {
+        axios({
+            method: "GET",
+            url: "/community/contents/lecture",
+            params: {
+                page: 1,
+                firstCategory:lectureCategory.firstCategory,
+                secondCategory:lectureCategory.secondCategory
+            }
+        })
+            .then(function (response) {
+                const data = response.data.data
+                setLectureList(data.lecture)
+                setLectureIsNext(data.isNext)
+            })
+            .catch(function (error) {
+            });
+    }, [lectureCategory]);
+
     const moreBook = () => {
         setSelectBookPage(selectBookPage + 1)
     }
@@ -296,24 +337,46 @@ function Category({ type }) {//카테고리
             <hr style={{ width: '60%', margin: '0 auto' }} />
             {type === '강의' ? <Nav defaultActiveKey="#" className="flex-column">
                 {lectureCategory.map((category, index) => {
-                    return <SecondCategory category={category} />
+                    return <SecondCategory type={'lecture'} category={category} index={index} />
                     // return 
                 })}
             </Nav> : <Nav defaultActiveKey="#" className="flex-column">
                 {bookCategory.map((category, index) => {
-                    return <SecondCategory category={category} />
+                    return <SecondCategory type={'book'} category={category} index={index} />
                 })}
             </Nav>}
         </>
     );
 }
 
-function SecondCategory({ category }) {
+function SecondCategory({ type, category, index }) {
     const [showSecondCategory, setShowSecondCategory] = useState(false)
+    const dispatch = useDispatch();
+    const clickedStyle = {
+        color: '#282c34',
+        fontWeight: 700
+    }
+    const defaultStyle = {
+        color: '#282c34',
+    }
+
+    const onClickCategory = (secondCategory) => {
+        if (type === 'lecture') {
+            dispatch(setLectureCategory({ firstCategory: index, secondCategory: secondCategory }));
+        } else {
+            dispatch(setBookCategory({ firstCategory: index, secondCategory: secondCategory }));
+        }
+
+    }
     return <>
-        <Nav.Link href="#" onClick={()=>setShowSecondCategory((prev)=>!prev)}><div style={{ color: '#282c34' }}>{category.firstCategory}</div></Nav.Link>
-        {showSecondCategory&&category.secondCategory.map((category,index)=>{
-            return <div className="second-category">{category}</div>
+        <Nav.Link href="#" onClick={() => {
+            onClickCategory(null)
+            setShowSecondCategory((prev) => !prev)
+        }}><div style={showSecondCategory ? clickedStyle : defaultStyle}>{category.firstCategory}</div></Nav.Link>
+        {showSecondCategory && category.secondCategory.map((category, secondIndex) => {
+            return <div onClick={() => {
+                onClickCategory(secondIndex)
+            }} className="second-category">{category}</div>
         })
         }
     </>
