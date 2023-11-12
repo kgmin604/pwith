@@ -42,10 +42,10 @@ const pc_config = {
     ],
 };
 
-const SOCKET_SERVER_URL = 'http://localhost:8080';
-const LiveRoom = () => {
+const LiveRoom = ({type}) => {
     const socketRef = useRef();
-    const studyLiveSocket = useWebSocket('studyLive');
+    const studyLiveSocket = useWebSocket(`${type}Live`);
+    const SOCKET_SERVER_URL = `http://localhost:8080/${type}`;
     const pcsRef = useRef({});
     const textRef = useRef(null);
     const localVideoRef = useRef(null);
