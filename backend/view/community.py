@@ -300,7 +300,7 @@ def replyPost(id, loginMember, new_token) :      # 댓글 작성
             # qnaReplyAlarm 에 추가
             post = QNAPost.findById(id)
             
-            alarm.insertAlarm(post.__writer, writer, pk, 4)
+            Alarm.insertAlarm(post.__writer, writer, pk, 4)
             
         except Exception as ex:
             print("에러 이유 : " + str(ex))
