@@ -12,7 +12,6 @@ class studyPost() :
         self.__likes = likes
         self.__views = views
         self.__roomId = roomId
-        
     @property
     def id(self) :
         return self.__id
@@ -39,29 +38,28 @@ class studyPost() :
         return self.__roomId
 
     @staticmethod
-    def insertStudy(title, writer, curDate, content, likes, views, roomId):     #스터디 글 생성
+    def insertStudy(title, writer, curDate, content, likes, views, roomId): # 스터디 글 생성
+
+        content = content.replace("\'", "\"")
+        title = title.replace("\'", "\"")
         
-        sql = f"INSERT INTO study (  title, writer, curDate, content, likes, views, roomId) VALUES ( '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(likes)}', '{int(views)}', '{int(roomId)}')"
+        sql = f"INSERT INTO study (title, writer, curDate, content, likes, views, roomId) VALUES ( '{title}', '{writer}', '{curDate}', '{content}', '{likes}', '{views}', '{roomId}')"
         
         done = commit(sql)
 
         return done
      
     @staticmethod
-    def getMyStudyList(writer):     # 내가 만든 스터디룸 리스트 반환하는 함수
-        sql = f"select id, name from studyRoom where leader = '{int(writer)}'"
+    def getMyStudyList(writer): # 내가 만든 스터디룸 리스트 반환하는 함수
+
+        sql = f"SELECT id, name FROM studyRoom WHERE leader = {writer}"
 
         rows = selectAll(sql)
 
         return rows
     
     @staticmethod
-    def curdate():  # date 구하는 함수
-        now = datetime.now()
-        return str(now)
-    
-    @staticmethod
-    def getStudy(category):     # study 글 전체를 최신순으로 가져오는 함수
+    def getStudy(category): # 글 전체를 최신순으로 가져오는 함수
         
         if category <11 :
             sql = f"select study.* from study, studyRoom WHERE study.roomId = studyRoom.id and studyRoom.category ='{int(category)}' ORDER BY study.curDate DESC"
@@ -137,22 +135,21 @@ class studyPost() :
         return result
     
     @staticmethod
-    def updateStudy(postId, content, title):   # study 게시글 내용 수정
-        sql = f"UPDATE study SET content = '{str(content)}', title ='{str(title)}' WHERE id = '{str(postId)}'"
-        done = commit(sql)
-        if done ==0:
-            rollback()
-            
-        return done
+    def updateStudy(postId, content, title): # 게시글 내용 수정
+
+        content = content.replace("\'", "\"")
+        title = title.replace("\'", "\"")
+
+        sql = f"UPDATE study SET content = '{content}', title = '{title}' WHERE id = {postId}"
+
+        return commit(sql)
     
     @staticmethod
-    def deleteStudy(studyID):   # study 게시글 삭제
+    def deleteStudy(studyID): # 게시글 삭제
+
         sql = f"DELETE from study WHERE id = '{str(studyID)}'"
-        done = commit(sql)
-        if done ==0:
-            rollback()
-        
-        return done
+
+        return commit(sql)
     
     @staticmethod
     def updateViews(postId):    # 조회수 1 증가

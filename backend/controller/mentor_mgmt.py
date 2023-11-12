@@ -162,6 +162,9 @@ class Portfolio() :
     @staticmethod
     def update(id, newImg, newBrf, newCnt, newTuit, newDur, subjects) :
 
+        newCnt = newCnt.replace("\'", "\"")
+        newBrf = newBrf.replace("\'", "\"")
+
         sql = f"UPDATE portfolio SET mentoPic = '{newImg}', brief = '{newBrf}', content = '{newCnt}', tuition = '{newTuit}', duration = '{newDur}' WHERE id = {id}"
 
         commit(sql)

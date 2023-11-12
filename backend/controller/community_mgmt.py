@@ -38,8 +38,10 @@ class QNAPost() :
         
     @staticmethod
     def insertQNA(title, writer, curDate, content, category, likes, views):     # qna 글 생성
+
+        content = content.replace("\'", "\"")
         
-        sql = f"INSERT INTO qna ( title, writer, curDate, content, category, likes, views) VALUES ( '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(category)}','{int(likes)}', '{int(views)}')"
+        sql = f"INSERT INTO qna (title, writer, curDate, content, category, likes, views) VALUES ( '{title}', '{writer}', '{curDate}', '{content}', '{category}','{likes}', '{views}')"
         
         done = commit(sql)
 
@@ -47,26 +49,24 @@ class QNAPost() :
     
     @staticmethod
     def updateQna(postId, content, title):   # qna 게시글 내용 수정
-        sql = f"UPDATE qna SET content = '{str(content)}', title = '{str(title)}' WHERE id = '{str(postId)}'"
+
+        content = content.replace("\'", "\"")
+
+        sql = f"UPDATE qna SET content = '{content}', title = '{title}' WHERE id = {postId}"
+
         done = commit(sql)
-        if done ==0:
-            rollback()
             
         return done
     
     @staticmethod
     def deleteQna(qnaID):   # Qna 게시글 삭제
-        sql = f"DELETE from qna WHERE id = '{str(qnaID)}'"
+
+        sql = f"DELETE from qna WHERE id = '{qnaID}'"
+        
         done = commit(sql)
-        if done ==0:
-            rollback()
         
         return done
 
-    def curdate():  # date 구하는 함수
-        now = datetime.now()
-        return str(now)
-    
     @staticmethod
     def getQNA(category):   # QNA 게시글 넘겨주는 함수
         if category <11 : 

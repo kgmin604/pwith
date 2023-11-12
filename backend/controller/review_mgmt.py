@@ -47,6 +47,8 @@ class Review :
 
     @staticmethod
     def save(writerId, content, score, curDate, portfolioId, roomId):
+
+        content = content.replace("\'", "\"")
         
         sql = f"INSERT INTO review(writer, content, score, curDate, portfolio, room) VALUES({writerId}, '{content}', {score}, '{curDate}', {portfolioId}, {roomId})"
 
@@ -56,6 +58,8 @@ class Review :
 
     @staticmethod
     def update(id, newCnt, newScore) :
+
+        newCnt = newCnt.replace("\'", "\"")
 
         sql = f"UPDATE review SET content = '{newCnt}', score = {newScore} WHERE id = {id}"
 

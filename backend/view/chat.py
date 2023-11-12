@@ -56,7 +56,7 @@ def send(loginMember, new_token):     # 쪽지 보내기
     if oppChk == True:  #oppId가 유효한 경우 result = 1
         
         content = data['content']
-        curDate = chat.curdate()
+        curDate = datetime.now()
         nickname = data['nickname']
         oppNickId = nicknameToId(nickname)
         print(str(nickname), memId)
