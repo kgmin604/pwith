@@ -310,8 +310,9 @@ def deleteRoom(loginMember, new_token, id) : # 룸 삭제 (멘토)
         }
 
     room = info['room']
-    mentoId = room.mento
+    portfolio = info['portfolio']
 
+    mentoId = room.mento
     if loginMember.id != mentoId :
         return {
             'status' : 403,
@@ -320,50 +321,19 @@ def deleteRoom(loginMember, new_token, id) : # 룸 삭제 (멘토)
             'access_token' : new_token
         }
 
-    # 1. 멘티의 알림창으로 스터디룸 삭제되었다는 알림 보내기
+    # 멘티의 알림창으로 스터디룸 삭제되었다는 알림 보내기 - 정윤
 
-    # 2. 환급해야할 금액 환급하기 (계좌 정보가 필요한데 이전 기록이 없다면?)
-    # Refund.save(loginMember.id)
+    data = request.get_json()
+    bank = data['bank']
+    account = data['account']
+
+    remain_refund = min(room.mento_cnt, room.menti_cnt) - room.refund_cnt
+    balance = remain_refund * portfolio.tuition
+
+    Refund.save(loginMember.id, bank, account, balance, datetime.now())
 
     MentoringRoom.delete(id)
 
-    return {
-        'data' : None,
-        'access_token' : new_token
-    }
-
-@mentoringroom_bp.route('/<id>/out', methods=['DELETE'])
-@login_required
-def quitRoom(loginMember, new_token, id) : # 스터디 그만두기 (멘티)
-
-    info = MentoringRoom.findById(id)
-
-    if not info:
-        return {
-            'status' : 400,
-            'message' : '없는 멘토링룸',
-            'data' : None,
-            'access_token' : new_token
-        }
-
-    room = info['room']
-    mentiId = room.menti
-
-    if loginMember.id != mentiId :
-        return {
-            'status' : 403,
-            'message' : '권한 없는 사용자',
-            'data' : None,
-            'access_token' : new_token
-        }
-
-    # 1. 멘토의 알림창으로 스터디 그만뒀다는 알림 보내기
-
-    # 2. 환급해야할 금액 환급하기 (계좌 정보가 필요한데 이전 기록이 없다면?)
-    # Refund.save()
-    
-    MentoringRoom.delete(id)
-    
     return {
         'data' : None,
         'access_token' : new_token
