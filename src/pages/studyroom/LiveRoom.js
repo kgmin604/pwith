@@ -265,12 +265,18 @@ const LiveRoom = () => {
         console.log(prevMarker)
     }
 
+    useEffect(() => { console.log(users) }, [users])
+    useEffect(() => { console.log(myIndex) }, [myIndex])
+
+
     useEffect(() => {
         socketRef.current = io.connect(SOCKET_SERVER_URL);
         getLocalStream();
 
+        let index
         socketRef.current.on('index', (data) => {
-            setMyIndex(data.index)
+            setMyIndex(data)
+            index = data
         });
 
         socketRef.current.on('all_users', (allUsers) => {
@@ -289,8 +295,10 @@ const LiveRoom = () => {
                         sdp: localSdp,
                         offerSendID: socketRef.current.id,
                         offerSendName: currentUser.name,
+                        offerSendIndex: index,
                         offerReceiveID: user.id,
                     });
+                    console.log(index)
                 } catch (e) {
                     console.error(e);
                 }
@@ -300,9 +308,9 @@ const LiveRoom = () => {
         socketRef.current.on(
             'getOffer',
             async (data) => {
-                const { sdp, offerSendID, offerSendName } = data;
+                const { sdp, offerSendID, offerSendName, offerSendIndex } = data;
                 if (!localStreamRef.current) return;
-                const pc = createPeerConnection(offerSendID, offerSendName,);
+                const pc = createPeerConnection(offerSendID, offerSendName, offerSendIndex);
                 if (!(pc && socketRef.current)) return;
                 pcsRef.current = { ...pcsRef.current, [offerSendID]: pc };
                 try {
@@ -420,6 +428,8 @@ const LiveRoom = () => {
     const onClickSomeone = (user) => {
         setClickedUser(user)
     }
+    const borderColor=['rgba(255, 213, 0, 0.7)','rgba(255, 0, 0, 0.7)','rgba(0, 255, 10, 0.7)','rgba(128, 0, 255, 0.7)']
+
 
     return (
         <div className="live-room" ref={ref}>
@@ -432,6 +442,8 @@ const LiveRoom = () => {
                                 height: 150,
                                 margin: 5,
                                 backgroundColor: 'black',
+                                borderWidth: 5,
+                                borderColor: borderColor[myIndex]
                             }}
                             muted
                             ref={localVideoRef}

@@ -19,9 +19,9 @@ const PORT = process.env.PORT || 8080;
 let users = {};
 let socketToRoom = {};
 const maximum = process.env.MAXIMUM || 4;
-
+let index={}
 io.on('connection', socket => {
-    let index
+    
     socket.on('join_room', data => {
         if (users[data.room]) {
             const length = users[data.room].length;
@@ -29,11 +29,11 @@ io.on('connection', socket => {
                 socket.to(socket.id).emit('room_full');
                 return;
             }
-            index=length
-            users[data.room].push({id: socket.id, name: data.name,index});
+            index[data.room]++;
+            users[data.room].push({id: socket.id, name: data.name,index:index[data.room]});
         } else {
-            index=0
-            users[data.room] = [{id: socket.id, name: data.name,index}];
+            index[data.room]=0
+            users[data.room] = [{id: socket.id, name: data.name,index:index[data.room]}];
         }
         socketToRoom[socket.id] = data.room;
 
@@ -42,13 +42,13 @@ io.on('connection', socket => {
 
         const usersInThisRoom = users[data.room].filter(user => user.id !== socket.id);
 
-        console.log(users[data.room]);
-        io.sockets.to(socket.id).emit('index', {index});
+        console.log(users[data.room],index[data.room]);
+        io.sockets.to(socket.id).emit('index', index[data.room]);
         io.sockets.to(socket.id).emit('all_users', usersInThisRoom);
     });
 
     socket.on('offer', data => {
-        socket.to(data.offerReceiveID).emit('getOffer', {sdp: data.sdp, offerSendID: data.offerSendID, offerSendName: data.offerSendName,});
+        socket.to(data.offerReceiveID).emit('getOffer', {sdp: data.sdp, offerSendID: data.offerSendID, offerSendName: data.offerSendName,offerSendIndex: data.offerSendIndex});
     });
 
     socket.on('answer', data => {
@@ -60,8 +60,12 @@ io.on('connection', socket => {
     })
 
     socket.on('disconnect', () => {
+        
         console.log(`[${socketToRoom[socket.id]}]: ${socket.id} exit`);
         const roomID = socketToRoom[socket.id];
+        if(index[roomID]>0){
+            index[roomID]--;
+        }
         let room = users[roomID];
         if (room) {
             room = room.filter(user => user.id !== socket.id);
@@ -72,7 +76,7 @@ io.on('connection', socket => {
             }
         }
         socket.to(roomID).emit('user_exit', {id: socket.id});
-        console.log(users);
+        console.log(users,index[roomID]);
     })
 });
 

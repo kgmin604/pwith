@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import "./liveroom.css";
 
+const borderColor=['rgba(255, 213, 0, 0.7)','rgba(255, 0, 0, 0.7)','rgba(0, 255, 10, 0.7)','rgba(128, 0, 255, 0.7)']
 const Video = ({ user,clickedUser, stream, muted }) => {
     const ref = useRef(null);
     useEffect(() => {
@@ -17,7 +18,7 @@ const defaultStyle={
 const clickedStyle={
     ...defaultStyle,
     borderWidth:5,
-    borderColor:'rgba(0, 134, 255, 1)'
+    borderColor:borderColor[clickedUser.index]
 }
     return (
         <div >
