@@ -44,6 +44,8 @@ class StudyRoom() :
     @staticmethod
     def save(roomName, date, category, leader, image, totalP) :
 
+        roomName = roomName.replace("\'", "\"")
+
         sql1 = f"INSERT INTO studyRoom(name, curDate, category, leader, image, totalP) VALUES('{roomName}', '{date}', {category}, {leader}, '{image}', {totalP})"
 
         roomId = commitAndGetId(sql1)
@@ -140,6 +142,8 @@ class StudyRoom() :
 
     @staticmethod
     def updateNotice(roomId, notice) : # 공지 수정
+
+        notice = notice.replace("\'", "\"")
 
         sql = f"UPDATE studyRoom SET notice='{notice}' WHERE id = {roomId}"
 

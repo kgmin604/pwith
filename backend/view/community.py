@@ -356,7 +356,7 @@ def write(loginMember, new_token):
     
     title = data['title']
     writer = loginMember.id
-    curDate = QNAPost.curdate()
+    curDate = datetime.now()
     content = data['content']
     category = data['category']
     likes = 0

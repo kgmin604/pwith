@@ -9,7 +9,6 @@ class chat():
         self.__receiver = receiver
         self.__content = content
         self.__curDate = curDate
-        
     @property
     def id(self):
         return self.__id
@@ -27,6 +26,8 @@ class chat():
         return self.__curDate
         
     def insertChat(sender, receiver, content, curDate):
+
+        content = content.replace("\'", "\"")
 
         sql = f"INSERT INTO chat(sender, receiver, content, curDate) VALUES ({sender}, {receiver}, '{content}', '{curDate}')"
 
@@ -86,11 +87,6 @@ class chat():
             return True
                 
         return False
-            
-    
-    def curdate():  # date 구하는 함수
-        now = datetime.now()
-        return str(now)
     
     
     def insertChatAlarm(memId, oppId, id):

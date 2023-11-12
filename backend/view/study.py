@@ -231,31 +231,23 @@ def showDetail(id, loginMember, new_token) :     # 글 조회
         
 @study_bp.route('/<int:id>', methods = ['PATCH'])
 @login_required
-def updatePost(id, loginMember, new_token):   # 게시글 수정
-        # id = request.get_json()['postId']
-        postContent = request.get_json()['content']
-        postTitle = request.get_json()['title']
+def updatePost(id, loginMember, new_token): # 게시글 수정
         
-        try :
-            done = studyPost.updateStudy(id, postContent, postTitle)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
+    postContent = request.get_json()['content']
+    postTitle = request.get_json()['title']
+    
+    studyPost.updateStudy(id, postContent, postTitle)
 
-        return {
-            'data': None,
-            'access_token' : new_token
+    return {
+        'data': None,
+        'access_token' : new_token
         }
          
 @study_bp.route('/<int:id>', methods = ['DELETE'])
 @login_required
 def deletePost(id, loginMember, new_token): # 게시글 삭제
 
-    try :
-        done = studyPost.deleteStudy(id)
-    except Exception as ex :
-        print("에러 이유 : " + str(ex))
-        done = 0
+    studyPost.deleteStudy(id)
 
     return {
         'data': None,
@@ -366,7 +358,7 @@ def write(loginMember, new_token): # 글 작성
         content = data['content']
         roomId = data['roomId']
         writer = loginMember.id
-        curDate = studyPost.curdate()
+        curDate = datetime.now()
         likes = 0
         views = 0
         

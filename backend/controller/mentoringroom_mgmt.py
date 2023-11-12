@@ -51,6 +51,8 @@ class MentoringRoom() :
     @staticmethod
     def save(roomName, date, mentoId, mentiId, portId) :
 
+        roomName = roomName.replace("\'", "\"")
+
         sql = f"INSERT INTO mentoringRoom(name, curDate, mento, menti, portfolio) VALUES('{roomName}', '{date}', {mentoId}, {mentiId}, {portId})"
 
         roomId = commitAndGetId(sql)
@@ -63,7 +65,6 @@ class MentoringRoom() :
         sql = f"SELECT EXISTS (SELECT id FROM mentoringRoom WHERE id = {id})"
 
         result = selectOne(sql)[0]
-        print(result)
 
         return True if result == 1 else False
 
@@ -176,6 +177,8 @@ class MentoringRoom() :
 
     @staticmethod
     def updateNotice(roomId, notice) : # 공지 수정
+
+        notice = notice.replace("\'", "\"")
 
         sql = f"UPDATE mentoringRoom SET notice='{notice}' WHERE id = {roomId}"
 

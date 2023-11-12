@@ -26,6 +26,8 @@ class ReplyStudy :
     @staticmethod
     def writeReply(writer, content, curDate, studyId) :
 
+        content = content.replace("\'", "\"")
+
         sql = f"INSERT INTO replyStudy(writer, content, curDate, studyId) VALUES({writer}, '{content}', '{curDate}', {studyId})"
 
         replyId = commitAndGetId(sql)
@@ -34,6 +36,8 @@ class ReplyStudy :
 
     @staticmethod
     def modifyReply(id, newCnt) :
+
+        newCnt = newCnt.replace("\'", "\"")
 
         sql = f"UPDATE replyStudy SET content = '{newCnt}' WHERE id = {id}"
 

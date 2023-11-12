@@ -26,6 +26,8 @@ class ReplyQna :
     @staticmethod
     def writeReply(writer, content, curDate, qnaId) :
 
+        content = content.replace("\'", "\"")
+
         sql = f"INSERT INTO replyQna(writer, content, curDate, qnaId) VALUES({writer}, '{content}', '{curDate}', {qnaId})"
 
         replyId = commitAndGetId(sql)
@@ -34,6 +36,8 @@ class ReplyQna :
 
     @staticmethod
     def modifyReply(id, newCnt) :
+
+        newCnt = newCnt.replace("\'", "\"")
 
         sql = f"UPDATE replyQna SET content = '{newCnt}' WHERE id = {id}"
 
