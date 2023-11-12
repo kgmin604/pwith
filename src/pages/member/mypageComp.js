@@ -904,25 +904,47 @@ function Admin() {
     let navigate = useNavigate();
     let [clickNum, setClickNum] = useState(0);
 
-    let [list, setList] = useState([
-        {id:1, title:'수업료 환급 요청', sender:'kkm5424' , date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
-        {id:2, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
-        {id:3, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: true, content:'우리은행 0000 3만원 환급요청합니다.'},
-        {id:4, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
-        {id:5, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
-        {id:6, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
-        {id:7, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
-        {id:8, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
-        {id:9, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
-        {id:10, title:'수업료 환급 요청', sender:'kkm5424' ,date:'2023/10/27 21:00', check: false, content:'우리은행 0000 3만원 환급요청합니다.'},
-    ]);
+    let [list, setList] = useState([]);
 
     useEffect(() => {
         if(user.name !== '관리자'){
             alert('비정상적 접근입니다.');
             navigate('/');
         }
+        else{
+            axios({
+                method: "GET",
+                url: `/mypage/admin`,
+            })
+                .then(function (response) {
+                setList(response.data.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
     }, []);
+
+    function requestCheck(e){
+        e.stopPropagation();
+
+        if (window.confirm("완료처리 하시겠습니까?")){
+            axios({
+                method: "POST",
+                url: `/mypage/admin`,
+                data:{
+                    id: Number(clickNum)
+                }
+            })
+            .then(function (response) {
+                alert("처리가 완료되었습니다.");
+                window.location.reload();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
+    }
 
     return (
     <>
@@ -954,7 +976,13 @@ function Admin() {
                         {item.content}
                         <br></br>
                         {
-                            !item.check? <input className="admin-btn" type="button" value="확인"></input> : null
+                            !item.check? 
+                            <input 
+                                className="admin-btn" 
+                                type="button" 
+                                value="확인"
+                                onClick={e=>requestCheck(e)}
+                            ></input> : null
                         }
                     </div>
                     : null

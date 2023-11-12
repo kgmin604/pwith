@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setStudyCategory, setQnaCategory, setBookCategory, setLectureCategory } from "./store.js";
 
 import PwithMain from "./pages/pwithmain/PwithMain.js";
+import Search from "./pages/pwithmain/Search.js";
 import StudyMain from "./pages/study/StudyMain.js";
 import RoomMain from "./pages/studyroom/RoomMain.js";
 import RoomCreate from "./pages/studyroom/RoomCreate.js";
@@ -69,6 +70,7 @@ const alramMoveTo = ["/studyroom/", "/mentoring/", "/study/", "/community/qna/",
 function App() {
   let navigate = useNavigate();
   let user = useSelector((state) => state.user);
+  let [searchText, setSearchText] = useState('');
   let dispatch = useDispatch();
   const [alarmList, setAlarmList] = useState([])
   const [unread, setUnread] = useState(false)
@@ -164,7 +166,7 @@ function App() {
         console.log(error);
       });
   }
-
+    
   return (
     <WebSocketProvider>
       <div className="wrap">
@@ -186,7 +188,8 @@ function App() {
                 className="btn pwith-logo"
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate("/");
+                  //navigate("/");
+                  window.location.href = "/";
                 }}
               ></div>
               <ul className="navbar-menu" style={{ "margin-right": "40px" }}>
@@ -195,7 +198,8 @@ function App() {
                     className="navbar-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate("/study/main");
+                      //navigate("/study/main");
+                      window.location.href = "/study/main";
                       setIsNav(0);
                       dispatch(setStudyCategory(null));
                     }}
@@ -215,7 +219,8 @@ function App() {
                             className="lst-item"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate("/study/main");
+                              window.location.href = "/study/main";
+                              //navigate("/study/main");
                               setIsNav(0);
                               dispatch(setStudyCategory(null));
                             }}
@@ -244,6 +249,7 @@ function App() {
                         className="navbar-modal"
                         onClick={(e) => {
                           e.stopPropagation();
+                          window.location.href = "/studyroom";
                         }}
                         onMouseEnter={() => setIsNav(2)}
                         onMouseLeave={() => setIsNav(0)}
@@ -253,7 +259,8 @@ function App() {
                             className="lst-item"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate("/studyroom");
+                              window.location.href = "/studyroom";
+                              // navigate("/studyroom");
                               setIsNav(0);
                             }}
                           >
@@ -269,7 +276,8 @@ function App() {
                     className="navbar-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate("/community/main");
+                      //navigate("/community/main");
+                      window.location.href = "/community/main";
                       setIsNav(0);
                       dispatch(setQnaCategory(null));
                       dispatch(setBookCategory({ firstCategory: null, secondCategory: null }));
@@ -291,7 +299,8 @@ function App() {
                             className="lst-item"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate("/community/it");
+                              //navigate("/community/it");
+                              window.location.href = "/community/it";
                               setIsNav(0);
                             }}
                           >
@@ -301,7 +310,8 @@ function App() {
                             className="lst-item"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate("/community/qna/main");
+                              //navigate("/community/qna/main");
+                              window.location.href = "/community/qna/main";
                               setIsNav(0);
                               dispatch(setQnaCategory(null));
                             }}
@@ -312,7 +322,8 @@ function App() {
                             className="lst-item"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate("/community/content");
+                              //navigate("/community/content");
+                              window.location.href = "/community/content";
                               dispatch(setBookCategory({ firstCategory: null, secondCategory: null }));
                               dispatch(setLectureCategory({ firstCategory: null, secondCategory: null }));
                               setIsNav(0);
@@ -330,7 +341,8 @@ function App() {
                     className="navbar-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate("/mentoring/main");
+                      //navigate("/mentoring/main");
+                      window.location.href = "/mentoring/main";
                       setIsNav(0);
                     }}
                     onMouseEnter={() => setIsNav(4)}
@@ -349,7 +361,8 @@ function App() {
                             className="lst-item"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate("/mentoring/main");
+                              //navigate("/mentoring/main");
+                              window.location.href = "/mentoring/main";
                               setIsNav(0);
                             }}
                           >
@@ -359,7 +372,8 @@ function App() {
                             className="lst-item"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate("/mentoring/create");
+                              //navigate("/mentoring/create");
+                              window.location.href = "/mentoring/create";
                               setIsNav(0);
                             }}
                           >
@@ -384,6 +398,10 @@ function App() {
                   placeholder="검색"
                   className="me-2"
                   aria-label="Search"
+                  onChange={e=>{
+                    e.stopPropagation();
+                    setSearchText(e.target.value);
+                  }}
                 />
                 <div
                   className="btn"
@@ -395,6 +413,15 @@ function App() {
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
+                    const currentURL = window.location.href;
+                    const url = new URL(currentURL);
+                    const pathName = url.pathname;
+
+                    alert(currentURL);
+                    if(pathName==='/search'){
+
+                    }
+                    navigate('/search');
                   }}
                 >
                   🔍{" "}
@@ -470,6 +497,10 @@ function App() {
         )}
         <Routes>
           <Route path="/" element={<PwithMain />} />
+          <Route
+            path="/search"
+            element={<Search searchText={searchText} />}
+          />
           <Route path="/study" element={<StudyMain />}>
             <Route path="main" element={<StudyBoard />} />
             <Route path=":id" element={<StudyPost />} />

@@ -334,44 +334,36 @@ div.Board div.posts-area div.post-item
     margin: 20px 0;
 }
 
-div.Board div.pagination
 .control-page{
     margin: 0 10px;
     color: lightgray;
 }
 
-div.Board div.pagination
 .control-page:hover{
     color: gray;
 }
 
-div.Board div.pagination
 .control-page:disabled{
     display: none;
 }
 
-div.Board div.pagination
 .pages{
     margin: 0 auto;
 }
 
-div.Board div.pagination
 .page{
     margin: 0 5px;
     cursor: pointer;
 }
 
-div.Board div.pagination
 .page:hover{
     color: black;
 }
 
-div.pagination
 .non-selected{
     color: gray;
 }
 
-div.pagination
 .selected{
     color: black;
     text-decoration: underline;

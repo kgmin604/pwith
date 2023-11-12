@@ -20,7 +20,9 @@ import { faStar } from "@fortawesome/free-solid-svg-icons/faStar";
 import { useWebSocket } from "../../hooks/WebsocketHooks";
 import { stopPropagation } from "ace-builds/src-noconflict/ace";
 
+
 function MentoringRoomDetail() {
+  
   /********************* 전 범위에서 사용 *********************/
   let [reLoad, setReLoad] = useState(0);
 
@@ -29,20 +31,20 @@ function MentoringRoomDetail() {
   let user = useSelector((state) => state.user);
   let navigate = useNavigate();
 
-  let [roomInfo, setRoomInfo] = useState({
+  let [roomInfo, setRoomInfo] = useState({ 
     id: 0,
     name: "",
     image: "",
     notice: "",
     mento: {
-      image: "",
-      memId: "",
-      nickname: "",
+      "image": "",
+      "memId": "",
+      "nickname": ""
     },
-    menti: {
-      image: "",
-      memId: "",
-      nickname: "",
+    menti:{
+      "image": "",
+      "memId": "",
+      "nickname": ""
     },
   });
   let [imgData, setImgData] = useState({});
@@ -55,50 +57,44 @@ function MentoringRoomDetail() {
   let [isOn, setIsOn] = useState(false);
   let [isChange, setIsChange] = useState(false);
 
-  /********************* 웹소켓  *********************/
-  const socket = useWebSocket("mentoringReady");
+ /********************* 웹소켓  *********************/
+  const socket = useWebSocket('mentoringReady');
 
   /********************* 정산 관리 *********************/
   let [paybackOpen, setPaybackOpen] = useState(false);
   let [paybackData, setPaybackData] = useState({
-    bank: "",
-    account: "",
-    refund: 0,
+    'bank':'',
+    'account':'',
+    'refund': 0
   });
   let handlePaybackModal = (event) => {
     event.stopPropagation();
     setPaybackOpen(!paybackOpen);
-  };
-  function inputPaybackData(e) {
+  }
+  function inputPaybackData(e){
     e.stopPropagation();
-    let copy = { ...paybackData };
+    let copy = {...paybackData};
     copy[e.target.id] = e.target.value;
     setPaybackData(copy);
   }
-  function requestPayback(e) {
+  function requestPayback(e){
     e.stopPropagation();
-    if (paybackData.account === "" || paybackData.bank === "") {
-      alert("정보를 전부 입력해주세요.");
+    if(paybackData.account==='' || paybackData.bank===''){
+      alert('정보를 전부 입력해주세요.');
       return;
     }
-    if (paybackData.refund <= 0) {
+    if(paybackData.refund <= 0){
       alert("정산받을 수업 수가 유효하지 않습니다.");
       return;
     }
-    if (paybackData.refund > numData.menti - numData.refund) {
-      alert(
-        `정산받을 수 있는 수업 수는 최대 ${
-          numData.menti - numData.refund
-        }회 입니다.`
-      );
+    if(paybackData.refund > (numData.menti-numData.refund)){
+      alert(`정산받을 수 있는 수업 수는 최대 ${(numData.menti-numData.refund)}회 입니다.`);
       return;
     }
 
-    if (window.confirm("입력한 정보가 맞습니까?")) {
+    if (window.confirm("입력한 정보가 맞습니까?")){
       // axios 요청 추가하기
-      alert(
-        "환급 요청이 완료되었습니다. 2~3일 내 해당 계좌로 수업료가 입금될 예정입니다."
-      );
+      alert("환급 요청이 완료되었습니다. 2~3일 내 해당 계좌로 수업료가 입금될 예정입니다.");
       // window.location.reload(); // 페이지 새로고침 -> 주연 예외처리 후
       setPaybackOpen(false); // 임시
     }
@@ -107,11 +103,11 @@ function MentoringRoomDetail() {
   /********************* 추가 결제 관리 *********************/
   let [isPay, setIsPay] = useState(false);
 
-  function PayMouseOver(event) {
+  function PayMouseOver(event){
     event.stopPropagation();
     setIsPay(true);
   }
-  function PayMouseOut(event) {
+  function PayMouseOut(event){
     event.stopPropagation();
     setIsPay(false);
   }
@@ -125,14 +121,14 @@ function MentoringRoomDetail() {
       //   "Access-Control-Allow-Origin": "*"
       // },
       data: {
-        classes: classes, // 나중에 수정
-      },
+        "classes": classes // 나중에 수정
+      }
     })
       .then(function (response) {
         window.location.href = response.data.data.pay_url;
       })
       .catch(function (e) {
-        alert("요청에 실패했습니다. 다시 시도해주세요.");
+        alert('요청에 실패했습니다. 다시 시도해주세요.');
         console.log(e);
       });
   }
@@ -150,90 +146,87 @@ function MentoringRoomDetail() {
   */
 
   let [open, setOpen] = useState(false);
-  let [newContent, setNewContent] = useState("");
+  let [newContent,setNewContent] = useState("");
   let handleModal = (event) => {
-    event.stopPropagation();
-    setOpen(!open);
-    setNewContent("");
-    if (review === null) {
-      setReviewType(0);
-      setReviewStar(0);
-    } else {
-      setReviewType(1);
-      setReviewStar(review.score);
-    }
-  };
+      event.stopPropagation();
+      setOpen(!open);
+      setNewContent('');
+      if(review===null){
+        setReviewType(0);
+        setReviewStar(0);
+      }else{
+        setReviewType(1);
+        setReviewStar(review.score);
+      }
+  }
   let [reviewStar, setReviewStar] = useState(0);
   let [reviewType, setReviewType] = useState(0); // 0: 리뷰 작성 모드 1: 리뷰 보기 모드
 
-  function writeReview(event) {
+  function writeReview(event){
     event.stopPropagation();
-    if (reviewType === 1) {
-      if (window.confirm("리뷰를 재작성 하시겠습니까?")) {
+    if(reviewType === 1){
+      if (window.confirm("리뷰를 재작성 하시겠습니까?")){
         setReviewType(0);
         setReviewStar(0);
       }
-    } else {
-      if (review === null) {
-        // 처음 작성
+    }
+    else{
+      if(review === null){ // 처음 작성
         axios({
           method: "POST",
           url: `/mentoring-room/${roomInfo.id}`,
-          data: {
+          data:{
             content: newContent,
-            score: reviewStar,
-          },
+		        score: reviewStar
+        }})
+        .then(function (response) {
+          alert("후기 작성이 완료되었습니다.");
+          setOpen(!open);
+          setReLoad(reLoad+1); // 업데이트용
         })
-          .then(function (response) {
-            alert("후기 작성이 완료되었습니다.");
-            setOpen(!open);
-            setReLoad(reLoad + 1); // 업데이트용
-          })
-          .catch(function (error) {
-            alert("요청을 처리하지 못했습니다. 다시 시도해주세요.");
-          });
-      } else {
-        // 기존 작성 변경
+        .catch(function (error) {
+          alert("요청을 처리하지 못했습니다. 다시 시도해주세요.");
+        });
+      }
+      else{ // 기존 작성 변경
         axios({
           method: "PATCH",
           url: `/mentoring-room/${roomInfo.id}/${review.id}`,
-          data: {
+          data:{
             content: newContent,
-            score: reviewStar,
-          },
+		        score: reviewStar
+        }})
+        .then(function (response) {
+          alert("후기 재작성이 완료되었습니다.");
+          setOpen(!open);
+          setReLoad(reLoad+1); // 업데이트용
         })
-          .then(function (response) {
-            alert("후기 재작성이 완료되었습니다.");
-            setOpen(!open);
-            setReLoad(reLoad + 1); // 업데이트용
-          })
-          .catch(function (error) {
-            alert("요청을 처리하지 못했습니다. 다시 시도해주세요.");
-          });
+        .catch(function (error) {
+          alert("요청을 처리하지 못했습니다. 다시 시도해주세요.");
+        });
       }
     }
   }
 
-  function deleteReview(event) {
+  function deleteReview(event){
     event.stopPropagation();
-    if (reviewType === 1) {
-      if (window.confirm("리뷰를 삭제하시겠습니까?")) {
+    if(reviewType === 1){
+      if (window.confirm("리뷰를 삭제하시겠습니까?")){
         axios({
           method: "DELETE",
           url: `/mentoring-room/${roomInfo.id}/${review.id}`,
-          data: {
+          data:{
             content: newContent,
-            score: reviewStar,
-          },
+		        score: reviewStar
+        }})
+        .then(function (response) {
+          alert("후기가 삭제되었습니다.");
+          setOpen(!open);
+          setReLoad(reLoad+1); // 업데이트용
         })
-          .then(function (response) {
-            alert("후기가 삭제되었습니다.");
-            setOpen(!open);
-            setReLoad(reLoad + 1); // 업데이트용
-          })
-          .catch(function (error) {
-            alert("요청을 처리하지 못했습니다. 다시 시도해주세요.");
-          });
+        .catch(function (error) {
+          alert("요청을 처리하지 못했습니다. 다시 시도해주세요.");
+        });
       }
     }
   }
@@ -257,21 +250,23 @@ function MentoringRoomDetail() {
     setNewNotice(e.target.value);
   }
 
-  function requestChangeNotice() {
+  function requestChangeNotice(){
     axios({
       method: "PATCH",
       url: `/mentoring-room/${roomInfo.id}`,
-      data: {
-        notice: `${newNotice}`,
-      },
+      data:{
+        notice: `${newNotice}`
+      }
     })
-      .then(function (response) {})
-      .catch(function (error) {});
+      .then(function (response) {
+      })
+      .catch(function (error) {
+      });
   }
 
   /********************* 룸 삭제(미구현) *********************/
 
-  function requestDeleteRoom(event) {
+  function requestDeleteRoom(event){
     event.stopPropagation();
     /*
     if (window.confirm("정말로 삭제하시겠습니까?")){
@@ -290,7 +285,7 @@ function MentoringRoomDetail() {
     */
   }
 
-  function requestOutRoom(event) {
+  function requestOutRoom(event){
     event.stopPropagation();
     /*
     if (window.confirm("정말로 탈퇴하시겠습니까?")){
@@ -311,62 +306,57 @@ function MentoringRoomDetail() {
 
   /********************* 수업 횟수 확인 *********************/
 
-  let [numData, setNumData] = useState({
-    // 수업 횟수 체크
+  let [numData, setNumData] = useState({ // 수업 횟수 체크
     total: 0,
     mento: 0,
     menti: 0,
-    refund: 0,
+    refund: 0
   });
 
-  function MenteeClick(e) {
+  function MenteeClick(e){
     e.stopPropagation();
-    if (user.name === roomInfo.mento.nickname) return; // 멘토라면 돌아가기
+    if(user.name === roomInfo.mento.nickname) return; // 멘토라면 돌아가기
 
-    let confirm_check = window.confirm(
-      "수업 완료로 상태를 변경하시겠습니까? 취소할 수 없습니다."
-    );
+    let confirm_check = window.confirm("수업 완료로 상태를 변경하시겠습니까? 취소할 수 없습니다.");
     if (confirm_check) {
       axios({
         method: "GET",
         url: `/mentoring-room/${roomInfo.id}/lesson`,
-        params: {
-          check: "menti",
-        },
+        params:{
+          check : "menti",
+        }
       })
-        .then(function (response) {
-          setReLoad(reLoad + 1);
-          alert("수업 완료처리 되었습니다.");
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      .then(function (response) {
+        setReLoad(reLoad+1);
+        alert('수업 완료처리 되었습니다.');
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     }
   }
 
-  function MentorClick(e) {
+  function MentorClick(e){
     e.stopPropagation();
-    if (user.name !== roomInfo.mento.nickname) return; // 멘티라면 돌아가기
+    if(user.name !== roomInfo.mento.nickname) return; // 멘티라면 돌아가기
 
-    let confirm_check = window.confirm(
-      "수업 완료로 상태를 변경하시겠습니까? 취소할 수 없습니다."
-    );
+    let confirm_check = window.confirm("수업 완료로 상태를 변경하시겠습니까? 취소할 수 없습니다.");
     if (confirm_check) {
       axios({
         method: "GET",
         url: `/mentoring-room/${roomInfo.id}/lesson`,
-        params: {
-          check: "mento",
-        },
+        params:{
+          check : "mento",
+        }
       })
-        .then(function (response) {
-          setReLoad(reLoad + 1);
-          alert("수업 완료처리 되었습니다.");
-        })
-        .catch(function (error) {
-          console.log(error);
-          alert(`${error.response.data.message}입니다.`);
-        });
+      .then(function (response) {
+        setReLoad(reLoad+1);
+        alert('수업 완료처리 되었습니다.');
+      })
+      .catch(function (error) {
+        console.log(error);
+        alert(`${error.response.data.message}입니다.`)
+      });
     }
   }
 
@@ -391,24 +381,24 @@ function MentoringRoomDetail() {
     setMyChat("");
   }
 
-  function EnterRoom() {
+  function EnterRoom(){
     const url = window.location.href;
     const part = url.split("/");
     const RoomId = part[part.length - 1];
     let data = {
-      roomId: Number(RoomId),
+      roomId: Number(RoomId)
     };
-    socket?.emit("enter", data);
+    socket?.emit("enter",data);
   }
 
-  function LeaveRoom() {
+  function LeaveRoom(){
     const url = window.location.href;
     const part = url.split("/");
     const RoomId = part[part.length - 1];
     let data = {
-      roomId: Number(RoomId),
+      roomId: Number(RoomId)
     };
-    socket?.emit("leave", data);
+    socket?.emit("leave",data);
   }
 
   // 스크롤 영역을 항상 아래로 스크롤하는 함수
@@ -425,17 +415,15 @@ function MentoringRoomDetail() {
 
   const pressEnter = (e) => {
     e.stopPropagation();
-    if (e.key === "Enter" && e.shiftKey) {
-      // [shift] + [Enter] 치면 그냥 리턴
+    if (e.key === 'Enter' && e.shiftKey) { // [shift] + [Enter] 치면 그냥 리턴
       return;
-    } else if (e.key === "Enter") {
-      // [Enter] 치면 메시지 보내기
+    } else if (e.key === 'Enter') { 	   // [Enter] 치면 메시지 보내기
       sendTo();
     }
   };
 
   useEffect(() => {
-    if (!socket) return;
+    if(!socket) return
 
     socket.connect();
 
@@ -446,8 +434,8 @@ function MentoringRoomDetail() {
     socket.on("sendFrom", (data) => {
       setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
     });
-    socket.on("disconnect", (data) => {
-      console.log("Socket disconnected");
+    socket.on("disconnect", (data)=>{
+      console.log("Socket disconnected")
     });
   }, [socket]);
 
@@ -469,30 +457,28 @@ function MentoringRoomDetail() {
         setNumData(response.data.data.lesson); // 남은 수업 정보
         setReview(response.data.data.review); // 리뷰 정보
 
-        if (response.data.data.review !== null) {
+        if(response.data.data.review !== null) {
           setReviewStar(response.data.data.review.score);
-          setReviewType(1);
-        } else {
-          // null이라면
+          setReviewType(1)
+        }
+        else{ // null이라면
           setReviewStar(0);
           setReviewType(0);
         }
 
         let tmp = {};
-        tmp[response.data.data.room.mento.nickname] =
-          response.data.data.room.mento.image;
-        tmp[response.data.data.room.menti.nickname] =
-          response.data.data.room.menti.image;
+        tmp[response.data.data.room.mento.nickname] = response.data.data.room.mento.image;
+        tmp[response.data.data.room.menti.nickname] = response.data.data.room.menti.image;
         setImgData(tmp);
       })
       .catch(function (error) {
         alert("요청이 실패했습니다. 다시 시도해주세요.");
       });
 
-    return () => {
-      // 컴포넌트가 unmount될 때 실행될 코드
-      LeaveRoom();
-    };
+      return () => {
+        // 컴포넌트가 unmount될 때 실행될 코드
+        LeaveRoom();
+      };
   }, [reLoad]);
 
   return (
@@ -506,7 +492,9 @@ function MentoringRoomDetail() {
               </div>
               <div className="info-header">
                 <h3>{"멘토링"}</h3>
-                <h3 className="leader">
+                <h3
+                  className="leader"
+                >
                   Mentor
                   <FontAwesomeIcon
                     icon={faCrown}
@@ -562,21 +550,26 @@ function MentoringRoomDetail() {
               >
                 입장하기
               </div>
-              {user.name === roomInfo.mento.nickname ? (
+              {
+              user.name === roomInfo.mento.nickname ?
+              (
                 <span
                   className="room-delete-btn"
-                  onClick={(e) => e.stopPropagation()} // API 연결
+                  onClick={e=>e.stopPropagation()} // API 연결
                 >
                   멘토링 삭제하기
                 </span>
-              ) : (
+              )
+               : 
+               (
                 <span
                   className="room-delete-btn"
-                  onClick={(e) => e.stopPropagation()} // API 연결
+                  onClick={e=>e.stopPropagation()} // API 연결
                 >
                   멘토링 그만두기
                 </span>
-              )}
+              )
+              }
             </div>
           </div>
           <div class="col-md-9">
@@ -612,9 +605,7 @@ function MentoringRoomDetail() {
                   ) : (
                     <span>{newNotice}</span>
                   )}
-                  {isOn &&
-                  roomInfo.mento.nickname === user.name &&
-                  !isChange ? (
+                  {isOn && roomInfo.mento.nickname === user.name && !isChange ? (
                     <FontAwesomeIcon
                       icon={faPencil}
                       style={{ color: "#9e9e9e", margin: "0 5px" }}
@@ -629,15 +620,10 @@ function MentoringRoomDetail() {
               </div>
               <div className="bottom">
                 <div className="number-list">
-                  <h2 className="no-drag">
-                    수업 횟수 체크{" "}
-                    <span className="num-summary">{`(${numData.menti}회/${numData.total}회)`}</span>{" "}
-                  </h2>
+                  <h2 className="no-drag">수업 횟수 체크 <span className="num-summary">{`(${numData.menti}회/${numData.total}회)`}</span> </h2>
                   <hr style={{ margin: "0 0" }}></hr>
-
-                  <div className="number-sign no-drag">
-                    박스를 클릭해 수업 횟수를 체크해주세요!
-                  </div>
+                  
+                  <div className="number-sign no-drag">박스를 클릭해 수업 횟수를 체크해주세요!</div>
                   <div className="sign-items">
                     <div className="sign-item">
                       <div className="number-item both-selected"></div>
@@ -655,283 +641,216 @@ function MentoringRoomDetail() {
                   <hr style={{ margin: "0 0" }}></hr>
 
                   <div className="number-items">
-                    {Array.from({ length: numData.total }, (_, index) => {
-                      if (index < numData.menti) {
-                        // 둘 다 선택
+                  {
+                    Array.from({ length: numData.total }, (_, index) => {
+                      if (index < numData.menti) { // 둘 다 선택
                         return (
-                          <div
-                            key={index}
+                          <div 
+                            key={index} 
                             className={`number-item both-selected`}
                           ></div>
                         );
-                      } else if (index < numData.mento) {
-                        // 멘토만 선택
-                        if (numData.menti === index) {
+                      } else if (index < numData.mento) { // 멘토만 선택
+                        if(numData.menti === index){
                           return (
-                            <div
-                              key={index}
-                              className={`number-item mentor-selected ${
-                                user.name !== roomInfo.mento.nickname
-                                  ? "can-click"
-                                  : ""
-                              }`}
-                              onClick={(e) => {
-                                MenteeClick(e);
-                              }}
-                            ></div>
-                          );
-                        } else {
-                          return (
-                            <div
-                              key={index}
-                              className={`number-item mentor-selected`}
+                            <div 
+                              key={index} 
+                              className={`number-item mentor-selected ${user.name!==roomInfo.mento.nickname? "can-click" : ""}`}
+                              onClick={e=>{MenteeClick(e)}}
                             ></div>
                           );
                         }
-                      } else {
-                        if (numData.mento === index) {
+                        else{
                           return (
-                            <div
-                              key={index}
-                              className={`number-item non-selected ${
-                                user.name === roomInfo.mento.nickname
-                                  ? "can-click"
-                                  : ""
-                              }`}
-                              onClick={(e) => {
-                                MentorClick(e);
-                              }}
+                            <div 
+                              key={index} 
+                              className={`number-item mentor-selected`}
+                            ></div>
+                        );
+                        }
+                      } else {
+                        if(numData.mento === index){
+                          return (
+                            <div 
+                              key={index} 
+                              className={`number-item non-selected ${user.name===roomInfo.mento.nickname? "can-click" : ""}`}
+                              onClick={e=>{MentorClick(e)}}
                             ></div>
                           );
-                        } else {
+                        }
+                        else{
                           return (
-                            <div
-                              key={index}
+                            <div 
+                              key={index} 
                               className={`number-item non-selected`}
                             ></div>
                           );
                         }
                       }
-                    })}
+                    })
+                  }
                   </div>
                   <div className="review-btn-container">
-                    {roomInfo.id === 0 ? null : roomInfo.mento.nickname ===
-                      user.name ? (
-                      <div
-                        className="review-btn no-drag"
-                        onClick={(e) => handlePaybackModal(e)}
-                      >
-                        정산 요청하기
+                  {
+                    roomInfo.id === 0 ? null :
+                    roomInfo.mento.nickname === user.name ? 
+                    <div className="review-btn no-drag" onClick={(e)=>handlePaybackModal(e)}>
+                      정산 요청하기
+                    </div>
+                    :
+                    <>
+                      <div className="review-btn no-drag" onClick={(e)=>{ handleModal(e);}}>
+                        {`${review === null? "리뷰 작성하기" : "작성한 리뷰 보기"}`}
                       </div>
-                    ) : (
-                      <>
-                        <div
-                          className="review-btn no-drag"
-                          onClick={(e) => {
-                            handleModal(e);
-                          }}
-                        >
-                          {`${
-                            review === null
-                              ? "리뷰 작성하기"
-                              : "작성한 리뷰 보기"
-                          }`}
-                        </div>
-                        <div
-                          className="review-btn no-drag"
-                          onMouseOver={PayMouseOver}
-                          onMouseOut={PayMouseOut}
-                        >
-                          추가 결제하기
-                          {isPay ? (
-                            <div className="pay-nums">
-                              <div
-                                className="pay-num"
-                                onClick={(e) => payment(e, 1)}
-                              >
-                                1회
-                              </div>
-                              <div
-                                className="pay-num"
-                                onClick={(e) => payment(e, 2)}
-                              >
-                                2회
-                              </div>
-                              <div
-                                className="pay-num"
-                                onClick={(e) => payment(e, 4)}
-                              >
-                                4회
-                              </div>
-                            </div>
-                          ) : null}
-                        </div>
-                      </>
-                    )}
+                      <div 
+                        className="review-btn no-drag" 
+                        onMouseOver={PayMouseOver}
+                        onMouseOut={PayMouseOut}
+                      >
+                        추가 결제하기
+                      {
+                        isPay ? 
+                        <div className="pay-nums">
+                          <div className="pay-num" onClick={e=>payment(e,1)}>1회</div>
+                          <div className="pay-num" onClick={e=>payment(e,2)}>2회</div>
+                          <div className="pay-num" onClick={e=>payment(e,4)}>4회</div>
+                        </div> : null
+                      }
+                      </div>
+                    </>
+                  } 
                   </div>
                 </div>
-                {open === true ? (
-                  <>
-                    <div className="modal-wrap"></div>
-                    {}
-                    <form method="POST">
-                      <div className="modal">
-                        <a
-                          title="닫기"
-                          className="close"
-                          onClick={(e) => handleModal(e)}
-                        >
-                          X
-                        </a>
-                        <h3>{`${
-                          reviewType === 0 ? "리뷰 작성하기" : "작성한 리뷰"
-                        }`}</h3>
-                        <div className="star-items">
-                          {[1, 2, 3, 4, 5].map((a, idx) => {
-                            if (a <= reviewStar) {
-                              return (
-                                <div key={idx}>
-                                  <FontAwesomeIcon
-                                    icon={faStar}
-                                    style={{ color: "#fcc419" }}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      if (reviewType === 0) setReviewStar(a);
-                                    }}
-                                  />
-                                </div>
-                              );
-                            } else {
-                              return (
-                                <div key={idx}>
-                                  <FontAwesomeIcon
-                                    icon={faStar}
-                                    style={{ color: "#b5b5b5" }}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      if (reviewType === 0) setReviewStar(a);
-                                    }}
-                                  />
-                                </div>
-                              );
-                            }
-                          })}
-                          <span>{`(${reviewStar}점)`}</span>
-                        </div>
-                        <p>
-                          {reviewType === 0 ? (
-                            <form>
-                              <textarea
-                                name="message"
-                                className="text"
-                                placeholder="내용 입력"
-                                onChange={(e) => {
-                                  e.stopPropagation();
-                                  setNewContent(e.target.value);
-                                }}
-                              ></textarea>
-                            </form>
-                          ) : (
-                            <div className="review-text">{review.content}</div>
-                          )}
-                        </p>
-                        <input
-                          type="button"
-                          value={`${
-                            reviewType === 0 ? "등록하기" : "다시쓰기"
-                          }`}
-                          className="button"
-                          onClick={(e) => {
-                            writeReview(e);
-                          }}
-                        ></input>
-                        {reviewType === 1 ? (
-                          <div
-                            className="review-delete-btn"
-                            onClick={(e) => deleteReview(e)}
-                          >
-                            리뷰 삭제하기
-                          </div>
-                        ) : null}
-                      </div>
-                    </form>
-                  </>
-                ) : null}
+                {
+                    open === true ?
+                        <>
+                            <div className="modal-wrap"></div>
+                            {
 
-                {paybackOpen === true /* 정산 요청 모달 */ ? (
+                            }
+                            <form method='POST'>
+                              <div className="modal">
+                                <a title="닫기" className="close" onClick={(e)=>handleModal(e)}>X</a>
+                                <h3>{`${reviewType === 0 ? "리뷰 작성하기" : "작성한 리뷰"}`}</h3>
+                                <div className="star-items">
+                                {[1,2,3,4,5].map((a, idx) => {
+                                  if(a <= reviewStar){
+                                    return (
+                                      <div key={idx}>
+                                        <FontAwesomeIcon 
+                                          icon={faStar} 
+                                          style={{color: "#fcc419",}}
+                                          onClick={(e) => { e.stopPropagation(); if(reviewType===0) setReviewStar(a); }}
+                                        />
+                                      </div>
+                                    );
+                                    }else{
+                                      return (
+                                        <div key={idx}>
+                                          <FontAwesomeIcon 
+                                            icon={faStar} 
+                                            style={{color: "#b5b5b5",}}
+                                            onClick={(e) => {e.stopPropagation(); if(reviewType===0) setReviewStar(a); }}
+                                          />
+                                        </div>
+                                      );}})}
+                                    <span>{`(${reviewStar}점)`}</span>
+                                  </div>
+                                    <p>
+                                    {
+                                    reviewType === 0 ?
+                                      <form><textarea
+                                        name="message"
+                                        className="text"
+                                        placeholder="내용 입력"
+                                        onChange={e => {e.stopPropagation(); setNewContent(e.target.value); }}>
+                                      </textarea></form>
+                                      :
+                                      <div className="review-text">
+                                        {review.content}
+                                      </div>
+                                    }
+                                    </p>
+                                    <input
+                                        type="button"
+                                        value={`${reviewType === 0 ? "등록하기":"다시쓰기"}`}
+                                        className="button"
+                                        onClick={e => {
+                                          writeReview(e);
+                                        }}
+                                    ></input>
+                                    {
+                                    reviewType === 1 ? 
+                                    <div 
+                                      className="review-delete-btn"
+                                      onClick={e=>deleteReview(e)}
+                                    >리뷰 삭제하기</div> 
+                                    : null
+                                    }
+                                </div>
+                            </form>
+                        </>
+                        :
+                        null
+                }
+
+                {
+                  paybackOpen === true ? /* 정산 요청 모달 */
                   <>
                     <div className="modal-wrap"></div>
-                    <form method="POST">
-                      <div className="modal" style={{ height: "280px" }}>
-                        <a
-                          title="닫기"
-                          className="close"
-                          onClick={(e) => handlePaybackModal(e)}
-                        >
-                          X
-                        </a>
-                        <h3>정산 요청하기</h3>
-                        <p className="payback-items">
-                          <div className="payback-item">
-                            <h4>은행</h4>
-                            <input
-                              id="bank"
-                              onChange={(e) => inputPaybackData(e)}
-                            ></input>
-                          </div>
-                          <div className="payback-item">
-                            <h4>계좌번호</h4>
-                            <input
-                              id="account"
-                              onChange={(e) => inputPaybackData(e)}
-                            ></input>
-                          </div>
-                          <div className="payback-item">
-                            <h4>정산받을 수업</h4>
-                            <input
-                              id="refund"
-                              onChange={(e) => inputPaybackData(e)}
-                              type="number"
-                              style={{ width: "50px" }}
-                            ></input>
-                            <span>회 / {numData.menti - numData.refund}회</span>
-                          </div>
-                        </p>
-                        <input
-                          type="button"
-                          value="정산요청"
-                          className="button"
-                          onClick={(e) => requestPayback(e)}
-                        ></input>
-                      </div>
+                    <form method='POST'>
+                    <div className="modal" style={{'height':'280px'}}>
+                      <a title="닫기" className="close" onClick={(e)=>handlePaybackModal(e)}>X</a>
+                      <h3>정산 요청하기</h3>
+                      <p className="payback-items">
+                        <div className="payback-item">
+                          <h4>은행</h4>
+                          <input id="bank" onChange={e=>inputPaybackData(e)}></input>
+                        </div>
+                        <div className="payback-item">
+                          <h4>계좌번호</h4>
+                          <input id="account" onChange={e=>inputPaybackData(e)}></input>
+                        </div>
+                        <div className="payback-item">
+                          <h4>정산받을 수업</h4>
+                          <input 
+                            id="refund" 
+                            onChange={e=>inputPaybackData(e)}
+                            type="number"
+                            style={{'width':'50px'}}
+                          ></input>
+                          <span>회 / {(numData.menti - numData.refund)}회</span>
+                        </div>
+                      </p>
+                      <input
+                        type="button"
+                        value="정산요청"
+                        className="button"
+                        onClick={ e=>requestPayback(e) }
+                      ></input>
+                    </div>
                     </form>
                   </>
-                ) : null}
+                  : null
+                }
 
                 <div className="member-chat">
                   <h2 className="no-drag">Chatting</h2>
                   <hr style={{ margin: "0 0" }}></hr>
-                  <div className="chats scroll" ref={chatAreaRef}>
+                  <div 
+                    className="chats scroll"
+                    ref={chatAreaRef}
+                >
                     {roomChat.map((chat, i) => (
                       <>
                         {chat.sender !== user.name ? (
                           <div className="chat-type1">
-                            <img
-                              src={
-                                imgData[`${chat.sender}`] === null
-                                  ? `default_user`
-                                  : imgData[`${chat.sender}`]
-                              }
-                              onClick={(e) =>
-                                alert(roomInfo.members[`${chat.sender}`])
-                              }
-                            />
+                            <img src={imgData[`${chat.sender}`] === null ? `default_user` : imgData[`${chat.sender}`]} 
+                            onClick={e=>alert(roomInfo.members[`${chat.sender}`])}/>
                             <div className="content">
                               <h3>{chat.sender}</h3>
                               <div className="chat-time">
-                                <p style={{ whiteSpace: "pre-line" }}>
-                                  {chat.content}
-                                </p>
+                                <p style={{ whiteSpace: "pre-line" }} >{chat.content}</p>
                                 <time>{chat.date}</time>
                               </div>
                             </div>
@@ -940,9 +859,7 @@ function MentoringRoomDetail() {
                           <div className="chat-type2">
                             <div className="chat-time">
                               <time>{chat.date}</time>
-                              <p style={{ whiteSpace: "pre-line" }}>
-                                {chat.content}
-                              </p>
+                              <p style={{ whiteSpace: "pre-line" }}>{chat.content}</p>
                             </div>
                           </div>
                         )}
