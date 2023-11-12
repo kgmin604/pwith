@@ -322,20 +322,10 @@ def deleteRoom(loginMember, new_token, id) : # 룸 삭제 (멘토)
             'access_token' : new_token
         }
 
-    # 멘티의 알림창으로 스터디룸 삭제되었다는 알림 보내기 - 정윤
     Alarm.insertAlarm(mentoId, room.menti, room.id, 6)
 
-    data = request.get_json()
-    bank = data['bank']
-    account = data['account']
-
-    remain_refund = min(room.mento_cnt, room.menti_cnt) - room.refund_cnt
-    balance = remain_refund * portfolio.tuition
-
-    Refund.save(loginMember.id, bank, account, balance, datetime.now())
-
     MentoringRoom.delete(id)
-
+    
     return {
         'data' : None,
         'access_token' : new_token
