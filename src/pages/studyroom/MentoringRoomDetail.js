@@ -94,9 +94,22 @@ function MentoringRoomDetail() {
 
     if (window.confirm("입력한 정보가 맞습니까?")){
       // axios 요청 추가하기
-      alert("환급 요청이 완료되었습니다. 2~3일 내 해당 계좌로 수업료가 입금될 예정입니다.");
-      // window.location.reload(); // 페이지 새로고침 -> 주연 예외처리 후
-      setPaybackOpen(false); // 임시
+      axios({
+        method: "POST",
+        url: `/mentoring-room/${roomInfo.id}/refund`,
+        data: {
+          bank: paybackData.bank,
+          account: paybackData.account,
+          classes: Number(paybackData.refund)
+        }
+      })
+        .then(function (response) {
+          alert("환급 요청이 완료되었습니다. 2~3일 내 해당 계좌로 수업료가 입금될 예정입니다.");
+          paybackOpen(false);
+        })
+        .catch(function (e) {
+          alert('요청에 실패했습니다. 다시 시도해주세요.');
+        });
     }
   }
 

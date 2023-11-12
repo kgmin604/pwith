@@ -9,15 +9,7 @@ function MentoringPaySuccess() {
     const dispatch = useDispatch();
 
     const location = useLocation();
-    const currentPath = location.pathname;
     const currentPathWithQuery = location.pathname + location.search;
-
-    // 리다이렉트용 정규식
-    const regex = /\/mentoring\/(\d+)/;
-    const match = currentPathWithQuery.match(regex);
-
-    const mentoringRoomId = match[1];
-    const finalPath = `/mentoringroom/${mentoringRoomId}`;
 
     useEffect(() => {
         axios({
@@ -26,7 +18,7 @@ function MentoringPaySuccess() {
         })
         .then(function (response) {
             alert("결제가 완료되었습니다.");
-            navigate(`${finalPath}`);
+            navigate('/studyroom');
         })
         .catch(function (error) {
             alert("에러가 발생했습니다.");
