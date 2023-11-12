@@ -3,7 +3,7 @@ from flask_login import current_user
 from backend.controller.study_mgmt import studyPost
 from backend.controller.mentor_mgmt import Portfolio
 from backend.controller.community_mgmt import QNAPost
-from backend.controller.alarm_mgmt import alarm
+from backend.controller.alarm_mgmt import Alarm
 from backend.model.db_mongo import conn_mongodb
 from backend.view import findNickName, login_required
 
@@ -105,7 +105,7 @@ def showalarm(loginMember, new_token):
     alarmList = []
     alarmLists = []
     
-    alarmList = alarm.getAlarm(memId)
+    alarmList = Alarm.getAlarm(memId)
     
     print(alarmList)
     for row in alarmList:
