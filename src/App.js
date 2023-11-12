@@ -302,7 +302,8 @@ function App() {
                               e.stopPropagation();
                               //navigate("/community/content");
                               window.location.href = "/community/content";
-                              dispatch(setContentCategory(null));
+                              dispatch(setBookCategory({ firstCategory: null, secondCategory: null }));
+                              dispatch(setLectureCategory({ firstCategory: null, secondCategory: null }));
                               setIsNav(0);
                             }}
                           >

@@ -277,46 +277,6 @@ function MentoringRoomDetail() {
       });
   }
 
-  /********************* 룸 삭제(미구현) *********************/
-
-  function requestDeleteRoom(event){
-    event.stopPropagation();
-    /*
-    if (window.confirm("정말로 삭제하시겠습니까?")){
-      axios({
-        method: "DELETE",
-        url: `/study-room/${roomInfo.id}`,
-      })
-        .then(function (response) {
-          alert('삭제가 완료되었습니다.');
-          navigate('./..');
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
-    */
-  }
-
-  function requestOutRoom(event){
-    event.stopPropagation();
-    /*
-    if (window.confirm("정말로 탈퇴하시겠습니까?")){
-      axios({
-        method: "DELETE",
-        url: `/study-room/${roomInfo.id}/out`,
-      })
-        .then(function (response) {
-          alert('탈퇴가 완료되었습니다.');
-          navigate('./..');
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
-    */
-  }
-
   /********************* 수업 횟수 확인 *********************/
 
   let [numData, setNumData] = useState({ // 수업 횟수 체크
@@ -372,6 +332,31 @@ function MentoringRoomDetail() {
       });
     }
   }
+
+    /********************* 룸 삭제 *********************/
+
+    function deleteMentoring(event){
+      event.stopPropagation();
+      if (window.confirm("정말로 삭제하시겠습니까?")){
+  
+        if(numData.total!==numData.refund){
+          alert("멘토링이 끝난 후 삭제해주세요. (모든 수업을 완료하고 환급 받으십시오)");
+          return;
+        }
+  
+        axios({
+          method: "DELETE",
+          url: `/study-room/${roomInfo.id}`,
+        })
+          .then(function (response) {
+            alert('삭제가 완료되었습니다.');
+            navigate('./..');
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+    }  
 
   /********************* 채팅 관리 *********************/
 
@@ -568,20 +553,16 @@ function MentoringRoomDetail() {
               (
                 <span
                   className="room-delete-btn"
-                  onClick={e=>e.stopPropagation()} // API 연결
+                  onClick={e=>{
+                    e.stopPropagation();
+                    deleteMentoring();
+                  }}
                 >
                   멘토링 삭제하기
                 </span>
               )
                : 
-               (
-                <span
-                  className="room-delete-btn"
-                  onClick={e=>e.stopPropagation()} // API 연결
-                >
-                  멘토링 그만두기
-                </span>
-              )
+               null
               }
             </div>
           </div>
