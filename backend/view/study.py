@@ -4,7 +4,7 @@ from backend.controller.study_mgmt import studyPost
 from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.studyroom_mgmt import StudyRoom
 from backend.controller.member_mgmt import Member
-from backend.controller.alarm_mgmt import alarm
+from backend.controller.alarm_mgmt import Alarm
 from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage, nicknameToId
 from backend.view import login_required
 from datetime import datetime
