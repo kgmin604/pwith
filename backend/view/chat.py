@@ -3,6 +3,7 @@ from backend.controller.chat_mgmt import chat
 from backend.controller.alarm_mgmt import Alarm
 from backend.view import IdtoMemId, nicknameToId, findNickName, getFormattedDate, mainFormattedDate, formatDateToString
 from backend.view import login_required
+from datetime import datetime
 
 chat_bp = Blueprint('chat', __name__, url_prefix='/mypage/chat')
 
