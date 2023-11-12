@@ -342,7 +342,7 @@ def applySuccess(loginMember, new_token, id):
     room_url = "http://localhost:3000/mentoringroom/" + str(roomId)
 
     # 4. 쪽지 전송
-    menticontent = f"스터디룸 <a style='color:#6666FF;font-weight:700;' href={room_url}>여기</a>로 입장해주세요."
+    menticontent = f"스터디룸 <a style=color:#6666FF;font-weight:700; href={room_url}>여기</a>로 입장해주세요."
     mentocontent = f"[{mentiNick}]님과 멘토링을 진행합니다."
     
     chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
