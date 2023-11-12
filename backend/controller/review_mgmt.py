@@ -7,7 +7,7 @@ class Review :
         self.__content = content
         self.__score = score
         self.__curDate = curDate
-        self.portfolio = portfolio
+        self.__portfolio = portfolio
         self.__room = room
     @property
     def id(self) :
@@ -26,7 +26,7 @@ class Review :
         return self.__curDate
     @property
     def portfolio(self) :
-        return self.portfolio
+        return self.__portfolio
     @property
     def room(self) :
         return self.__room

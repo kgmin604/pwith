@@ -13,6 +13,7 @@ from backend.controller.member_mgmt import Member
 from backend.controller.mentoringroom_mgmt import MentoringRoom
 from backend.controller.review_mgmt import Review
 from backend.controller.refund_mgmt import Refund
+from backend.controller.mentor_mgmt import Portfolio
 
 mentoringroom_bp = Blueprint('mentoringRoom', __name__, url_prefix='/mentoring-room')
 
@@ -405,7 +406,7 @@ def writeReview(id, loginMember, new_token) : # 후기 작성
 
     key = Review.save(loginMember.id, content, score, datetime.now(), room.portfolio, id)
 
-    # 기존의 score와 새로운 score의 평균으로 업데이트
+    Portfolio.updateScore(room.portfolio)
 
     return {
         'reviewId' : key,
@@ -438,7 +439,7 @@ def updateReview(id, reviewId, loginMember, new_token) : # 후기 수정
 
     Review.update(reviewId, newContent, newScore)
 
-    # 평균 score 업데이트
+    Portfolio.updateScore(review.portfolio)
 
     return {
         'data': None,
