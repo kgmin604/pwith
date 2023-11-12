@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint, request, jsonify, redirect, url_for, session, render_template
 from backend.controller.chat_mgmt import chat
-from backend.controller.alarm_mgmt import alarm
+from backend.controller.alarm_mgmt import Alarm
 from backend.view import IdtoMemId, nicknameToId, findNickName, getFormattedDate, mainFormattedDate, formatDateToString
 from backend.view import login_required
 
@@ -64,7 +64,7 @@ def send(loginMember, new_token):     # 쪽지 보내기
         chatId = chat.getOneChat(memId, str(oppNickId))
         print(chatId)
         # chatAlarm 에 추가
-        alarm.insertAlarm(oppNickId, memId, chatId, 5)
+        Alarm.insertAlarm(oppNickId, memId, chatId, 5)
         
         return {
             'data': None,

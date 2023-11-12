@@ -3,7 +3,7 @@ from datetime import datetime
 from backend.model.db_mongo import conn_mongodb
 from backend.controller.community_mgmt import QNAPost
 from backend.controller.replyQna_mgmt import ReplyQna
-from backend.controller.alarm_mgmt import alarm
+from backend.controller.alarm_mgmt import Alarm
 from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage
 from backend.view import login_required
 
@@ -300,7 +300,7 @@ def replyPost(id, loginMember, new_token) :      # 댓글 작성
             # qnaReplyAlarm 에 추가
             post = QNAPost.findById(id)
             
-            alarm.insertAlarm(post.__writer, writer, pk, 4)
+            Alarm.insertAlarm(post.__writer, writer, pk, 4)
             
         except Exception as ex:
             print("에러 이유 : " + str(ex))
@@ -395,6 +395,8 @@ def like(id, loginMember, new_token):
         'access_token' : new_token
     }
    
+   
+   # 카테고리 : first, second == null -> 전체 결과
 @community_bp.route('/contents/lecture', methods=['GET'])
 def listLectures() :
     page = 0

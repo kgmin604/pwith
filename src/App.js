@@ -15,7 +15,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 //import Cookies from 'js-cookie';
 // import { useCookies, Cookies } from 'react-cookie';
-import { setStudyCategory, setQnaCategory, setContentCategory} from "./store.js";
+import { setStudyCategory, setQnaCategory, setBookCategory, setLectureCategory } from "./store.js";
 
 import PwithMain from "./pages/pwithmain/PwithMain.js";
 import StudyMain from "./pages/study/StudyMain.js";
@@ -24,7 +24,7 @@ import RoomCreate from "./pages/studyroom/RoomCreate.js";
 import LiveRoom from "./pages/studyroom/LiveRoom";
 import RoomDetail from "./pages/studyroom/RoomDetail.js";
 import MentoringRoomDetail from "./pages/studyroom/MentoringRoomDetail.js";
-import{
+import {
   MentoringRoomPaySuccess,
 } from "./pages/studyroom/MentoringRoomPay.js";
 import CommunityMain from "./pages/community/CommunityMain.js";
@@ -63,41 +63,64 @@ import QnaPost from "./pages/community/QnaPost";
 import PortfolioManage from "./pages/mentoring/PortfolioManage";
 import { WebSocketProvider } from "./hooks/WebsocketHooks";
 
+const alramType = ["새로운 스터디 신청입니다", "새로운 멘토링 신청입니다", "새로운 댓글이 달렸어요!", "새로운 댓글이 달렸어요!", "새로운 쪽지가 왔어요!", "멘토링이 삭제됐습니다."]
+const alramMoveTo = ["/studyroom/", "/mentoring/", "/study/", "/community/qna/", "/mypage/chat", "/mentoring/"]
+
 function App() {
   let navigate = useNavigate();
   let user = useSelector((state) => state.user);
   let dispatch = useDispatch();
+  const [alarmList, setAlarmList] = useState([])
+  const [unread, setUnread] = useState(false)
 
   // 로그인 유지 목적
-  useEffect(()=>{
+  useEffect(() => {
     axios({
       method: "GET",
       url: "/check"
     })
-    .then(function (response) {
-      console.log("로그인 요청");
-      console.log(response);
-      if(response.data.status===200){
-        dispatch(
-          loginUser({
-            id: response.data.data.id,
-            name: response.data.data.nickname,
-            isSocial: response.data.data.isSocial
-          })
-        );
-      }
+      .then(function (response) {
+        console.log("로그인 요청");
+        console.log(response);
+        if (response.data.status === 200) {
+          dispatch(
+            loginUser({
+              id: response.data.data.id,
+              name: response.data.data.nickname,
+              isSocial: response.data.data.isSocial
+            })
+          );
+        }
       })
       .catch(function (error) {
         console.log(error);
       });
-  },[])
+
+    axios({
+      method: "GET",
+      url: "/alarm"
+    })
+      .then(function (response) {
+        console.log("알림 가져오기");
+        console.log(response);
+        if (response.data.status === 200) {
+          const data = response.data.data
+          setAlarmList(data.alarmList)
+          setUnread(data.unread)
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [])
 
   //스터디룸에서는 네브바 숨기기
   const location = useLocation();
   const isStudyRoomPath =
-    location.pathname.startsWith(`/studyroom/live`) &&
-    !location.pathname.includes("main") &&
-    !location.pathname.includes("create");
+    ((location.pathname.startsWith(`/studyroom/live`) || location.pathname.startsWith(`/mentoringroom/live`)) &&
+      !location.pathname.includes("main") &&
+      !location.pathname.includes("create"))
+
 
   let [isModal, setIsModal] = useState(false); // 알림함
   let [isNav, setIsNav] = useState(0);
@@ -249,7 +272,8 @@ function App() {
                       navigate("/community/main");
                       setIsNav(0);
                       dispatch(setQnaCategory(null));
-                      dispatch(setContentCategory(null));
+                      dispatch(setBookCategory({ firstCategory: null, secondCategory: null }));
+                      dispatch(setLectureCategory({ firstCategory: null, secondCategory: null }));
                     }}
                     onMouseEnter={() => setIsNav(3)}
                     onMouseLeave={() => setIsNav(0)}
@@ -289,7 +313,8 @@ function App() {
                             onClick={(e) => {
                               e.stopPropagation();
                               navigate("/community/content");
-                              dispatch(setContentCategory(null));
+                              dispatch(setBookCategory({ firstCategory: null, secondCategory: null }));
+                              dispatch(setLectureCategory({ firstCategory: null, secondCategory: null }));
                               setIsNav(0);
                             }}
                           >
@@ -408,76 +433,20 @@ function App() {
                       }}
                     >
                       알림함
-                      {
-                        // 조건 추가 필요
-                        <>
-                          <div className="notice_new">N</div>
-                        </>
-                      }
+                      {unread&&<div className="notice_new">N</div>}
                       {!isModal ? null : (
                         <>
                           <div
                             className="drop-down"
                             onClick={(e) => {
                               e.stopPropagation();
-                            }}
-                          >
-                            <div className="item">
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>
-                                {
-                                  "저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"
-                                }
-                              </h6>
-                            </div>
-                            <div className="item">
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>
-                                {
-                                  "저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"
-                                }
-                              </h6>
-                            </div>
-                            <div className="item">
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>
-                                {
-                                  "저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"
-                                }
-                              </h6>
-                            </div>
-                            <div className="item">
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>
-                                {
-                                  "저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"
-                                }
-                              </h6>
-                            </div>
-                            <div className="item">
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>
-                                {
-                                  "저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"
-                                }
-                              </h6>
-                            </div>
-                            <div className="item">
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>
-                                {
-                                  "저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"
-                                }
-                              </h6>
-                            </div>
-                            <div className="item">
-                              <h5>{"댓글이 달렸습니다."}</h5>
-                              <h6>
-                                {
-                                  "저 같이 하고싶어요! 날짜랑 시간은 어떻게 될까요? 궁금해용궁금해"
-                                }
-                              </h6>
-                            </div>
+                            }}>
+                            {alarmList?.map((item, index) => {
+                                return <div onClick={() => { navigate(`${alramMoveTo[item.type]}${item.contentId}`) }} className={`alram-${index}`}>
+                                  <h5>{alramType[item.type - 1]}</h5>
+                                  <h6>{item.content}</h6>
+                                </div>
+                              })}
                           </div>
                         </>
                       )}
@@ -509,8 +478,9 @@ function App() {
           <Route path="/studyroom" element={<RoomMain />} />
           <Route path="/studyroom/create" element={<RoomCreate />} />
           <Route path="/studyroom/:id" element={<RoomDetail />} />
-          <Route path="/studyroom/live/:id" element={<LiveRoom />} />
-          <Route path="/mentoringroom/:id" element={<MentoringRoomDetail />} />
+          <Route path="/studyroom/live/:id" element={<LiveRoom type={'study'} />} />
+          <Route path="/mentoringroom/:id" element={<MentoringRoomDetail type={'mentoring'} />} />
+          <Route path="/mentoringroom/live/:id" element={<LiveRoom />} />
           <Route path="/mentoring-room/:id/pay/success" element={<MentoringRoomPaySuccess />} />
           <Route path="/community" element={<CommunityMain />}>
             <Route path="main" element={<CommunityBoard />} />
@@ -542,7 +512,7 @@ function App() {
           <Route path="/oauth/callback/naver" element={<Auth />} />
           <Route path="/oauth/callback/google" element={<Auth />} />
           <Route path="/oauth/callback/kakao" element={<Auth />} />
-          <Route path="/member/login/auth" element={<AuthJoin/>} />
+          <Route path="/member/login/auth" element={<AuthJoin />} />
           <Route
             path="*"
             element={

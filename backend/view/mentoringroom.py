@@ -14,6 +14,7 @@ from backend.controller.mentoringroom_mgmt import MentoringRoom
 from backend.controller.review_mgmt import Review
 from backend.controller.refund_mgmt import Refund
 from backend.controller.mentor_mgmt import Portfolio
+from backend.controller.alarm_mgmt import Alarm
 
 mentoringroom_bp = Blueprint('mentoringRoom', __name__, url_prefix='/mentoring-room')
 
@@ -322,6 +323,7 @@ def deleteRoom(loginMember, new_token, id) : # 룸 삭제 (멘토)
         }
 
     # 멘티의 알림창으로 스터디룸 삭제되었다는 알림 보내기 - 정윤
+    Alarm.insertAlarm(mentoId, room.menti, room.id, 6)
 
     data = request.get_json()
     bank = data['bank']
