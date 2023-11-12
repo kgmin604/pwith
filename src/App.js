@@ -15,7 +15,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 //import Cookies from 'js-cookie';
 // import { useCookies, Cookies } from 'react-cookie';
-import { setStudyCategory, setQnaCategory, setContentCategory} from "./store.js";
+import { setStudyCategory, setQnaCategory, setBookCategory, setLectureCategory } from "./store.js";
 
 import PwithMain from "./pages/pwithmain/PwithMain.js";
 import Search from "./pages/pwithmain/Search.js";
@@ -25,7 +25,7 @@ import RoomCreate from "./pages/studyroom/RoomCreate.js";
 import LiveRoom from "./pages/studyroom/LiveRoom";
 import RoomDetail from "./pages/studyroom/RoomDetail.js";
 import MentoringRoomDetail from "./pages/studyroom/MentoringRoomDetail.js";
-import{
+import {
   MentoringRoomPaySuccess,
 } from "./pages/studyroom/MentoringRoomPay.js";
 import CommunityMain from "./pages/community/CommunityMain.js";
@@ -71,37 +71,38 @@ function App() {
   let dispatch = useDispatch();
 
   // 로그인 유지 목적
-  useEffect(()=>{
+  useEffect(() => {
     axios({
       method: "GET",
       url: "/check"
     })
-    .then(function (response) {
-      console.log("로그인 요청");
-      console.log(response);
-      if(response.data.status===200){
-        dispatch(
-          loginUser({
-            id: response.data.data.id,
-            name: response.data.data.nickname,
-            isSocial: response.data.data.isSocial
-          })
-        );
-      }
+      .then(function (response) {
+        console.log("로그인 요청");
+        console.log(response);
+        if (response.data.status === 200) {
+          dispatch(
+            loginUser({
+              id: response.data.data.id,
+              name: response.data.data.nickname,
+              isSocial: response.data.data.isSocial
+            })
+          );
+        }
       })
       .catch(function (error) {
         console.log(error);
       });
-  },[])
+  }, [])
 
   //스터디룸에서는 네브바 숨기기
   const location = useLocation();
   const isStudyRoomPath =
-    location.pathname.startsWith(`/studyroom/live`) &&
-    !location.pathname.includes("main") &&
-    !location.pathname.includes("create");
+    ((location.pathname.startsWith(`/studyroom/live`)|| location.pathname.startsWith(`/mentoringroom/live`) ) &&
+      !location.pathname.includes("main") &&
+      !location.pathname.includes("create")) 
 
-  let [isModal, setIsModal] = useState(false); // 알림함
+
+    let[isModal, setIsModal] = useState(false); // 알림함
   let [isNav, setIsNav] = useState(0);
 
   function logout() {
@@ -257,7 +258,8 @@ function App() {
                       window.location.href = "/community/main";
                       setIsNav(0);
                       dispatch(setQnaCategory(null));
-                      dispatch(setContentCategory(null));
+                      dispatch(setBookCategory({ firstCategory: null, secondCategory: null }));
+                      dispatch(setLectureCategory({ firstCategory: null, secondCategory: null }));
                     }}
                     onMouseEnter={() => setIsNav(3)}
                     onMouseLeave={() => setIsNav(0)}
@@ -540,8 +542,9 @@ function App() {
           <Route path="/studyroom" element={<RoomMain />} />
           <Route path="/studyroom/create" element={<RoomCreate />} />
           <Route path="/studyroom/:id" element={<RoomDetail />} />
-          <Route path="/studyroom/live/:id" element={<LiveRoom />} />
-          <Route path="/mentoringroom/:id" element={<MentoringRoomDetail />} />
+          <Route path="/studyroom/live/:id" element={<LiveRoom type={'study'}/>} />
+          <Route path="/mentoringroom/:id" element={<MentoringRoomDetail type={'mentoring'} />} />
+          <Route path="/mentoringroom/live/:id" element={<LiveRoom />} />
           <Route path="/mentoring-room/:id/pay/success" element={<MentoringRoomPaySuccess />} />
           <Route path="/community" element={<CommunityMain />}>
             <Route path="main" element={<CommunityBoard />} />
@@ -573,7 +576,7 @@ function App() {
           <Route path="/oauth/callback/naver" element={<Auth />} />
           <Route path="/oauth/callback/google" element={<Auth />} />
           <Route path="/oauth/callback/kakao" element={<Auth />} />
-          <Route path="/member/login/auth" element={<AuthJoin/>} />
+          <Route path="/member/login/auth" element={<AuthJoin />} />
           <Route
             path="*"
             element={

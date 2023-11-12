@@ -1,7 +1,7 @@
 from backend.controller import commit, selectAll, selectOne, rollback
 from flask import Flask, jsonify
 
-class alarm():
+class Alarm():
     def __init__(self, id, memId, oppId, contentId, contentType, reading):
         self.__id = id
         self.__memId = memId
@@ -29,20 +29,36 @@ class alarm():
             if row[4] == 1:
                 # studyRoom name
                 sql = f"select name from studyRoom where id = '{row[3]}'"
+                done = selectOne(sql)
+                content = str(done[0][0])
             if row[4] == 2:
                 # mentoring 
-                sql = f"select brief from portfolio where id = '{row[3]}'"
+                print(row)
+                sql = f"select id from mentoringRoom where id = '{row[3]}'"
+                room = selectOne(sql)
+                print(room)
+                content = "/mentoring-room" + str(room[0])
             if row[4] == 3:
                 #study reply content
                 sql = f"select content from replyStudy where id = '{row[3]}'"
+                done = selectOne(sql)
+                content = str(done[0][0])
             if row[4] == 4:
                 #qna reply content
                 sql = f"select content from replyQna where id = '{row[3]}'"
+                cdone = selectOne(sql)
+                content = str(done[0][0])
             if row[4] == 5:
                 #chat content
                 sql = f"select content from chat where id = '{row[3]}'"
+                done = selectOne(sql)
+                content = str(done[0][0])
+            if row[4] == 6:
+                # mentoring 
+                # sql = f"select id from mentoringRoom where id = '{row[3]}'"
+                # room = selectOne(sql)
+                content = "멘토링룸이 삭제되었습니다"
             
-            content = selectOne(sql)
         
             record = {
                 'id': row[0],     
@@ -51,7 +67,7 @@ class alarm():
                 'contentId': row[3],
                 'contentType': row[4],
                 'reading' : row[5],
-                'content' : str(content[0][0])
+                'content' : content
             }
             result.append(record)
         print(result)

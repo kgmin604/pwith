@@ -8,6 +8,7 @@ from backend.controller.mentor_mgmt import Portfolio
 from backend.controller.review_mgmt import Review
 from backend.controller.mentoringroom_mgmt import MentoringRoom
 from backend.controller.chat_mgmt import chat
+from backend.controller.alarm_mgmt import Alarm
 from backend.view import uploadFileS3, login_required, findSocialLoginMember, payKakao, payKakaoSuccess, findNickName, formatYMDHM
 
 mento_bp = Blueprint('mentoring', __name__, url_prefix='/mentoring')
@@ -342,11 +343,13 @@ def applySuccess(loginMember, new_token, id):
     room_url = "http://localhost:3000/mentoringroom/" + str(roomId)
 
     # 4. 쪽지 전송
-    menticontent = f"스터디룸 <a style='color:#6666FF;font-weight:700;' href={room_url}>여기</a>로 입장해주세요."
+    menticontent = f"스터디룸 <a style=color:#6666FF;font-weight:700; href={room_url}>여기</a>로 입장해주세요."
     mentocontent = f"[{mentiNick}]님과 멘토링을 진행합니다."
     
-    chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
-    chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
+    # chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
+    # chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
+    
+    Alarm.insertAlarm(mentiId, mentoId, roomId, 2)
 
     # 5. 수업 횟수 증가
     MentoringRoom.updateLessonCnt(roomId, classes.get(mentiId, 0))

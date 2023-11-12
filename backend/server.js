@@ -7,7 +7,7 @@ const server = http.createServer(app);
 // cors 설정을 하지 않으면 오류가 생기게 됩니다. 설정해 줍니다.
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*",
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
