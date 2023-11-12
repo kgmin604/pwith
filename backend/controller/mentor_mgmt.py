@@ -188,6 +188,21 @@ class Portfolio() :
         return done
 
     @staticmethod
+    def updateScore(portfolioId) : # 평균 별점 업데이트
+
+        average_score = Portfolio.calculateAverageScore(portfolioId)
+        
+        sql = f"UPDATE portfolio SET score = {average_score} WHERE id = {portfolioId}"
+
+        return commit(sql)
+    
+    def calculateAverageScore(portfolioId): # 평균 별점 계산하기
+
+        sql = f"SELECT avg(score) FROM review WHERE portfolio = {portfolioId}"
+
+        return selectOne(sql)[0]
+
+    @staticmethod
     def findByMentoId(mento_id) :
 
         sql = f"SELECT id FROM portfolio WHERE mento = {mento_id} and isDeleted = false"
