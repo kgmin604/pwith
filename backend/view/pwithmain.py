@@ -137,13 +137,9 @@ def search():
         
     searchType = request.args.get('type')
     searchValue = request.args.get('value')
+    searchCategory = request.args.get('search')
     
     result = []
-    bookList = []
-    lectureList = []
-    studyList = []
-    qnaList = []
-    portfolioList = []
     page = 0
 
     page = request.args.get('page')
@@ -155,84 +151,100 @@ def search():
     #     return jsonify(result)
 
     page = int(page)
-    posts, studyposts, qnaposts, portfolioposts, bookposts, lectureposts = [], [], [], [], [], []
-
-    if int(searchType) == 0: # 제목으로 검색
-        studyposts = studyPost.findByTitle(searchValue)
-        qnaposts = QNAPost.findByTitle(searchValue)
-        portfolioposts = Portfolio.findByTitle(searchValue)
-        
-        regex = f".*{searchValue}.*"
-        
-        bookposts =  conn_mongodb().book_crawling.find({'title' : {'$regex' : regex }})
-        print("=========book=========")
-        # print(bookposts[0])
-        lectureposts = conn_mongodb().lecture_crawling.find({'title' : {'$regex' : regex}})
-        print("=========lecture===========")
-        
-        
-    elif int(searchType) == 1 : # 글쓴이로 검색
-        studyposts = studyPost.findByWriter(searchValue)
-        print("study select")
-        qnaposts = QNAPost.findByWriter(searchValue)
-        print("qna select")
-        print(qnaposts)
-        portfolioposts = Portfolio.findByMento(searchValue)
-        print("portfolio select")
-        print(portfolioposts)
+    posts = []
     
-    if studyposts is not None:
-        for i in range(len(studyposts)) :
-            post = {
-                'id' : i+1,
-                'postId' : studyposts[i][0],
-                'title' : studyposts[i][1],
-                'writerId': studyposts[i][2],
-            }
-            studyList.append(post)
-        
-    if qnaposts is not None:
-        for i in range(len(qnaposts)) :
-            post = {
-                'id' : i+1,
-                'postId' : qnaposts[i][0],
-                'title' : qnaposts[i][1],
-                'writerId': qnaposts[i][2],
-            }
-            qnaList.append(post)
-        
-    if portfolioposts is not None:
-        for i in range(len(portfolioposts)) :
-            post = {
-                'id' : i+1,
-                'postId' : portfolioposts[i][0],
-                'title' : portfolioposts[i][1],
-                'writerId': portfolioposts[i][2],
-            }
-            portfolioList.append(post)
-        
-    if bookposts is not None:
-        
-        for book in bookposts:
-            bookList.append({
-            'title' : book['title'],
-            'instructor' : book['writer'],
-            'link' : book['url'],
-            'image': book['img'],
-            'type' : book['type']
-            })
+    if searchCategory == "study":
+        if int(searchType) == 0: # 제목으로 검색
+            studyposts = studyPost.findByTitle(searchValue)
+        elif int(searchType) == 1 : # 글쓴이로 검색
+            studyposts = studyPost.findByWriter(searchValue)
+            print("study select")
             
+        if studyposts is not None:
+            for i in range(len(studyposts)) :
+                post = {
+                    'id' : i+1,
+                    'postId' : studyposts[i][0],
+                    'title' : studyposts[i][1],
+                    'nickname': findNickName(studyposts[i][2]),
+                }
+                posts.append(post)
+                
+    if searchCategory == "qna":
+        if int(searchType) == 0: # 제목으로 검색
+            qnaposts = QNAPost.findByTitle(searchValue)
+            
+        elif int(searchType) == 1 : # 글쓴이로 검색
+            qnaposts = QNAPost.findByWriter(searchValue)
+            print("qna select")
+            
+        if qnaposts is not None:
+            for i in range(len(qnaposts)) :
+                post = {
+                    'id' : i+1,
+                    'postId' : qnaposts[i][0],
+                    'title' : qnaposts[i][1],
+                    'nickname': findNickName(qnaposts[i][2]),
+                }
+                posts.append(post)
+            
+    if searchCategory == "portfolio":
+        if int(searchType) == 0: # 제목으로 검색
+            portfolioposts = Portfolio.findByTitle(searchValue)
+            
+        elif int(searchType) == 1 : # 글쓴이로 검색
+            portfolioposts = Portfolio.findByMento(searchValue)
+            print("portfolio select")
+            
+        if portfolioposts is not None:
+            for i in range(len(portfolioposts)) :
+                post = {
+                    'id' : i+1,
+                    'postId' : portfolioposts[i][0],
+                    'title' : portfolioposts[i][1],
+                    'nickname': findNickName(portfolioposts[i][2]),
+                }
+                posts.append(post)
+            
+    if searchCategory == "book":
+        if int(searchType) == 0: # 제목으로 검색
+            regex = f".*{searchValue}.*"
+            
+            bookposts =  conn_mongodb().book_crawling.find({'title' : {'$regex' : regex }})
+            print("=========book=========")
+            
+        elif int(searchType) == 1 : # 글쓴이로 검색
+            bookposts = []
+            
+        if bookposts is not None:
+            for book in bookposts:
+                posts.append({
+                'title' : book['title'],
+                'instructor' : book['writer'],
+                'link' : book['url'],
+                'image': book['img'],
+                'type' : book['type']
+                })
         
+    if searchCategory == "lecture":
+        if int(searchType) == 0: # 제목으로 검색
+            regex = f".*{searchValue}.*"
+            
+            lectureposts = conn_mongodb().lecture_crawling.find({'title' : {'$regex' : regex}})
+            print("=========lecture===========")
+            
+        elif int(searchType) == 1 : # 글쓴이로 검색
+            lectureposts = []
         
-    if lectureposts is not None:
-        for lecture in lectureposts:
-            lectureList.append({
-            'title' : lecture['title'],
-            'instructor' : lecture['instructor'],
-            'link' : lecture['link'],
-            'image': lecture['img'],
-            'type' : lecture['type']
-            })
+        if lectureposts is not None:
+            for lecture in lectureposts:
+                posts.append({
+                'title' : lecture['title'],
+                'instructor' : lecture['instructor'],
+                'link' : lecture['link'],
+                'image': lecture['img'],
+                'type' : lecture['type']
+                })
             
         
     
@@ -248,20 +260,14 @@ def search():
     else :
         for i in range(page):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
             requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
-            studyList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
+            # searchList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
             
-        print(studyList)
-        print(qnaList)
-        print(portfolioList)
-        print(bookList)
-        print(lectureList)
 
     return {
-        'studyposts' : studyList,
-        'qnaposts' : qnaList,
-        'portfolioposts' : portfolioList,
-        'bookposts' : bookList,
-        'lectureposts' : lectureList,
-        'num': requiredPage
+        'data':{
+            'searchList' : posts,
+            'totalPage': requiredPage
         }
+    
+    }
         
