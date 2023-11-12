@@ -12,6 +12,7 @@ from backend.model.db_mongo import conn_mongodb
 from backend.controller.member_mgmt import Member
 from backend.controller.mentoringroom_mgmt import MentoringRoom
 from backend.controller.review_mgmt import Review
+from backend.controller.refund_mgmt import Refund
 
 mentoringroom_bp = Blueprint('mentoringRoom', __name__, url_prefix='/mentoring-room')
 
@@ -244,6 +245,55 @@ def checkLesson(id, loginMember, new_token): # 수업 횟수 체크
         'data': None
     }
 
+@mentoringroom_bp.route('/<id>/refund', methods=['POST'])
+@login_required
+def refundTuition(loginMember, new_token, id): # 수업료 환급 신청
+
+    info = MentoringRoom.findById(id)
+
+    if not info:
+        return {
+            'status' : 400,
+            'message' : '없는 멘토링룸',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    room = info['room']
+    portfolio = info['portfolio']
+
+    if loginMember.id != room.mento:
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    data = request.get_json()
+    bank = data['bank']
+    account = data['account']
+    classes = data['classes']
+
+    can_refund_cnt = min(room.mento_cnt, room.menti_cnt) - room.refund_cnt
+    if classes > can_refund_cnt:
+        return {
+            'status' : 404,
+            'message' : '수업 횟수 이상 환급 불가능',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    balance = classes * portfolio.tuition
+    Refund.save(loginMember.id, bank, account, balance, datetime.now())
+
+    MentoringRoom.updateRefundCnt(id, classes)
+    
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
+
 @mentoringroom_bp.route('/<id>', methods=['DELETE'])
 @login_required
 def deleteRoom(loginMember, new_token, id) : # 룸 삭제 (멘토)
@@ -271,8 +321,8 @@ def deleteRoom(loginMember, new_token, id) : # 룸 삭제 (멘토)
 
     # 1. 멘티의 알림창으로 스터디룸 삭제되었다는 알림 보내기
 
-    # 2. 환급해야할 금액 환급하기
-    # Refund.save()
+    # 2. 환급해야할 금액 환급하기 (계좌 정보가 필요한데 이전 기록이 없다면?)
+    # Refund.save(loginMember.id)
 
     MentoringRoom.delete(id)
 

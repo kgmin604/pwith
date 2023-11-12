@@ -165,6 +165,14 @@ class MentoringRoom() :
 
         return done
 
+    @staticmethod
+    def updateRefundCnt(id, count) : # 환급받은 횟수 증가
+
+        sql = f"UPDATE mentoringRoom SET refund_cnt = refund_cnt + {count} WHERE id = {id}"
+
+        done = commit(sql)
+
+        return done
 
     @staticmethod
     def updateNotice(roomId, notice) : # 공지 수정

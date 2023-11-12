@@ -9,6 +9,7 @@ from backend.controller.study_mgmt import studyPost
 from backend.controller.community_mgmt import QNAPost
 from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.replyQna_mgmt import ReplyQna
+from backend.controller.refund_mgmt import Refund
 from backend.view import formatYMD, uploadFileS3, login_required
 from backend.view.member import sendAuthCode
 from backend import config
@@ -240,3 +241,41 @@ def hashPassword(pw):
 
 def verifyPassword(pw, hashed_pw) : # return boolean
     return bcrypt.checkpw(pw.encode('utf-8'), hashed_pw.encode('utf-8'))
+
+@mypage_bp.route('/admin', methods = ['GET'])
+@login_required
+def admin(loginMember, new_token):
+    # admin
+    manage = []
+    
+    alldata = Refund.getAllInfo()
+    
+    for info in alldata:
+        manage_data = {
+            'id': info[0],
+            'title': "수업료 환급 요청",
+            'sender' : info[1],
+            'date': formatYMD(info[5]),
+            'check' : info[6],
+            'content' : str(info[2]) + " " +str(info[3]) +" "+ str(info[4]) + " 원 환급 요청합니다"
+        }
+        manage.append(manage_data)
+    
+    return{
+        'data' : manage,
+        'access_token' : new_token
+    }
+    
+@mypage_bp.route('/admin', methods = ['POST'])
+@login_required
+def chkAdmin(loginMember, new_token):
+    
+    data = request.get_json(silent=True)  # silent: parsing fail 에러 방지
+    id = data.get('id')
+
+    done = Refund.chkRefund(id)
+    
+    return {
+        'data': done,
+        'access_tocken' : new_token
+    }

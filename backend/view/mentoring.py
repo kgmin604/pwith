@@ -318,7 +318,6 @@ def applySuccess(loginMember, new_token, id):
     pg_token = request.args.get('pg_token')
 
     response = payKakaoSuccess(loginMember, pg_token, tids.get(loginMember.id, ''))
-    print(response)
 
     if response.get('code', None):
         return {
@@ -337,10 +336,10 @@ def applySuccess(loginMember, new_token, id):
 
     roomName = f"멘토 {mentoNick}와 멘티 {mentiNick}의 공부방"
 
-    MentoringRoom.save(roomName, datetime.now(), mentoId, mentiId, id)
+    roomId = MentoringRoom.save(roomName, datetime.now(), mentoId, mentiId, id)
 
     # 3. 멘토링룸 링크 생성
-    room_url = "http://localhost:3000/mentoringroom/" + str(id)
+    room_url = "http://localhost:3000/mentoringroom/" + str(roomId)
 
     # 4. 쪽지 전송
     menticontent = f"<a href={room_url}>스터디룸</a>으로 입장해주세요."
@@ -350,7 +349,7 @@ def applySuccess(loginMember, new_token, id):
     chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
 
     # 5. 수업 횟수 증가
-    MentoringRoom.updateLessonCnt(id, classes.get(mentiId, 0))
+    MentoringRoom.updateLessonCnt(roomId, classes.get(mentiId, 0))
 
     del tids[mentiId]
     del classes[mentiId]
