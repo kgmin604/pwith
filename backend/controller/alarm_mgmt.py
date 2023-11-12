@@ -37,7 +37,7 @@ class Alarm():
                 sql = f"select id from mentoringRoom where id = '{row[3]}'"
                 room = selectOne(sql)
                 print(room)
-                content = "/mentoring-room" + str(room[0])
+                content = "/mentoring-room/" + str(room[0])
             if row[4] == 3:
                 #study reply content
                 sql = f"select content from replyStudy where id = '{row[3]}'"
@@ -73,3 +73,23 @@ class Alarm():
         print(result)
         print("====result=====")
         return result
+    
+    
+    @staticmethod
+    def readAlarm():
+        sql  = f"update alarm set reading = 1 "
+        
+        done = commit(sql)
+        
+    @staticmethod
+    def chkAlarm():
+        sql  = f"select reading from alarm"
+        
+        result = selectAll(sql)
+        
+        for i in result:
+            print(str(i[0]))
+            if str(i) == "0":
+                return True
+            
+        return False
