@@ -41,7 +41,7 @@ class Refund() :
         return done
      
     def getAllInfo():
-        sql = f"select refund.id, member.memId, bank, account, balance, curDate, checked from refund, member where refund.memId = member.id"
+        sql = f"select refund.id, member.memId, bank, account, balance, curDate, checked from refund, member where refund.memId = member.id order by id desc"
         
         rows = selectAll(sql)
         
