@@ -1,13 +1,13 @@
 from backend.controller import commit, commitAndGetId, selectAll, selectOne
 
 class Review :
-    def __init__(self, id, writer, content, score, curDate, mento, room) :
+    def __init__(self, id, writer, content, score, curDate, portfolio, room) :
         self.__id = id
         self.__writer = writer
         self.__content = content
         self.__score = score
         self.__curDate = curDate
-        self.__mento = mento
+        self.portfolio = portfolio
         self.__room = room
     @property
     def id(self) :
@@ -25,16 +25,16 @@ class Review :
     def curDate(self) :
         return self.__curDate
     @property
-    def mento(self) :
-        return self.__mento
+    def portfolio(self) :
+        return self.portfolio
     @property
     def room(self) :
         return self.__room
         
     @staticmethod
-    def findByMentoId(mentoId) :
+    def findByPortfolioId(portfolioId) :
 
-        sql = f"SELECT * FROM review WHERE mento = '{mentoId}' ORDER BY curDate DESC"
+        sql = f"SELECT * FROM review WHERE portfolio = {portfolioId} ORDER BY curDate DESC"
 
         reviews = selectAll(sql)
 
@@ -46,9 +46,9 @@ class Review :
         return result
 
     @staticmethod
-    def save(writerId, content, score, curDate, mentoId, roomId):
+    def save(writerId, content, score, curDate, portfolioId, roomId):
         
-        sql = f"INSERT INTO review(writer, content, score, curDate, mento, room) VALUES({writerId}, '{content}', {score}, '{curDate}', {mentoId}, {roomId})"
+        sql = f"INSERT INTO review(writer, content, score, curDate, portfolio, room) VALUES({writerId}, '{content}', {score}, '{curDate}', {portfolioId}, {roomId})"
 
         reviewId = commitAndGetId(sql)
 

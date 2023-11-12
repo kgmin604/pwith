@@ -358,7 +358,7 @@ def quitRoom(loginMember, new_token, id) : # 스터디 그만두기 (멘티)
 
     # 1. 멘토의 알림창으로 스터디 그만뒀다는 알림 보내기
 
-    # 2. 환급해야할 금액 환급하기
+    # 2. 환급해야할 금액 환급하기 (계좌 정보가 필요한데 이전 기록이 없다면?)
     # Refund.save()
     
     MentoringRoom.delete(id)
@@ -403,7 +403,9 @@ def writeReview(id, loginMember, new_token) : # 후기 작성
     content = data['content']
     score = data['score']
 
-    key = Review.save(loginMember.id, content, score, datetime.now(), room.mento, id)
+    key = Review.save(loginMember.id, content, score, datetime.now(), room.portfolio, id)
+
+    # 기존의 score와 새로운 score의 평균으로 업데이트
 
     return {
         'reviewId' : key,
@@ -435,6 +437,8 @@ def updateReview(id, reviewId, loginMember, new_token) : # 후기 수정
     newScore = data['score']
 
     Review.update(reviewId, newContent, newScore)
+
+    # 평균 score 업데이트
 
     return {
         'data': None,

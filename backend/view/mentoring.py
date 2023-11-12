@@ -236,7 +236,7 @@ def showReview(loginMember, new_token, id):
 
     mentoId = Portfolio.findMentoById(id)
 
-    reviews = Review.findByMentoId(mentoId)
+    reviews = Review.findByPortfolioId(id)
 
     result = []
 
