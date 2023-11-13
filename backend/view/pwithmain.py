@@ -16,6 +16,9 @@ def chkLogin(loginMember, new_token):
     isSocial = False
     if request.cookies.get('provider') in ['GOOGLE', 'NAVER', 'KAKAO']:
         isSocial = True
+        
+    unread = Alarm.chkAlarm()
+    #unread = True
 
     return {
         'status': 200,
@@ -23,7 +26,8 @@ def chkLogin(loginMember, new_token):
         'data': {
             'id': loginMember.memId,
             'nickname': loginMember.nickname,
-            'isSocial': isSocial
+            'isSocial': isSocial,
+            'unread' : unread
         }
     }
 
@@ -107,36 +111,34 @@ def showalarm(loginMember, new_token):
     
     alarmLists = Alarm.getAlarm(memId)
     
-    print(alarmList)
+    #print(alarmList)
     for row in alarmLists:
-        print(row)
-        post = {
-            #'id' : row['id'],
-            'contentId' : row['contentId'],
-            'type': row['contentType'],
-            'content' : row['content'],
-        }
+       #print(row)
+       post = {
+           #'id' : row['id'],
+           'contentId' : row['contentId'],
+           'type': row['contentType'],
+           'content' : row['content'],
+       }
         
-        alarmList.append(post)
+       alarmList.append(post)
         
     # unread 여부 확인
-    
-    unread = Alarm.chkAlarm()
+
     Alarm.readAlarm()
-    print(unread)
+    # print(unread)
     
     # print(alarmList)
     
     return{
        'data': {
-           'alarmList' : alarmList,
-           'unread' : unread
+           'alarmList' : alarmList
        },
        'access_token' : new_token
     }
     
     
-    # 전체 검색 페이지네이션 - 정윤
+    # 전체 검색 페이지네이션, 책, 강의  id 추가 - 정윤
 @main_bp.route('/search', methods = ['GET'])      # 전체 검색
 def search():
     
@@ -233,14 +235,17 @@ def search():
             bookposts = []
             
         if bookposts is not None:
+            i=0
             for book in bookposts:
                 posts.append({
-                'title' : book['title'],
-                'instructor' : book['writer'],
-                'link' : book['url'],
-                'image': book['img'],
-                'type' : book['type']
+                    'id': i,
+                    'title' : book['title'],
+                    'instructor' : book['writer'],
+                    'link' : book['url'],
+                    'image': book['img'],
+                    'type' : book['type']
                 })
+                i+=1
         
     if searchCategory == "lecture":
         if int(searchType) == 0: # 제목으로 검색
@@ -253,14 +258,17 @@ def search():
             lectureposts = []
         
         if lectureposts is not None:
+            i=0
             for lecture in lectureposts:
                 posts.append({
-                'title' : lecture['title'],
-                'instructor' : lecture['instructor'],
-                'link' : lecture['link'],
-                'image': lecture['img'],
-                'type' : lecture['type']
+                    'id' : i,
+                    'title' : lecture['title'],
+                    'instructor' : lecture['instructor'],
+                    'link' : lecture['link'],
+                    'image': lecture['img'],
+                    'type' : lecture['type']
                 })
+                i+=1
             
         
     
