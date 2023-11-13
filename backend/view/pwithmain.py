@@ -236,6 +236,7 @@ def search():
         if bookposts is not None:
             i=0
             for book in bookposts:
+                i+=1
                 posts.append({
                     'id': i,
                     'title' : book['title'],
@@ -244,7 +245,6 @@ def search():
                     'image': book['img'],
                     'type' : book['type']
                 })
-                i+=1
         
     if searchCategory == "lecture":
         if int(searchType) == 0: # 제목으로 검색
@@ -259,6 +259,7 @@ def search():
         if lectureposts is not None:
             i=0
             for lecture in lectureposts:
+                i+=1
                 posts.append({
                     'id' : i,
                     'title' : lecture['title'],
@@ -267,7 +268,7 @@ def search():
                     'image': lecture['img'],
                     'type' : lecture['type']
                 })
-                i+=1
+                
             
         
     
