@@ -31,7 +31,7 @@ export function WebSocketProvider({ children }) {
             },
             autoConnect: false,
         });
-        const studyLive = io(`http://${baseUrl}lhost:5000/study-live`, {
+        const studyLive = io(`http://${baseUrl}:5000/study-live`, {
             cors: {
                 origin: "*",
             },
