@@ -79,28 +79,32 @@ function App() {
 
   // 로그인 유지 목적
   useEffect(() => {
-    axios({
-      method: "GET",
-      url: "/check"
-    })
-      .then(function (response) {
-        console.log("로그인 요청");
-        console.log(response);
-        if (response.data.status === 200) {
-          dispatch(
-            loginUser({
-              id: response.data.data.id,
-              name: response.data.data.nickname,
-              isSocial: response.data.data.isSocial
-            })
-          );
-          setUnread(response.data.data.unread)
-        }
+    const timer = setTimeout(() => {
+      axios({
+        method: "GET",
+        url: "/check"
       })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, [])
+        .then(function (response) {
+          console.log("로그인 요청");
+          console.log(response);
+          if (response.data.status === 200) {
+            dispatch(
+              loginUser({
+                id: response.data.data.id,
+                name: response.data.data.nickname,
+                isSocial: response.data.data.isSocial
+              })
+            );
+            setUnread(response.data.data.unread)
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }, 250); 
+  
+    return () => clearTimeout(timer); // cleanup 함수를 이용하여 컴포넌트 언마운트 시 타이머를 정리
+  }, []);
 
   const getAlramList=()=>{
     setUnread(0)
