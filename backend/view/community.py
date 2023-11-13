@@ -411,13 +411,14 @@ def listLectures() :
 
     if fcategory is None:
         fcategory = 10
-        all_lectureList = conn_mongodb().lecture_crawling.find()
-        #requiredPage = len(list(all_lectureList)) // 10 + 1
-        
-        lectureList = conn_mongodb().lecture_crawling.find().skip((page-1)*32).limit(32)
+        regex = ""  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "first_category": { '$regex': regex } }
+    
     if scategory is None:
         scategory = 20
-
+        regex = ""  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "second_category": { '$regex': regex } }
+        
     if not page :
         return {
             'result' : result
@@ -513,12 +514,12 @@ def listBooks() :
     
     if fcategory is None:
         fcategory = 10
-        all_bookList = conn_mongodb().book_crawling.find()
-        bookList = conn_mongodb().book_crawling.find().sort('_id', -1).skip((page-1)*32).limit(32)
+        regex = ""  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "first_category": { '$regex': regex } }
     if scategory is None:
         scategory = 20
-        ll_bookList = conn_mongodb().book_crawling.find()
-        bookList = conn_mongodb().book_crawling.find().sort('_id', -1).skip((page-1)*32).limit(32)
+        regex = ""  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "second_category": { '$regex': regex } }
 
     if not page :
         return {
