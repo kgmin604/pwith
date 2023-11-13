@@ -2,11 +2,9 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { loginUser, clearUser } from "../../store.js";
 
 function MentoringPaySuccess() {
     let navigate = useNavigate();
-    const dispatch = useDispatch();
 
     const location = useLocation();
     const currentPathWithQuery = location.pathname + location.search;

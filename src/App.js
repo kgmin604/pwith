@@ -32,7 +32,7 @@ import CommunityMain from "./pages/community/CommunityMain.js";
 import MentoringMain from "./pages/mentoring/MentoringMain.js";
 import MentoringCreate from "./pages/mentoring/MetoringCreate";
 
-import MentoringPaySuccess from "./pages/mentoring/MentoringPay.js";
+import MentoringPaySuccess from "./pages/mentoring/MentoringPaySuccess.js";
 
 import Login from "./pages/member/login.js";
 import Join from "./pages/member/join.js";
@@ -63,6 +63,8 @@ import QnaCreate from "./pages/community/QnaCreate";
 import QnaPost from "./pages/community/QnaPost";
 import PortfolioManage from "./pages/mentoring/PortfolioManage";
 import { WebSocketProvider } from "./hooks/WebsocketHooks";
+import MentoringPayCancel from "./pages/mentoring/MentoringPayCancel";
+import MentoringPayFail from "./pages/mentoring/MentoringPayFail";
 
 const alramType = ["새로운 스터디 신청입니다", "새로운 멘토링 신청입니다", "새로운 댓글이 달렸어요!", "새로운 댓글이 달렸어요!", "새로운 쪽지가 왔어요!", "멘토링이 삭제됐습니다."]
 const alramMoveTo = ["/studyroom/", "/mentoring/", "/study/", "/community/qna/", "/mypage/chat", "/mentoring/"]
@@ -513,6 +515,9 @@ function App() {
           <Route path="/mentoringroom/:id" element={<MentoringRoomDetail type={'mentoring'} />} />
           <Route path="/mentoringroom/live/:id" element={<LiveRoom />} />
           <Route path="/mentoring-room/:id/pay/success" element={<MentoringRoomPaySuccess />} />
+          <Route path="/mentoring-room/:id/pay/fail" element={<MentoringPayFail/>} />
+          <Route path="/mentoring-room/:id/pay/cancel" element={<MentoringPayCancel />} />
+
           <Route path="/community" element={<CommunityMain />}>
             <Route path="main" element={<CommunityBoard />} />
             <Route path="it" element={<CommunityIT />} />
@@ -525,6 +530,8 @@ function App() {
           <Route path="/mentoring/create" element={<MentoringCreate />} />
           <Route path="/mentoring/:myPortfolio" element={<PortfolioManage />} />
           <Route path="/mentoring/:id/pay/success" element={<MentoringPaySuccess />} />
+          <Route path="/mentoring/:id/pay/fail" element={<MentoringPayFail/>} />
+          <Route path="/mentoring/:id/pay/cancel" element={<MentoringPayCancel />} />
           <Route path="member/login" element={<Login />} />
           <Route path="member/join" element={<Join />} />
           <Route path="member/id" element={<HelpId />} />
