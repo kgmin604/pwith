@@ -96,36 +96,37 @@ function PortfolioManage() {
     const updatePortfolio = () => {
         const imageElement = cropperRef?.current;
         const cropper = imageElement?.cropper;
+        const formData = new FormData();
         // 이미지를 Blob으로 변환
-        cropper.getCroppedCanvas().toBlob((blob) => {
+
+        cropper?.getCroppedCanvas().toBlob((blob) => {
             // Blob을 FormData로 감싸기
-            const formData = new FormData();
-            const updatedSubject = JSON.stringify(selectedWords);
             formData.append('mentoPic', blob, `${user.id}.jpg`);
-            formData.append('data', JSON.stringify({
-                'subject': selectedWords,
-                'brief': portfolio.brief,
-                'content': portfolio.content,
-                'tuition': portfolio.tuition,
-                'duration': portfolio.duration,
-            }));
-            axios({
-                method: "PATCH",
-                url: `/mentoring/${myPortfolio}`,
-                data: formData
-            },
-            )
-                .then(function (response) {
-                    if (response.data.status === 200) {
-                        alert("수정이 완료됐습니다")
-                        setIsUpdating(false)
-                        navigate(`../mentoring/main`)
-                    }
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
         })
+
+        formData.append('data', JSON.stringify({
+            'subject': selectedWords,
+            'brief': portfolio.brief,
+            'content': portfolio.content,
+            'tuition': portfolio.tuition,
+            'duration': portfolio.duration,
+        }));
+        axios({
+            method: "PATCH",
+            url: `/mentoring/${myPortfolio}`,
+            data: formData
+        },
+        )
+            .then(function (response) {
+                if (response.data.status === 200) {
+                    alert("수정이 완료됐습니다")
+                    setIsUpdating(false)
+                    navigate(`../mentoring/main`)
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
     function checkTitle() {
         portfolio['title'] === "" || portfolio['content'] === "" ? alert("제목 또는 내용을 입력해주세요.") :
@@ -144,11 +145,11 @@ function PortfolioManage() {
             })
             .catch(function (error) {
                 console.log(error);
-                if(error.response.status===400){
+                if (error.response.status === 400) {
                     alert(`없는 포트폴리오입니다.`);
-                }else if(error.response.status===403){
+                } else if (error.response.status === 403) {
                     alert(`로그인이 필요합니다.`);
-                }else{
+                } else {
                     alert("요청을 처리하지 못했습니다.");
                 }
             });
