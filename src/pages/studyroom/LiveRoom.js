@@ -90,6 +90,7 @@ const LiveRoom = ({type}) => {
     const roomId = useParams().id;
 
     const handleDivClick = () => {
+        console.log(1)
         setIsClicked(true);
     };
 
@@ -544,7 +545,7 @@ const LiveRoom = ({type}) => {
                 </div>}
             </div>
 
-            {showChat && <Chat roomId={roomId} roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />}
+            {showChat && <Chat type={type} roomId={roomId} roomChat={roomChat} setRoomChat={setRoomChat} setShowChat={setShowChat} isClicked={isClicked} handleDivClick={handleDivClick} />}
 
 
             <div className="control-bar-wrapper">
