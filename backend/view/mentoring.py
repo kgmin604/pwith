@@ -158,8 +158,11 @@ def modifyPortfolio(loginMember, new_token, id) :
             'access_token' : new_token
         }
 
-    image = request.files['mentoPic']
-    mentoPic = uploadFileS3(image, 'mentoring')
+    if request.files.getlist('mentoPic'):
+        image = request.files['mentoPic']
+        mentoPic = uploadFileS3(image, 'mentoring')
+    else:
+        mentoPic = Portfolio.findMentoPicById(id)
 
     data_str = request.form['data']
     data = json.loads(data_str)
