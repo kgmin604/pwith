@@ -425,6 +425,7 @@ div.room-cropper-area div.btn-area
     background-color: #98AFCA;
     color: white;
     float: right;
+    border:none;
 }
 
 
@@ -461,6 +462,10 @@ span{
 
 .img-error{
     margin: 130px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 div.img-error

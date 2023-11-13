@@ -93,16 +93,19 @@ function PortfolioManage() {
                 console.log(error);
             });
     }
-    const updatePortfolio = () => {
+    const updatePortfolio = async () => {
         const imageElement = cropperRef?.current;
         const cropper = imageElement?.cropper;
         const formData = new FormData();
         // 이미지를 Blob으로 변환
 
-        cropper?.getCroppedCanvas().toBlob((blob) => {
-            // Blob을 FormData로 감싸기
+        if (cropper) {
+            const blob = await new Promise((resolve) => {
+                cropper?.getCroppedCanvas().toBlob(resolve);
+            });
             formData.append('mentoPic', blob, `${user.id}.jpg`);
-        })
+        }
+
 
         formData.append('data', JSON.stringify({
             'subject': selectedWords,
@@ -111,6 +114,10 @@ function PortfolioManage() {
             'tuition': portfolio.tuition,
             'duration': portfolio.duration,
         }));
+
+        console.log(formData.get('mentoPic'));
+        console.log(formData.get('data'));
+
         axios({
             method: "PATCH",
             url: `/mentoring/${myPortfolio}`,
@@ -127,6 +134,7 @@ function PortfolioManage() {
             .catch(function (error) {
                 console.log(error);
             });
+
     }
     function checkTitle() {
         portfolio['title'] === "" || portfolio['content'] === "" ? alert("제목 또는 내용을 입력해주세요.") :
