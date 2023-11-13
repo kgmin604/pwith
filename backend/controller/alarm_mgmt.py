@@ -83,13 +83,9 @@ class Alarm():
         
     @staticmethod
     def chkAlarm():
-        sql  = f"select reading from alarm"
+
+        sql  = f"SELECT COUNT(reading) FROM alarm WHERE reading = false"
         
-        result = selectAll(sql)
-        
-        for i in result:
-            print(str(i[0]))
-            if str(i) == "0":
-                return True
-            
-        return False
+        unread_count = selectOne(sql)[0]
+
+        return unread_count > 0

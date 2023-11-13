@@ -1,11 +1,14 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./study.css";
 import "../../App.css";
-import React from 'react';
+import React,{useEffect} from 'react';
+import axios from 'axios'
 import { Nav } from "react-bootstrap";
 import { setStudyCategory } from "../../store";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Outlet } from "react-router-dom";
+import { updateRecStudyList } from "../../store";
+
 
 const category = [
   '웹개발',
