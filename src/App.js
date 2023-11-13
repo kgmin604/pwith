@@ -512,8 +512,8 @@ function App() {
           <Route path="/studyroom/create" element={<RoomCreate />} />
           <Route path="/studyroom/:id" element={<RoomDetail />} />
           <Route path="/studyroom/live/:id" element={<LiveRoom type={'study'} />} />
-          <Route path="/mentoringroom/:id" element={<MentoringRoomDetail type={'mentoring'} />} />
-          <Route path="/mentoringroom/live/:id" element={<LiveRoom />} />
+          <Route path="/mentoringroom/:id" element={<MentoringRoomDetail />} />
+          <Route path="/mentoringroom/live/:id" element={<LiveRoom type={'mentoring'} />} />
           <Route path="/mentoring-room/:id/pay/success" element={<MentoringRoomPaySuccess />} />
           <Route path="/mentoring-room/:id/pay/fail" element={<MentoringPayFail/>} />
           <Route path="/mentoring-room/:id/pay/cancel" element={<MentoringPayCancel />} />
