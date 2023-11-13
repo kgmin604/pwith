@@ -9,9 +9,9 @@ import io from "socket.io-client";
 import { useWebSocket } from "../../hooks/WebsocketHooks";
 
 
-function Chat({ roomId,roomChat,setRoomChat, setShowChat, isClicked, handleDivClick }) {
+function Chat({ type, roomId,roomChat,setRoomChat, setShowChat, isClicked, handleDivClick }) {
     const textRef = useRef();
-    const studyLiveSocket = useWebSocket('studyLive');
+    const studyLiveSocket = useWebSocket(`${type}Live`);
     const chatAreaRef = useRef(null);
     const [myChat, setMyChat] = useState("");
     let user = useSelector((state) => state.user);
@@ -27,6 +27,7 @@ function Chat({ roomId,roomChat,setRoomChat, setShowChat, isClicked, handleDivCl
             message: myChat,
             sender: user.name,
         };
+        console.log(data)
         studyLiveSocket.emit("send", data);
         document.getElementById("chat-area").value = "";
         setMyChat("");
@@ -41,7 +42,7 @@ function Chat({ roomId,roomChat,setRoomChat, setShowChat, isClicked, handleDivCl
 
     // 컴포넌트가 업데이트 될 때마다 스크롤을 아래로 이동
     useEffect(() => {
-        console.log(roomChat)
+        scrollToBottom()
     }, [roomChat]);
 
     function changeChatInput(event) {
@@ -72,8 +73,8 @@ function Chat({ roomId,roomChat,setRoomChat, setShowChat, isClicked, handleDivCl
 
             </div>
         </div>
-        <form className={`chat-input ${isClicked ? 'clicked' : ''}`} onClick={handleDivClick}>
-            <textarea id="chat-area" ref={textRef} onInput={handleResizeHeight} onChange={(e) => changeChatInput(e)} onKeyDown={pressEnter}/>
+        <form className={`chat-input ${isClicked ? 'clicked' : ''}`}  onClick={handleDivClick}>
+            <textarea id="chat-area" ref={textRef} onInput={handleResizeHeight} onChange={(e) => changeChatInput(e)} onKeyPress={pressEnter}/>
             <div className="iconWrapper"
                 onClick={(e) => {
                     e.stopPropagation();

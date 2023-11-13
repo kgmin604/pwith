@@ -222,7 +222,6 @@ div.right-space .header {
 
 .control-bar-wrapper {
     display: flex;
-    width: 100%;
     justify-content: center;
     position: fixed;
     bottom: 50px;
@@ -231,6 +230,8 @@ div.right-space .header {
 
 .chat {
     margin: 5px 0px;
+    overflow-y: scroll;
+    max-height: 600px;
 }
 
 
@@ -354,6 +355,7 @@ div.right-space .header {
 
 .chat-input>textarea {
     outline: none;
+    border:none;
     padding: 5px;
     width: 100%;
     height: auto;
