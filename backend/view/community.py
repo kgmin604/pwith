@@ -403,18 +403,74 @@ def listLectures() :
     result = []
 
     page = request.args.get('page')
+    fcategory = request.args.get('firstCategory')
+    scategory = request.args.get('secondCategory')
+    print(fcategory, scategory)
+    
+    page = int(page)
+
+    if fcategory is None:
+        fcategory = 10
+        all_lectureList = conn_mongodb().lecture_crawling.find()
+        #requiredPage = len(list(all_lectureList)) // 10 + 1
+        
+        lectureList = conn_mongodb().lecture_crawling.find().skip((page-1)*32).limit(32)
+    if scategory is None:
+        scategory = 20
 
     if not page :
         return {
             'result' : result
         }
+        
+    print(fcategory, scategory)
+    
+    if fcategory == "0":
+        print(fcategory)
+        regex = "프로그래밍"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "first_category": { '$regex': regex } }
+    
+    if fcategory == "1":
+        print(fcategory)
+        regex = "보안"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "first_category": { '$regex': regex } }
 
-    page = int(page)
+    if fcategory == "2":
+        print(fcategory)
+        regex = "데이터"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "first_category": { '$regex': regex } }
     
-    all_lectureList = conn_mongodb().lecture_crawling.find()
-    requiredPage = len(list(all_lectureList)) // 10 + 1
+    if fcategory == "3":
+        print(fcategory)
+        regex = "게임"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "first_category": { '$regex': regex } }
+   
+
+    if fcategory == "4":
+        print(fcategory)
+        regex = "하드웨어"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "first_category": { '$regex': regex } }
+ 
+        
+    if scategory == "0":
+        print(fcategory)
+        regex = "웹"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "second_category": { '$regex': regex } }
+        
     
-    lectureList = conn_mongodb().lecture_crawling.find().skip((page-1)*32).limit(32)
+    if scategory == "1":
+        print(fcategory)
+        regex = "프론트"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "second_category": { '$regex': regex } }
+    
+    if scategory == "2":
+        print(fcategory)
+        regex = "백엔드"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "second_category": { '$regex': regex } }
+    
+    all_lectureList = conn_mongodb().lecture_crawling.find(query)
+    lectureList = conn_mongodb().lecture_crawling.find(query).sort('_id', -1).skip((page - 1) * 32).limit(32)
+
 
     cnt = 0
     
@@ -450,18 +506,62 @@ def listBooks() :
     result = []
 
     page = request.args.get('page')
+    fcategory = request.args.get('firstCategory')
+    scategory = request.args.get('secondCategory')
+    
+    page = int(page)
+    
+    if fcategory is None:
+        fcategory = 10
+        all_bookList = conn_mongodb().book_crawling.find()
+        bookList = conn_mongodb().book_crawling.find().sort('_id', -1).skip((page-1)*32).limit(32)
+    if scategory is None:
+        scategory = 20
+        ll_bookList = conn_mongodb().book_crawling.find()
+        bookList = conn_mongodb().book_crawling.find().sort('_id', -1).skip((page-1)*32).limit(32)
 
     if not page :
         return {
             'result' : result
         }
 
-    page = int(page)
+    if fcategory == "0":
+        regex = "게임"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "first_category": { '$regex': regex } }
+  
     
-    all_bookList = conn_mongodb().book_crawling.find()
-    requiredPage = len(list(all_bookList)) // 10 + 1
+    if fcategory == "5":
+        regex = "OS"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "first_category": { '$regex': regex } }
+  
+    
+    if scategory == "0":
+        regex = "클라우드"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "second_category": { '$regex': regex } }
+    
+    if scategory == "1":
+        regex = "서버"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "second_category": { '$regex': regex } }
+    
+    if scategory == "2":
+        regex = "리눅스"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "second_category": { '$regex': regex } }
+  
+    if scategory == "3":
+        regex = "Oracle"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "second_category": { '$regex': regex } }
 
-    bookList = conn_mongodb().book_crawling.find().sort('_id', -1).skip((page-1)*32).limit(32)
+
+    if scategory == "4":
+        regex = "윈도우"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "second_category": { '$regex': regex } }
+
+    if scategory == "5":
+        regex = "SQL"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        query = { "second_category": { '$regex': regex } }
+    
+    all_bookList = conn_mongodb().book_crawling.find(query)
+    bookList = conn_mongodb().book_crawling.find(query).sort('_id', -1).skip((page - 1) * 32).limit(32)
     
     cnt = 0
     for book in bookList :
