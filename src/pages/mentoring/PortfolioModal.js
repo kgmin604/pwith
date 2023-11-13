@@ -56,13 +56,15 @@ function PortfolioModal(props) {
             data: {
                 classes: selectedClass
             }
-        })
-            .then(function (response) {
-                window.location.href = response.data.data.pay_url;
-            })
-            .catch(function (error) {
-                alert('요청에 실패했습니다. 다시 시도해주세요.');
-            });
+        }).then(function (response) {
+            window.location.href = response.data.data.pay_url;
+            if(response.data.status!==200){
+                navigate(`../mentoring-room/${id}/pay/fail`)
+            }
+        }).catch(function (error) {
+            alert('요청에 실패했습니다. 다시 시도해주세요.');
+             navigate(`../mentoring-room/${id}/pay/fail`)
+        });
     }
 
     return <div className="modal-backdrop">
