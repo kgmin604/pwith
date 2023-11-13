@@ -286,6 +286,7 @@ div.cropper-area
     background-color: #98AFCA;
     color: white;
     float: right;
+    border:none;
 }
 
 .acc-header{
