@@ -27,36 +27,55 @@ function StudyBoard(props) {
     const [isDisabled, setIsDisabled] = useState(user.id === null);
 
     useEffect(() => {
-        axios({
-            method: "GET",
-            url: "/study",
-            params: {
-                search: 0,
-                page: selectPage,
-                category: studyCategory
-            }
-        })
-            .then(function (response) {
-                setStudyPostList(response.data.data.posts);
-                setTotalPage(response.data.data.num);
-                dispatch(updateRecStudyList(response.data.data.rec));
-                if (!isLoad) { // 맨 처음 한번만 실행
-                    if (response.data.data.num > 5) {
-                        const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
-                        setPages(tmp);
-                        setDisabled2(false); // 페이지 이동 가능
+        const init = async () => {
+            try {
+                await axios({
+                    method: "GET",
+                    url: "/study",
+                    params: {
+                        search: 0,
+                        page: selectPage,
+                        category: studyCategory
+                    }
+                })
+                    .then(function (response) {
+                        setStudyPostList(response.data.data.posts);
+                        setTotalPage(response.data.data.num);
+                        if (!isLoad) { // 맨 처음 한번만 실행
+                            if (response.data.data.num > 5) {
+                                const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
+                                setPages(tmp);
+                                setDisabled2(false); // 페이지 이동 가능
 
-                    }
-                    else {
-                        const tmp = Array.from({ length: response.data.data.num }, (_, index) => index + 1);
-                        setPages(tmp);
-                    }
-                    setIsLoad(true);
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+                            }
+                            else {
+                                const tmp = Array.from({ length: response.data.data.num }, (_, index) => index + 1);
+                                setPages(tmp);
+                            }
+                            setIsLoad(true);
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
+                await axios({
+                    method: "GET",
+                    url: "/study/recommend",
+                })
+                    .then(function (response) {
+                        dispatch(updateRecStudyList(response.data.data.rec));
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+            catch (e) {
+                console.error(e)
+            }
+        }
+        init()
+
     }, [selectPage, studyCategory]);
 
     const searchStudy = () => {

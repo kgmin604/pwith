@@ -5,13 +5,14 @@ import "../../App.css";
 import axios from "axios";
 import { Button } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
 import LikeAndComment from '../../component/likeAndComment';
 import MDEditor from '@uiw/react-md-editor';
+import { useSelector, useDispatch } from "react-redux";
+import { updateRecStudyList } from "../../store";
 
 function StudyPost(props) {
     let navigate = useNavigate();
-
+    const dispatch = useDispatch();
     let user = useSelector((state) => state.user);
     let { id } = useParams();
 
@@ -22,18 +23,36 @@ function StudyPost(props) {
 
 
     useEffect(() => {
-        axios({
-            method: "GET",
-            url: `/study/${id}`
-        })
-            .then(function (response) {
-                console.log(response.data.data.post);
-                setPost(response.data.data.post);
-                setReply(response.data.data.reply);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        const init = async () => {
+            try {
+                await axios({
+                    method: "GET",
+                    url: `/study/${id}`
+                })
+                    .then(function (response) {
+                        console.log(response.data.data.post);
+                        setPost(response.data.data.post);
+                        setReply(response.data.data.reply);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
+                await axios({
+                    method: "GET",
+                    url: "/study/recommend",
+                })
+                    .then(function (response) {
+                        dispatch(updateRecStudyList(response.data.data.rec));
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        init()
     }, []);
 
     if (!post) {
