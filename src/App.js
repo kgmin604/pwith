@@ -94,29 +94,30 @@ function App() {
               isSocial: response.data.data.isSocial
             })
           );
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-
-    axios({
-      method: "GET",
-      url: "/alarm"
-    })
-      .then(function (response) {
-        console.log("알림 가져오기");
-        console.log(response);
-        if (response.data.status === 200) {
-          const data = response.data.data
-          setAlarmList(data.alarmList)
-          setUnread(data.unread)
+          setUnread(response.data.data.unread)
         }
       })
       .catch(function (error) {
         console.log(error);
       });
   }, [])
+
+  const getAlramList=()=>{
+    setUnread(0)
+    axios({
+      method: "GET",
+      url: "/alarm"
+    })
+      .then(function (response) {
+        if (response.data.status === 200) {
+          const data = response.data.data
+          setAlarmList(data.alarmList)
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
   //스터디룸에서는 네브바 숨기기
   const location = useLocation();
@@ -459,6 +460,9 @@ function App() {
                       onClick={(e) => {
                         e.stopPropagation();
                         setIsModal(!isModal);
+                        if(!isModal){
+                          getAlramList()
+                        }
                       }}
                     >
                       알림함
