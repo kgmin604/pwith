@@ -321,7 +321,7 @@ def deleteRoom(loginMember, new_token, id) : # 룸 삭제 (멘토)
             'access_token' : new_token
         }
 
-    Alarm.insertAlarm(mentoId, room.menti, room.id, 6)
+    Alarm.insertAlarm(mentoId, room.menti, id, 6)
 
     MentoringRoom.delete(id)
     

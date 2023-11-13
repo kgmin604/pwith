@@ -345,7 +345,7 @@ function RoomDetail() {
               ) : (
                 <span
                   className="room-delete-btn"
-                  onClick={(e) => requestOutRoom(e)} // API 연결 필요
+                  onClick={e=>requestOutRoom(e)}
                 >
                   스터디 탈퇴하기
                 </span>
