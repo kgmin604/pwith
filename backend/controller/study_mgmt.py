@@ -57,18 +57,16 @@ class studyPost() :
         rows = selectAll(sql)
 
         return rows
-    
+
     @staticmethod
-    def getStudy(category): # 글 전체를 최신순으로 가져오는 함수
-        
-        if category <11 :
-            sql = f"select study.* from study, studyRoom WHERE study.roomId = studyRoom.id and studyRoom.category ='{int(category)}' ORDER BY study.curDate DESC"
-        else :
-            sql = f"select * from study ORDER BY curDate DESC"
-        
-        rows = selectAll(sql)
-        
-        return rows
+    def countByCategory(category): # 총 게시글 수
+
+        if category == 11:
+            sql = f"SELECT COUNT(*) FROM study"
+        else:
+            sql = f"SELECT COUNT(*) FROM study s JOIN studyRoom sr ON s.roomId=sr.id WHERE sr.category = {category}"
+
+        return selectOne(sql)[0]
 
     @staticmethod
     def findById(id) : # 게시글 ID로 검색
@@ -96,30 +94,58 @@ class studyPost() :
         return roomId
 
     @staticmethod
-    def findByWriter(writer) : # 글쓴이로 검색
+    def findByWriterAndPage(writer, page, per_date) : # 글쓴이로 검색 + 페이지네이션
 
-        sql = f"SELECT * FROM study, member WHERE writer = member.id and member.nickname LIKE '%{writer}%' "
+        offset = (page - 1) * per_page # 페이지의 시작 위치
+
+        sql = f"SELECT s.* FROM study s, member m \
+            WHERE s.writer = m.id AND m.nickname LIKE '%{writer}%' \
+            ORDER BY s.curDate DESC LIMIT {per_page} OFFSET {offset}"
         
         posts = selectAll(sql)
         
         if not posts :
             return None
-        
-        return posts
+
+        result = []
+        for p in posts:
+            result.append(studyPost(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7]))
+
+        return result
 
     @staticmethod
-    def findByTitle(title) :
+    def countBySearchWriter(writer): # 글쓴이 검색 게시글 수
 
-        sql = f"SELECT * FROM study WHERE title LIKE '%{title}%' "
+        sql = f"SELECT s.* FROM study s, member m \
+            WHERE s.writer = m.id AND m.nickname LIKE '%{writer}%'"
+
+        return selectOne(sql)[0]
+
+    @staticmethod
+    def findByTitleAndPage(title, page, per_date) : # 제목으로 검색 + 페이지네이션
+
+        offset = (page - 1) * per_page # 페이지의 시작 위치
+
+        sql = f"SELECT * FROM study WHERE title LIKE '%{title}%' \
+            ORDER BY curDate DESC LIMIT {per_page} OFFSET {offset}"
 
         posts = selectAll(sql)
-        print(posts)
-        print("sql")
         
         if not posts :
             return None
-        
-        return posts
+
+        result = []
+        for p in posts:
+            result.append(studyPost(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7]))
+
+        return result
+
+    @staticmethod
+    def countBySearchTitle(title): # 제목 검색 게시글 수
+
+        sql = f"SELECT COUNT(*) FROM study WHERE title LIKE '%{title}%'"
+
+        return selectOne(sql)[0]
 
     @staticmethod
     def findByWriterId(writer_id) :
@@ -206,14 +232,29 @@ class studyPost() :
         return rows
     
     @staticmethod
-    def pagenation(page, per_page):     # 게시글 10개씩 페이지네이션 하는 함수
-        offset = (page - 1) * per_page  # 페이지의 시작 위치 계산
-        
+    def getByCategoryAndPage(category, page, per_page): # 카테고리 + 페이지네이션
 
-        sql = f"SELECT * FROM study order by curDate desc LIMIT {per_page} OFFSET {offset}"
-        results = selectAll(sql)
+        offset = (page - 1) * per_page # 페이지의 시작 위치
 
-        return(results)
+        if category == 11:
+            sql = f"SELECT * FROM study \
+                ORDER BY curDate DESC LIMIT {per_page} OFFSET {offset}"
+        else:
+            sql = f"SELECT s.* \
+                FROM study s JOIN studyRoom sr ON s.roomId=sr.id \
+                WHERE sr.category = {category} \
+                ORDER BY s.curDate DESC LIMIT {per_page} OFFSET {offset}"
+
+        posts = selectAll(sql)
+
+        if not posts:
+            return None
+
+        result = []
+        for p in posts:
+            result.append(studyPost(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7]))
+
+        return result
     
     def getTotalP(roomId) :   # totalP studyRoom 에서 받아오기 (roomId 같은 걸로)
         sql = f"SELECT totalP from studyRoom where studyRoom.id = '{str(roomId)}'"
