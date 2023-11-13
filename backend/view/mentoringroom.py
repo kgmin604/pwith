@@ -94,7 +94,6 @@ def paySuccess(loginMember, new_token, id):
         'access_token': new_token
     }
 
-# TODO 환급할 때마다 mr.refund_cnt += 환급 횟수
 @mentoringroom_bp.route('/<id>', methods=['PATCH'])
 @login_required
 def updateNotice(loginMember, new_token, id) : # 공지 수정

@@ -18,7 +18,6 @@ def chkLogin(loginMember, new_token):
         isSocial = True
         
     unread = Alarm.chkAlarm()
-    #unread = True
 
     return {
         'status': 200,
