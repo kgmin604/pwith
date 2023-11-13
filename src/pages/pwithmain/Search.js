@@ -76,6 +76,7 @@ function Search({ searchText }) {
     }
 
     useEffect(()=>{
+        setSearchType (0);
         firstRequestSearch(0, false);
     },[location]); // url이 바뀔때마다 재검색!
 
@@ -85,6 +86,7 @@ function Search({ searchText }) {
             const tmp = Array.from({ length: 5 }, (_, index) => startPage - 5 + index);
             setPages(tmp);
             setSelectPage(tmp[0]);
+            requestSearch(tmp[0]); // 검색
             setDisabled2(false); // > 클릭 가능
 
             if (startPage === 6) {
@@ -99,6 +101,7 @@ function Search({ searchText }) {
                 if (pages[4] + 5 === totalPage) {
                     setDisabled2(true); // > 클릭 불가
                 }
+                requestSearch(tmp[0]); // 검색 요청
             }
             else {   // 페이지 5개 dispaly 불가능
                 const num = totalPage - pages[4];
@@ -106,12 +109,16 @@ function Search({ searchText }) {
                 setPages(tmp);
                 setSelectPage(tmp[0]);
                 setDisabled2(true); // > 클릭 불가
+                requestSearch(tmp[0]); // 검색 요청
             }
             setDisabled1(false); // < 클릭 가능
+            
         }
     }
 
-    function requestSearch(){
+    function requestSearch(page){
+        setSearchList([]);
+
         let str;
         if(searchType===0) str="study";
         else if(searchType===1) str="qna"
@@ -125,7 +132,7 @@ function Search({ searchText }) {
             params: {
                 type: 0,
                 value: searchText,
-                page: 1,
+                page: page,
                 search: str,
             }
         })
@@ -164,6 +171,7 @@ function Search({ searchText }) {
                             e.stopPropagation();
                             setSearchList([]);
                             setSearchType(index);
+                            setSelectPage(1);
                             if(index===2) setNameType('저자')
                             else if(index===3) setNameType('강사')
                             firstRequestSearch(index,false);
@@ -257,7 +265,11 @@ function Search({ searchText }) {
                                 <span
                                     key={i}
                                     className={`page${selectPage === page ? ' selected' : ' non-selected'}`}
-                                    onClick={(e) => { e.stopPropagation(); setSelectPage(page); }}
+                                    onClick={(e) => { 
+                                        e.stopPropagation(); 
+                                        setSelectPage(page); 
+                                        requestSearch(page);
+                                    }}
                                 >
                                     {page}
                                 </span>

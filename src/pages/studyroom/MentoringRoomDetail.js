@@ -104,6 +104,7 @@ function MentoringRoomDetail() {
       })
         .then(function (response) {
           alert("환급 요청이 완료되었습니다. 2~3일 내 해당 계좌로 수업료가 입금될 예정입니다.");
+          let copy = {...paybackData};
           window.location.reload();
         })
         .catch(function (e) {
@@ -350,7 +351,7 @@ function MentoringRoomDetail() {
       })
         .then(function (response) {
           alert('삭제가 완료되었습니다.');
-          navigate('./..');
+          navigate('/studyroom');
         })
         .catch(function (error) {
           console.log(error);

@@ -311,7 +311,7 @@ function Join() {
                 id="joinEmail" 
                 onChange={e=>inputChange(e)}
                 style={{'width':'240px'}}
-                maxlength="20"
+                maxlength="50"
               ></input>
               <div className="auth-btn" onClick={(e)=>clickEmailBtn(e)}>
                 인증
