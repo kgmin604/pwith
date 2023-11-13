@@ -123,6 +123,7 @@ def showalarm(loginMember, new_token):
     
     unread = Alarm.chkAlarm()
     Alarm.readAlarm()
+    print(unread)
     
     # print(alarmList)
     
@@ -138,11 +139,19 @@ def showalarm(loginMember, new_token):
     # 전체 검색 페이지네이션 - 정윤
 @main_bp.route('/search', methods = ['GET'])      # 전체 검색
 def search():
+    
+    searchValue = ""
         
     searchType = request.args.get('type')
     searchValue = request.args.get('value')
     searchCategory = request.args.get('search')
     
+    print(searchType, searchValue, searchCategory)
+    
+    if searchType == None:
+        searchType = ""
+    
+    print(searchType, searchValue, searchCategory)
     result = []
     page = 0
 
@@ -178,6 +187,8 @@ def search():
     if searchCategory == "qna":
         if int(searchType) == 0: # 제목으로 검색
             qnaposts = QNAPost.findByTitle(searchValue)
+            print("qna select")
+            print(qnaposts)
             
         elif int(searchType) == 1 : # 글쓴이로 검색
             qnaposts = QNAPost.findByWriter(searchValue)
@@ -206,8 +217,8 @@ def search():
                 post = {
                     'id' : i+1,
                     'postId' : portfolioposts[i][0],
-                    'title' : portfolioposts[i][1],
-                    'nickname': findNickName(portfolioposts[i][2]),
+                    'title' : portfolioposts[i][2],
+                    'nickname': findNickName(portfolioposts[i][1]),
                 }
                 posts.append(post)
             
@@ -257,6 +268,8 @@ def search():
         requiredPage = 0
     else:
         requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
+    if len(posts) % 10 == 0 : 
+        requiredPage -=1
     result = []
     #print(posts)
 
@@ -265,21 +278,15 @@ def search():
     else :
         print("posts is not None")
         print(page)
-        for i in range(requiredPage):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
-            requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
-            print(i)
-            print(len(posts))
+
+        print(requiredPage)
+        print(len(posts))
             # searchList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
-            for j in range(10):
-                print(i+page)
-                if i+j > len(posts):
-                    pass
-                else:
-                    print(posts[i + j])
-                    result.append(posts[i + j])
+        for j in range(min(len(posts), 10)):
             
-    print(requiredPage)
-    print(posts[0])
+            print(posts[page-1 + j])       
+            result.append(posts[page-1 + j])
+            
     return {
         'data':{
             'searchList' : result,

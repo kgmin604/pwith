@@ -134,8 +134,7 @@ def show():
 
         return {
             'posts' : result,
-            'num': requiredPage,
-            'rec' : recStudy
+            'num': requiredPage
             }
 
 @study_bp.route('/<int:id>/apply', methods=['POST']) # 스터디 신청

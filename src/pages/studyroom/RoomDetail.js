@@ -21,7 +21,6 @@ import { faMessage } from "@fortawesome/free-solid-svg-icons/faMessage";
 import { useWebSocket } from "../../hooks/WebsocketHooks";
 
 function RoomDetail() {
-
   const chatAreaRef = useRef(null);
 
   let user = useSelector((state) => state.user);
@@ -60,7 +59,7 @@ function RoomDetail() {
   let [chatContent, setChatContent] = useState("");
   let [msg, setMsg] = useState("");
 
-  const socket = useWebSocket('studyReady');
+  const socket = useWebSocket("studyReady");
 
   function handleMouseOver(event) {
     event.stopPropagation();
@@ -77,13 +76,13 @@ function RoomDetail() {
     setNewNotice(e.target.value);
   }
 
-  function requestChangeNotice(){
+  function requestChangeNotice() {
     axios({
       method: "PATCH",
       url: `/study-room/${roomInfo.id}`,
-      data:{
-        notice: `${newNotice}`
-      }
+      data: {
+        notice: `${newNotice}`,
+      },
     })
       .then(function (response) {
         setRoomInfo(response.data.data.room);
@@ -115,17 +114,17 @@ function RoomDetail() {
     setMyChat(event.target.value);
   }
 
-  function requestDeleteRoom(event){
+  function requestDeleteRoom(event) {
     event.stopPropagation();
 
-    if (window.confirm("정말로 삭제하시겠습니까?")){
+    if (window.confirm("정말로 삭제하시겠습니까?")) {
       axios({
         method: "DELETE",
         url: `/study-room/${roomInfo.id}`,
       })
         .then(function (response) {
-          alert('삭제가 완료되었습니다.');
-          navigate('./..');
+          alert("삭제가 완료되었습니다.");
+          navigate("./..");
         })
         .catch(function (error) {
           console.log(error);
@@ -133,23 +132,23 @@ function RoomDetail() {
     }
   }
 
-  function requestOutRoom(event){
+  function requestOutRoom(event) {
     event.stopPropagation();
 
-    if (window.confirm("정말로 탈퇴하시겠습니까?")){
+    if (window.confirm("정말로 탈퇴하시겠습니까?")) {
       axios({
         method: "DELETE",
         url: `/study-room/${roomInfo.id}/out`,
       })
         .then(function (response) {
-          alert('탈퇴가 완료되었습니다.');
-          navigate('./..');
+          alert("탈퇴가 완료되었습니다.");
+          navigate("./..");
         })
         .catch(function (error) {
-          if(error.response.data.status === 403){
+          if (error.response.data.status === 403) {
             alert("탈퇴 대상자가 아닙니다.");
           }
-          if(error.response.data.status === 400){
+          if (error.response.data.status === 400) {
             alert("스터디 탈퇴가 불가합니다.");
           }
           console.log(error);
@@ -173,24 +172,24 @@ function RoomDetail() {
     setMyChat("");
   }
 
-  function EnterRoom(){
+  function EnterRoom() {
     const url = window.location.href;
     const part = url.split("/");
     const RoomId = part[part.length - 1];
     let data = {
-      roomId: Number(RoomId)
+      roomId: Number(RoomId),
     };
-    socket.emit("enter",data);
+    socket.emit("enter", data);
   }
 
-  function LeaveRoom(){
-    const url = window.location.href;
-    const part = url.split("/");
-    const RoomId = part[part.length - 1];
+  function LeaveRoom(RoomId) {
+    // const url = window.location.href;
+    // const part = url.split("/");
+    // const RoomId = part[part.length-1];
     let data = {
-      roomId: Number(RoomId)
+      roomId: Number(RoomId),
     };
-    socket.emit("leave",data);
+    socket?.emit("leave", data);
   }
 
   // room data 받아오기
@@ -210,9 +209,9 @@ function RoomDetail() {
         setNewNotice(response.data.data.room.notice);
 
         let tmp = {};
-        response.data.data.room.members.map((member,i)=>{
+        response.data.data.room.members.map((member, i) => {
           tmp[member.nickname] = member.image;
-        })
+        });
         setImgData(tmp);
         console.log(tmp);
       })
@@ -220,28 +219,29 @@ function RoomDetail() {
         //console.log(error);
       });
 
-      return () => {
-        // 컴포넌트가 unmount될 때 실행될 코드
-        LeaveRoom();
-      };
+    return () => {
+      // 컴포넌트가 unmount될 때 실행될 코드
+      LeaveRoom(RoomId);
+    };
   }, []);
 
   // 소켓 통신하기
 
   useEffect(() => {
-   if(!socket) return
+    if (!socket) return;
+
     console.log("연결 시도");
     socket.connect();
+    EnterRoom();
 
     socket.on("connect", (data) => {
-      EnterRoom();
       console.log("Socket connected");
     });
     socket.on("sendFrom", (data) => {
       setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
     });
-    socket.on("disconnect", (data)=>{
-      console.log("Socket disconnected")
+    socket.on("disconnect", (data) => {
+      console.log("Socket disconnected");
     });
   }, [socket]);
 
@@ -259,9 +259,11 @@ function RoomDetail() {
 
   const pressEnter = (e) => {
     e.stopPropagation();
-    if (e.key === 'Enter' && e.shiftKey) { // [shift] + [Enter] 치면 걍 리턴
+    if (e.key === "Enter" && e.shiftKey) {
+      // [shift] + [Enter] 치면 걍 리턴
       return;
-    } else if (e.key === 'Enter') { 	   // [Enter] 치면 메시지 보내기
+    } else if (e.key === "Enter") {
+      // [Enter] 치면 메시지 보내기
       sendTo();
     }
   };
@@ -277,9 +279,7 @@ function RoomDetail() {
               </div>
               <div className="info-header">
                 <h3>{roomInfo.name}</h3>
-                <h3
-                  className="leader"
-                >
+                <h3 className="leader">
                   LEADER
                   <FontAwesomeIcon
                     icon={faCrown}
@@ -335,26 +335,25 @@ function RoomDetail() {
               >
                 입장하기
               </div>
-              {
-              user.name === roomInfo.leader ?
-              (
+              {user.name === roomInfo.leader ? (
                 <span
                   className="room-delete-btn"
-                  onClick={e=>requestDeleteRoom(e)}
+                  onClick={(e) => requestDeleteRoom(e)}
                 >
                   스터디 삭제하기
                 </span>
-              )
-               : 
-               (
+              ) : (
                 <span
                   className="room-delete-btn"
+<<<<<<< HEAD
                   onClick={e=>requestOutRoom(e)}
+=======
+                  onClick={(e) => requestOutRoom(e)} // API 연결 필요
+>>>>>>> ef9a87656e99d7721829fe7f38e24c1f48ba697f
                 >
                   스터디 탈퇴하기
                 </span>
-              )
-              }
+              )}
             </div>
           </div>
           <div class="col-md-9">
@@ -428,20 +427,27 @@ function RoomDetail() {
                 <div className="member-chat">
                   <h2 className="no-drag">Chatting</h2>
                   <hr style={{ margin: "0 0" }}></hr>
-                  <div 
-                    className="chats scroll"
-                    ref={chatAreaRef}
-                >
+                  <div className="chats scroll" ref={chatAreaRef}>
                     {roomChat.map((chat, i) => (
                       <>
                         {chat.sender !== user.name ? (
                           <div className="chat-type1">
-                            <img src={imgData[`${chat.sender}`] === null ? `default_user` : imgData[`${chat.sender}`]} 
-                            onClick={e=>alert(roomInfo.members[`${chat.sender}`])}/>
+                            <img
+                              src={
+                                imgData[`${chat.sender}`] === null
+                                  ? `default_user`
+                                  : imgData[`${chat.sender}`]
+                              }
+                              onClick={(e) =>
+                                alert(roomInfo.members[`${chat.sender}`])
+                              }
+                            />
                             <div className="content">
                               <h3>{chat.sender}</h3>
                               <div className="chat-time">
-                                <p style={{ whiteSpace: "pre-line" }} >{chat.content}</p>
+                                <p style={{ whiteSpace: "pre-line" }}>
+                                  {chat.content}
+                                </p>
                                 <time>{chat.date}</time>
                               </div>
                             </div>
@@ -450,7 +456,9 @@ function RoomDetail() {
                           <div className="chat-type2">
                             <div className="chat-time">
                               <time>{chat.date}</time>
-                              <p style={{ whiteSpace: "pre-line" }}>{chat.content}</p>
+                              <p style={{ whiteSpace: "pre-line" }}>
+                                {chat.content}
+                              </p>
                             </div>
                           </div>
                         )}

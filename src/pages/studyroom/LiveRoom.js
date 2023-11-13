@@ -378,8 +378,10 @@ const LiveRoom = ({type}) => {
     useEffect(() => {
         if (!studyLiveSocket) return
         studyLiveSocket?.connect();
+        EnterRoom();
+
         studyLiveSocket.on("connect", (data) => {
-            EnterRoom();
+            console.log("연결연결이요");
         });
         studyLiveSocket.on("sendFrom", (data) => {
             setRoomChat((prevRoomChat) => [...prevRoomChat, data]);
@@ -403,8 +405,13 @@ const LiveRoom = ({type}) => {
             });
         });
         studyLiveSocket.on("disconnect", (data) => {
-            LeaveRoom();
+            // LeaveRoom();
+            console.log("Socket disconnected");
         });
+        return () => {
+            // 컴포넌트가 unmount될 때 실행될 코드
+            LeaveRoom(roomId);
+          };
     }, [studyLiveSocket])
 
     const onClickMike = async () => {

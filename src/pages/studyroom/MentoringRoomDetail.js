@@ -390,10 +390,10 @@ function MentoringRoomDetail() {
     socket?.emit("enter",data);
   }
 
-  function LeaveRoom(){
-    const url = window.location.href;
-    const part = url.split("/");
-    const RoomId = part[part.length - 1];
+  function LeaveRoom(RoomId){
+    // const url = window.location.href;
+    // const part = url.split("/");
+    // const RoomId = part[part.length - 1];
     let data = {
       roomId: Number(RoomId)
     };
@@ -425,9 +425,9 @@ function MentoringRoomDetail() {
     if(!socket) return
 
     socket.connect();
+    EnterRoom();
 
     socket.on("connect", (data) => {
-      EnterRoom();
       console.log("Socket connected");
     });
     socket.on("sendFrom", (data) => {
@@ -476,7 +476,7 @@ function MentoringRoomDetail() {
 
       return () => {
         // 컴포넌트가 unmount될 때 실행될 코드
-        LeaveRoom();
+        LeaveRoom(RoomId);
       };
   }, [reLoad]);
 

@@ -413,15 +413,7 @@ function App() {
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    const currentURL = window.location.href;
-                    const url = new URL(currentURL);
-                    const pathName = url.pathname;
-
-                    alert(currentURL);
-                    if(pathName==='/search'){
-
-                    }
-                    navigate('/search');
+                    navigate(`/search?value=${searchText}`);
                   }}
                 >
                   🔍{" "}
