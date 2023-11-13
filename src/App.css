@@ -97,12 +97,14 @@ ul.navbar-menu div.parent-container li.navbar-btn div.navbar-modal ul.lst
   font-family: "TmoneyRoundWind";
   font-size: small;
   line-height: 40px;
+  list-style-type: none;
 }
 
 ul.navbar-menu div.parent-container li.navbar-btn div.navbar-modal ul.lst
 .lst-item:hover{
   background-color: #98afca;
   color: white;
+  list-style-type: none;
 }
 
 .top-msg{
