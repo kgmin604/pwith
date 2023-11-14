@@ -25,6 +25,7 @@ def chkLogin(loginMember, new_token):
         'data': {
             'id': loginMember.memId,
             'nickname': loginMember.nickname,
+            'image': loginMember.image,
             'isSocial': isSocial,
             'unread' : unread
         }
