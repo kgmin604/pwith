@@ -7,11 +7,13 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    font-family: 'Noto Sans KR';
 }
 
 .mento-card:hover {
     transform: translateY(-5px);
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    font-family: 'Noto Sans KR';
 }
 
 .mentoInfo {
@@ -19,6 +21,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px;
+    font-family: 'Noto Sans KR';
 }
 
 .mentoPic {
@@ -39,15 +42,18 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-family: 'Noto Sans KR';
 }
 
 .mentoInfo>div {
     display: flex;
     align-items: center;
+    font-family: 'Noto Sans KR';
 }
 
 .mentoInfo> .review {
     cursor: pointer;
+    font-family: 'Noto Sans KR';
 }
 
 .mentoScore {
@@ -59,8 +65,10 @@
     margin-left: 2px;
     white-space: nowrap;
     margin-right: 2px;
+    font-family: 'Noto Sans KR';
 }
 
 .mento-subject {
     margin: 5px;
+    font-family: 'Noto Sans KR';
 }
