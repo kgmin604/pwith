@@ -334,16 +334,16 @@ div.Board div.posts-area div.post-item
     margin: 20px 0;
 }
 
-.control-page{
+.control-page-btn{
     margin: 0 10px;
     color: lightgray;
 }
 
-.control-page:hover{
+.control-page-btn:hover{
     color: gray;
 }
 
-.control-page:disabled{
+.control-page-btn:disabled{
     display: none;
 }
 

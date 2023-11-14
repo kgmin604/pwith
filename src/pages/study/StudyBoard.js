@@ -241,7 +241,7 @@ function StudyBoard(props) {
 
             <div className='pagination'>
                 <span className="pages">
-                    <button disabled={disabled1} className="control-page" onClick={(e) => { e.stopPropagation(); controlPages(-1); }}>
+                    <button disabled={disabled1} className="control-page-btn" onClick={(e) => { e.stopPropagation(); controlPages(-1); }}>
                         {'<'}
                     </button>
                     {
@@ -257,7 +257,7 @@ function StudyBoard(props) {
                             );
                         })
                     }
-                    <button disabled={disabled2} className="control-page" onClick={(e) => { e.stopPropagation(); controlPages(1); }}>
+                    <button disabled={disabled2} className="control-page-btn" onClick={(e) => { e.stopPropagation(); controlPages(1); }}>
                         {'>'}
                     </button>
                 </span>

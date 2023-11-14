@@ -410,6 +410,11 @@ function App() {
                     e.stopPropagation();
                     setSearchText(e.target.value);
                   }}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault(); // 기본 동작을 막음
+                    }
+                  }}
                 />
                 <div
                   className="btn"

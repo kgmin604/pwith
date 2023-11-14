@@ -256,7 +256,7 @@ function Search({ searchText }) {
                 {
                     searchList.length !== 0 ?
                     <>
-                    <button disabled={disabled1} className="control-page" onClick={(e) => { e.stopPropagation(); controlPages(-1); }}>
+                    <button disabled={disabled1} className="control-page-btn" onClick={(e) => { e.stopPropagation(); controlPages(-1); }}>
                         {'<'}
                     </button>
                     {
@@ -276,7 +276,7 @@ function Search({ searchText }) {
                             );
                         })
                     }
-                    <button disabled={disabled2} className="control-page" onClick={(e) => { e.stopPropagation(); controlPages(1); }}>
+                    <button disabled={disabled2} className="control-page-btn" onClick={(e) => { e.stopPropagation(); controlPages(1); }}>
                         {'>'}
                     </button>
                     </>
