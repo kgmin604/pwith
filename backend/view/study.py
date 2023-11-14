@@ -32,110 +32,66 @@ def recommend():
     }    
     
 @study_bp.route('', methods=['GET'])
-def show(): 
+def showPosts(): 
         
+    result = []
+
     search = request.args.get('search')
     
-    if int(search) == 0:        # 검색 x, 기본 값
+    page = request.args.get('page')
+    page = int(page) if page else 0
 
-        posts = []
-        result = []
-        page = 0
+    if int(search) == 0: # 검색 x
 
-        page = request.args.get('page')
         category = request.args.get('category')
+        category = int(category) if category else 11
 
-        if category is None:
-            category = 11
-        
+        # 전체 글
+        posts = studyPost.getByCategoryAndPage(category, page, 10)
 
-        # 전체 글 출력
-        posts = studyPost.getStudy(int(category))
-        requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
+        # 전체 페이지 수
+        post_cnt = studyPost.countByCategory(category)
+        required_page = post_cnt // 10 + 1
 
-        for i in range(int(page)):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
-            studyList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
+    elif int(search) == 1: # 검색 o
 
-        for i in range(len(studyList)):
-            post = {
-                'id': ((int(page)-1)*10)+i+1,
-                'studyId':studyList[i][0],
-                'title':studyList[i][1],
-                'writerId':studyList[i][2],
-                'writerNick': findNickName(studyList[i][2]),
-                # 'image' : getProfileImage(current_user.id),
-                'curDate': studyList[i][3],
-                'likes': studyList[i][5],
-                'views': studyList[i][6]
-            }
-            post['curDate'] = mainFormattedDate(posts[i][3])
-
-            result.append(post)
-
-        return{
-            'posts': result,
-            'num': requiredPage,
-        }
-        
-    else:
-        
-        posts = []
-        
         searchType = request.args.get('type')
         searchValue = request.args.get('value')
         
-        result = []
-        page = 0
-
-        page = request.args.get('page')
-        print(page)
-        
-
-        if not page :
-            page = 0
-        #     return jsonify(result)
-
-        page = int(page)
-
         if int(searchType) == 0: # 제목으로 검색
             posts = studyPost.findByTitle(searchValue)
+            post_cnt = studyPost.countBySearchTitle(searchValue)
+
         elif int(searchType) == 1 : # 글쓴이로 검색
-            posts = studyPost.findByWriter(searchValue)
-            
-        if posts is None:   
-            requiredPage = 0
-        else:
-            requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
-        result = []
-        print(posts)
+            posts = studyPost.findByWriterAndPage(searchValue)
+            post_cnt = studyPost.countBySearchWriter(searchValue)
 
-        if posts is None :
-            pass # 결과 없을 시 empty list
-        else :
-            for i in range(page):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
-                requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
-                studyList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
-                
-            for i in range(len(posts)) :
-                post = {
-                    'id' : ((page-1)*10)+i+1,
-                    'studyId' : posts[i][0],
-                    'title' : posts[i][1],
-                    'writerId': posts[i][2],
-                    'writerNick': findNickName(posts[i][2]),
-                    # 'image' : getProfileImage(current_user.id),
-                    'curDate' : posts[i][3],
-                    'likes' : posts[i][5],
-                    'views' : posts[i][6]
-                }
-                post['curDate'] = mainFormattedDate(formatDateToString(posts[i][3]))
-                
-                result.append(post)
+        required_page = post_cnt // 10 + 1
 
+    if not posts:
         return {
-            'posts' : result,
-            'num': requiredPage
-            }
+            'posts': result,
+            'num': required_page,
+        }
+
+    postOrder = 1
+    for post in posts:
+        result.append({
+            'id': postOrder,
+            'studyId': post.id,
+            'title': post.title,
+            'writerId': post.writer,
+            'writerNick': findNickName(post.writer),
+            'curDate': mainFormattedDate(post.curDate),
+            'likes': post.likes,
+            'views': post.views
+        })
+        postOrder += 1
+
+    return {
+        'posts' : result,
+        'num': required_page
+    }
 
 @study_bp.route('/<int:id>/apply', methods=['POST']) # 스터디 신청
 @login_required

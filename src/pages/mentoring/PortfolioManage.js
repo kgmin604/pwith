@@ -36,6 +36,7 @@ function PortfolioManage() {
     const [isDisabled, setIsDisabled] = useState(user.id === null);
     const navigate = useNavigate()
     const { myPortfolio } = useParams();
+    const [categoryWorning, setCategoryWorning] = useState(false); // 클릭한 단어 배열
     const [isCrop, setIsCrop] = useState(false);
     const [inputImage, setInputImage] = useState(null); // 유저가 첨부한 이미지
     const [imgUrl, setImgUrl] = useState(portfolio?.mentoPic);
@@ -93,39 +94,48 @@ function PortfolioManage() {
                 console.log(error);
             });
     }
-    const updatePortfolio = () => {
+    const updatePortfolio = async () => {
         const imageElement = cropperRef?.current;
         const cropper = imageElement?.cropper;
+        const formData = new FormData();
         // 이미지를 Blob으로 변환
-        cropper.getCroppedCanvas().toBlob((blob) => {
-            // Blob을 FormData로 감싸기
-            const formData = new FormData();
-            const updatedSubject = JSON.stringify(selectedWords);
+
+        if (cropper) {
+            const blob = await new Promise((resolve) => {
+                cropper?.getCroppedCanvas().toBlob(resolve);
+            });
             formData.append('mentoPic', blob, `${user.id}.jpg`);
-            formData.append('data', JSON.stringify({
-                'subject': selectedWords,
-                'brief': portfolio.brief,
-                'content': portfolio.content,
-                'tuition': portfolio.tuition,
-                'duration': portfolio.duration,
-            }));
-            axios({
-                method: "PATCH",
-                url: `/mentoring/${myPortfolio}`,
-                data: formData
-            },
-            )
-                .then(function (response) {
-                    if (response.data.status === 200) {
-                        alert("수정이 완료됐습니다")
-                        setIsUpdating(false)
-                        navigate(`../mentoring/main`)
-                    }
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
-        })
+        }
+
+
+        formData.append('data', JSON.stringify({
+            'subject': selectedWords,
+            'brief': portfolio.brief,
+            'content': portfolio.content,
+            'tuition': portfolio.tuition,
+            'duration': portfolio.duration,
+        }));
+
+        console.log(formData.get('mentoPic'));
+        console.log(formData.get('data'));
+
+        axios({
+            method: "PATCH",
+            url: `/mentoring/${myPortfolio}`,
+            data: formData
+        },
+        )
+            .then(function (response) {
+                if (response.data.status === 200) {
+                    alert("수정이 완료됐습니다")
+                    setIsUpdating(false)
+                    navigate(`../mentoring/main`)
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
     }
     function checkTitle() {
         portfolio['title'] === "" || portfolio['content'] === "" ? alert("제목 또는 내용을 입력해주세요.") :
@@ -144,11 +154,11 @@ function PortfolioManage() {
             })
             .catch(function (error) {
                 console.log(error);
-                if(error.response.status===400){
+                if (error.response.status === 400) {
                     alert(`없는 포트폴리오입니다.`);
-                }else if(error.response.status===403){
+                } else if (error.response.status === 403) {
                     alert(`로그인이 필요합니다.`);
-                }else{
+                } else {
                     alert("요청을 처리하지 못했습니다.");
                 }
             });
@@ -161,10 +171,16 @@ function PortfolioManage() {
         })
     };
     const handleWordClick = (word) => {
+
         const wordIndex = words.indexOf(word);
         if (selectedWords.includes(wordIndex)) {
             setSelectedWords(prevWords => prevWords.filter(w => w !== wordIndex));
+            if(categoryWorning){setCategoryWorning(false)}
         } else {
+            if (selectedWords.length === 3) {
+                setCategoryWorning(true)
+                return
+            }
             setSelectedWords(prevWords => [...prevWords, wordIndex]);
         }
     };
@@ -229,11 +245,18 @@ function PortfolioManage() {
                             <h5>포트폴리오 수정</h5>
                         </div>}
                         <hr />
-                        <div className='mentoPic-area' >
-                            <form>
+                        <div className='mentoPic-area' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
+                            {imgUrl && <img
+                                width={'150px'}
+                                height={'150px'}
+                                src={imgUrl}
+                                className='child'
+                            />}
+                            <form >
                                 <label
                                     htmlFor="imageUpload"
                                     className='btn-area'
+                                    style={{ color: 'white', backgroundColor: 'rgb(152, 175, 202)', padding: 5, borderRadius: 10, marginTop: 10 }}
                                 >
                                     사진 수정
                                 </label>
@@ -252,12 +275,7 @@ function PortfolioManage() {
                                     style={{ 'display': 'none' }}
                                 />
                             </form>
-                            {imgUrl && <img
-                                width={'150px'}
-                                height={'150px'}
-                                src={imgUrl}
-                                className='child'
-                            />}
+
 
                         </div>
 
@@ -272,12 +290,18 @@ function PortfolioManage() {
                             <div className='selectSubject'>
                                 <hr />
                                 <div>카테고리 선택(최대 3개)</div>
+                                {categoryWorning && <div style={{
+                                    color: 'red',
+                                    fontWeight: '600',
+                                }}>카테고리는 최대 3개까지 가능합니다.</div>}
                                 {words.map((word, index) => (
                                     <span
                                         key={index}
                                         style={{
-                                            color: selectedWords.includes(index) ? 'blue' : 'gray',
-                                            marginRight: index % 3 === 2 ? '10px' : '5px'
+                                            color: selectedWords.includes(index) ? 'black' : 'gray',
+                                            fontWeight: selectedWords.includes(index) ? '700' : '',
+                                            marginRight: index % 3 === 2 ? '10px' : '5px',
+                                            cursor: 'pointer'
                                         }}
                                         onClick={() => { handleWordClick(word) }}>
                                         #{word}

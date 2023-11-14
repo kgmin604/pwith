@@ -132,12 +132,12 @@ def sendMessage(data):
 
     emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now}, to = 's'+str(roomId))
     print(roomId, message, sender, formatted_now)
+    print(rooms())
 
 @socketio.on("leave",namespace='/study-live')
 def leaveRoom(data):
     print("스터디룸 메인 페이지 나감")
     roomId = data['roomId']
-    print(roomId)
     leave_room('s'+str(roomId))
     print(rooms())
 
@@ -156,6 +156,7 @@ def sendCode(data):
     formatted_now = formatYMDHM(now)
 
     emit('codeUploadFrom', {'sender': sender, 'language':language, 'code': code,'marker':marker}, to = 's'+str(roomId))
+    print(rooms())
 
 # 멘토링룸 메인 페이지
     
@@ -173,7 +174,6 @@ def enterRoom(data):
 @socketio.on("send",namespace='/mentoring-live')
 def sendMessage(data):
     print("멘토링룸 메인 페이지 메시지 전송")
-    print(rooms())
     roomId = data['roomId']
     message = data['message']
     sender = data['sender']
@@ -182,6 +182,8 @@ def sendMessage(data):
     formatted_now = formatYMDHM(now)
 
     emit('sendFrom', {'sender': sender, 'content': message, 'date': formatted_now}, to = 'm'+str(roomId))
+    print(roomId, message, sender, formatted_now)
+    print(rooms())
 
 @socketio.on("leave",namespace='/mentoring-live')
 def leaveRoom(data):

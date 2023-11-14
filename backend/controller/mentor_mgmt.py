@@ -136,12 +136,24 @@ class Portfolio() :
 
         result = selectOne(sql)[0]
 
-        return True if result == 1 else False
+        return result == 1
 
     @staticmethod
     def findMentoById(id) :
 
         sql = f'SELECT mento FROM portfolio WHERE id = {id} AND isDeleted = false'
+
+        result = selectOne(sql)[0]
+
+        if not result :
+            return None
+        
+        return result
+
+    @staticmethod
+    def findMentoPicById(id) :
+
+        sql = f'SELECT mentoPic FROM portfolio WHERE id = {id} AND isDeleted = false'
 
         result = selectOne(sql)[0]
 

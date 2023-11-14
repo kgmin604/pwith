@@ -45,13 +45,6 @@ def create_app() :
     @app.after_request
     def final_return(resp) :
 
-        # if resp.json.get('message') == 'redirect' : # redirect
-        #     url = resp.json.get('data')
-        #     print('REDIRECT!')
-        #     response = redirect(url)
-        #     response.headers['Access-Control-Allow-Origin'] = '*'
-        #     return response
-
         response = app.response_class(
             response = json.dumps({
                 'status' : resp.json.get('status', 200),

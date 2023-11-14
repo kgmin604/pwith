@@ -3,6 +3,8 @@ import { io } from 'socket.io-client';
 
 const WebSocketContext = createContext();
 
+const baseUrl='localhost'
+
 export function useWebSocket(namespace) {
     const globalSocket = useContext(WebSocketContext);
 
@@ -17,25 +19,25 @@ export function WebSocketProvider({ children }) {
 
     useEffect(() => {
         // 각 네임스페이스에 대한 WebSocket 연결을 설정 및 관리
-        const studyReady = io("http://localhost:5000/study-ready", {
+        const studyReady = io(`http://${baseUrl}:5000/study-ready`, {
             cors: {
                 origin: "*",
             },
             autoConnect: false,
         });
-        const mentoringReady = io("http://localhost:5000/mentoring-ready", {
+        const mentoringReady = io(`http://${baseUrl}:5000/mentoring-ready`, {
             cors: {
                 origin: "*",
             },
             autoConnect: false,
         });
-        const studyLive = io("http://localhost:5000/study-live", {
+        const studyLive = io(`http://${baseUrl}:5000/study-live`, {
             cors: {
                 origin: "*",
             },
             autoConnect: false,
         });
-        const mentoringLive = io("http://localhost:5000/mentoring-live", {
+        const mentoringLive = io(`http://${baseUrl}:5000/mentoring-live`, {
             cors: {
                 origin: "*",
             },
