@@ -61,7 +61,6 @@ def check_id():
     memId = data['memId']
     memNick = data['nickname']
 
-    print(id, memId, memNick) ##
     if Member.existsById(memId):
         return {
             'status': 409,
@@ -76,8 +75,10 @@ def check_id():
         }
     else:
         Member.updateOauth(id, memId, memNick)
+        member = Member.findById(id)
         return {
-            'id': memId,
-            'nickname': memNick,
+            'id': member.memId,
+            'nickname': member.nickname,
+            'image': member.image,
             'isSocial': True
         }

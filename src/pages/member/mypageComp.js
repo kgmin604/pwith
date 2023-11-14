@@ -320,7 +320,7 @@ function CommentList() {
                                     <div
                                         className="item"
                                         key={index}
-                                        onClick={e => movePage(e, comm.id)}
+                                        onClick={e => movePage(e, comm.postId)}
                                     >
                                         <time>{comm.curDate}</time>
                                         <h3 className="header">{comm.title}</h3>
