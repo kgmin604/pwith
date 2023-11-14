@@ -140,7 +140,7 @@ def show():     # 전체 글 출력
             result.append(post)
         return { 
                 'posts' : result,
-                'page': requiredPage
+                'num': requiredPage
             }
     
     else:
@@ -411,12 +411,12 @@ def listLectures() :
 
     if fcategory is None:
         fcategory = 10
-        regex = ""  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        regex = ""  
         query = { "first_category": { '$regex': regex } }
     
     if scategory is None:
         scategory = 20
-        regex = ""  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        regex = ""  
         query = { "second_category": { '$regex': regex } }
         
     if not page :
@@ -428,47 +428,38 @@ def listLectures() :
     
     if fcategory == "0":
         print(fcategory)
-        regex = "프로그래밍"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
-        query = { "first_category": { '$regex': regex } }
+        regex = "프로그래밍"  
     
     if fcategory == "1":
         print(fcategory)
-        regex = "보안"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
-        query = { "first_category": { '$regex': regex } }
+        regex = "보안" 
 
     if fcategory == "2":
         print(fcategory)
-        regex = "데이터"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
-        query = { "first_category": { '$regex': regex } }
-    
+        regex = "데이터"  
+        
     if fcategory == "3":
         print(fcategory)
-        regex = "게임"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
-        query = { "first_category": { '$regex': regex } }
-   
+        regex = "게임"  
 
     if fcategory == "4":
         print(fcategory)
-        regex = "하드웨어"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
-        query = { "first_category": { '$regex': regex } }
- 
+        regex = "하드웨어"  
         
     if scategory == "0":
         print(fcategory)
-        regex = "웹"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
-        query = { "second_category": { '$regex': regex } }
-        
+        regex = "웹"     
     
     if scategory == "1":
         print(fcategory)
-        regex = "프론트"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
-        query = { "second_category": { '$regex': regex } }
+        regex = "프론트"  
     
     if scategory == "2":
         print(fcategory)
-        regex = "백엔드"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
-        query = { "second_category": { '$regex': regex } }
-    
+        regex = "백엔드"  
+        
+    query = { "first_category": { '$regex': regex } }    
+    query = { "second_category": { '$regex': regex } }
     all_lectureList = conn_mongodb().lecture_crawling.find(query)
     lectureList = conn_mongodb().lecture_crawling.find(query).sort('_id', -1).skip((page - 1) * 32).limit(32)
 
@@ -514,11 +505,11 @@ def listBooks() :
     
     if fcategory is None:
         fcategory = 10
-        regex = ""  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        regex = ""  
         query = { "first_category": { '$regex': regex } }
     if scategory is None:
         scategory = 20
-        regex = ""  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        regex = ""  
         query = { "second_category": { '$regex': regex } }
 
     if not page :
@@ -527,38 +518,38 @@ def listBooks() :
         }
 
     if fcategory == "0":
-        regex = "게임"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        regex = "게임"  
         query = { "first_category": { '$regex': regex } }
   
     
     if fcategory == "5":
-        regex = "OS"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        regex = "OS"  
         query = { "first_category": { '$regex': regex } }
   
     
     if scategory == "0":
-        regex = "클라우드"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        regex = "클라우드"  
         query = { "second_category": { '$regex': regex } }
     
     if scategory == "1":
-        regex = "서버"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        regex = "서버"  
         query = { "second_category": { '$regex': regex } }
     
     if scategory == "2":
-        regex = "리눅스"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        regex = "리눅스"  
         query = { "second_category": { '$regex': regex } }
   
     if scategory == "3":
-        regex = "Oracle"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        regex = "Oracle"  
         query = { "second_category": { '$regex': regex } }
 
 
     if scategory == "4":
-        regex = "윈도우"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        regex = "윈도우"  
         query = { "second_category": { '$regex': regex } }
 
     if scategory == "5":
-        regex = "SQL"  # "게임"을 포함하는 문자열을 찾기 위한 정규 표현식
+        regex = "SQL"  
         query = { "second_category": { '$regex': regex } }
     
     all_bookList = conn_mongodb().book_crawling.find(query)

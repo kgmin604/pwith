@@ -88,7 +88,8 @@ function Login() {
             loginUser({
               id: response.data.data.id,
               name: response.data.data.nickname,
-              isSocial: response.data.data.isSocial
+              isSocial: response.data.data.isSocial,
+              image:response.data.data.image
             })
           );
           navigate("/");

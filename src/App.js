@@ -92,7 +92,8 @@ function App() {
               loginUser({
                 id: response.data.data.id,
                 name: response.data.data.nickname,
-                isSocial: response.data.data.isSocial
+                isSocial: response.data.data.isSocial,
+                image:response.data.data.image
               })
             );
             setUnread(response.data.data.unread)
@@ -468,7 +469,7 @@ function App() {
                       }}
                     >
                       알림함
-                      {unread&&<div className="notice_new">N</div>}
+                      {unread>0&&<div className="notice_new">N</div>}
                       {!isModal ? null : (
                         <>
                           <div
@@ -477,7 +478,7 @@ function App() {
                               e.stopPropagation();
                             }}>
                             {alarmList?.map((item, index) => {
-                                return <div onClick={() => { navigate(`${alramMoveTo[item.type]}${item.contentId}`) }} className={`alram-${index}`}>
+                                return <div onClick={() => { navigate(`${alramMoveTo[item.type-1]}${item.contentId}`) }} className={`alram-${index} item`}>
                                   <h5>{alramType[item.type - 1]}</h5>
                                   <h6>{item.content}</h6>
                                 </div>

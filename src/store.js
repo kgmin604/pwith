@@ -5,13 +5,15 @@ let user = createSlice({
   initialState: {
     id: null,
     name: null,
-    isSocial: null
+    isSocial: null,
+    image: null
   },
   reducers: {
     loginUser: (state, action) => {
       state.id = action.payload.id;
       state.name = action.payload.name;
       state.isSocial = action.payload.isSocial;
+      state.image = action.payload.image;
     },
     clearUser: (state) => {
       state.id = null;
@@ -92,7 +94,7 @@ export default configureStore({
     recStudyList: recStudyList.reducer,
     studyCategory: studyCategory.reducer,
     qnaCategory: qnaCategory.reducer,
-    lectureCategory:lectureCategory.reducer,
+    lectureCategory: lectureCategory.reducer,
     bookCategory: bookCategory.reducer
   }
 })
