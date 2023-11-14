@@ -96,11 +96,11 @@ def oauth_callback(provider):
             refresh_token = RefreshToken.findTokenByMemberId(message.id)
 
         data = {
-            'memId' : message.memId if message.memId is not None else message.id, ##
+            'memId' : message.memId if message.memId else message.id,
             'nickname' : message.nickname if message.nickname else None,
+            'image': message.image,
             'isSocial' : True
         }
-        print(data)
         message = '성공'
 
     return {

@@ -102,6 +102,7 @@ def login() :
     return {
         'id' : member.memId,
         'nickname' : member.nickname,
+        'image' : member.image,
         'isSocial' : False
     }
 
