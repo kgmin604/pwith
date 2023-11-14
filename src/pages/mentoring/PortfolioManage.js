@@ -36,6 +36,7 @@ function PortfolioManage() {
     const [isDisabled, setIsDisabled] = useState(user.id === null);
     const navigate = useNavigate()
     const { myPortfolio } = useParams();
+    const [categoryWorning, setCategoryWorning] = useState(false); // 클릭한 단어 배열
     const [isCrop, setIsCrop] = useState(false);
     const [inputImage, setInputImage] = useState(null); // 유저가 첨부한 이미지
     const [imgUrl, setImgUrl] = useState(portfolio?.mentoPic);
@@ -170,10 +171,16 @@ function PortfolioManage() {
         })
     };
     const handleWordClick = (word) => {
+
         const wordIndex = words.indexOf(word);
         if (selectedWords.includes(wordIndex)) {
             setSelectedWords(prevWords => prevWords.filter(w => w !== wordIndex));
+            if(categoryWorning){setCategoryWorning(false)}
         } else {
+            if (selectedWords.length === 3) {
+                setCategoryWorning(true)
+                return
+            }
             setSelectedWords(prevWords => [...prevWords, wordIndex]);
         }
     };
@@ -238,11 +245,18 @@ function PortfolioManage() {
                             <h5>포트폴리오 수정</h5>
                         </div>}
                         <hr />
-                        <div className='mentoPic-area' >
-                            <form>
+                        <div className='mentoPic-area' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
+                            {imgUrl && <img
+                                width={'150px'}
+                                height={'150px'}
+                                src={imgUrl}
+                                className='child'
+                            />}
+                            <form >
                                 <label
                                     htmlFor="imageUpload"
                                     className='btn-area'
+                                    style={{ color: 'white', backgroundColor: 'rgb(152, 175, 202)', padding: 5, borderRadius: 10, marginTop: 10 }}
                                 >
                                     사진 수정
                                 </label>
@@ -261,12 +275,7 @@ function PortfolioManage() {
                                     style={{ 'display': 'none' }}
                                 />
                             </form>
-                            {imgUrl && <img
-                                width={'150px'}
-                                height={'150px'}
-                                src={imgUrl}
-                                className='child'
-                            />}
+
 
                         </div>
 
@@ -281,12 +290,18 @@ function PortfolioManage() {
                             <div className='selectSubject'>
                                 <hr />
                                 <div>카테고리 선택(최대 3개)</div>
+                                {categoryWorning && <div style={{
+                                    color: 'red',
+                                    fontWeight: '600',
+                                }}>카테고리는 최대 3개까지 가능합니다.</div>}
                                 {words.map((word, index) => (
                                     <span
                                         key={index}
                                         style={{
-                                            color: selectedWords.includes(index) ? 'blue' : 'gray',
-                                            marginRight: index % 3 === 2 ? '10px' : '5px'
+                                            color: selectedWords.includes(index) ? 'black' : 'gray',
+                                            fontWeight: selectedWords.includes(index) ? '700' : '',
+                                            marginRight: index % 3 === 2 ? '10px' : '5px',
+                                            cursor: 'pointer'
                                         }}
                                         onClick={() => { handleWordClick(word) }}>
                                         #{word}
