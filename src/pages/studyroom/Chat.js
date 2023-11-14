@@ -27,7 +27,7 @@ function Chat({ type, roomId,roomChat,setRoomChat, setShowChat, isClicked, handl
             message: myChat,
             sender: user.name,
         };
-        console.log(data)
+        console.log(data); // 여기서 채팅 내용 출력됨.
         studyLiveSocket.emit("send", data);
         document.getElementById("chat-area").value = "";
         setMyChat("");

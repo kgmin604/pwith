@@ -7,18 +7,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-@font-face {
-  font-family: 'Noto Sans KR';
-  src: url("./assets/fonts/NotoSansKR-Regular.ttf");
-  font-weight: normal;
-  font-style: normal;
-}
-
-* {
-  font-family: "Noto Sans KR";
-}
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

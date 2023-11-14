@@ -167,6 +167,7 @@ function RoomDetail() {
       message: myChat,
       sender: user.name,
     };
+    console.log(data);
     socket.emit("sendTo", data);
     document.getElementById("chat-area").value = "";
     setMyChat("");
