@@ -212,7 +212,7 @@ div.mem-area div.mem-btn
   right: 15%;
   position: absolute;
   width: 270px;
-  height: 300px;
+  min-height: 50px;
   background-color: white;
   border: 1px lightgray solid;
   z-index: 3 !important;
@@ -229,7 +229,7 @@ div.mem-area div.mem-btn div.drop-down
   flex-direction: column;
   margin: 0 0;
   padding: 5px 10px;
-  width: 250px;
+  width: 100%;
   height: 60px;
   border-bottom: 1px lightgray solid;
 }

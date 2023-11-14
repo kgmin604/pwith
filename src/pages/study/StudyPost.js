@@ -53,7 +53,7 @@ function StudyPost(props) {
             }
         }
         init()
-    }, []);
+    }, [id]);
 
     if (!post) {
         return <div>Loading...</div>;

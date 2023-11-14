@@ -26,7 +26,8 @@ function Auth() {
                 loginUser({
                   id: response.data.data.memId,
                   name: response.data.data.nickname,
-                  isSocial: response.data.data.isSocial
+                  isSocial: response.data.data.isSocial,
+                  image:response.data.data.image
                 })
               );
 

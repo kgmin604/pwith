@@ -17,10 +17,11 @@ function WriteReplyForm(props) {
                 const newReply = [
                     ...reply,
                     {
+                        "profileImage": user.image,
                         "content": `${content}`,
                         "id": response.data.data.id,
                         "date": response.data.data.date,
-                        "writer": `${user.id}`
+                        "writer": `${user.name}`
                     }
                 ];
                 setReply(newReply);

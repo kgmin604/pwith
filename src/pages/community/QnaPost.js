@@ -25,7 +25,7 @@ function QnaPost(props) {
                 setReply(response.data.data.reply);
             })
             .catch();
-    }, []);
+    }, [id]);
 
     useEffect(() => {
     }, [post.title])
