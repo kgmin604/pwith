@@ -94,7 +94,7 @@ class studyPost() :
         return roomId
 
     @staticmethod
-    def findByWriterAndPage(writer, page, per_date) : # 글쓴이로 검색 + 페이지네이션
+    def findByWriterAndPage(writer, page, per_page) : # 글쓴이로 검색 + 페이지네이션
 
         offset = (page - 1) * per_page # 페이지의 시작 위치
 
@@ -122,7 +122,7 @@ class studyPost() :
         return selectOne(sql)[0]
 
     @staticmethod
-    def findByTitleAndPage(title, page, per_date) : # 제목으로 검색 + 페이지네이션
+    def findByTitleAndPage(title, page, per_page) : # 제목으로 검색 + 페이지네이션
 
         offset = (page - 1) * per_page # 페이지의 시작 위치
 

@@ -59,11 +59,11 @@ def showPosts():
         searchValue = request.args.get('value')
         
         if int(searchType) == 0: # 제목으로 검색
-            posts = studyPost.findByTitle(searchValue)
+            posts = studyPost.findByTitleAndPage(searchValue, page, 10)
             post_cnt = studyPost.countBySearchTitle(searchValue)
 
         elif int(searchType) == 1 : # 글쓴이로 검색
-            posts = studyPost.findByWriterAndPage(searchValue)
+            posts = studyPost.findByWriterAndPage(searchValue, page, 10)
             post_cnt = studyPost.countBySearchWriter(searchValue)
 
         required_page = post_cnt // 10 + 1
