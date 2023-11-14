@@ -169,22 +169,22 @@ def search():
     
     
     if searchCategory == "study":
+
         if int(searchType) == 0: # 제목으로 검색
-            studyposts = studyPost.findByTitle(searchValue)
+            studyposts = studyPost.findByTitleAndPage(searchValue, page, 10)
         elif int(searchType) == 1 : # 글쓴이로 검색
-            studyposts = studyPost.findByWriter(searchValue)
-            print("study select")
-            
-        if studyposts is not None:
-            for i in range(len(studyposts)) :
-                post = {
-                    'id' : i+1,
-                    'postId' : studyposts[i][0],
-                    'title' : studyposts[i][1],
-                    'nickname': findNickName(studyposts[i][2]),
-                }
-                posts.append(post)
-                
+            studyposts = studyPost.findByWriterAndPage(searchValue, page, 10)
+
+        postOrder = 1
+        for post in studyposts:
+            posts.append({
+                'id': postOrder,
+                'postId': post.id,
+                'title': post.title,
+                'nickname': findNickName(post.writer),
+            })
+            postOrder += 1
+
     if searchCategory == "qna":
         if int(searchType) == 0: # 제목으로 검색
             qnaposts = QNAPost.findByTitle(searchValue)
