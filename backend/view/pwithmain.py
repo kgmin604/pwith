@@ -171,9 +171,9 @@ def search():
     if searchCategory == "study":
 
         if int(searchType) == 0: # 제목으로 검색
-            studyposts = studyPost.findByTitleAndPage(searchValue, page, 10)
+            studyposts = studyPost.findByTitle(searchValue)
         elif int(searchType) == 1 : # 글쓴이로 검색
-            studyposts = studyPost.findByWriterAndPage(searchValue, page, 10)
+            studyposts = studyPost.findByWriter(searchValue)
 
         postOrder = 1
         for post in studyposts:
@@ -269,37 +269,25 @@ def search():
                     'type' : lecture['type']
                 })
                 
-            
-        
-    
     if posts is None:   
         requiredPage = 0
     else:
-        requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
+        requiredPage = len(list(posts)) // 10 + 1 # 전체 페이지 수
     if len(posts) % 10 == 0 : 
-        requiredPage -=1
-    result = []
-    #print(posts)
+        requiredPage -= 1
 
     if posts is None :
-        pass # 결과 없을 시 empty list
-    else :
-        print("posts is not None")
-        print(page)
-
-        print(requiredPage)
-        print(len(posts))
-            # searchList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
-        for j in range(min(len(posts), 10)):
-            
-            print(posts[page-1 + j])       
-            result.append(posts[page-1 + j])
+        return {
+            'data':{
+                'searchList' : [],
+                'totalPage': requiredPage
+            }
+        }
             
     return {
-        'data':{
-            'searchList' : result,
+        'data': {
+            'searchList' : posts[page * 10 - 10 : page * 10],
             'totalPage': requiredPage
         }
-    
     }
         

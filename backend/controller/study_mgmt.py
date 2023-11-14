@@ -122,12 +122,47 @@ class studyPost() :
         return selectOne(sql)[0]
 
     @staticmethod
+    def findByWriter(writer) : # 글쓴이로 검색
+
+        sql = f"SELECT s.* FROM study s, member m \
+            WHERE s.writer = m.id AND m.nickname LIKE '%{writer}%' \
+            ORDER BY s.curDate DESC"
+        
+        posts = selectAll(sql)
+        
+        if not posts :
+            return None
+
+        result = []
+        for p in posts:
+            result.append(studyPost(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7]))
+
+        return result
+
+    @staticmethod
     def findByTitleAndPage(title, page, per_page) : # 제목으로 검색 + 페이지네이션
 
         offset = (page - 1) * per_page # 페이지의 시작 위치
 
         sql = f"SELECT * FROM study WHERE title LIKE '%{title}%' \
             ORDER BY curDate DESC LIMIT {per_page} OFFSET {offset}"
+
+        posts = selectAll(sql)
+        
+        if not posts :
+            return None
+
+        result = []
+        for p in posts:
+            result.append(studyPost(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7]))
+
+        return result
+
+    @staticmethod
+    def findByTitle(title) : # 제목으로 검색
+
+        sql = f"SELECT * FROM study WHERE title LIKE '%{title}%' \
+            ORDER BY curDate DESC"
 
         posts = selectAll(sql)
         
