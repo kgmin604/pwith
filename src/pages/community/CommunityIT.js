@@ -117,7 +117,7 @@ function CommunityIT() {
                 }
 
             </div>
-            <div className="control-page">
+            <div className="control-page-it">
                 <input
                     type='number'
                     className='page-num'
