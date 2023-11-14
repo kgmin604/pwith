@@ -24,7 +24,8 @@ function StudyBoard(props) {
     const [disabled1, setDisabled1] = useState(true);
     const [disabled2, setDisabled2] = useState(true);
     const [isLoad, setIsLoad] = useState(false);
-    const [isDisabled, setIsDisabled] = useState(user.id === null);
+    //const [isDisabled, setIsDisabled] = useState(user.id === null);
+    const { isLogin } = props;
 
     useEffect(() => {
         const init = async () => {
@@ -193,7 +194,7 @@ function StudyBoard(props) {
                     <div className="vr" />
                     <Button
                         variant="blue"
-                        disabled={isDisabled}
+                        disabled={!isLogin}
                         onClick={() => { navigate("../create"); }}
                     >
                         New

@@ -77,6 +77,8 @@ function App() {
   const [alarmList, setAlarmList] = useState([])
   const [unread, setUnread] = useState(false)
 
+  const [isLogin, setIsLogin] = useState(false);
+
   // 로그인 유지 목적
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -85,8 +87,6 @@ function App() {
         url: "/check"
       })
         .then(function (response) {
-          console.log("로그인 요청");
-          console.log(response);
           if (response.data.status === 200) {
             dispatch(
               loginUser({
@@ -96,6 +96,7 @@ function App() {
               })
             );
             setUnread(response.data.data.unread)
+            setIsLogin(true);
           }
         })
         .catch(function (error) {
@@ -504,7 +505,7 @@ function App() {
             element={<Search searchText={searchText} />}
           />
           <Route path="/study" element={<StudyMain />}>
-            <Route path="main" element={<StudyBoard />} />
+            <Route path="main" element={<StudyBoard isLogin={isLogin}/>} />
             <Route path=":id" element={<StudyPost />} />
           </Route>
           <Route path="/study/create" element={<StudyCreate />} />
