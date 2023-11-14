@@ -26,7 +26,7 @@ function StudyBoard(props) {
     const [isLoad, setIsLoad] = useState(false);
     //const [isDisabled, setIsDisabled] = useState(user.id === null);
     const { isLogin } = props;
-
+    console.log(isLogin)
     useEffect(() => {
         const init = async () => {
             try {
