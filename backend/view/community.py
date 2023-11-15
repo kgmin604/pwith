@@ -520,36 +520,123 @@ def listBooks() :
     if fcategory == "0":
         regex = "게임"  
         query = { "first_category": { '$regex': regex } }
-  
+        
+        if scategory == "0":
+            regex = "게임 개발"  
+        
+        if scategory == "1":
+            regex = "게임 기획"  
+        
+        if scategory == "2":
+            regex = "모바일 게임"  
+            
+        query = { "second_category": { '$regex': regex } }
+            
+    if fcategory == "1":
+        regex = "네트워크"  
+        query = { "first_category": { '$regex': regex } }
+        
+        if scategory == "0":
+            regex = "네트워크 일반"  
+            query = { "second_category": { '$regex': regex } }
+        
+        if scategory == "1":
+            regex = "TCP/IP"  
+            query = { "second_category": { '$regex': regex } }
+        
+        if scategory == "2":
+            regex = "보안/해킹"  
+            
+        query = { "second_category": { '$regex': regex } }
+            
+           
+    if fcategory == "2":
+        regex = "모바일"  
+        query = { "first_category": { '$regex': regex } }
+        
+        if scategory == "0":
+            regex = "아이폰"  
+            
+        if scategory == "1":
+            regex = "안드로이드"  
+        
+        if scategory == "2":
+            regex = "윈도우"  
+            
+        if scategory == "3":
+            regex = "모바일 게임"  
+            
+        query = { "second_category": { '$regex': regex } }
+            
+    if fcategory == "3":
+        regex = "웹"  
+        query = { "first_category": { '$regex': regex } }
+        
+        if scategory == "0":
+            regex = "HTML"  
+            
+        if scategory == "1":
+            regex = "웹디자인"  
+        
+        if scategory == "2":
+            regex = "웹기획"  
+            
+        if scategory == "3":
+            regex = "UI/UX"  
+            
+        query = { "second_category": { '$regex': regex } }
     
+    if fcategory == "4":
+        regex = "공학"  
+        query = { "first_category": { '$regex': regex } }
+        
+        if scategory == "0":
+            regex = "컴퓨터 교육"  
+            
+        if scategory == "1":
+            regex = "네트워크/데이터"  
+        
+        if scategory == "2":
+            regex = "마이크로"  
+    
+        if scategory == "3":
+            regex = "알고리즘/자료구조"  
+            
+        if scategory == "4":
+            regex = "전산수학"  
+        
+        if scategory == "5":
+            regex = "정보통신"  
+        
+        if scategory == "6":
+            regex = "컴퓨터구조"  
+    
+        if scategory == "3":
+            regex = "운영체제"  
+        query = { "second_category": { '$regex': regex } }
+        
     if fcategory == "5":
         regex = "OS"  
         query = { "first_category": { '$regex': regex } }
   
-    
-    if scategory == "0":
-        regex = "클라우드"  
-        query = { "second_category": { '$regex': regex } }
-    
-    if scategory == "1":
-        regex = "서버"  
-        query = { "second_category": { '$regex': regex } }
-    
-    if scategory == "2":
-        regex = "리눅스"  
-        query = { "second_category": { '$regex': regex } }
-  
-    if scategory == "3":
-        regex = "Oracle"  
-        query = { "second_category": { '$regex': regex } }
+        if scategory == "0":
+            regex = "클라우드"  
 
+        if scategory == "1":
+            regex = "서버"  
+        
+        if scategory == "2":
+            regex = "리눅스"  
+    
+        if scategory == "3":
+            regex = "Oracle"  
 
-    if scategory == "4":
-        regex = "윈도우"  
-        query = { "second_category": { '$regex': regex } }
+        if scategory == "4":
+            regex = "윈도우"  
 
-    if scategory == "5":
-        regex = "SQL"  
+        if scategory == "5":
+            regex = "SQL"  
+        
         query = { "second_category": { '$regex': regex } }
     
     all_bookList = conn_mongodb().book_crawling.find(query)
