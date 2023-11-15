@@ -109,7 +109,7 @@ function App() {
   }, []);
 
   const getAlramList=()=>{
-    setUnread(0)
+    setUnread(false)
     axios({
       method: "GET",
       url: "/alarm"
@@ -469,7 +469,7 @@ function App() {
                       }}
                     >
                       알림함
-                      {unread>0&&<div className="notice_new">N</div>}
+                      {unread===true &&<div className="notice_new">N</div>}
                       {!isModal ? null : (
                         <>
                           <div

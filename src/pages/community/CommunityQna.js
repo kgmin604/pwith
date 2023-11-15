@@ -41,7 +41,7 @@ function CommunityQna(props) {
                 setPostList(response.data.data.posts);
                 setTotalPage(response.data.data.num);
                 if (!isLoad) { // 맨 처음 한번만 실행
-                    if (response.data.num > 5) {
+                    if (response.data.data.num > 5) {
                         const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
                         setPages(tmp);
                         setDisabled2(false); // 페이지 이동 가능
