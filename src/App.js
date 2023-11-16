@@ -93,7 +93,7 @@ function App() {
                 id: response.data.data.id,
                 name: response.data.data.nickname,
                 isSocial: response.data.data.isSocial,
-                image:response.data.data.image
+                image: response.data.data.image
               })
             );
             setUnread(response.data.data.unread)
@@ -103,12 +103,12 @@ function App() {
         .catch(function (error) {
           console.log(error);
         });
-    }, 250); 
-  
+    }, 250);
+
     return () => clearTimeout(timer); // cleanup 함수를 이용하여 컴포넌트 언마운트 시 타이머를 정리
   }, []);
 
-  const getAlramList=()=>{
+  const getAlramList = () => {
     setUnread(false)
     axios({
       method: "GET",
@@ -175,7 +175,7 @@ function App() {
         console.log(error);
       });
   }
-    
+
   return (
     <WebSocketProvider>
       <div className="wrap">
@@ -407,7 +407,7 @@ function App() {
                   placeholder="검색"
                   className="me-2"
                   aria-label="Search"
-                  onChange={e=>{
+                  onChange={e => {
                     e.stopPropagation();
                     setSearchText(e.target.value);
                   }}
@@ -463,13 +463,13 @@ function App() {
                       onClick={(e) => {
                         e.stopPropagation();
                         setIsModal(!isModal);
-                        if(!isModal){
+                        if (!isModal) {
                           getAlramList()
                         }
                       }}
                     >
                       알림함
-                      {unread===true &&<div className="notice_new">N</div>}
+                      {unread === true && <div className="notice_new">N</div>}
                       {!isModal ? null : (
                         <>
                           <div
@@ -478,11 +478,17 @@ function App() {
                               e.stopPropagation();
                             }}>
                             {alarmList?.map((item, index) => {
-                                return <div onClick={() => { navigate(`${alramMoveTo[item.type-1]}${item.contentId}`) }} className={`alram-${index} item`}>
-                                  <h5>{alramType[item.type - 1]}</h5>
-                                  <h6>{item.content}</h6>
-                                </div>
-                              })}
+                              return <div onClick={() => {
+                                if (item.type === 5) {
+                                  navigate(`${alramMoveTo[item.type - 1]}`)
+                                  return
+                                }
+                                navigate(`${alramMoveTo[item.type - 1]}${item.contentId}`)
+                              }} className={`alram-${index} item`}>
+                                <h5>{alramType[item.type - 1]}</h5>
+                                <h6>{item.content}</h6>
+                              </div>
+                            })}
                           </div>
                         </>
                       )}
@@ -511,7 +517,7 @@ function App() {
             element={<Search searchText={searchText} />}
           />
           <Route path="/study" element={<StudyMain />}>
-            <Route path="main" element={<StudyBoard isLogin={isLogin}/>} />
+            <Route path="main" element={<StudyBoard isLogin={isLogin} />} />
             <Route path=":id" element={<StudyPost />} />
           </Route>
           <Route path="/study/create" element={<StudyCreate />} />
@@ -522,7 +528,7 @@ function App() {
           <Route path="/mentoringroom/:id" element={<MentoringRoomDetail />} />
           <Route path="/mentoringroom/live/:id" element={<LiveRoom type={'mentoring'} />} />
           <Route path="/mentoring-room/:id/pay/success" element={<MentoringRoomPaySuccess />} />
-          <Route path="/mentoring-room/:id/pay/fail" element={<MentoringPayFail/>} />
+          <Route path="/mentoring-room/:id/pay/fail" element={<MentoringPayFail />} />
           <Route path="/mentoring-room/:id/pay/cancel" element={<MentoringPayCancel />} />
 
           <Route path="/community" element={<CommunityMain />}>
@@ -537,7 +543,7 @@ function App() {
           <Route path="/mentoring/create" element={<MentoringCreate />} />
           <Route path="/mentoring/:myPortfolio" element={<PortfolioManage />} />
           <Route path="/mentoring/:id/pay/success" element={<MentoringPaySuccess />} />
-          <Route path="/mentoring/:id/pay/fail" element={<MentoringPayFail/>} />
+          <Route path="/mentoring/:id/pay/fail" element={<MentoringPayFail />} />
           <Route path="/mentoring/:id/pay/cancel" element={<MentoringPayCancel />} />
           <Route path="member/login" element={<Login />} />
           <Route path="member/join" element={<Join />} />
