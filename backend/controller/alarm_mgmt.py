@@ -42,24 +42,24 @@ class Alarm():
                 #study reply content
                 sql = f"select content from replyStudy where id = '{row[3]}'"
                 done = selectOne(sql)
-                content = str(done[0][0])
+                content = str(done[0])
             if row[4] == 4:
                 #qna reply content
                 sql = f"select content from replyQna where id = '{row[3]}'"
                 cdone = selectOne(sql)
-                content = str(done[0][0])
+                content = str(done[0])
             if row[4] == 5:
                 #chat content
                 sql = f"select content from chat where id = '{row[3]}'"
                 done = selectOne(sql)
-                content = str(done[0][0])
+                content = str(done[0])
             if row[4] == 6:
                 # mentoring 
                 # sql = f"select id from mentoringRoom where id = '{row[3]}'"
                 # room = selectOne(sql)
                 content = "멘토링룸이 삭제되었습니다"
             
-        
+            # print(content)
             record = {
                 'id': row[0],     
                 'memId': row[1],   
