@@ -31,6 +31,8 @@ class Alarm():
                 sql = f"select name from studyRoom where id = '{row[3]}'"
                 done = selectOne(sql)
                 content = str(done[0][0])
+                
+                contentId = row[3]
             if row[4] == 2:
                 # mentoring 
                 print(row)
@@ -38,33 +40,48 @@ class Alarm():
                 room = selectOne(sql)
                 print(room)
                 content = "/mentoring-room/" + str(room[0])
+                
+                contentId = row[3]
             if row[4] == 3:
                 #study reply content
-                sql = f"select content from replyStudy where id = '{row[3]}'"
+                sql = f"select content from replyStudy where id = {row[3]}"
                 done = selectOne(sql)
-                content = str(done[0][0])
+                content = str(done[0])
+                
+                sql = f"select studyId from replyStudy where replyStudy.id = {row[3]}"
+                done = selectOne(sql)
+                contentId = done[0]
+                
             if row[4] == 4:
                 #qna reply content
                 sql = f"select content from replyQna where id = '{row[3]}'"
                 cdone = selectOne(sql)
-                content = str(done[0][0])
+                content = str(done[0])
+                
+                sql = f"select qnaId from qna, replyQna where replyQna.id = {row[3]}"
+                done = selectOne(sql)
+                contentId = done[0]
+                
             if row[4] == 5:
                 #chat content
                 sql = f"select content from chat where id = '{row[3]}'"
                 done = selectOne(sql)
-                content = str(done[0][0])
+                content = str(done[0])
+                
+                contentId = row[3]
             if row[4] == 6:
                 # mentoring 
                 # sql = f"select id from mentoringRoom where id = '{row[3]}'"
                 # room = selectOne(sql)
                 content = "멘토링룸이 삭제되었습니다"
+                contentId = row[3]
             
-        
+            print(contentId)
             record = {
                 'id': row[0],     
                 'memId': row[1],   
                 'oppId': row[2],    
-                'contentId': row[3],
+                'contentId': contentId,
                 'contentType': row[4],
                 'reading' : row[5],
                 'content' : content
