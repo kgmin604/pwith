@@ -30,7 +30,7 @@ class Alarm():
                 # studyRoom name
                 sql = f"select name from studyRoom where id = '{row[3]}'"
                 done = selectOne(sql)
-                content = str(done[0][0])
+                content = str(done[0])
                 
                 contentId = row[3]
             if row[4] == 2:
