@@ -488,7 +488,7 @@ function MentoringRoomDetail() {
           <div className="col-md-3">
             <div className="info-area">
               <div className="img-area">
-                <img src={`${roomInfo.image}`} alt="User" />
+                <img src={`${roomInfo.image}?${Date.now()}`} alt="User" />
               </div>
               <div className="info-header">
                 <h3>{"멘토링"}</h3>

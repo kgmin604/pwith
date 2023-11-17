@@ -213,6 +213,7 @@ div.mem-area div.mem-btn
   position: absolute;
   width: 270px;
   min-height: 50px;
+  height: 300px;
   background-color: white;
   border: 1px lightgray solid;
   z-index: 3 !important;
@@ -220,7 +221,7 @@ div.mem-area div.mem-btn
   font-family: "Noto Sans KR";
   color: black;
   padding: 5px 0;
-  overflow: auto;
+  overflow-y: auto; /* 세로 스크롤을 추가합니다. */
 }
 
 div.mem-area div.mem-btn div.drop-down
