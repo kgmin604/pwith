@@ -4,11 +4,12 @@ import axios from "axios";
 import "./studyroom.css";
 import "../../assets/modal.css"
 import { useState, useEffect } from "react";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import {  useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { useLoginStore } from '../auth/CheckLogin';
 
 
 function RoomMain() {
@@ -23,8 +24,20 @@ function RoomMain() {
     let [chkAxios, setChkAxios] = useState(false);
 
     let [type, setType] = useState('study'); // 'study' or 'mentoring'
+    const {checkLogin}=useLoginStore()
+
 
     useEffect(() => {
+        const init = async () => {
+            try {
+                await checkLogin()
+                await getStudyRoomList()
+            } catch (e) { }
+        }
+        init()
+    }, [])
+
+    const getStudyRoomList=()=>{
         axios({
             method: "GET",
             url: "/study-room"
@@ -39,7 +52,7 @@ function RoomMain() {
             .catch(function (error) {
                 console.log(error);
             });
-    }, [])
+    }
 
     return (
         <>{
@@ -68,7 +81,7 @@ function RoomMain() {
                                 <div className="create-btn" onClick={() => navigate('./create')}>스터디 만들기</div>
                             </div>
                         </div>
-                        <div class="col-md-9">
+                        <div className="col-md-9">
                             <div className="list-area">
                                 <div className="header">
                                     <h2

@@ -7,6 +7,7 @@ import axios from 'axios';
 import { Link, useNavigate } from "react-router-dom";
 import MentorCard from './MentorCard';
 import { useSelector } from "react-redux";
+import { useLoginStore } from '../auth/CheckLogin';
 
 
 
@@ -17,8 +18,29 @@ function MentoringMain() {
     const [userinput, setUserinput] = useState('');
     const [isNext, setIsNext] = useState(false)
     const [myPortfolio, setMyPortfolio] = useState();
+    const [isLoad, setIsLoad] = useState(true)
+    const { checkLogin } = useLoginStore()
 
     useEffect(() => {
+        const init = async () => {
+            try {
+                await checkLogin()
+                getMentoList()
+                setIsLoad(false)
+            }
+            catch (e) {
+            }
+        }
+        init()
+    }, [])
+
+    useEffect(() => {
+        if (isLoad) return
+        getMentoList()
+    }, [selectPage]);
+
+    const getMentoList = () => {
+        setIsLoad(true)
         axios({
             method: "GET",
             url: "/mentoring",
@@ -35,8 +57,9 @@ function MentoringMain() {
             .catch(function (error) {
                 console.log(error);
             });
+        setIsLoad(false)
 
-    }, [selectPage]);
+    }
 
     const more = () => {
         setSelectPage(selectPage + 1)
@@ -100,8 +123,8 @@ function MentoringMain() {
 
 function Category({ myPortfolio }) {
     const user = useSelector((state) => state.user);
-    const checkPortfolio=()=>{
-        if(myPortfolio){
+    const checkPortfolio = () => {
+        if (myPortfolio) {
             alert("포트폴리오가 이미 존재합니다.\n관리탭을 이용해주세요")
         }
     }

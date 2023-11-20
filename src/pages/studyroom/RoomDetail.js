@@ -353,7 +353,7 @@ function RoomDetail() {
               )}
             </div>
           </div>
-          <div class="col-md-9">
+          <div className="col-md-9">
             <div className="content-area">
               <div className="top">
                 <h2>{roomInfo.name}</h2>

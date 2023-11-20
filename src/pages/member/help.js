@@ -70,7 +70,7 @@ function HelpId(){
                 회원 가입 시 사용한 이메일 주소를 통해 아이디를 찾을 수 있습니다.
             </p>
         </div>
-        <hr style={{"margin-bottom":"40px"}}></hr>
+        <hr style={{"marginBottom":"40px"}}></hr>
         {
             !authFlag ?
             <div className="help-input">
@@ -153,7 +153,7 @@ function HelpPw(){
                 회원 가입 시 사용한 이메일 주소를 통해 비밀번호를 재설정 할 수 있습니다.
             </p>
         </div>
-        <hr style={{"margin-bottom":"40px"}}></hr>
+        <hr style={{"marginBottom":"40px"}}></hr>
         <div className="help-input">
             <form>
                 <div className="items">
@@ -254,7 +254,7 @@ function ResetPw(){
                 하나 이상의 문자,숫자,특수문자를 포함한 8자리 이상의 비밀번호를 사용해주세요.
             </p>
         </div>
-        <hr style={{"margin-bottom":"40px"}}></hr>
+        <hr style={{"marginBottom":"40px"}}></hr>
         <div className="help-input">
             <form>
                 <div className="items">

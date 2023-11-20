@@ -30,16 +30,16 @@ function StudyMain() {
 
   return (
     <div className="StudyMain">
-      <div class="row">
-        <div class="col-md-3">
+      <div className="row">
+        <div className="col-md-3">
           <Category />
         </div>
 
-        <div class="col-md-6">
+        <div className="col-md-6">
           <Outlet></Outlet>
         </div>
 
-        <div class="col-md-3">
+        <div className="col-md-3">
           <h5>추천 스터디</h5>
           <hr style={{ width: '60%', margin: '0 auto', marginBottom: '10px' }} />
           <div className="rec-items">

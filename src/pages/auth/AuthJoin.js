@@ -90,7 +90,7 @@ function AuthJoin() {
     return(
         <>
         <div style={{'height':'430px'}} className='round-box'>
-          <div style={{'margin-bottom':'40px'}} className = "top-message">소셜 회원가입</div>
+          <div style={{'marginBottom':'40px'}} className = "top-message">소셜 회원가입</div>
           <form method="POST">
   
             <div className="join-item">

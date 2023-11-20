@@ -1,7 +1,7 @@
 // import logo from './logo.svg';
 import axios from "axios";
 import "./App.css";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // bootstrap css 파일 사용
 import { Form } from "react-bootstrap"; // bootstrap의 component 사용
 import {
@@ -36,7 +36,6 @@ import MentoringPaySuccess from "./pages/mentoring/MentoringPaySuccess.js";
 
 import Login from "./pages/member/login.js";
 import Join from "./pages/member/join.js";
-import Help from "./pages/member/help.js";
 import Mypage from "./pages/member/mypage.js";
 import Auth from "./pages/auth/Auth.js";
 import AuthJoin from "./pages/auth/AuthJoin.js";
@@ -51,7 +50,8 @@ import {
   Admin,
 } from "./pages/member/mypageComp.js";
 import { HelpId, HelpPw, ResetPw } from "./pages/member/help.js";
-import { loginUser, clearUser } from "./store.js";
+import { clearUser } from "./store.js";
+import { setUnread } from "./store.js";
 import StudyCreate from "./pages/study/StudyCreate.js";
 import StudyPost from "./pages/study/StudyPost.js";
 import StudyBoard from "./pages/study/StudyBoard";
@@ -70,46 +70,23 @@ const alramType = ["새로운 스터디 신청입니다", "새로운 멘토링 �
 const alramMoveTo = ["/studyroom/", "/mentoring/", "/study/", "/community/qna/", "/mypage/chat", "/mentoring/"]
 
 function App() {
-  let navigate = useNavigate();
-  let user = useSelector((state) => state.user);
-  let [searchText, setSearchText] = useState('');
-  let dispatch = useDispatch();
-  const [alarmList, setAlarmList] = useState([])
-  const [unread, setUnread] = useState(false)
+  const navigate = useNavigate();
+  const { user, unread } = useSelector((state) => state);
+  const [searchText, setSearchText] = useState('');
+  const dispatch = useDispatch();
+  const [alarmList, setAlarmList] = useState([]);
 
   const [isLogin, setIsLogin] = useState(false);
 
-  // 로그인 유지 목적
   useEffect(() => {
-    const timer = setTimeout(() => {
-      axios({
-        method: "GET",
-        url: "/check"
-      })
-        .then(function (response) {
-          if (response.data.status === 200) {
-            dispatch(
-              loginUser({
-                id: response.data.data.id,
-                name: response.data.data.nickname,
-                isSocial: response.data.data.isSocial,
-                image: response.data.data.image
-              })
-            );
-            setUnread(response.data.data.unread)
-            setIsLogin(true);
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }, 250);
-
-    return () => clearTimeout(timer); // cleanup 함수를 이용하여 컴포넌트 언마운트 시 타이머를 정리
-  }, []);
-
+    if (user && !isLogin) {
+      setIsLogin(true)
+    }
+  }, [user])
   const getAlramList = () => {
-    setUnread(false)
+    dispatch(
+      setUnread(false)
+    );
     axios({
       method: "GET",
       url: "/alarm"
@@ -201,7 +178,7 @@ function App() {
                   window.location.href = "/";
                 }}
               ></div>
-              <ul className="navbar-menu" style={{ "margin-right": "40px" }}>
+              <ul className="navbar-menu" style={{ "marginRight": "40px" }}>
                 <div className="parent-container">
                   <li
                     className="navbar-btn"
@@ -399,7 +376,7 @@ function App() {
                 style={{
                   width: "280px",
                   height: "40px",
-                  "margin-left": "80px",
+                  "marginLeft": "80px",
                 }}
               >
                 <Form.Control
@@ -421,8 +398,8 @@ function App() {
                   className="btn"
                   style={{
                     border: "solid 1px",
-                    "border-color": "#98AFCA",
-                    "background-color": "white",
+                    "borderColor": "#98AFCA",
+                    "backgroundColor": "white",
                     height: "40px",
                   }}
                   onClick={(e) => {
@@ -447,7 +424,7 @@ function App() {
                     style={{
                       width: "90px",
                       color: "white",
-                      "background-color": "#98afca",
+                      "backgroundColor": "#98afca",
                     }}
                     onClick={() => navigate("./member/join")}
                   >
@@ -499,7 +476,7 @@ function App() {
                     style={{
                       width: "90px",
                       color: "white",
-                      "background-color": "#98afca",
+                      "backgroundColor": "#98afca",
                     }}
                     onClick={() => navigate("./mypage/account")}
                   >
@@ -581,8 +558,8 @@ function App() {
             style={{
               width: "1200px",
               margin: "0 auto",
-              "line-height": "80px",
-              "font-size": "small",
+              "lineHeight": "80px",
+              "fontSize": "small",
             }}
           >
             @Pwith team

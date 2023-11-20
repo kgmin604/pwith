@@ -8,6 +8,7 @@ import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { updateITNewsList, updateiTNewsList } from "../../store.js";
+import { useLoginStore } from "../auth/CheckLogin";
 
 function CommunityIT() {
     let navigate = useNavigate();
@@ -23,6 +24,12 @@ function CommunityIT() {
 
     const [itList, setItList] = useState([]);
 
+    const {checkLogin}=useLoginStore()
+
+    useEffect(() => {
+        checkLogin()
+    }, [])
+    
     useEffect(() => {
 
         /* Date 객체 -> 문자열 변환 */

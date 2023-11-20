@@ -6,6 +6,7 @@ import { Nav } from "react-bootstrap";
 import axios from "axios";
 import { setBookCategory,setLectureCategory } from "../../store";
 import { useDispatch,useSelector } from "react-redux";
+import { useLoginStore } from "../auth/CheckLogin";
 
 
 function CommunityContent() {
@@ -19,6 +20,12 @@ function CommunityContent() {
 
     const [bookList, setBookList] = useState([])
     const [lectureList, setLectureList] = useState([])
+
+    const {checkLogin}=useLoginStore()
+
+    useEffect(() => {
+        checkLogin()
+    }, [])
 
     useEffect(() => {
         axios({

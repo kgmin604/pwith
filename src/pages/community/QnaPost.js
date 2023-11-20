@@ -75,11 +75,11 @@ function QnaPost(props) {
     return (
         <div className="QnaPost">
             {!isUpdating ? <div>
-                <div class="row">
-                    <div class="col-md-3">
+                <div className="row">
+                    <div className="col-md-3">
                         <QnaCategory />
                     </div>
-                    <div class="col-md-6 StudyPost">
+                    <div className="col-md-6 StudyPost">
                         <h2 style={{ textAlign: 'left' }}>QnA</h2>
                         <hr style={{ width: '100%', margin: '0 auto' }} />
                         <div className="study-header">
@@ -111,7 +111,7 @@ function QnaPost(props) {
                         </div>
                         <LikeAndComment id={id} liked={post.liked} likes={post.likes} reply={reply} type={'qna'} />
 
-                        <div class="col-md-3"></div>
+                        <div className="col-md-3"></div>
                     </div>
                 </div>
 

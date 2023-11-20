@@ -7,6 +7,7 @@ import "../pwithmain/main.css";
 import React, { useEffect, useState } from 'react';
 import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { useLoginStore } from "../auth/CheckLogin";
 
 function CommunityBoard() {
     let navigate = useNavigate();
@@ -20,8 +21,19 @@ function CommunityBoard() {
     let [itList, setItList] = useState(dummy);
     let [qnaList, setQnaList] = useState(dummy);
     let [contentList, setContentList] = useState(dummy);
+    const {checkLogin}=useLoginStore()
 
     useEffect(() => {
+        const init = async () => {
+            try {
+                await checkLogin()
+                getComunityBoard()
+            } catch (e) { }
+        }
+        init()
+    }, [])
+
+    const getComunityBoard=()=>{
         axios({
             method: "GET",
             url: "/community"
@@ -34,7 +46,7 @@ function CommunityBoard() {
             .catch(function (error) {
                 console.log(error);
             });
-    }, []);
+    }
 
     return (
         <div className="CommunityBoard">

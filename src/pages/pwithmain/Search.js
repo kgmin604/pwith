@@ -158,8 +158,8 @@ function Search({ searchText }) {
 
     return(
         <>
-        <div class="row">
-            <div class="col-md-3 search-category">
+        <div className="row">
+            <div className="col-md-3 search-category">
                 <h5>검색 종류</h5>
                 <hr style={{ width: '60%', margin: '0 auto' }} />
                 {category.map((item, index) => (
@@ -179,7 +179,7 @@ function Search({ searchText }) {
                     >{item}</div>
                 ))}
             </div>
-            <div class="col-md-6">
+            <div className="col-md-6">
                 <div className="search-area">
                 {
                     searchType === 2 || searchType === 3 ?
