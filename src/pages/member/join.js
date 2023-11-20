@@ -248,7 +248,7 @@ function Join() {
   return (
     <>
       <div style={{'height':'930px'}} className='round-box'>
-        <div style={{'margin-bottom':'40px'}} className = "top-message">회원가입</div>
+        <div style={{'marginBottom':'40px'}} className = "top-message">회원가입</div>
         <form method="POST">
 
           <div className="join-item">

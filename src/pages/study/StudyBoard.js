@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { updateRecStudyList } from "../../store";
+import { useLoginStore } from "../auth/CheckLogin";
 
 function StudyBoard(props) {
     const navigate = useNavigate();
@@ -23,53 +24,30 @@ function StudyBoard(props) {
     const [pages, setPages] = useState([]); // 임시
     const [disabled1, setDisabled1] = useState(true);
     const [disabled2, setDisabled2] = useState(true);
-    const [isLoad, setIsLoad] = useState(false);
+    const [isLoad, setIsLoad] = useState(true);
     //const [isDisabled, setIsDisabled] = useState(user.id === null);
     const { isLogin } = props;
-    console.log(isLogin)
+    const { checkLogin } = useLoginStore()
+
     useEffect(() => {
         const init = async () => {
             try {
-                await axios({
-                    method: "GET",
-                    url: "/study",
-                    params: {
-                        search: 0,
-                        page: selectPage,
-                        category: studyCategory
-                    }
-                })
-                    .then(function (response) {
-                        setStudyPostList(response.data.data.posts);
-                        setTotalPage(response.data.data.num);
-                        if (!isLoad) { // 맨 처음 한번만 실행
-                            if (response.data.data.num > 5) {
-                                const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
-                                setPages(tmp);
-                                setDisabled2(false); // 페이지 이동 가능
+                await checkLogin()
+                await getStudyPostList()
+                await getRecommendStudyList()
+                setIsLoad(false)
+            } catch (e) { }
+        }
+        init()
+    }, [])
 
-                            }
-                            else {
-                                const tmp = Array.from({ length: response.data.data.num }, (_, index) => index + 1);
-                                setPages(tmp);
-                            }
-                            setIsLoad(true);
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-
-                await axios({
-                    method: "GET",
-                    url: "/study/recommend",
-                })
-                    .then(function (response) {
-                        dispatch(updateRecStudyList(response.data.data.rec));
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+    useEffect(() => {
+        console.log(2)
+        if (isLoad) { return }
+        const init = async () => {
+            try {
+                await getStudyPostList()
+                await getRecommendStudyList()
             }
             catch (e) {
                 console.error(e)
@@ -78,6 +56,61 @@ function StudyBoard(props) {
         init()
 
     }, [selectPage, studyCategory]);
+
+    const getStudyPostList = async () => {
+        try {
+            await axios({
+                method: "GET",
+                url: "/study",
+                params: {
+                    search: 0,
+                    page: selectPage,
+                    category: studyCategory
+                }
+            })
+                .then(function (response) {
+                    setStudyPostList(response.data.data.posts);
+                    setTotalPage(response.data.data.num);
+                    if (!isLoad) { // 맨 처음 한번만 실행
+                        if (response.data.data.num > 5) {
+                            const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
+                            setPages(tmp);
+                            setDisabled2(false); // 페이지 이동 가능
+
+                        }
+                        else {
+                            const tmp = Array.from({ length: response.data.data.num }, (_, index) => index + 1);
+                            setPages(tmp);
+                        }
+                        setIsLoad(false);
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        } catch (e) {
+
+        }
+
+    }
+
+    const getRecommendStudyList = async () => {
+        try {
+            await axios({
+                method: "GET",
+                url: "/study/recommend",
+            })
+                .then(function (response) {
+                    dispatch(updateRecStudyList(response.data.data.rec));
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+        } catch (e) {
+
+        }
+    }
 
     const searchStudy = () => {
         axios({

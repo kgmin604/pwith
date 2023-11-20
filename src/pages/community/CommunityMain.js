@@ -10,8 +10,8 @@ function CommunityMain() {
 
     return (
         <div className="CommunityMain">
-            <div class="row">
-                <div class="col-md-3">
+            <div className="row">
+                <div className="col-md-3">
                     <h5>커뮤니티</h5>
                     <hr style={{ width: '60%', margin: '0 auto' }} />
                     <Nav defaultActiveKey="/community" className="flex-column">
@@ -22,11 +22,11 @@ function CommunityMain() {
                 </div>
 
 
-                <div class="col-md-6">
+                <div className="col-md-6">
                     <Outlet></Outlet>
                 </div>
 
-                <div class="col-md-3">
+                <div className="col-md-3">
                 </div>
 
             </div>

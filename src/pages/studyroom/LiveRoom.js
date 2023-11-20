@@ -465,7 +465,7 @@ const LiveRoom = ({ type }) => {
                             ref={localVideoRef}
                             autoPlay
                         />
-                        <div class="user-name">{user.name}</div>
+                        <div className="user-name">{user.name}</div>
                     </div>
 
                     {users.map((user, index) => (
@@ -484,7 +484,7 @@ const LiveRoom = ({ type }) => {
                     {!clickedUser?.id && (
                         <>
                             <div className="header">
-                                <div class="language-select">
+                                <div className="language-select">
                                     <div>코드 업로드</div>
                                     <select
                                         value={selectedLanguage}
@@ -501,7 +501,7 @@ const LiveRoom = ({ type }) => {
                                         <option value="sql">SQL</option>
                                     </select>
                                 </div>
-                                <div class="upload-button" onClick={uploadCode}>
+                                <div className="upload-button" onClick={uploadCode}>
                                     <div>{isMyCodeUpload ? "재업로드" : "업로드 하기"}</div>
                                     <FontAwesomeIcon
                                         icon={faArrowUpFromBracket}
@@ -593,7 +593,7 @@ const LiveRoom = ({ type }) => {
                         )}
                         {!bardAnswer && (
                             <div
-                                class="submit-button"
+                                className="submit-button"
                                 onClick={() => {
                                     askBard();
                                 }}
@@ -622,7 +622,7 @@ const LiveRoom = ({ type }) => {
                         />}
                         {bardAnswer && (
                             <div
-                                class="refresh-button"
+                                className="refresh-button"
                                 onClick={() => {
                                     setBardAnswer("");
                                 }}

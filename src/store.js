@@ -23,6 +23,16 @@ let user = createSlice({
   }
 });
 
+const unread = createSlice({
+  name: 'unread',
+  initialState: false,
+  reducers: { 
+    setUnread: (state, action) => {
+      return action.payload
+    }
+  }
+});
+
 const recStudyList = createSlice({
   name: 'recStudyList',
   initialState: [],
@@ -81,6 +91,7 @@ const bookCategory = createSlice({
 })
 
 export let { loginUser, clearUser } = user.actions;
+export const { setUnread } = unread.actions;
 export const { updateRecStudyList } = recStudyList.actions;
 export const { setStudyCategory } = studyCategory.actions;
 export const { setQnaCategory } = qnaCategory.actions;
@@ -91,6 +102,7 @@ export const { setBookCategory } = bookCategory.actions;
 export default configureStore({
   reducer: {
     user: user.reducer, // 앞의 user는 작명, user.reducer의 user는 slice
+    unread:unread.reducer,
     recStudyList: recStudyList.reducer,
     studyCategory: studyCategory.reducer,
     qnaCategory: qnaCategory.reducer,

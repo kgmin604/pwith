@@ -3,13 +3,14 @@ import "./community.css";
 import "../study/study.css"
 import "../../App.css";
 import React, { useState, useEffect } from 'react';
-import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { Form, Stack, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import QnaCategory from "./QnaCategory";
+import { useLoginStore } from "../auth/CheckLogin";
 
 
 function CommunityQna(props) {
@@ -23,10 +24,29 @@ function CommunityQna(props) {
     const [pages, setPages] = useState([]); // 임시
     const [disabled1, setDisabled1] = useState(true);
     const [disabled2, setDisabled2] = useState(true);
-    const [isLoad, setIsLoad] = useState(false);
-    const [isDisabled, setIsDisabled] = useState(user.id === null);
+    const [isLoad, setIsLoad] = useState(true);
+    const isDisabled = user?.id === null;
+    const { checkLogin } = useLoginStore()
 
     useEffect(() => {
+        const init = async () => {
+            try {
+                await checkLogin()
+                getQnaPostList()
+                setIsLoad(false)
+            }
+            catch (e) {
+            }
+        }
+        init()
+    }, [])
+
+    useEffect(() => {
+        if (isLoad) return
+        getQnaPostList()
+    }, [selectPage, qnaCategory]);
+
+    const getQnaPostList = () => {
         axios({
             method: "GET",
             url: "/community/qna",
@@ -50,12 +70,12 @@ function CommunityQna(props) {
                         const tmp = Array.from({ length: response.data.num }, (_, index) => index + 1);
                         setPages(tmp);
                     }
-                    setIsLoad(true);
+                    setIsLoad(false);
                 }
             })
             .catch(function (error) {
             });
-    }, [selectPage, qnaCategory]);
+    }
 
     const searchPost = () => {
         axios({
@@ -132,11 +152,11 @@ function CommunityQna(props) {
 
     return (
         <div className="CommunityQna">
-            <div class="row">
-                <div class="col-md-3">
+            <div className="row">
+                <div className="col-md-3">
                     <QnaCategory />
                 </div>
-                <div class="col-md-6 Board">
+                <div className="col-md-6 Board">
                     <Stack direction="horizontal" gap={3} style={{ padding: "5px" }}>
                         <div className="study-top">
                             {
