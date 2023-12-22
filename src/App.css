@@ -52,6 +52,7 @@
   font-family: "TmoneyRoundWind";
   cursor: pointer;
   color:grey;
+  user-select: none;
 }
 
 .navbar-btn:hover{
@@ -85,6 +86,7 @@ ul.navbar-menu div.parent-container li.navbar-btn div.navbar-modal
   height: 100%;
   display: flex;
   flex-direction: column;
+  list-style: none;
 }
 
 ul.navbar-menu div.parent-container li.navbar-btn div.navbar-modal ul.lst
@@ -96,12 +98,14 @@ ul.navbar-menu div.parent-container li.navbar-btn div.navbar-modal ul.lst
   font-family: "TmoneyRoundWind";
   font-size: small;
   line-height: 40px;
+  list-style-type: none;
 }
 
 ul.navbar-menu div.parent-container li.navbar-btn div.navbar-modal ul.lst
 .lst-item:hover{
   background-color: #98afca;
   color: white;
+  list-style-type: none;
 }
 
 .top-msg{
@@ -137,6 +141,7 @@ ul.navbar-menu div.parent-container li.navbar-btn div.navbar-modal ul.lst
   margin: 0 10px;
   float: left;
   cursor: pointer;
+  user-select: none;
 }
 
 .mybtn {
@@ -164,7 +169,6 @@ ul.navbar-menu div.parent-container li.navbar-btn div.navbar-modal ul.lst
   font-weight: normal;
   font-style: normal;
 }
-
 @font-face {
   font-family: 'Noto Sans KR';
   font-style: normal;
@@ -208,6 +212,7 @@ div.mem-area div.mem-btn
   right: 15%;
   position: absolute;
   width: 270px;
+  min-height: 50px;
   height: 300px;
   background-color: white;
   border: 1px lightgray solid;
@@ -216,7 +221,7 @@ div.mem-area div.mem-btn
   font-family: "Noto Sans KR";
   color: black;
   padding: 5px 0;
-  overflow: auto;
+  overflow-y: auto; /* 세로 스크롤을 추가합니다. */
 }
 
 div.mem-area div.mem-btn div.drop-down
@@ -225,7 +230,7 @@ div.mem-area div.mem-btn div.drop-down
   flex-direction: column;
   margin: 0 0;
   padding: 5px 10px;
-  width: 250px;
+  width: 100%;
   height: 60px;
   border-bottom: 1px lightgray solid;
 }
@@ -257,4 +262,8 @@ h6{
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.no-drag {
+  user-select: none;
 }

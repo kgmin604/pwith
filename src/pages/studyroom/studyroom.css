@@ -101,50 +101,111 @@ div.room-part div.row div.col-md-9
 }
 
 div.room-part div.row div.col-md-9 div.list-area
+.header{
+    display: flex;
+    width: 100%;
+}
+
+div.room-part div.row div.col-md-9 div.list-area
 h2{
-    flex: auto;
     line-height: 50px;
     font-size: 18px;
     font-weight: 600; 
-    float : left;
-    width: 100%;
-    margin: 0 10px;
+    margin: 0 5px;
+    display: inline;
+    float: left;
+    color: gray;
+    cursor: pointer;
+}
+
+div.room-part div.row div.col-md-9 div.list-area
+.sel{
+    color: #98AFCA;
+}
+
+div.room-part div.row div.col-md-9 div.list-area .items{
+    display: flex;
+    flex-wrap: wrap;
 }
 
 div.room-part div.row div.col-md-9 div.list-area div.items 
 .item
 {
-    position: relative;
     display: flex;
+    align-items: center;
     flex-direction: column;
     word-wrap: break-word;
     background-color: #fff;
     background-clip: border-box;
     border-radius: 0.25rem;
     box-shadow: 0 0.0625rem 0.1875rem 0 rgba(0,0,0,.2);
-    width: 96%;
+    width: 230px;
+    height: 200px;
     margin: 10px 10px;
+    cursor: pointer;
 }
 
-div.room-part div.row div.col-md-9 div.list-area div.items a.item
+div.room-part div.row div.col-md-9 div.list-area div.items
+.img-area{
+    position: relative;
+    margin: 0 auto;
+    overflow: hidden;
+    width: 230px;
+    height: 200px;
+}
+
+div.room-part div.row div.col-md-9 div.list-area div.items div.item div.img-area 
+img{
+    transition: transform 0.3s ease;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+div.room-part div.row div.col-md-9 div.list-area div.items div.item
+.join-area{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    float: left;
+    padding: 8px;
+}
+
+div.room-part div.row div.col-md-9 div.list-area div.items div.item .join-area
+span{
+    margin: 0 5px;
+}
+
+div.room-part div.row div.col-md-9 div.list-area div.items div.item
 h3{
-    flex: auto;
     line-height: 14px;
     font-size: 14px;
-    float : left;
-    cursor: pointer;
-    padding-left: 20px;
-    width: 100%;
+    font-weight: 400;
+    color: gray;
     margin: 15px 0;
+    font-family: 'TmoneyRoundWind';
 }
 
+/* hover 효과 */
+
+div.room-part div.row div.col-md-9 div.list-area div.items 
+div.item:hover img {
+    /* item hover시 img 확대 */
+    transform: scale(1.1);
+}
+
+div.room-part div.row div.col-md-9 div.list-area div.items 
+div.item:hover h3{
+    color: black;
+}
 
 /* 스터디룸 create */
 
 .create-wrap{
     border-radius: 20px;
     width: 500px;
-    height: 500px;
+    height: 720px;
     margin: 100px auto;
     padding: 20px 0;
     border: solid 1px;
@@ -192,6 +253,88 @@ div.create-wrap div.item
     padding-left: 5px;
 }
 
+div.create-wrap div.item
+.room-img {
+    position: relative;
+}
+
+div.create-wrap div.item div.room-img
+.img-area{
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+}
+
+div.create-wrap div.item div.room-img 
+.main-img {
+    flex: 1;
+    border-radius: 5px;
+    border: solid 1px;
+    border-color: #98AFCA;
+    width: 300px;
+    height: 200px;
+}
+  
+div.create-wrap div.item div.room-img 
+.sub-img {
+    display: flex;
+    flex: 1;
+    border-radius: 5px;
+    border: solid 1px;
+    border-color: #98AFCA;
+    flex-direction: column;
+    align-items: center;
+    height: 200px;
+}
+
+div.create-wrap div.item div.room-img 
+span{
+    font-family: 'Noto Sans KR';
+    font-weight: 600;
+    font-size: 12px;
+    margin: 5px 0;
+}
+  
+div.create-wrap div.item div.room-img .sub-img 
+img {
+    height: 28%;
+    border: solid white;
+    cursor: pointer;
+}
+
+div.create-wrap div.item div.room-img .sub-img
+.sel-img{
+    border: solid #98AFCA
+}
+
+div.create-wrap div.item div.room-img
+.btn-area{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    line-height: 1;
+
+    width: 60px;
+    height: 25px;
+    line-height: 25px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    text-align: center;
+    font-size: small;
+    transition: background-color 0.5s;
+    border-top-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    font-family: 'TmoneyRoundWind';
+    cursor: pointer;
+}
+
+div.create-wrap div.item div.room-img
+.btn-area:hover{
+    background-color:#98AFCA;   
+}
+
+
 div.create-wrap
 .create-btn{
     border-radius: 5px;
@@ -219,6 +362,74 @@ div.create-wrap
     text-align: center;
 }
 
+/* 이미지 업로드 모달 */
+.room-cropper-wrap{
+    position: fixed;
+    top:0;
+    left:0;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+}
+
+.room-cropper-area{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 중앙 정렬 */
+    z-index: 9999;
+    background-color: white;
+    width: 800px;
+    height: 520px;
+    display: flex;
+    flex-direction: column;
+}
+
+div.room-cropper-area
+.x-btn{
+    float:right;
+    font-family: 'TmoneyRoundWind';
+    font-weight: 400;
+    color: gray;
+    margin:0 10px;
+    cursor: pointer;
+}
+
+div.room-cropper-area
+h3{
+    font-size: large;
+    font-weight: 600;
+    font-family: 'Noto Sans KR';
+    margin: 15px 0;
+    padding: 0 10px;
+}
+
+div.room-cropper-area
+span{
+    color: gray;
+    font-size: small;
+}
+
+div.room-cropper-area
+.btn-area{
+    margin: 13px 0;
+    padding: 0 10px;
+}
+
+div.room-cropper-area div.btn-area
+.room-crop-btn{
+    width: 100px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #98AFCA;
+    color: white;
+    float: right;
+    border:none;
+}
+
+
+
 /* 스터디룸 0개 시 안내 */
 div.room-part div.list-area
 .img-notice{
@@ -237,7 +448,7 @@ div{
     font-family: 'TmoneyRoundWind';
     margin: 0 auto;
     text-align: center;
-    text: gray;
+    color: gray;
 }
 
 div.room-part div.list-area div.img-notice
@@ -251,6 +462,10 @@ span{
 
 .img-error{
     margin: 130px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 div.img-error
@@ -273,3 +488,4 @@ span{
     text-decoration: underline;
     text-decoration-color: gray;
 }
+

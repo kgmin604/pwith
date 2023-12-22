@@ -3,37 +3,65 @@ import "./community.css";
 import "../study/study.css"
 import "../../App.css";
 import React, { useState, useEffect } from 'react';
-import { Form, Nav, Stack, Button, Table } from "react-bootstrap";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { Form, Stack, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import axios from "axios";
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import QnaCategory from "./QnaCategory";
+import { useLoginStore } from "../auth/CheckLogin";
+
 
 function CommunityQna(props) {
     const navigate = useNavigate();
     const user = useSelector((state) => state.user);
+    const qnaCategory = useSelector((state) => state.qnaCategory);
     const [postList, setPostList] = useState([]);
+    const [searchType, setSearchType] = useState(0);
     const [totalPage, setTotalPage] = useState(1);
     const [selectPage, setSelectPage] = useState(1);
     const [pages, setPages] = useState([]); // 임시
     const [disabled1, setDisabled1] = useState(true);
     const [disabled2, setDisabled2] = useState(true);
-    const [isLoad, setIsLoad] = useState(false);
-    const [isDisabled, setIsDisabled] = useState(user.id === null);
+    const [isLoad, setIsLoad] = useState(true);
+    const isDisabled = user?.id === null;
+    const { checkLogin } = useLoginStore()
 
     useEffect(() => {
+        const init = async () => {
+            try {
+                await checkLogin()
+                getQnaPostList()
+                setIsLoad(false)
+            }
+            catch (e) {
+            }
+        }
+        init()
+    }, [])
+
+    useEffect(() => {
+        if (isLoad) return
+        getQnaPostList()
+    }, [selectPage, qnaCategory]);
+
+    const getQnaPostList = () => {
         axios({
             method: "GET",
-            url: "/community/qna/main",
+            url: "/community/qna",
             params: {
-                page: selectPage
+                type: searchType, // 0: 제목 1: 글쓴이
+                value: inputValue,
+                page: selectPage,
+                category: qnaCategory
             }
         })
             .then(function (response) {
-                setPostList(response.data);
-                setTotalPage(response.data.num);
-
+                setPostList(response.data.data.posts);
+                setTotalPage(response.data.data.num);
                 if (!isLoad) { // 맨 처음 한번만 실행
-                    if (response.data.num > 5) {
+                    if (response.data.data.num > 5) {
                         const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
                         setPages(tmp);
                         setDisabled2(false); // 페이지 이동 가능
@@ -42,12 +70,53 @@ function CommunityQna(props) {
                         const tmp = Array.from({ length: response.data.num }, (_, index) => index + 1);
                         setPages(tmp);
                     }
-                    setIsLoad(true);
+                    setIsLoad(false);
                 }
             })
             .catch(function (error) {
             });
-    }, [selectPage]);
+    }
+
+    const searchPost = () => {
+        axios({
+            method: "GET",
+            url: `/community/qna`,
+            params: {
+                search: 1,
+                type: searchType, // 0: 제목 1: 글쓴이
+                value: inputValue,
+                page: 1
+            }
+        })
+            .then(function (response) {
+                setPostList(response.data.data.posts);
+
+                if (response.data.data.num > 5) {
+                    const tmp = Array.from({ length: 5 }, (_, index) => index + 1);
+                    setPages(tmp);
+                    setDisabled2(false); // 페이지 이동 가능
+                }
+                else {
+                    const tmp = Array.from({ length: response.data.data.num }, (_, index) => index + 1);
+                    setPages(tmp);
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+    };
+    const [inputValue, setInputValue] = useState('');
+
+    const handleInputChange = (event) => {
+        event.stopPropagation();
+        setInputValue(event.target.value);
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        searchPost();
+    };
 
     function controlPages(type) {
         if (type === -1) {
@@ -83,22 +152,53 @@ function CommunityQna(props) {
 
     return (
         <div className="CommunityQna">
-            <div class="row">
-                <div class="col-md-3">
-                    {Category()}
+            <div className="row">
+                <div className="col-md-3">
+                    <QnaCategory />
                 </div>
-                <div class="col-md-6 Board">
+                <div className="col-md-6 Board">
                     <Stack direction="horizontal" gap={3} style={{ padding: "5px" }}>
-                        <Form.Control className="me-auto" placeholder="궁금한 것이 무엇인가요?" />
-                        <Button variant="blue">🔍</Button>
-                        <div className="vr" />
-                        <Button
-                            variant="blue"
-                            disabled={isDisabled}
-                            onClick={() => { navigate("../community/qna/create"); }}
-                        >
-                            New
-                        </Button>
+                        <div className="study-top">
+                            {
+                                searchType === 0 ?
+                                    <DropdownButton
+                                        id="dropdown-button-dark-example2"
+                                        variant="blue"
+                                        title="글제목"
+                                        className="mt-2 setting"
+                                    >
+                                        <Dropdown.Item>글제목</Dropdown.Item>
+                                        <Dropdown.Item onClick={() => { setSearchType(1) }}>글쓴이</Dropdown.Item>
+                                    </DropdownButton> :
+                                    <DropdownButton
+                                        id="dropdown-button-dark-example2"
+                                        variant="blue"
+                                        title="글쓴이"
+                                        className="mt-2 setting"
+                                    >
+                                        <Dropdown.Item onClick={() => { setSearchType(0) }}>글제목</Dropdown.Item>
+                                        <Dropdown.Item >글쓴이</Dropdown.Item>
+                                    </DropdownButton>
+                            }
+                            <Form onSubmit={handleSubmit} className="setting">
+                                <Form.Control
+                                    className="me-auto"
+                                    placeholder="궁금한 것이 무엇인가요?"
+                                    value={inputValue}
+                                    onChange={(e) => handleInputChange(e)}
+                                    style={{ width: '380px' }}
+                                />
+                            </Form>
+                            <Button variant="blue" type="submit" onClick={() => searchPost()}>🔍</Button>
+                            <div className="vr" />
+                            <Button
+                                variant="blue"
+                                disabled={isDisabled}
+                                onClick={() => { navigate("../community/qna/create"); }}
+                            >
+                                New
+                            </Button>
+                        </div>
 
                     </Stack>
 
@@ -118,7 +218,7 @@ function CommunityQna(props) {
                                     <div
                                         className="post-item hover-effect"
                                         key={i}
-                                        onClick={(e) => { e.stopPropagation(); navigate(`../community/qna/${post.id}`) }}
+                                        onClick={(e) => { e.stopPropagation(); navigate(`../community/qna/${post.qnaId}`) }}
                                     >
                                         <span className=" post-comm">{post.id}</span>
                                         <span className=" post-title">{post.title}</span>
@@ -133,7 +233,7 @@ function CommunityQna(props) {
                     </div>
                     <div className='pagination'>
                         <span className="pages">
-                            <button disabled={disabled1} className="control-page" onClick={(e) => { e.stopPropagation(); controlPages(-1); }}>
+                            <button disabled={disabled1} className="control-page-btn" onClick={(e) => { e.stopPropagation(); controlPages(-1); }}>
                                 {'<'}
                             </button>
                             {
@@ -149,7 +249,7 @@ function CommunityQna(props) {
                                     );
                                 })
                             }
-                            <button disabled={disabled2} className="control-page" onClick={(e) => { e.stopPropagation(); controlPages(1); }}>
+                            <button disabled={disabled2} className="control-page-btn" onClick={(e) => { e.stopPropagation(); controlPages(1); }}>
                                 {'>'}
                             </button>
                         </span>
@@ -158,28 +258,6 @@ function CommunityQna(props) {
             </div>
         </div>
     );
-}
-
-function Category() {//카테고리
-    return <>
-
-        <h5>QnA</h5>
-        <hr style={{ width: '60%', margin: '0 auto' }} />
-        <Nav defaultActiveKey="#" className="flex-column">
-            <Nav.Link href="#"><div style={{ color: '#282c34' }}>웹개발</div></Nav.Link>
-            <Nav.Link href="#"><div style={{ color: '#282c34' }}>모바일 앱 개발</div></Nav.Link>
-            <Nav.Link href="#"><div style={{ color: '#282c34' }}>게임 개발</div></Nav.Link>
-            <Nav.Link href="#"><div style={{ color: '#282c34' }}>프로그래밍 언어</div></Nav.Link>
-            <Nav.Link href="#"><div style={{ color: '#282c34' }}>알고리즘 · 자료구조</div></Nav.Link>
-            <Nav.Link href="#"><div style={{ color: '#282c34' }}>데이터베이스</div></Nav.Link>
-            <Nav.Link href="#"><div style={{ color: '#282c34' }}>자격증</div></Nav.Link>
-            <Nav.Link href="#"><div style={{ color: '#282c34' }}>개발 도구</div></Nav.Link>
-            <Nav.Link href="#"><div style={{ color: '#282c34' }}>데이터 사이언스</div></Nav.Link>
-            <Nav.Link href="#"><div style={{ color: '#282c34' }}>데스크톱 앱 개발</div></Nav.Link>
-            <Nav.Link href="#"><div style={{ color: '#282c34' }}>교양 · 기타</div></Nav.Link>
-        </Nav>
-    </>
-
 }
 
 export default CommunityQna;

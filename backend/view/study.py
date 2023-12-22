@@ -3,175 +3,163 @@ from flask_login import login_required, current_user
 from backend.controller.study_mgmt import studyPost
 from backend.controller.replyStudy_mgmt import ReplyStudy
 from backend.controller.studyroom_mgmt import StudyRoom
-from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString
+from backend.controller.member_mgmt import Member
+from backend.controller.alarm_mgmt import Alarm
+from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage, nicknameToId
+from backend.view import login_required
 from datetime import datetime
 import json
 
 study_bp = Blueprint('study', __name__, url_prefix='/study')
 
-@study_bp.route('/main', methods=['GET'])
-def show():
-    if request.method == 'GET':
+@study_bp.route('/recommend', methods=['GET'])
+def recommend():
+    recStudy=[]
+    recommendStudy = studyPost.getNStudy(3)
+    
+    for study in recommendStudy:
+        roomId = studyPost.findRoomId(study[0])
+        rec = {
+            'id' : study[0],
+            'title' : study[1],
+            'image' : studyPost.getRoomImage(roomId)
+        }
+        recStudy.append(rec)
         
-        # 추천 스터디 3개
-        recommend = request.args.get('recommend')
-        print("recommend")
-        print(recommend)
-        print("recommend")
-        if recommend is not None:
-            print("recommend")
-            recStudy=[]
-            recommendStudy = studyPost.getNStudy(3)
-            for study in recommendStudy:
-                rec = {
-                    'id' : study[0],
-                    'title' : study[1]
-                }
-                recStudy.append(rec)
-            return jsonify({
-                'rec' : recStudy # by. 경민
-            })
-                
+        
+    return{
+        'rec' : recStudy
+    }    
+    
+@study_bp.route('', methods=['GET'])
+def showPosts(): 
+        
+    result = []
+
+    search = request.args.get('search')
+    
+    page = request.args.get('page')
+    page = int(page) if page else 0
+
+    if int(search) == 0: # 검색 x
+
+        category = request.args.get('category')
+        category = int(category) if category else 11
+
+        # 전체 글
+        posts = studyPost.getByCategoryAndPage(category, page, 10)
+
+        # 전체 페이지 수
+        post_cnt = studyPost.countByCategory(category)
+        required_page = post_cnt // 10 + 1
+
+    elif int(search) == 1: # 검색 o
 
         searchType = request.args.get('type')
         searchValue = request.args.get('value')
         
-        result = []
-        page = 0
+        if int(searchType) == 0: # 제목으로 검색
+            posts = studyPost.findByTitleAndPage(searchValue, page, 10)
+            post_cnt = studyPost.countBySearchTitle(searchValue)
 
-        page = request.args.get('page')
+        elif int(searchType) == 1 : # 글쓴이로 검색
+            posts = studyPost.findByWriterAndPage(searchValue, page, 10)
+            post_cnt = studyPost.countBySearchWriter(searchValue)
 
-        if not page :
-            return jsonify(result)
+        required_page = post_cnt // 10 + 1
 
-        page = int(page)
+    if not posts:
+        return {
+            'posts': result,
+            'num': required_page,
+        }
+
+    postOrder = 1
+    for post in posts:
+        result.append({
+            'id': postOrder,
+            'studyId': post.id,
+            'title': post.title,
+            'writerId': post.writer,
+            'writerNick': findNickName(post.writer),
+            'curDate': mainFormattedDate(post.curDate),
+            'likes': post.likes,
+            'views': post.views
+        })
+        postOrder += 1
+
+    return {
+        'posts' : result,
+        'num': required_page
+    }
+
+@study_bp.route('/<int:id>/apply', methods=['POST']) # 스터디 신청
+@login_required
+def applyStudy(id,  loginMember, new_token ) :
 
 
-        if (searchType is None) or (searchValue is None) : # 전체 글 출력
-            posts = studyPost.getStudy()
-            requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
+    roomId = studyPost.findRoomId(id)
+    done = StudyRoom.addStudent(loginMember.id, roomId)
+    print(done)
+    
+    post = studyPost.findById(id) 
+    Alarm.insertAlarm(post.writer, loginMember.id, roomId, 1)
+    print("studyRoom alarm")
 
-            for i in range(page):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
-                studyList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
-
-            for row in studyList:
-                post = {
-                    'id': row[0],
-                    'title': row[1],
-                    'writer': findNickName(row[2]),
-                    'curDate': row[3],
-                    'likes': row[5],
-                    'views': row[6]
-                }
-                post['curDate'] = mainFormattedDate(row[3])
-
-                result.append(post)
-
-            return jsonify({
-                'posts': result,
-                'num': requiredPage,
-                #'rec' : recStudy
-            })
-
-
-        else : # 글 검색
-            posts = []
-
-            if int(searchType) == 0: # 제목으로 검색
-                posts = studyPost.findByTitle(searchValue, 0)
-            else: # 글쓴이로 검색
-                posts = studyPost.findByWriter(searchValue, 0)
-
-            result = []
-
-            if posts is None :
-                pass # 결과 없을 시 empty list
-            else :
-                for i in range(page):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
-                    requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
-                    studyList = studyPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
-                    
-                for i in range(len(posts)) :
-                    post = {
-                        'id' : posts[i][0],
-                        'title' : posts[i][1],
-                        'writer' : findNickName(posts[i][2]),
-                        'curDate' : posts[i][3],
-                        'likes' : posts[i][5],
-                        'views' : posts[i][6]
-                    }
-                    post['curDate'] = mainFormattedDate(posts[i][5])
-                    
-                    result.append(post)
-
-            return jsonify({
-                'posts' : result,
-                'num': page
-                #'rec' : recStudy
-                })
-            
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
 
 @study_bp.route('/<int:id>', methods=['GET'])
-def showDetail(id) :
-    if request.method == 'GET' :    # 글 조회
+@login_required
+def showDetail(id, loginMember, new_token) :     # 글 조회
 
-        apply = request.args.get('apply')
-
-        if apply == 'go' : # 스터디 신청
-            roomId = studyPost.findRoomId(id)
-
-            studentsList_string = StudyRoom.getStudentList(roomId)
-
-            newStudentList = ''
-
-            if not studentsList_string :
-                newStudentList = f'["{current_user.get_id()}"]'
-                # newStudentList = f'["a"]' # dummmmmmmmmmmmmmy
-            else :
-                studentsList = json.loads(studentsList_string) # list
-                studentsList.append(current_user.get_id())
-                # studentsList.append("a") # dummmmmmmmmmmmmmy
-                newStudentList = str(studentsList)
-                newStudentList = newStudentList.replace("\'", "\"")
-
-            done = StudyRoom.addStudent(roomId, newStudentList)
-
+        memId = loginMember.id
 
         result = {}
 
         post = studyPost.findById(id)
 
-        postDate = getFormattedDate(formatDateToString(post._curDate))
+        postDate = getFormattedDate(formatDateToString(post.curDate))
         
         roomId= studyPost.findRoomId(id) #roomName 조회위해서 미리 변수로 리턴받음
-
-        isApplied = None
-        try : # 익명의 경우
-            isApplied = f'"{current_user.get_id()}"' in StudyRoom.getStudentList(roomId)
-            # print("ISAPPLIED" + str(isApplied))
-        except Exception as ex:
-            isApplied = False
-            # print("에러 발생 : " + str(ex))
+        
+        studentList = StudyRoom.findMemberByRoomId(roomId)
+        
+        print(studentList)
+        for member in studentList:
+            if loginMember is None:
+                isApplied = False
+            elif Member.findById(memId) == member:
+                isApplied = True
+            else:
+                isApplied = False
+                
+        print("isApplied")
+        print(isApplied)
 
         liked = 0
         try : # 익명의 경우
-            liked = studyPost.findLike(current_user.get_id(), id)
+            liked = studyPost.findLike(memId, id)
         except Exception as ex :
             liked = False
 
         result = {
             'isApplied' : isApplied,
-            'title': post._title,
-            'writer' : findNickName(post._writer),
-            'content': post._content,
+            'title': post.title,
+            'writer' : findNickName(post.writer),
+            # 'writerImage': getProfileImage(current_user.id),
+            'content': post.content,
             'curDate' : postDate,
-            'likes' : post._likes,
+            'likes' : post.likes,
             'liked' : liked,
-            'views': post._views,
+            'views': post.views,
             'roomId' : roomId,
             'roomTitle' : studyPost.getRoomName(roomId),
             'totalP': studyPost.getTotalP(roomId),
-            'joinP' : studyPost.getJoinP(roomId)
+            'joinP' : studyPost.getJoinP(roomId),
+            'roomImage' : studyPost.getRoomImage(roomId)
             }
         
         viewresult = studyPost.updateViews(id)
@@ -189,71 +177,81 @@ def showDetail(id) :
                 'id' : reply[0],
                 'writer' : findNickName(reply[1]),
                 'content' : reply[2],
-                'date' : date
+                'date' : getFormattedDate(date),
+                'profileImage': getProfileImage(reply[1])
             })
 
-        return jsonify({
-            'post' : result,
-            'reply' : replyResult
-        })
+        return {
+            'data' : {
+                'post' : result,
+                'reply' : replyResult
+            },
+            'access_token' : new_token
+        }
         
-@study_bp.route('/update/<int:id>', methods = ['PUT'])
-def updatePost(id):
-    if request.method == 'PUT':     # 게시글 수정
-        id = request.get_json()['postId']
-        postContent = request.get_json()['content']
+@study_bp.route('/<int:id>', methods = ['PATCH'])
+@login_required
+def updatePost(id, loginMember, new_token): # 게시글 수정
         
-        try :
-            done = studyPost.updateStudy(id, postContent)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
+    postContent = request.get_json()['content']
+    postTitle = request.get_json()['title']
+    
+    studyPost.updateStudy(id, postContent, postTitle)
 
-        return jsonify({
-            'done' : done
-        })
+    return {
+        'data': None,
+        'access_token' : new_token
+        }
          
-@study_bp.route('/delete/<int:id>', methods = ['POST', 'PUT', 'DELETE'])
-def deletePost(id):
-    if request.method == 'DELETE':      # 게시글 삭제
-        id = request.get_json()['postId']
+@study_bp.route('/<int:id>', methods = ['DELETE'])
+@login_required
+def deletePost(id, loginMember, new_token): # 게시글 삭제
+
+    studyPost.deleteStudy(id)
+
+    return {
+        'data': None,
+        'access_token' : new_token
+    }
+
+@study_bp.route('/<int:studyId>', methods = ['POST'])
+@login_required
+def replyPost(studyId,  loginMember, new_token ) :        # 댓글 작성
+    cnt = request.get_json()['content']
+
+    writer = loginMember.id
+
+    date = datetime.now()
+
+    try :
+        replyId = ReplyStudy.writeReply(writer, cnt, date, studyId)
+        # studyReplyAlarm 에 추가
+        post = studyPost.findById(studyId)
+        Alarm.insertAlarm(post.writer, writer, replyId, 3)
+        print("insert alarm")
         
-        try :
-            done = studyPost.deleteStudy(id)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
-
-        return jsonify({
-            'done' : done
-        })
-
-
-@study_bp.route('/<int:studyId>', methods = ['POST', 'PUT', 'DELETE'])
-def reply(studyId) :
-    if request.method == 'POST' : # 댓글 작성
-
-        cnt = request.get_json()['content']
-
-        writer = current_user.get_id()
-
-        date = datetime.now()
-
-        try :
-            replyId = ReplyStudy.writeReply(writer, cnt, date, studyId)
-        except Exception as ex:
-            print("에러 이유 : " + str(ex))
-            replyId = 0
-
-        return jsonify({
-            'id' : replyId, # 0 is fail
+    except Exception as ex:
+        print("에러 이유 : " + str(ex))
+        replyId = 0
+        
+        return{
+            'status': 400,
+            'data' : None,
+            'message' : "댓글을 달 수 없습니다.",
+            'access_token' : new_token
+        }
+    return {
+        'data': {
+            'id' : replyId, 
             'date' : formatDateToString(date)
-        })
+        },
+        'access_token' : new_token
+    }
 
-    elif request.method == 'PUT' : # 댓글 수정
+@study_bp.route('/<int:studyId>/<int:replyId>', methods = ['PATCH'])
+@login_required
+def replyPatch(studyId, replyId, loginMember, new_token ) :    # 댓글 수정
 
-        replyId = request.get_json()['id']
-        # print(replyId)
         newContent = request.get_json()['content']
 
         try :
@@ -262,13 +260,22 @@ def reply(studyId) :
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return jsonify({
-            'done' : done
-        })
+        if done == 0:
+            return{
+                'status': 400,
+                'data' : None,
+                'message' : "댓글을 수정할 수 없습니다.",
+                'access_token' : new_token
+            }
+        else:
+            return {
+                'data':None,
+                'access_token' : new_token
+            }
 
-    else : # 댓글 삭제
-
-        replyId = request.get_json()['id']
+@study_bp.route('/<int:studyId>/<int:replyId>', methods = ['DELETE'])
+@login_required
+def replyDelete(studyId, replyId, loginMember, new_token ) :     # 댓글 삭제
 
         try :
             done = ReplyStudy.removeReply(replyId)
@@ -276,18 +283,20 @@ def reply(studyId) :
             print("에러 이유 : " + str(ex))
             done = 0
 
-        return jsonify({
-            'done' : done
-        })
+        return {
+            'data': None,
+            'access_token' : new_token
+        }
 
+@study_bp.route('/create', methods=['GET', 'POST'])
 @login_required
-@study_bp.route("/create", methods=['GET', 'POST'])
-def write():
+def write(loginMember, new_token): # 글 작성
+
     if request.method == 'GET' :
+
         result = []
 
-        roomList = studyPost.getMyStudyList(current_user.get_id())
-        # roomList = studyPost.getMyStudyList('a')
+        roomList = studyPost.getMyStudyList(loginMember.id)
 
         for room in roomList :
             result.append({
@@ -295,48 +304,53 @@ def write():
                 'label' : room[1]
             })
 
-        # print(result)
-        return jsonify(result)
+        return {
+            'data' : {
+                'result' : result
+            },
+            'access_token' : new_token
+        }
+    else : # POST
 
-    else :
-
-        data = request.get_json(silent=True)
-
+        data = request.get_json()
 
         title = data['title']
-        writer = current_user.get_id()
-        curDate = studyPost.curdate()
         content = data['content']
+        roomId = data['roomId']
+        writer = loginMember.id
+        curDate = datetime.now()
         likes = 0
         views = 0
-        roomId = data['roomId']
         
-        done =studyPost.insertStudy(title, writer, curDate, content, likes, views, roomId)
+        studyPost.insertStudy(title, writer, curDate, content, likes, views, roomId)
         
-        return jsonify({
-            'done' : done
-        })
+        return {
+            'data': None,
+            'access_token': new_token
+        }
     
+@study_bp.route('/<int:id>/like', methods=['POST'])
 @login_required
-@study_bp.route('/<int:id>/like', methods=['GET', 'POST'])
-def like(id):
-    memId = current_user.get_id()
+def like(id, loginMember, new_token ):
+    memId = loginMember.id
     post = studyPost.findById(id)
+
+    postId = request.get_json()['postId']
     
-    if request.method=='POST':
-        postId = request.get_json()['postId']
-        
-        print(memId, postId)
-        studyPost.Like(memId, id)
-     
-        
-    if request.method == 'GET':
-        likes = post._likes
-        liked = studyPost.findLike(memId, id)
-        return jsonify({
+    print(memId, postId)
+    studyPost.Like(memId, id)
+    
+    likes = studyPost.getLikes(id)
+    liked = studyPost.findLike(memId, id)
+    print(likes)
+    print(liked)
+    
+    return {
+        'data': {
             'likes' : likes,
             'liked' : liked
-        })
-    return jsonify({'message': 'Invalid request method'})   # 추가: POST 요청 이외의 다른 요청에 대한 처리 로직
-        
+        },
+        'access_token' : new_token
+    }
+ 
 

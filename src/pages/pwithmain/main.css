@@ -53,18 +53,23 @@
 
 .study-content-img{
     width:250px; 
-    height:180px;
+    height:200px;
     background-color:#98afca;
-    margin: 25px auto;
+    margin: 15px auto;
     cursor: pointer;
+    overflow: hidden;
+    object-fit: cover;
 }
 
 .study-content-header{
     font-family: "TmoneyRoundWind";
-    font-size:large;
+    font-size: 16px;
     text-align: center;
     margin: 10px;
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden; 
+    text-overflow: ellipsis;
 }
 
 .ad-img1{

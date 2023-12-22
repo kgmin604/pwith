@@ -1,65 +1,115 @@
-from backend.model.db_mysql import conn_mysql
+from backend.controller import commit, commitAndGetId, selectAll, selectOne
 
 class Review :
-    def __init__(self, id, writer, content, mento) :
+    def __init__(self, id, writer, content, score, curDate, portfolio, room) :
         self.__id = id
         self.__writer = writer
         self.__content = content
-        self.__mento = mento
-
+        self.__score = score
+        self.__curDate = curDate
+        self.__portfolio = portfolio
+        self.__room = room
+    @property
+    def id(self) :
+        return self.__id
     @property
     def writer(self) :
-        return str(self.__writer)
-
+        return self.__writer
     @property
     def content(self) :
-        return str(self.__content)
-
+        return self.__content
     @property
-    def mentoId(self) :
-        return str(self.__mentoId)
-
+    def score(self) :
+        return self.__score
+    @property
+    def curDate(self) :
+        return self.__curDate
+    @property
+    def portfolio(self) :
+        return self.__portfolio
+    @property
+    def room(self) :
+        return self.__room
+        
     @staticmethod
-    def showReview(mentoId) :
+    def findByPortfolioId(portfolioId) :
 
-        sql = f"SELECT * FROM review WHERE mento = '{mentoId}'"
+        sql = f"SELECT * FROM review WHERE portfolio = {portfolioId} ORDER BY curDate DESC"
 
         reviews = selectAll(sql)
 
-        return reviews
+        result = []
+        
+        for r in reviews:
+            result.append(Review(r[0],r[1],r[2],r[3],r[4],r[5],r[6]))
+
+        return result
 
     @staticmethod
-    def writeReview(writer, content, mento) :
+    def save(writerId, content, score, curDate, portfolioId, roomId):
+
+        content = content.replace("\'", "\"")
         
-        sql = f"INSERT INTO review(writer, content, mento) VALUES({writer}, '{content}', {mento})"
+        sql = f"INSERT INTO review(writer, content, score, curDate, portfolio, room) VALUES({writerId}, '{content}', {score}, '{curDate}', {portfolioId}, {roomId})"
 
         reviewId = commitAndGetId(sql)
-
-        # if done == 0 :
-        #     mysql_db.rollback()
 
         return reviewId
 
     @staticmethod
-    def modifyReview(id, newCnt) :
+    def update(id, newCnt, newScore) :
 
-        sql = f"UPDATE review SET content = '{newCnt}' WHERE id = {id}"
+        newCnt = newCnt.replace("\'", "\"")
+
+        sql = f"UPDATE review SET content = '{newCnt}', score = {newScore} WHERE id = {id}"
 
         done = commit(sql)
 
-        if done == 0 :
-            mysql_db.rollback()
-        
         return done
 
     @staticmethod
-    def removeReview(id) :
+    def delete(id) :
 
         sql = f"DELETE FROM review WHERE id = {id}"
 
         done = commit(sql)
 
-        if done == 0 :
-            mysql_db.rollback()
-
         return done
+
+    @staticmethod
+    def findByIdAndRoom(id, roomId) :
+
+        sql = f"SELECT * FROM review WHERE id = {id} AND room = {roomId}"
+
+        r = selectOne(sql)
+
+        if not r :
+            return None
+
+        review = Review(r[0],r[1],r[2],r[3],r[4],r[5],r[6])
+
+        return review
+
+    @staticmethod
+    def findByRoom(roomId):
+
+        sql = f"SELECT * FROM review WHERE room = {roomId}"
+
+        r = selectOne(sql)
+
+        if not r :
+            return None
+
+        review = Review(r[0],r[1],r[2],r[3],r[4],r[5],r[6])
+
+        return review
+
+
+    @staticmethod
+    def existsByWriterAndRoom(roomId, writerId):
+
+        sql = f"SELECT EXISTS (SELECT id FROM review WHERE writer = {writerId} AND room = {roomId})"
+
+        result = selectOne(sql)[0]
+
+        return True if result == 1 else False

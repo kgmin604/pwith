@@ -1,0 +1,99 @@
+.help-top{
+    margin-top: 60px;
+    padding: 10px;
+}
+
+div.help-top
+.help-title{
+    text-align: center;
+    font-family: 'Noto Sans KR';
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+div.help-top
+.help-text{
+    text-align: center;
+    font-family: 'Noto Sans KR';
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.help-input{
+    margin: 10px 0;
+}
+
+div.help-input
+.items{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+div.help-input div.items
+.item{
+    width: 465px;
+    margin: 10px 0;
+    display: flex;
+    justify-content:flex-start;
+    gap: 10px;
+}
+
+div.help-input div.items div.item
+h4{
+    width: 120px;
+    height: 30px;
+    font-family: 'Noto Sans KR';
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 30px;
+}
+
+div.help-input div.items div.item
+input{
+    width: 240px;
+    height: 30px;
+    border: solid 1px lightgray;
+    font-family: 'Noto Sans KR';
+    font-size: 14px;
+    font-weight: 600;
+}
+
+div.help-input div.items div.item
+div{
+    width: 80px;
+    height: 30px;
+    line-height: 30px;
+    font-family: 'Noto Sans KR';
+    font-size: 14px;
+    font-weight: 600;
+    color:white;
+    background-color: #98AFCA;
+    border-radius: 3px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.help-id{
+    text-align: center;
+}
+
+div.help-id
+strong{
+    color: orange;
+    margin: 0 5px;
+}
+
+.help-btn{
+    margin: 30px auto;
+    width: 120px;
+    height: 35px;
+    line-height: 35px;
+    font-family: 'TmoneyRoundWind';
+    font-size: 16px;
+    font-weight: 400;
+    color:white;
+    background-color: #98AFCA;
+    text-align: center;
+    cursor: pointer;
+}

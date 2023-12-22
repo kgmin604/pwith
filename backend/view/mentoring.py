@@ -1,254 +1,366 @@
+from flask import Blueprint, request
+from flask_login import current_user
+from datetime import datetime
 import json
-import base64
-import pymysql
-from flask import Flask, session, Blueprint, request, jsonify
-from flask_login import login_required, current_user
+
+from backend.controller.member_mgmt import Member
 from backend.controller.mentor_mgmt import Portfolio
 from backend.controller.review_mgmt import Review
 from backend.controller.mentoringroom_mgmt import MentoringRoom
 from backend.controller.chat_mgmt import chat
-from backend.model.db_mysql import conn_mysql
-from datetime import datetime
+from backend.controller.alarm_mgmt import Alarm
+from backend.view import uploadFileS3, login_required, findSocialLoginMember, payKakao, payKakaoSuccess, findNickName, formatYMDHM
 
-mento_bp = Blueprint('mento', __name__, url_prefix='/mentoring')
+mento_bp = Blueprint('mentoring', __name__, url_prefix='/mentoring')
 
-@mento_bp.route('/main', methods = ['GET', 'POST'])
-def showAll() :
-    if request.method == 'GET' :
+@mento_bp.route('', methods=['POST']) # 포폴 작성
+@login_required
+def writePortfolio(loginMember, new_token):
 
-        searchValue = request.args.get('value')
-
-        if searchValue is None : # 전체 글 출력
-
-            allP = Portfolio.loadAll()
-            allP = list(allP) # tuple to list for change
-
-            result = []
-
-            for i in range(len(allP)) :
-                allP[i] = list(allP[i])
-
-                result.append({
-                    'writer' : allP[i][0],
-                    'subject' : json.loads(allP[i][2]),
-                    'image' : base64.b64encode(allP[i][3]).decode('utf-8'),
-                    'brief' : allP[i][4],
-                    'content' : allP[i][5]
-                })
-
-            return jsonify(result)
-
-        else : # 검색
-
-            mentos = Portfolio.search(searchValue)
-
-            result = []
-
-            if mentos is None :
-                pass # 결과 없을 시 empty list
-            else :
-                for i in range(len(mentos)) :
-                    mento = {
-                        'writer' : mentos[i][0],
-                        'subject' : json.loads(mentos[i][2]),
-                        'image' : base64.b64encode(mentos[i][3]).decode('utf-8'),
-                        'brief' : mentos[i][4],
-                        'content' : mentos[i][5]
-                    }
-                    
-                    result.append(mento)
-
-            return jsonify(result)
-
-
-@mento_bp.route('/<mentoId>', methods = ['GET'])
-def showDetail(mentoId) :
-    if request.method == 'GET' :
-
-        apply = request.args.get('apply')
-
-        if apply == 'go' : # 멘토링 신청
-
-            # 1. 룸 생성
-            mentiId = current_user.get_id()
-            roomName = str(mentoId) + "와 " + str(mentiId) + "의 공부방"
-
-            roomId = MentoringRoom.create(roomName, mentoId, mentiId)
-
-            # 2. 멘토링룸 쪽지로 전송
-
-            url = "http://localhost:3000/mentoringroom/" + str(roomId)
-
-            # 3. 쪽지 전송
-            menticontent = url + '\n' + "다음 스터디룸으로 입장해주세요."
-            mentocontent = '"' + mentiId + '"님이 멘토링을 신청하셨습니다.' + '\n' + ' 수락하시겠습니까?'
-            
-            done = chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
-            done = chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
-
-            return jsonify({
-                'status' : 'success' # 필없
-            })
-
-
-        detail = {}
-
-        portfolio = Portfolio.findByMento(mentoId)
-        review_list = Review.showReview(mentoId)
-        review = []
-
-        for rev in review_list :
-            review.append({
-                'reviewId' : rev[0],
-                'menti' : rev[1],
-                'review' : rev[2]
-            })
-        # print(type(base64.b64encode(@bytes@).decode('utf-8')))
-        detail = {
-            'mento' : portfolio.writer, # @property instead getter
-            'subject' : json.loads(portfolio.subject),
-            'image' : base64.b64encode(portfolio.image).decode('utf-8'),
-            'brief' : portfolio.brief,
-            'content' : portfolio.content
+    if Portfolio.existsByMentoId(loginMember.id):
+        return {
+            'status' : 400,
+            'message' : '포트폴리오 존재',
+            'data' : None,
+            'access_token' : new_token
         }
 
-        return jsonify({
-            'portfolio' : detail,
-            'review' : review
+    image = request.files['mentoPic']
+    mentoPic = uploadFileS3(image, 'mentoring')
+
+    data_str = request.form['data']
+    data = json.loads(data_str)
+
+    brief = data['brief']
+    content = data['content']
+    tuition = data['tuition']
+    subjects = data['subject']
+    duration = 1 # TODO DB 컬럼 삭제 후 수정 (현재는 임시)
+    if subjects == []:
+        return {
+            'status' : 404,
+            'message' : '불충분한 입력',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    date = datetime.now()
+
+    Portfolio.save(loginMember.id, mentoPic, brief, content, date, tuition, duration, subjects)
+
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
+
+@mento_bp.route('', methods = ['GET']) # 포폴 목록
+def listPortfolio() :
+
+    # 1. my portfolio
+    myPortfolioId = None
+
+    loginMember = current_user # chk session
+    if loginMember.is_anonymous : # chk tokens
+        loginMember, new_token = findSocialLoginMember()
+        
+    if loginMember != None :
+        myPortfolioId = Portfolio.findByMentoId(loginMember.id)
+
+    # 2. portfolio list
+    searchWord = request.args.get('search')
+    page = request.args.get('page')
+
+    if searchWord is None :
+        portfolios = Portfolio.findPaging(int(page) * 12 if page else 0)
+    else : # 검색
+        portfolios = Portfolio.searchByMento(searchWord, int(page) * 12 if page else 0)
+
+    portfolioList = []
+
+    for p in portfolios :
+
+        subjects = list(map(int, p[8].split(',')))
+
+        portfolioList.append({
+            'id' : p[0],
+            'mentoId' : p[1],
+            'mentoNick' : p[2],
+            'mentoPic' : p[3],
+            'brief' : p[4],
+            'tuition' : p[5],
+            'duration' : p[6],
+            'score' : p[7],
+            'subject' : subjects
         })
 
-@mento_bp.route('/<mentoId>', methods = ['POST', 'PUT', 'DELETE'])
-def review(mentoId) :
-    if request.method == 'POST' : # 후기 작성
+    result = {
+        'myPortfolio' : myPortfolioId,
+        'portfolioList' : portfolioList,
+        'isNext' : False if len(portfolioList) < 12 else True
+    }
 
-        cnt = request.get_json()['content']
+    return result
 
-        writer = current_user.get_id()
+@mento_bp.route('/<id>', methods = ['GET']) # 포폴 상세
+@login_required
+def showPortfolio(loginMember, new_token, id) :
 
-        try :
-            pk = Review.writeReview(writer, cnt, mentoId)
-        except Exception as ex:
-            print("에러 이유 : " + str(ex))
-            pk = 0
-
-        return jsonify({
-            'reviewId' : pk # 0 is fail
-        })
-
-    elif request.method == 'PUT' : # 후기 수정
-
-        reviewId = request.get_json()['reviewId']
-        newContent = request.get_json()['content']
-
-        try :
-            done = Review.modifyReview(reviewId, newContent)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
-
-        return jsonify({
-            'done' : done
-        })
-
-    else : # 후기 삭제
-
-        reviewId = request.get_json()['reviewId']
-
-        try :
-            done = Review.removeReview(reviewId)
-        except Exception as ex :
-            print("에러 이유 : " + str(ex))
-            done = 0
-
-        return jsonify({
-            'done' : done
-        })
-
-@mento_bp.route('/create', methods=['GET', 'POST'])
-def writePortfolio():
-    if request.method == 'POST':
-
-        portfolioInfo = request.form
-
-        mento = current_user.get_id()
-        subjects = portfolioInfo['subject']
-        # TODO string에서 list 형식으로 받아야 함. 현재는 str
-        brief = portfolioInfo['brief']
-        content = portfolioInfo['content']
-
-        # file = request.files['image'] # TODO image 받는 형식 바뀌어야 함
-        # image = file.read()
-
-
-        # TODO dummy
-        mentoPic = "https://s3.orbi.kr/data/file/united/251cc0d1434cc0aed00afe93082bb25a.jpeg"
-
-        date = datetime.now()
-
-        try:
-            # result = Portfolio.create(writer, subject, image, brief, content)
-            result = Portfolio.create(mento, mentoPic, brief, content, date, subjects)
-        except Exception as ex:
-            print(f"예외 발생: {ex}")
-            # connection.rollback()
-            result = 0
-        return jsonify({
-            'done': result
-        })
-
-@mento_bp.route('/update/<mentoId>', methods = ['GET', 'PUT'])
-def modifyPortfolio(mentoId) :
-
-    loginUser = current_user.get_id()
+    portfolio = Portfolio.findById(id)
     
-    if loginUser != mentoId : # 본인의 글에 접근한 게 아닐 때
-        return jsonify({
-            'status' : 'fail'
-        })
-
-    if request.method == 'GET' : # 작성 정보 띄우기
-
-        detail = {}
-
-        portfolio = Portfolio.findByMento(mentoId)
-
-        detail = {
-            'subject' : json.loads(portfolio.subject),
-            'image' : portfolio.image,
-            'brief' : portfolio.brief,
-            'content' : portfolio.content
+    if not portfolio:
+        return {
+            'status' : 400,
+            'message' : '없는 포트폴리오',
+            'data' : None,
+            'access_token' : new_token
         }
-        
-        return jsonify(detail)
 
-    else : # 'PUT'
+    mentoId = portfolio[10]
+    mentiId = loginMember.id
+    isJoining = MentoringRoom.existsByMentoMenti(mentoId, mentiId)
 
-        newPort = request.form
+    result = {
+        'mentoId' : portfolio[0],
+        'mentoNick' : portfolio[1],
+        'mentoPic' : portfolio[2],
+        'brief' : portfolio[3],
+        'content' : portfolio[4],
+        'tuition' : portfolio[5],
+        'duration' : portfolio[6],
+        'isOpen' : portfolio[7],
+        'score' : portfolio[8],
+        'subject' : list(map(int, portfolio[9].split(','))),
+        'isJoining' : isJoining
+    }
 
-        file = request.files['image']
-        image = file.read()
-        
-        # TODO string에서 list 형식으로 받아야 함. 현재는 str
-        done = Portfolio.update(mentoId, image, newPort['brief'], newPort['content'], newPort['subject'])
+    return {
+        'data' : result,
+        'access_token' : new_token
+    }
 
-        return jsonify({
-            'done' : done # 성공 시 1, 실패 또는 변경 사항 없을 시 0
+@mento_bp.route('/<id>', methods = ['PATCH']) # 포폴 수정
+@login_required
+def modifyPortfolio(loginMember, new_token, id) :
+
+    if not Portfolio.existsById(id):
+        return {
+            'status' : 400,
+            'message' : '없는 포트폴리오',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    if not Portfolio.existsByIdAndMento(id, loginMember.id):
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    if request.files.getlist('mentoPic'):
+        image = request.files['mentoPic']
+        mentoPic = uploadFileS3(image, 'mentoring')
+    else:
+        mentoPic = Portfolio.findMentoPicById(id)
+
+    data_str = request.form['data']
+    data = json.loads(data_str)
+
+    brief = data['brief']
+    content = data['content']
+    tuition = data['tuition']
+    duration = data['duration']
+    subjects = data['subject']
+    
+    Portfolio.update(id, mentoPic, brief, content, tuition, duration, subjects)
+
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
+
+@mento_bp.route('/<id>', methods = ['DELETE']) # 포폴 삭제
+@login_required
+def deletePortfolio(loginMember, new_token, id) :
+
+    if not Portfolio.existsById(id):
+        return {
+            'status' : 400,
+            'message' : '없는 포트폴리오',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    if not Portfolio.existsByIdAndMento(id, loginMember.id):
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    Portfolio.updateDeleted(id)
+
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
+
+@mento_bp.route('/<id>/state', methods = ['PATCH']) # ON/OFF
+@login_required
+def changeState(loginMember, new_token, id) :
+
+    if not Portfolio.existsById(id):
+        return {
+            'status' : 400,
+            'message' : '없는 포트폴리오',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    Portfolio.updateState(id, datetime.now())
+
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
+
+@mento_bp.route('/<id>/review', methods = ['GET']) # 후기 조회
+@login_required
+def showReview(loginMember, new_token, id):
+
+    if not Portfolio.existsById(id):
+        return {
+            'status' : 400,
+            'message' : '없는 포트폴리오',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    mentoId = Portfolio.findMentoById(id)
+
+    reviews = Review.findByPortfolioId(id)
+
+    result = []
+
+    for review in reviews:
+        result.append({
+            'writer': findNickName(review.writer),
+            'content': review.content,
+            'score': review.score,
+            'date': formatYMDHM(review.curDate)
         })
 
-@mento_bp.route('/delete/<mentoId>', methods = ['DELETE'])
-def deletePortfolio(mentoId) :
-    if request.method == 'DELETE' :
-        
-        loginUser = current_user.get_id()
-        
-        if loginUser != mentoId : # 본인의 글에 접근한 게 아닐 때
-            return jsonify({
-                'status' : 'fail'
-            })
+    return {
+        'data' : result,
+        'access_token' : new_token
+    }
 
-        done = 0
-        done = Portfolio.delete(mentoId)
+tids = {}
+classes = {}
+@mento_bp.route('/<id>/apply', methods=['POST']) # 멘토링 신청 + 결제
+@login_required
+def applyMentoring(loginMember, new_token, id) :
 
-        return jsonify({
-            'done' : done
-        })
+    if not Portfolio.existsById(id):
+        return {
+            'status' : 400,
+            'message' : '없는 포트폴리오',
+            'data' : None,
+            'access_token' : new_token
+        }
+    
+    mentiId = loginMember.id
+    mentoId = Portfolio.findMentoById(id)
+    if mentiId == mentoId:
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    # 1. 결제
+    global tids, classes
+
+    class_cnt = request.get_json()['classes']
+
+    portfolio_tuition = Portfolio.findById(id)[5] # TODO refactoring
+
+    item_name = f'{findNickName(mentoId)} 멘토링 수업료'
+    total_tuition = class_cnt * portfolio_tuition
+    response = payKakao(id, loginMember, item_name, total_tuition, True)
+    # print(response)
+
+    if response.get('code', None):
+        return {
+            'status': 404,
+            'message': '결제 실패',
+            'data': None,
+            'access_token': new_token
+        }
+
+    classes[loginMember.id] = class_cnt
+    tids[loginMember.id] = response['tid']
+
+    redirect_url = response['next_redirect_pc_url']
+
+    return {
+        'data': {
+            'pay_url': redirect_url
+        },
+        'access_token': new_token
+    }
+
+@mento_bp.route('/<id>/pay/success', methods=['GET']) # 결제 성공 시 방 생성 & 쪽지 전송
+@login_required
+def applySuccess(loginMember, new_token, id):
+
+    global tids, classes
+
+    pg_token = request.args.get('pg_token')
+
+    response = payKakaoSuccess(loginMember, pg_token, tids.get(loginMember.id, ''))
+
+    if response.get('code', None):
+        return {
+            'status': 404,
+            'message': '결제 승인 요청 실패',
+            'data': None,
+            'access_token': new_token
+        }
+
+    # 2. 룸 생성
+    mentiId = loginMember.id
+    mentoId = Portfolio.findMentoById(id)
+
+    mentiNick = loginMember.nickname
+    mentoNick = findNickName(mentoId)
+
+    roomName = f"멘토 {mentoNick}와 멘티 {mentiNick}의 공부방"
+
+    roomId = MentoringRoom.save(roomName, datetime.now(), mentoId, mentiId, id)
+
+    # 3. 멘토링룸 링크 생성
+    room_url = "http://localhost:3000/mentoringroom/" + str(roomId)
+
+    # 4. 쪽지 전송
+    menticontent = f"스터디룸 <a style=color:#6666FF;font-weight:700; href={room_url}>여기</a>로 입장해주세요."
+    mentocontent = f"[{mentiNick}]님과 멘토링을 진행합니다."
+    
+    # chat.insertChat(mentiId, mentoId, mentocontent, datetime.now())
+    # chat.insertChat(mentoId, mentiId, menticontent, datetime.now())
+    
+    Alarm.insertAlarm(mentiId, mentoId, roomId, 2)
+
+    # 5. 수업 횟수 증가
+    MentoringRoom.updateLessonCnt(roomId, classes.get(mentiId, 0))
+
+    del tids[mentiId]
+    del classes[mentiId]
+
+    return {
+        'data': None,
+        'access_token': new_token
+    }

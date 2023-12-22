@@ -1,52 +1,79 @@
-from backend.model.db_mysql import conn_mysql
 from backend.controller import commit, selectAll, selectOne, rollback
 from datetime import datetime
 
 class QNAPost() :
-    def __init__(self, id, title, writer, content, curDate, category, likes, views):
-        self._id = id
-        self._title = title
-        self._writer = writer
-        self._content = content
-        self._curDate = curDate
-        self._category = category
-        self._likes = likes
-        self._views = views
+    def __init__(self, id, title, writer, curDate, content, category, likes, views):
+        self.__id = id
+        self.__title = title
+        self.__writer = writer
+        self.__curDate = curDate
+        self.__content = content
+        self.__likes = likes
+        self.__views = views
+        self.__category = category
+    @property
+    def id(self) :
+        return self.__id
+    @property
+    def title(self) :
+        return self.__title
+    @property
+    def writer(self):
+        return self.__writer
+    @property
+    def content(self) :
+        return self.__content
+    @property
+    def curDate(self) :
+        return self.__curDate
+    @property
+    def category(self):
+        return self.__category
+    @property
+    def likes(self):
+        return self.__likes
+    @property
+    def views(self) :
+        return self.__views
         
     @staticmethod
     def insertQNA(title, writer, curDate, content, category, likes, views):     # qna 글 생성
+
+        content = content.replace("\'", "\"")
         
-        sql = f"INSERT INTO qna ( title, writer, curDate, content, category, likes, views) VALUES ( '{str(title)}', '{str(writer)}', '{str(curDate)}', '{str(content)}', '{int(category)}','{int(likes)}', '{int(views)}')"
+        sql = f"INSERT INTO qna (title, writer, curDate, content, category, likes, views) VALUES ( '{title}', '{writer}', '{curDate}', '{content}', '{category}','{likes}', '{views}')"
         
         done = commit(sql)
 
         return done
     
     @staticmethod
-    def updateQna(postId, content):   # qna 게시글 내용 수정
-        sql = f"UPDATE qna SET content = '{str(content)}' WHERE id = '{str(postId)}'"
+    def updateQna(postId, content, title):   # qna 게시글 내용 수정
+
+        content = content.replace("\'", "\"")
+
+        sql = f"UPDATE qna SET content = '{content}', title = '{title}' WHERE id = {postId}"
+
         done = commit(sql)
-        if done ==0:
-            rollback()
             
         return done
     
     @staticmethod
     def deleteQna(qnaID):   # Qna 게시글 삭제
-        sql = f"DELETE from qna WHERE id = '{str(qnaID)}'"
+
+        sql = f"DELETE from qna WHERE id = '{qnaID}'"
+        
         done = commit(sql)
-        if done ==0:
-            rollback()
         
         return done
 
-    def curdate():  # date 구하는 함수
-        now = datetime.now()
-        return str(now)
-    
     @staticmethod
-    def getQNA():   # QNA 게시글 넘겨주는 함수
-        sql = "select * from qna order by curDate desc"
+    def getQNA(category):   # QNA 게시글 넘겨주는 함수
+        if category <11 : 
+            sql = f"select * from qna where category = '{int(category)}' order by curDate desc"
+        else:
+            sql = f"select * from qna order by curDate desc"
+
         rows = selectAll(sql)
   
         # mysql_db.close()
@@ -54,7 +81,7 @@ class QNAPost() :
     
     @staticmethod
     def findByWriter(writer) : # 글쓴이로 검색 & 내 글 목록
-        sql = f"SELECT * FROM qna WHERE writer = '{writer}' order by curDate desc"
+        sql = f"SELECT * FROM qna, member WHERE qna.writer = member.id and member.nickname LIKE '%{writer}%' order by curDate desc"
 
         posts = selectAll(sql) # tuple의 tuple
      
@@ -62,15 +89,28 @@ class QNAPost() :
             return None
         
         return posts
-    
+
+    @staticmethod
+    def findByWriterId(writer_id) :
+
+        sql = f"SELECT * FROM qna, member WHERE writer= member.id and member.nickname = '{str(writer_id)}' ORDER BY curDate DESC"
+        sql = f"SELECT * FROM qna WHERE writer = {writer_id} ORDER BY curDate DESC"
+
+        posts = selectAll(sql)
+        
+        result = []
+        for p in posts :
+            result.append(QNAPost(p[0],p[1],p[2],p[3],p[4],p[5],p[6],p[7]))
+        
+        return result
+
     @staticmethod
     def findByTitle(title) : # 제목으로 검색
        
-        sql = f"SELECT * FROM qna WHERE title = '{title}' order by curDate desc"
+        sql = f"SELECT * FROM qna WHERE title LIKE '%{title}%' order by curDate desc"
 
         posts = selectAll(sql) # page 만들 시 fetchmany() 사용
-   
-        print(posts)
+        
         if not posts :
             return None
         
@@ -84,7 +124,7 @@ class QNAPost() :
         if not res :
             return None
 
-        post = QNAPost(res[0],res[1], res[2], res[4], res[3], res[5], res[6], res[7])
+        post = QNAPost(res[0],res[1], res[2], res[3], res[4], res[5], res[6], res[7])
         return post
     
     @staticmethod
@@ -151,30 +191,23 @@ class QNAPost() :
         rows = selectAll(sql)
        
         return rows
-    
-    @property
-    def title(self) :
-        return str(self._title)
-    @property
-    def content(self) :
-        return self._content
-    @property
-    def views(self) :
-        return self._views
-    @property
-    def curDate(self) :
-        return self._curDate
-    @property
-    def writer(self):
-        return self._writer
-    @property
-    def category(self):
-        return self._category
-    @property
-    def likes(self):
-        return self._likes
+
+    @staticmethod
+    def insertReplyAlarm(memId, oppId, id):
+            sql = f"insert into replyQnaAlarm (memId, oppId, contentId) values ('{memId}', '{oppId}', '{id}')"
+            
+            done = commit(sql)
+            
+            return done
     
    # @staticmethod
    # def getLiked(memId, postId):
    #     sql = f"SELECT liked from liked where memberId = '{str(memId)}' and postId = '{str(postId)}'"
     
+        
+    def getLikes(id):
+        sql = f"select likes from qna where id = '{id}'"
+        row = selectOne(sql)
+        likes = row[0]
+        
+        return likes

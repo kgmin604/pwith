@@ -1,0 +1,621 @@
+.room-detail-wrap{
+    margin: 0 0;
+    padding: 0 0;
+}
+
+div.room-detail-wrap div.row
+.col-md-3
+{
+    width: 20%;
+    margin: 0 0;
+    padding: 0 0;
+}
+
+div.room-detail-wrap div.row
+.col-md-9
+{
+    width: 80%;
+    margin: 0 0;
+}
+
+/* info 영역 */
+
+div.room-detail-wrap
+.info-area{
+    border-radius: 10px;
+    background-color: rgb(241, 241, 241) ;
+    width: 200px;
+    height: 370px;
+    margin: 0 auto;
+    display: flex; /* 플렉스 컨테이너로 설정 */
+    flex-direction: column;
+    align-items: center;
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area
+.img-area{
+    width: 180px;
+    height: 120px;
+    overflow: hidden;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area div.img-area
+img{
+    display: block;
+    width: 100%; 
+    height: 100%;
+    object-fit: cover;
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area
+.info-header{
+    width: 80%;
+    height: 70px;
+    border-bottom: 1px solid lightgray;
+    margin: 15px 0;
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area
+span{
+    font-size: 11px;
+    color: gray;
+    text-decoration: underline;
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area div.info-header
+h3{
+    margin: 5px 0;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area div.info-header
+.leader{
+    font-size: 14px;
+    color: rgb(61, 105, 144);
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area
+.setting{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 5px 0;
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area div.setting
+.mike-button {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    border-radius: 50px;
+    background-color: #FF6969;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area div.setting
+.video-button {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    border-radius: 50px;
+    background-color: #83B97A;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+div.room-detail-wrap div.row div.col-md-3 div.info-area
+.ent-btn{
+    cursor: pointer;
+    text-align: center;
+    line-height: 30px;
+    height: 30px;
+    width: 80%;
+    margin: 10px auto;
+    font-size: 14px;
+    font-weight: 400;
+    color:white;
+    border:solid 1px rgb(61, 105, 144);
+    border-radius: 5px;
+    background-color: rgb(61, 105, 144);
+}
+
+/* content 영역 */
+
+/* top */
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area 
+.top{
+    display: flex;
+    flex-direction: column;
+}
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area div.top
+h2{
+    line-height: 50px;
+    font-size: 24px;
+    font-weight: 600; 
+    margin: 0 5px;
+    display: inline;
+    float: left;
+    color: rgb(61, 61, 61);
+}
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area div.top
+.notice{
+    width: 100%;
+    height: 40px;
+    background-color: rgb(247, 247, 247);
+    padding-left: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area div.top div.notice
+input{
+    width: 90%;
+    height: 30px;
+    border: solid 1px gray;
+}
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area div.top div.notice
+.notice-btn{
+    width: 45px;
+    height: 30px;
+    line-height: 30px;
+    background-color: rgb(61, 105, 144);
+    border-radius: 5px;
+    color: white;
+    font-weight: 500;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    margin: 5px 0;
+}
+
+
+.fapencil{
+    cursor: pointer;
+}
+
+/* bottom */
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area 
+.bottom{
+    display: flex;
+}
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area div.bottom
+.member-list{
+    width: 30%;
+    border: 1px solid lightgray;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.member-list
+.items{
+    display: flex;
+    float: left;
+    flex-direction: column;
+    align-items: center;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.member-list
+h2{
+    font-family: "Noto Sans KR";
+    font-weight: 700;
+    font-size: 20px;
+    margin: 10px;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.member-list div.items 
+.item{
+    display: flex;
+    align-items: center;
+    width: 90%;
+    height: 30px;
+    margin: 5px 0;
+    padding: 0 0;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.member-list div.items div.item
+h3{
+    display: block;
+    width: 280px;
+    font-size: 16px;
+    font-family: "Noto Sans KR";
+    font-weight: 600;
+    margin-top: 10px;
+    
+}
+
+div.room-detail-wrap div.content-area div.bottom div.member-list div.items div.item
+.send-btn{
+    color: #98afca;
+    cursor: pointer;
+    margin-top: 4px;
+}
+div.room-detail-wrap div.content-area div.bottom div.member-list div.items div.item
+.send-btn:hover{
+    color: rgb(61, 105, 144);
+}
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area  div.bottom
+.member-chat{
+    width: 70%;
+    border: 1px solid lightgray;
+}
+
+div.room-detail-wrap div.member-chat
+.chats{
+    height: 500px;
+    padding: 10px;
+}
+
+div.room-detail-wrap div.member-chat div.chats
+.chat-type1{
+    display: flex;
+    gap: 7px;
+    margin: 15px 0;
+}
+
+div.room-detail-wrap div.member-chat div.chats div.chat-type1
+img{
+    width: 40px;
+    height: 40px;
+    border-radius: 100px;
+}
+
+div.room-detail-wrap div.member-chat div.chats div.chat-type1
+.content{
+    width: 100%;
+}
+
+div.room-detail-wrap div.member-chat div.chats div.chat-type1
+.chat-time{
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+    margin: 0 0;
+    padding: 0 0;
+}
+
+div.room-detail-wrap div.member-chat div.chats div.chat-type1
+h3{
+    font-size: 14px;
+    font-weight: bold;
+}
+
+div.room-detail-wrap div.member-chat div.chats div.chat-type1
+time{
+    line-height: 20px;
+    font-size: 12px;
+}
+
+div.room-detail-wrap div.member-chat div.chats div.chat-type1
+p{
+    line-height: 20px;
+    overflow-wrap: break-word;
+    border-radius: 5px;
+    border: 2px solid #98afca;
+    max-width: 500px;
+    padding: 7px;
+    margin: 0 0;
+}
+
+div.room-detail-wrap div.member-chat div.chats
+.chat-type2{
+    width: 100%;
+    margin: 15px 0;
+}
+
+div.room-detail-wrap div.member-chat div.chats div.chat-type2
+.chat-time{
+    display: flex;
+    justify-content: flex-end;
+    gap: 3px;
+    align-items: flex-end;
+    margin: 0 0;
+    padding: 0 0;
+}
+
+div.room-detail-wrap div.member-chat div.chats div.chat-type2
+time{
+    line-height: 20px;
+    font-size: 12px;
+}
+
+div.room-detail-wrap div.member-chat div.chats div.chat-type2
+p{
+    line-height: 20px;
+    overflow-wrap: break-word;
+    border-radius: 5px;
+    border: 2px solid #98afca;
+    background-color: #98afca;
+    color: white;
+    max-width: 500px;
+    padding: 7px;
+    margin: 0 0;
+}
+
+div.room-detail-wrap div.member-chat
+.scroll{
+    overflow-y: scroll;
+    scrollbar-width: thin; /* for Firefox */
+    -ms-overflow-style: scrollbar; /* for Internet Explorer, Edge */
+}
+div.room-detail-wrap div.member-chat
+.scroll::-webkit-scrollbar {
+    width: 6px;
+}
+div.room-detail-wrap div.member-chat
+.scroll::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 3px;
+}
+div.room-detail-wrap div.member-chat
+.scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+div.room-detail-wrap div.member-chat
+h2{
+    font-family: "Noto Sans KR";
+    font-weight: 700;
+    font-size: 20px;
+    margin: 10px;
+}
+
+div.room-detail-wrap div.member-chat
+.sending-area{
+    height: 80px;
+    display: flex;
+}
+
+div.room-detail-wrap div.member-chat div.sending-area
+textarea{
+    width: 90%;
+    height: 100%;
+    font-family: 'Noto Sans KR';
+    font-weight: 600;
+    padding: 10px;
+}
+
+div.room-detail-wrap div.member-chat div.sending-area
+.sending-btn{
+    width: 10%;
+    height: 100%;
+    background-color: #98afca;
+    color: white;
+    font-family: 'Noto Sans KR';
+    font-weight: 700;
+    text-align: center;
+    padding-top: 27px;
+    cursor: pointer;
+    user-select: none;
+}
+
+div.room-detail-wrap div.member-chat div.sending-area
+.sending-btn:active{
+    background-color: rgb(61, 105, 144);
+}
+
+.room-delete-btn{
+    cursor: pointer;
+}
+
+/* 멘토링 상세 페이지 수업 횟수 관리 */
+
+div.room-detail-wrap div.row div.col-md-9 div.content-area div.bottom
+.number-list{
+    width: 30%;
+    border: 1px solid lightgray;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.number-list
+h2{
+    font-family: "Noto Sans KR";
+    font-weight: 700;
+    font-size: 20px;
+    margin: 10px;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.number-list
+.num-summary{
+    font-size: 14px;
+    color: gray;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.number-list
+.number-items{
+    width: 305px;
+    display: flex;
+    float: left;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+    flex-wrap: wrap; /* 여러 줄에 걸쳐 정렬되도록 설정 */
+    margin-top: 10px;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.number-list
+.number-item{
+    width: 26px;
+    height: 26px;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.number-list
+.non-selected{
+    background-color: lightgray;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.number-list
+.mentor-selected{
+    background-color: #98afca;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.number-list
+.both-selected{
+    background-color: rgb(61, 105, 144);
+}
+
+div.room-detail-wrap div.content-area div.bottom div.number-list
+.number-sign{
+    color: gray;
+    font-family: "TmoneyRoundWind";
+    text-align: center;
+    margin: 20px 0;
+    font-size: 14px;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.number-list
+.sign-items{
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.number-list div.sign-items
+.sign-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.number-list div.sign-items
+.sign-item span{
+    font-size: 12px;
+    color: gray;
+}
+
+.can-click{
+    cursor: pointer;
+}
+
+.review-btn-container{
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    flex-direction: column;
+    gap: 15px;
+}
+
+div.room-detail-wrap div.content-area div.bottom div.review-btn-container
+.review-btn{
+    width: 120px;
+    height: 30px;
+    line-height: 30px;
+    font-family: "TmoneyRoundWind";
+    text-align: center;
+    font-size: 14px;
+    color: white;
+    background-color: rgb(61, 105, 144);
+    border-radius: 3px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+    margin: 0px 80px;
+    cursor: pointer;
+}
+
+.star-items{
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.star-items
+span{
+    font-family: "Noto Sans KR";
+    color: gray;
+    font-weight: 600;
+}
+
+.review-text{
+    padding: 5px;
+    width: 100%;
+    height: 100px;
+    line-height: 20px;
+    border: 1px solid #e3e3e3;
+    box-sizing: border-box;
+    resize: none;
+    color: #292929;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.review-delete-btn{
+    font-size: 11px;
+    color: gray;
+    text-decoration: underline;
+    cursor: pointer;
+    text-align: center;
+    margin: 7px 0;
+}
+
+.pay-nums{
+    display: flex;
+    flex-direction: column;
+    width: 120px;
+    background-color: rgb(240, 240, 240);
+    margin-top: 0px;
+}
+
+div.pay-nums
+.pay-num{
+    text-align: center;
+    border: 2px gray;
+    height: 30px;
+    line-height: 30px;
+    cursor: pointer;
+    color: gray;
+}
+
+div.pay-nums
+.pay-num:hover{
+    background-color: lightgray;
+}
+
+.payback-item{
+    display: flex;
+    margin: 5px 0;
+    padding: 0 0;
+    height: 30px;
+}
+
+.payback-item
+h4{
+    width: 130px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: medium;
+}
+
+p.payback-items{
+    margin: 30px 0;
+}
+
+p.payback-items div.payback-item
+input{
+    width: 200px;
+    height: 30px;
+    font-size: medium;
+    border-radius: 3px;
+    border: gray 1.5px solid;
+}
+
+p.payback-items div.payback-item
+span{
+    height: 30px;
+    line-height: 30px;
+    margin: 0 5px;
+}

@@ -14,9 +14,25 @@
     margin: 0 auto;
 }
 
+.form-wrapper-update{
+    width:100%;
+    display: flex;
+    flex-direction: column;
+align-items: center;
+}
 
 .title-input {
     width: 765px;
+    height: 40px;
+    margin: 10px auto;
+    border: 1px solid #d1d1d1;
+    padding-left: 10px;
+    text-align: left;
+    color: gray;
+}
+
+.title-input-update {
+    width: 100%;
     height: 40px;
     margin: 10px auto;
     border: 1px solid #d1d1d1;
@@ -105,18 +121,22 @@ div.StudyCreate div.form-wrapper div.study-bottom-area .submit-button {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding-top: 12px;
+    gap: 40px;
 }
 
 div.rec-items
 .rec-item{
     width: 150px;
-    margin-top: 10px;
+    height: 100px;
 }
 
 div.rec-items div.rec-item
 img{
     width: 100%;
+    height: 100%;
     cursor: pointer;
+    object-fit: cover;
 }
 
 div.rec-items div.rec-item
@@ -217,6 +237,7 @@ img{
     width: 60px;
     height: 60px;
     margin-left: 10px;
+    object-fit: cover;
 }
 
 div.StudyPost div.studyroom-join
@@ -313,44 +334,36 @@ div.Board div.posts-area div.post-item
     margin: 20px 0;
 }
 
-div.Board div.pagination
-.control-page{
+.control-page-btn{
     margin: 0 10px;
     color: lightgray;
 }
 
-div.Board div.pagination
-.control-page:hover{
+.control-page-btn:hover{
     color: gray;
 }
 
-div.Board div.pagination
-.control-page:disabled{
+.control-page-btn:disabled{
     display: none;
 }
 
-div.Board div.pagination
 .pages{
     margin: 0 auto;
 }
 
-div.Board div.pagination
 .page{
     margin: 0 5px;
     cursor: pointer;
 }
 
-div.Board div.pagination
 .page:hover{
     color: black;
 }
 
-div.pagination
 .non-selected{
     color: gray;
 }
 
-div.pagination
 .selected{
     color: black;
     text-decoration: underline;

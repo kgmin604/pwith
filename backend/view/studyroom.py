@@ -1,58 +1,243 @@
 from flask import Flask, session, Blueprint, request, jsonify
-from flask_login import login_required, current_user
+from flask_login import current_user
 from datetime import datetime
+from bardapi import Bard
+from random import randint
+import json
+import os
+
+from backend import config
+from backend.view import uploadFileS3, s3, login_required, findNickName, formatYMDHM
+from backend.model.db_mongo import conn_mongodb
+from backend.controller.member_mgmt import Member
 from backend.controller.studyroom_mgmt import StudyRoom
 from backend.controller.mentoringroom_mgmt import MentoringRoom
 
-studyroom_bp = Blueprint('studyRoom', __name__, url_prefix='/studyroom')
+studyroom_bp = Blueprint('studyRoom', __name__, url_prefix='/study-room')
 
-@studyroom_bp.route('', methods=['GET', 'POST'])
-def showRoom() :
-    if request.method == 'GET' :
+@studyroom_bp.route('', methods=['GET'])
+@login_required
+def listRoom(loginMember, new_token) : # 룸 목록 조회
 
-        logUser = current_user.get_id()
+    studyRooms = StudyRoom.findByMemberId(loginMember.id)
+    mentoringRooms = MentoringRoom.findByMemberId(loginMember.id)
 
-        study_rooms = StudyRoom.show(logUser)
-        mentoring_rooms = MentoringRoom.show(logUser)
+    studyRoomList = []
+    mentoringRoomList = []
 
-        studyRoomList = []
-        mentoringRoomList = []
+    for room in studyRooms :
+        studyRoomList.append({
+            'id' : room.id,
+            'name' : room.name,
+            'leader' : room.leader,
+            'image' : room.image,
+            'joinP' : room.joinP
+        })
 
-        for r1 in study_rooms :
-            studyRoomList.append({
-                'roomId' : r1[0],
-                'title' : r1[1],
-                'category' : r1[2],
-                'leader' : r1[3],
-                'joinP' : r1[5],
-                'totalP' : r1[6]
-            })
+    for mr in mentoringRooms :
+        room = mr['room']
+        portfolio = mr['portfolio']
 
-        for r2 in mentoring_rooms :
-            mentoringRoomList.append({
-                'roomId' : r2[0],
-                'title' : r2[1]
-            })
+        mentoringRoomList.append({
+            'id' : room.id,
+            'name' : room.name,
+            'mento' : room.mento,
+            'image' : portfolio.mentoPic
+        })
 
-        return jsonify({
+    return {
+        'data' : {
+            'profileImage' : loginMember.image,
             'studyRoom' : studyRoomList,
             'mentoringRoom' : mentoringRoomList
-            })
+        },
+        'access_token' : new_token
+    }
 
-@studyroom_bp.route('/create', methods=['GET', 'POST'])
-def createRoom() :
-    if request.method == 'GET' :
-        pass
+@studyroom_bp.route('', methods=['POST'])
+@login_required
+def createRoom(loginMember, new_token) : # 룸 생성
+
+    default_image = request.args.get('image')
+
+    if not default_image :
+
+        file = request.files['image']
+        image = uploadFileS3(file, "studyroom")
     else :
-        info = request.get_json()
 
-        title = info['title']
-        category = info['category']
-        totalP = info['totalP']
-        leader = current_user.get_id()
+        location = s3.get_bucket_location(Bucket=config.S3_BUCKET_NAME)["LocationConstraint"]
+        
+        image = f"https://{config.S3_BUCKET_NAME}.s3.{location}.amazonaws.com/studyroom/default_study_image_{str(default_image)}.jpg"
 
-        done = StudyRoom.create(title, category, leader, totalP)
+    data_str = request.form['data']
+    data = json.loads(data_str)
 
-        return jsonify({
-            'done' : done
+    roomName = data['roomName']
+    category = data['category']
+    totalP = data['totalP']
+
+    roomId = StudyRoom.save(roomName, datetime.now(), category, loginMember.id, image, totalP)
+
+    done = StudyRoom.addStudent(loginMember.id, roomId)
+
+    if done != 1 :
+        return {
+            'status' : 400,
+            'message' : '실패',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
+
+@studyroom_bp.route('/<id>', methods=['PATCH'])
+@login_required
+def updateNotice(loginMember, new_token, id) : # 공지 수정
+
+    leaderId = StudyRoom.findById(id).leader
+    if loginMember.id != leaderId :
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    new_notice = request.get_json()['notice']
+
+    StudyRoom.updateNotice(id, new_notice)
+
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
+
+@studyroom_bp.route('/<id>', methods=['DELETE'])
+@login_required
+def deleteRoom(loginMember, new_token, id) : # 룸 삭제
+
+    leaderId = StudyRoom.findById(id).leader
+    if loginMember.id != leaderId :
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    StudyRoom.delete(id)
+
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
+
+@studyroom_bp.route('/<id>', methods=['GET'])
+@login_required
+def showRoom(loginMember, new_token, id) : # 룸 준비 페이지
+    
+    join_members = []
+    members = StudyRoom.findMemberByRoomId(id)
+
+    if loginMember not in members :
+        return {
+            'status' : 403,
+            'message' : '권한 없는 사용자',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    for m in members :
+        join_members.append({
+            'memId' : m.memId,
+            'nickname' : m.nickname,
+            'image' : m.image
         })
+
+    chats = []
+    chatList = conn_mongodb().studyroom_chat.find({'roomId':int(id)})
+
+    for c in chatList:
+        chats.append({
+            'sender' : c['sender'],
+            'content' : c['content'],
+            'date' : formatYMDHM(c['createdAt'])
+        })
+
+    room = StudyRoom.findById(id)
+
+    return {
+        'data' : {
+            'room' : {
+                'id' : id,
+                'name' : room.name,
+                'notice' : room.notice if room.notice else '',
+                'leader' : findNickName(room.leader),
+                'image' : room.image,
+                'members' : join_members,
+            },
+            'chat' : chats
+        },
+        'access_token' : new_token
+    }
+    
+@studyroom_bp.route('/live/<id>', methods=['GET'])
+@login_required
+def studyStart(loginMember, new_token, id): # 룸 상세
+    
+    room = StudyRoom.findById(id)
+    members = StudyRoom.findMemberByRoomId(id)
+
+    return{
+        'data' : None,
+        'access_token' : new_token
+    }
+    
+@studyroom_bp.route('/<id>/code-bard', methods=['POST'])
+@login_required
+def codeBard(id, loginMember, new_token) : # 코드 리뷰
+    
+    data = request.get_json(silent=True)
+    question = data['text']
+    
+
+    bard = Bard(token=config.BARD_TOKEN)
+    response = bard.get_answer(question)['content']
+    
+    return{
+        'data' : {
+            'answer': response
+        },
+        'access_token' : new_token
+    }
+    
+@studyroom_bp.route('/<id>/out', methods=['DELETE'])
+@login_required
+def studyOut(id, loginMember, new_token) : # 스터디 탈퇴
+
+    if not StudyRoom.existByMemberAndRoom(loginMember.id, id):
+        return {
+            'status': 403,
+            'message': '탈퇴 대상자 아님',
+            'data': None,
+            'access_token': new_token
+        }
+    
+    done = StudyRoom.deleteStudent(loginMember.id, id)
+    
+    if done == 0 :
+        return {
+            'status' : 400,
+            'message' : '스터디 탈퇴 불가능',
+            'data' : None,
+            'access_token' : new_token
+        }
+    else: 
+        return {
+            'data' : None,
+            'access_token' : new_token
+        }

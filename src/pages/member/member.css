@@ -286,7 +286,7 @@ div.cropper-area
     background-color: #98AFCA;
     color: white;
     float: right;
-    float:right;
+    border:none;
 }
 
 .acc-header{
@@ -314,6 +314,10 @@ div.cropper-area
     border-radius: 5px;
     border: solid 1px;
     border-color: #98AFCA;
+}
+
+.red-border{
+    border-color: red !important;
 }
 
 .pwBtn{
@@ -504,6 +508,13 @@ div.chat-bottom div.chat-box div.content div.item
     word-wrap: break-word;
 }
 
+div.chat-bottom div.chat-box div.content div.item
+.text >a{
+    color:#6666FF;
+    font-weight: 700;
+}
+
+
 div.mypage-chat
 .my-header{
     float: left;
@@ -516,7 +527,6 @@ div.mypage-chat
     cursor: pointer;
 }
 
-div.mypage-chat
 .modal{
     margin-left: -200px;
     margin-top: -106.5px;
@@ -529,7 +539,7 @@ div.mypage-chat
     
 }
 
-div.mypage-chat div.modal
+div.modal
 .close{
     display: block;
     float: right;
@@ -540,7 +550,7 @@ div.mypage-chat div.modal
     cursor: pointer;
 }
 
-div.mypage-chat div.modal
+div.modal
 h3{
     margin-bottom: 15px;
     font-size: 18px;
@@ -550,13 +560,13 @@ h3{
     padding-left: 10px;
 }
 
-div.mypage-chat div.modal
+/* div.mypage-chat */ div.modal
 .receiver{
     margin: 0 0;
     padding: 0 0;
 }
 
-div.mypage-chat div.modal p.receiver
+/* div.mypage-chat */ div.modal p.receiver
 input{
     width: 100%;
     height: 30px;
@@ -566,7 +576,7 @@ input{
     margin: 0 auto;
 }
 
-div.mypage-chat div.modal p
+/* div.mypage-chat */ div.modal p
 textarea{
     padding: 5px;
     width: 100%;
@@ -580,7 +590,7 @@ textarea{
     margin-top: 5px;
 }
 
-div.mypage-chat div.modal
+/* div.mypage-chat */ div.modal
 .button{
     width: 150px;
     height: 40px;
@@ -595,7 +605,7 @@ div.mypage-chat div.modal
     cursor: pointer;
 }
 
-div.mypage-chat div.modal
+/* div.mypage-chat */ div.modal
 .message{
     margin: 0 0;
     padding: 0 0;
@@ -607,6 +617,7 @@ div.mypage-chat div.modal
 }
 
 .scroll-area {
+    overflow-x: hidden;
   overflow-y: scroll;
   scrollbar-width: thin; /* for Firefox */
   -ms-overflow-style: scrollbar; /* for Internet Explorer, Edge */
@@ -754,4 +765,41 @@ div.join-item div.join-input
     color:white;
     font-family: 'TmoneyRoundWind';
     cursor: pointer;
+}
+
+.login-bottom{
+    width: 300px;
+    height: 30px;
+    margin: 0 auto;
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+div.login-bottom
+.item{
+    margin: 0px;
+    font-size: 10px;
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+div.login-bottom
+.partition{
+    font-size: 8px;
+    color: gray;
+}
+
+/* 소셜 로그인 회원 탈퇴 */
+
+.witdraw-pw-btn{
+    border-radius: 5px;
+    background-color: #2D61A0;
+    color: white;
+    font-size: small;
+    font-weight: 700;
+    font-family: 'Noto Sans KR';
+    user-select: none;
+    cursor: pointer;
+    padding: 3px 6px;
 }

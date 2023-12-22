@@ -1,13 +1,12 @@
-import React,{useState} from "react";
-import {useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import { Form, ListGroup } from "react-bootstrap";
 
 import moreImg from "../assets/img/more.png"
-import defaultUserImage from "../assets/img/default_user.png"
 
 function Reply(props) {
-    const { reply, id, item, setReply, replyNum, setReplyNum,baseUrl} = props;
+    const { reply, id, item, setReply, replyNum, setReplyNum, baseUrl } = props;
     const [more, setMore] = useState(false);
     const [update, setUpdate] = useState(false);
     const user = useSelector((state) => state.user);
@@ -22,17 +21,16 @@ function Reply(props) {
     };
 
     function deleteComment(replyId) {
-        if(baseUrl===undefined||id===undefined)return
-        axios.delete(`${baseUrl}/${id}`, {
+        if (baseUrl === undefined || id === undefined) return
+        axios.delete(`${baseUrl}/${id}/${replyId}`, {
             data: {
-                id: `${replyId}`
+                replyId: `${replyId}`
             }
         })
             .then(function (response) {
                 const filteredReply = reply.filter(reply => reply.id !== replyId);
                 setReply(filteredReply);
                 setReplyNum(replyNum - 1);
-                console.log('댓글삭제')
                 alert("댓글 삭제 성공");
             })
             .catch(function (error) {
@@ -43,9 +41,9 @@ function Reply(props) {
             });
     }
     function updateComment(replyId, content) {
-        if(baseUrl===undefined||id===undefined)return
-        axios.put(`${baseUrl}/${id}`, {
-            id: `${replyId}`,
+        if (baseUrl === undefined || id === undefined) return
+        axios.patch(`${baseUrl}/${id}/${replyId}`, {
+            replyId: `${replyId}`,
             content: `${content}`
         })
             .then(function (response) {
@@ -63,11 +61,9 @@ function Reply(props) {
                 // 오류발생시 실행
             })
     }
-
     return <div key={item.id}>{/* 댓글하나 */}
-        <div className='align-row' style={{justifyContent:"center",alignItems:"center"}}>
-            <img src={defaultUserImage} className='comment' style={{width:'45px',height:'45px'}} />
-            {/* <img src={item.image} className='comment' style={{width:'45px',height:'45px'}}/> */}
+        <div className='align-row' style={{ justifyContent: "center", alignItems: "center" }}>
+            {item.profileImage && <img src={`${item.profileImage}?version=${Math.random()}`} className='comment' style={{ width: '45px', height: '45px' }} />}
             <span style={{ width: '5px' }}></span>
             <div className='align-side'>
                 <div style={{ textAlign: 'start' }}>
@@ -81,14 +77,14 @@ function Reply(props) {
                     </> : item.content}
                 </div>
                 <div style={{ textAlign: 'end' }}>
-                    {user.id === item.writer && <img src={moreImg} className="more" onClick={() => setMore(!more)} />}
+                    {user.name === item.writer && <img src={moreImg} className="more" onClick={() => setMore(!more)} />}
                     <div>
                         {more && <ListGroup>
-                            <ListGroup.Item action onClick={() => {setUpdate(true); setMore(false) }}>수정</ListGroup.Item>
+                            <ListGroup.Item action onClick={() => { setUpdate(true); setMore(false) }}>수정</ListGroup.Item>
                             <ListGroup.Item action onClick={() => deleteComment(item.id)}>삭제</ListGroup.Item>
                         </ListGroup>}
                     </div>
-                    <div style={{ fontSize: '10px'}}>{item.date}</div>
+                    <div style={{ fontSize: '10px' }}>{item.date}</div>
                 </div>
             </div>
         </div>

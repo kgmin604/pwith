@@ -1,84 +1,672 @@
-import requests
-from bs4 import BeautifulSoup
-# from model.db_mongo import conn_mongodb
+from flask import Flask, session, Blueprint, render_template, redirect, request, jsonify, url_for
+from datetime import datetime
+from backend.model.db_mongo import conn_mongodb
+from backend.controller.community_mgmt import QNAPost
+from backend.controller.replyQna_mgmt import ReplyQna
+from backend.controller.alarm_mgmt import Alarm
+from backend.view import findNickName, getFormattedDate, mainFormattedDate, formatDateToString, getProfileImage
+from backend.view import login_required
 
-import pymongo
+community_bp = Blueprint('community', __name__, url_prefix='/community')
 
-MONGO_SERVER = 'mongodb+srv://pwith:pwith1234@cluster0.ezfau5x.mongodb.net/'
+@community_bp.route('', methods = ['GET'])
+def communityMain() :
+    news = []
+    conts = []
+    qna = []
 
-mongo_conn = pymongo.MongoClient(MONGO_SERVER)
+    news_db = conn_mongodb().ITnews_crawling.find().sort('_id', -1).limit(3)
+    for n in news_db :
 
-def conn_mongodb() :
-    try:
-        mongo_conn.admin.command('ismaster')
-        pwith_db = mongo_conn.pwith_db
-    except:
-        mongo_conn = pymongo.MongoClient(MONGO_SERVER)
-        pwith_db = mongo_conn.pwith_db
-    return pwith_db
+        title = n['title']
+        date = n['date']
+        url = n['url']
 
-header = {'User-Agent':'Mozilla/5.0'}
+        formatted_date = datetime.strptime(date, '%Y년 %m월 %d일').strftime('%Y-%m-%d')
 
-# date = '20230620'
-daum_url = 'https://news.daum.net/breakingnews/digital?page={}&regDate=20230625'
-
-def connectUrl(url, page=1) :
-    response = requests.get(url.format(page), headers=header)
-    return BeautifulSoup(response.text, 'html.parser')
-
-soup_date = connectUrl(daum_url, 1)
-news_date = soup_date.select_one('.box_calendar > .screen_out').text
-
-page = 1
-
-while True :
-    soup = connectUrl(daum_url, page)
-
-    '''
-    url_tags = soup.select('.list_allnews > li > div > strong > a')
-
-    for url_tag in url_tags :
-
-        soup = connectUrl(url_tag.get('href'), page)
-        url = url_tag.get('href')
-
-        title = soup.select_one('.tit_view')
-        img = soup.select_one('.link_figure > img')
-        content = soup.select_one('.article_view')
-
-        news = {
-            # 'newsId' : newsId,
-            'date' : news_date,
-            'title' : title.text if title is not None else '',
-            'brief' : content.text.replace('\n', ' ') if content is not None else '',
-            'img' : img.get('data-org-src') if img is not None else '',
+        news.append({
+            'title' : title,
+            'date' : formatted_date,
             'url' : url
+        })
+    
+    qna_db = QNAPost.get3QNA()
+    for q in qna_db :
+
+        postId = q[0]
+        title = q[1]
+
+        date = q[3]
+        formatted_date = date.strftime("%Y-%m-%d")
+
+        qna.append({
+            'postId' : postId,
+            'title' : title,
+            'date' : formatted_date
+        })
+
+    conts_db = conn_mongodb().lecture_crawling.find().sort('_id', -1).limit(3)
+    for n in conts_db :
+
+        title = n['title']
+        type = n['type']
+        url = n['link']
+
+        # formatted_date = datetime.strptime(date, '%Y년 %m월 %d일').strftime('%Y-%m-%d')
+
+        conts.append({
+            'title' : title,
+            'type' : type,
+            'url' : url
+        })
+    # dummmmmmmmmmmmmmmy
+
+    return {
+        'news' : news,
+        'qna' : qna,
+        'contents' : conts
+    }
+ 
+@community_bp.route('/it', methods=['GET'])
+def listNews() :
+    page = 0
+    result = []
+
+    page = request.args.get('page')
+    date = request.args.get('date')
+
+    if not page or not date :
+        return {
+            'result' : result
         }
-        conn_mongodb().ITnews_crawling.insert_one(news)
-        # newsId += 1
-    '''
 
-    all_news = soup.select('.list_allnews > li')
+    page = int(page)
+    formatted_date = f'{date[:4]}년 {date[4:6]}월 {date[6:]}일'
 
-    for one_news in all_news :
+    all_newsList = conn_mongodb().ITnews_crawling.find({'date':formatted_date}).sort('_id', -1)
+    requiredPage = len(list(all_newsList)) // 10 + 1
 
-        title = one_news.select_one('.cont_thumb > .tit_thumb > .link_txt')
-        img = one_news.select_one('.link_thumb > img')
-        brief = one_news.select_one('.cont_thumb > .desc_thumb > .link_txt')
-        url = one_news.select_one('.cont_thumb > .tit_thumb > a')
+    newsList = conn_mongodb().ITnews_crawling.find({'date':formatted_date}).sort('_id', -1).skip((page-1)*10).limit(10)
 
-        news = {
-            'date' : news_date,
-            'title' : title.text if title else '',
-            'brief' : brief.text if brief else '',
-            'img' : img.get('src') if img else '',
-            'url' : url.get('href') if url else '',
+    for news in newsList :
+        result.append({
+            'date': news['date'],
+            'title' : news['title'],
+            'brief' : news['brief'],
+            'img' : news['img'],
+            'url' : news['url']
+        })
+    
+    return {
+        'page' : requiredPage,
+        'news' : result
+    }
+
+@community_bp.route('/qna', methods=['GET'])
+def show():     # 전체 글 출력
+    search = request.args.get('search')
+    print(search)
+    
+    if search is None:
+        posts = []
+        result = []
+        page = 0
+        
+        page = request.args.get('page')
+        category = request.args.get('category')
+
+        if category is None:
+            category = 11
+
+        posts = QNAPost.getQNA(int(category))
+        
+        requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
+        
+        for i in range(int(page)):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
+            QNAList = QNAPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
+        
+        for i in range(len(posts)):
+            post = {
+                    'id' : ((int(page)-1)*10)+i+1,
+                    'qnaId' : posts[i][0],
+                    'title' : posts[i][1],
+                    'writer' : findNickName(posts[i][2]),
+                    'curDate' : posts[i][3],
+                    'category' : posts[i][5],
+                    'likes' : posts[i][6],
+                    'views' : posts[i][7]
+                    }
+            post['curDate'] = mainFormattedDate(posts[i][3])
+            result.append(post)
+        return { 
+                'posts' : result,
+                'num': requiredPage
+            }
+    
+    else:
+        print("search")
+        
+        searchType = request.args.get('type')
+        searchValue = request.args.get('value')
+        posts = []
+        result = []
+        page = 0
+        
+        print(searchType, searchValue)
+
+        if int(searchType) == 0: # 제목으로 검색
+            posts = QNAPost.findByTitle(searchValue)
+        elif int(searchType) == 1: # 글쓴이로 검색
+            posts = QNAPost.findByWriter(searchValue)
+            
+        page = request.args.get('page')
+
+        if posts is None :
+            requiredPage = 0
+            pass # 결과 없을 시 empty list
+        else :
+            requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
+            
+            for i in range(int(page)):  # 전체 페이지 수 만큼 각 페이지당 studyList 가져오기
+                requiredPage = len(list(posts)) // 10 + 1   # 전체 페이지 수
+                QNAList = QNAPost.pagenation(i+1, 10)   # 매개변수: 현재 페이지, 한 페이지 당 게시글 수
+            
+            for i in range(len(posts)) :
+                post = {
+                    'id': ((int(page)-1)*10)+i+1,
+                    'qnaId' : posts[i][0],
+                    'title' : posts[i][1],
+                    'writer' : findNickName(posts[i][2]),
+                    'content' : posts[i][4],
+                    'curDate' : posts[i][3],
+                    'category' : posts[i][5],
+                    'likes' : posts[i][6],
+                    'views' : posts[i][7]
+                }
+                post['curDate'] = mainFormattedDate(posts[i][3])
+                
+                result.append(post)
+
+        return {
+            'posts' : result,
+            'num': requiredPage
+            }
+
+
+@community_bp.route('/qna/<int:id>', methods=['GET']) # 글 조회
+@login_required
+def showDetail(id, loginMember, new_token) :
+    if request.method == 'GET' :
+
+        result = {}
+
+        post = QNAPost.findById(id)
+
+        if not post :
+            return result
+        
+        viewresult = QNAPost.updateViews(id)
+        liked = 0
+        try : # 익명의 경우
+            liked = QNAPost.findLike(loginMember.id, id)
+        except Exception as ex :
+            liked = False
+
+        result = {
+            'title': post.title,
+            'writer' : findNickName(post.writer),
+            # 'writerImage' : getProfileImage(post.writer),
+            'content': post.content,
+            'curDate' : getFormattedDate(formatDateToString(post.curDate)),
+            'likes' : post.likes,
+            'liked' : liked,
+            'views': post.views
         }
-        conn_mongodb().ITnews_crawling.insert_one(news)
+        
+        # toFront['curDate'] = QNAPost.getFormattedDate(toFront['curDate'])
 
-    if not soup.select_one('.btn_page.btn_next') :
-        print("page : " + str(page) + " and break")
-        break
+        replyList = ReplyQna.showReplies(id) # 댓글 조회 
 
-    print("page : " + str(page))
-    page += 1
+        replyResult = []
+
+        for reply in replyList :
+
+            date = formatDateToString(reply[3])
+
+            replyResult.append({
+                'id' : reply[0],
+                'writer' : findNickName(reply[1]),
+                'content' : reply[2],
+                'date' : getFormattedDate(date),
+                'profileImage' : getProfileImage(reply[1])
+            })
+        
+        return {
+            'data' : {
+                'post' : result,
+                'reply' : replyResult
+            },
+            'access_token' : new_token
+        }
+        
+@community_bp.route('/qna/<int:id>', methods = ['PATCH'])
+@login_required
+def updatePost(id, loginMember, new_token):
+    if request.method == 'PATCH':     # 게시글 수정
+        id = request.get_json()['postId']
+        postContent = request.get_json()['content']
+        title = request.get_json()['title']
+        
+        try :
+            done = QNAPost.updateQna(id, postContent, title)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return {
+            'data': None,
+            'access_token' : new_token
+        }
+        
+@community_bp.route('/qna/<int:id>', methods = ['DELETE'])
+@login_required
+def deletePost(id, loginMember, new_token):
+    
+    id = request.get_json()['postId']
+    
+    try :
+        done = QNAPost.deleteQna(id)
+    except Exception as ex :
+        print("에러 이유 : " + str(ex))
+        done = 0
+
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
+
+@community_bp.route('/qna/<int:id>', methods = ['POST'])
+@login_required
+def replyPost(id, loginMember, new_token) :      # 댓글 작성
+
+        cnt = request.get_json()['content']
+
+        writer = loginMember.id
+
+        date = datetime.now()
+
+        try :
+            pk = ReplyQna.writeReply(writer, cnt, date, id)
+            # qnaReplyAlarm 에 추가
+            post = QNAPost.findById(id)
+            
+            Alarm.insertAlarm(post.__writer, writer, pk, 4)
+            
+        except Exception as ex:
+            print("에러 이유 : " + str(ex))
+            pk = 0
+
+        return {
+            'data' : {
+                'id' : pk, # 0 is fail
+                'date' : formatDateToString(date)
+            },
+            'access_token' : new_token
+        }
+
+@community_bp.route('/qna/<int:id>/<int:replyId>', methods = ['PATCH'])
+@login_required
+def replyPatch(id, replyId, loginMember, new_token) :  # 댓글 수정
+
+        newContent = request.get_json()['content']
+
+        try :
+            done = ReplyQna.modifyReply(replyId, newContent)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex))
+            done = 0
+
+        return {
+            'data' : None,
+            'access_token' : new_token
+        }
+
+@community_bp.route('/qna/<int:id>/<int:replyId>', methods = ['DELETE'])
+@login_required
+def replyDelete(id, replyId, loginMember, new_token) : # 댓글 삭제
+
+        try :
+            done = ReplyQna.removeReply(replyId)
+        except Exception as ex :
+            print("에러 이유 : " + str(ex)) 
+            done = 0
+
+        return {
+            'done' : None,
+            'access_token' : new_token
+        }
+    
+
+
+@community_bp.route("/qna", methods=['POST'])
+@login_required
+def write(loginMember, new_token):
+
+    data = request.get_json(silent=True)
+    
+    title = data['title']
+    writer = loginMember.id
+    curDate = datetime.now()
+    content = data['content']
+    category = data['category']
+    likes = 0
+    views = 0
+    
+    # print(postType, title, writer, curDate, content, category, likes, views)
+    done = QNAPost.insertQNA(title, writer, curDate, content, category, likes, views)
+    
+    return {
+        'done' : None,
+        'access_token' : new_token
+    }
+        
+@community_bp.route('/qna/<int:id>/like', methods=['POST'])
+@login_required
+def like(id, loginMember, new_token):
+    memId = loginMember.id
+    post = QNAPost.findById(id)
+    
+    postId = request.get_json()['postId']
+    
+    print(memId, postId)
+    QNAPost.Like(memId, postId)
+    print("liked")
+    likes = QNAPost.getLikes(id)
+    liked = QNAPost.findLike(memId, id)
+    
+    print(likes)
+    print(liked)
+    
+    return {
+        'data' : {
+            'likes' : likes,
+            'liked' : liked
+        },
+        'access_token' : new_token
+    }
+   
+   
+   # 카테고리 : first, second == null -> 전체 결과
+@community_bp.route('/contents/lecture', methods=['GET'])
+def listLectures() :
+    page = 0
+    result = []
+
+    page = request.args.get('page')
+    fcategory = request.args.get('firstCategory')
+    scategory = request.args.get('secondCategory')
+    print(fcategory, scategory)
+    
+    page = int(page)
+
+    if fcategory is None:
+        fcategory = 10
+        regex = ""  
+        query = { "first_category": { '$regex': regex } }
+    
+    if scategory is None:
+        scategory = 20
+        regex = ""  
+        query = { "second_category": { '$regex': regex } }
+        
+    if not page :
+        return {
+            'result' : result
+        }
+        
+    print(fcategory, scategory)
+    
+    if fcategory == "0":
+        print(fcategory)
+        regex = "프로그래밍"  
+    
+    if fcategory == "1":
+        print(fcategory)
+        regex = "보안" 
+
+    if fcategory == "2":
+        print(fcategory)
+        regex = "데이터"  
+        
+    if fcategory == "3":
+        print(fcategory)
+        regex = "게임"  
+
+    if fcategory == "4":
+        print(fcategory)
+        regex = "하드웨어"  
+        
+    if scategory == "0":
+        print(fcategory)
+        regex = "웹"     
+    
+    if scategory == "1":
+        print(fcategory)
+        regex = "프론트"  
+    
+    if scategory == "2":
+        print(fcategory)
+        regex = "백엔드"  
+        
+    query = { "first_category": { '$regex': regex } }    
+    query = { "second_category": { '$regex': regex } }
+    all_lectureList = conn_mongodb().lecture_crawling.find(query)
+    lectureList = conn_mongodb().lecture_crawling.find(query).sort('_id', -1).skip((page - 1) * 32).limit(32)
+
+
+    cnt = 0
+    
+    for lecture in lectureList :
+        if cnt == 32:
+            cnt = 0
+        else:
+            cnt += 1
+        result.append({
+            'title' : lecture['title'],
+            'instructor' : lecture['instructor'],
+            'first_category' : lecture['first_category'],
+            'second_category' : lecture['second_category'],
+            'tags' : lecture['tags'],
+            'link' : lecture['link'],
+            'image': lecture['img'],
+            'type' : lecture['type']
+        })
+        
+    if cnt != 0 :
+        isNext = True
+    else:
+        isNext = False
+    
+    return {
+        'isNext' : isNext,
+        'lecture' : result
+    }
+    
+@community_bp.route('/contents/book', methods=['GET'])
+def listBooks() :
+    page = 0
+    result = []
+
+    page = request.args.get('page')
+    fcategory = request.args.get('firstCategory')
+    scategory = request.args.get('secondCategory')
+    
+    page = int(page)
+    
+    if fcategory is None:
+        fcategory = 10
+        regex = ""  
+        query = { "first_category": { '$regex': regex } }
+    if scategory is None:
+        scategory = 20
+        regex = ""  
+        query = { "second_category": { '$regex': regex } }
+
+    if not page :
+        return {
+            'result' : result
+        }
+
+    if fcategory == "0":
+        regex = "게임"  
+        query = { "first_category": { '$regex': regex } }
+        
+        if scategory == "0":
+            regex = "게임 개발"  
+        
+        if scategory == "1":
+            regex = "게임 기획"  
+        
+        if scategory == "2":
+            regex = "모바일 게임"  
+            
+        query = { "second_category": { '$regex': regex } }
+            
+    if fcategory == "1":
+        regex = "네트워크"  
+        query = { "first_category": { '$regex': regex } }
+        
+        if scategory == "0":
+            regex = "네트워크 일반"  
+            query = { "second_category": { '$regex': regex } }
+        
+        if scategory == "1":
+            regex = "TCP/IP"  
+            query = { "second_category": { '$regex': regex } }
+        
+        if scategory == "2":
+            regex = "보안/해킹"  
+            
+        query = { "second_category": { '$regex': regex } }
+            
+           
+    if fcategory == "2":
+        regex = "모바일"  
+        query = { "first_category": { '$regex': regex } }
+        
+        if scategory == "0":
+            regex = "아이폰"  
+            
+        if scategory == "1":
+            regex = "안드로이드"  
+        
+        if scategory == "2":
+            regex = "윈도우"  
+            
+        if scategory == "3":
+            regex = "모바일 게임"  
+            
+        query = { "second_category": { '$regex': regex } }
+            
+    if fcategory == "3":
+        regex = "웹"  
+        query = { "first_category": { '$regex': regex } }
+        
+        if scategory == "0":
+            regex = "HTML"  
+            
+        if scategory == "1":
+            regex = "웹디자인"  
+        
+        if scategory == "2":
+            regex = "웹기획"  
+            
+        if scategory == "3":
+            regex = "UI/UX"  
+            
+        query = { "second_category": { '$regex': regex } }
+    
+    if fcategory == "4":
+        regex = "공학"  
+        query = { "first_category": { '$regex': regex } }
+        
+        if scategory == "0":
+            regex = "컴퓨터 교육"  
+            
+        if scategory == "1":
+            regex = "네트워크/데이터"  
+        
+        if scategory == "2":
+            regex = "마이크로"  
+    
+        if scategory == "3":
+            regex = "알고리즘/자료구조"  
+            
+        if scategory == "4":
+            regex = "전산수학"  
+        
+        if scategory == "5":
+            regex = "정보통신"  
+        
+        if scategory == "6":
+            regex = "컴퓨터구조"  
+    
+        if scategory == "3":
+            regex = "운영체제"  
+        query = { "second_category": { '$regex': regex } }
+        
+    if fcategory == "5":
+        regex = "OS"  
+        query = { "first_category": { '$regex': regex } }
+  
+        if scategory == "0":
+            regex = "클라우드"  
+
+        if scategory == "1":
+            regex = "서버"  
+        
+        if scategory == "2":
+            regex = "리눅스"  
+    
+        if scategory == "3":
+            regex = "Oracle"  
+
+        if scategory == "4":
+            regex = "윈도우"  
+
+        if scategory == "5":
+            regex = "SQL"  
+        
+        query = { "second_category": { '$regex': regex } }
+    
+    all_bookList = conn_mongodb().book_crawling.find(query)
+    bookList = conn_mongodb().book_crawling.find(query).sort('_id', -1).skip((page - 1) * 32).limit(32)
+    
+    cnt = 0
+    for book in bookList :
+        if cnt == 32:
+            cnt = 0
+        else:
+            cnt += 1
+        result.append({
+            'title' : book['title'],
+            'writer' : book['writer'],
+            'publisher' : book['publisher'],
+            'first_category' : book['first_category'],
+            'second_category' : book['second_category'],
+            'category' : 'IT 모바일',
+            'link' : book['url'],
+            'image': book['img'],
+            'type' : book['type']
+        })
+        
+    if cnt != 0 :
+        isNext = True
+    else:
+        isNext = False
+        
+    
+    return {
+        'isNext' : isNext,
+        'book' : result
+    }

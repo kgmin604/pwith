@@ -4,54 +4,65 @@ import "./study.css";
 import "../../App.css";
 import axios from "axios";
 import { Button } from "react-bootstrap";
-import {useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import LikeAndComment from '../../component/likeAndComment';
 import MDEditor from '@uiw/react-md-editor';
+import { useSelector, useDispatch } from "react-redux";
+import { updateRecStudyList } from "../../store";
 
 function StudyPost(props) {
-
     let navigate = useNavigate();
-
+    const dispatch = useDispatch();
     let user = useSelector((state) => state.user);
     let { id } = useParams();
 
-    const [post, setPost] = useState(null);
-    const [reply, setReply] = useState(null);
+    const [post, setPost] = useState({});
+    const [reply, setReply] = useState([]);
 
     const [isUpdating, setIsUpdating] = useState(false);
 
 
     useEffect(() => {
-        axios({
-            method: "GET",
-            url: `/study/${id}`
-        })
-            .then(function (response) {
-                setPost(response.data.post);
-                setReply(response.data.reply);
-                console.log(response.data)
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }, []);
+        const init = async () => {
+            try {
+                await axios({
+                    method: "GET",
+                    url: `/study/${id}`
+                })
+                    .then(function (response) {
+                        console.log(response.data.data.post);
+                        setPost(response.data.data.post);
+                        setReply(response.data.data.reply);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
+                await axios({
+                    method: "GET",
+                    url: "/study/recommend",
+                })
+                    .then(function (response) {
+                        dispatch(updateRecStudyList(response.data.data.rec));
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        init()
+    }, [id]);
 
     if (!post) {
         return <div>Loading...</div>;
     }
 
-    const parse = require('html-react-parser');
-    const parsedContent = parse(post.content);
-    const date = JSON.stringify(post.curDate).slice(3, 17);
-
     function joinStudyRoom() {
         axios({
-            method: "GET",
-            url: `/study/${id}`,
-            params: {
-                apply: 'go'
-            }
+            method: "POST",
+            url: `/study/${id}/apply`
         })
             .then(function (response) {
                 alert("스터디 참여 완료!");
@@ -63,7 +74,8 @@ function StudyPost(props) {
     }
 
     function updatePost(content) {
-        axios.put(`/study/${id}`, {
+        axios.patch(`/study/${id}`, {
+            title: `${post.title}`,
             postId: `${id}`,
             content: `${content}`
         })
@@ -110,9 +122,9 @@ function StudyPost(props) {
                         <span className="line">|</span>
                         <strong>조회수</strong> <span className="info-content">{post.views}</span>
                         <span className="line">|</span>
-                        <strong>등록일</strong> <span className="info-content">{date}</span>
+                        <strong>등록일</strong> <span className="info-content">{post.curDate}</span>
                         {
-                            user.id === post.writer ?
+                            user.name === post.writer ?
                                 <span className="control-part">
                                     <button className="control-btn" onClick={() => setIsUpdating(true)}>수정</button>
                                     <button className="control-btn" onClick={() => checkDelete()}>삭제</button>
@@ -134,14 +146,12 @@ function StudyPost(props) {
                 </div>
 
                 <div className="studyroom-join">
-                    <img src='/img_notebook.png'></img>
+                    <img src={post.roomImage}></img>
                     <span className="room-title">
                         {post.roomTitle}
                         <span className="room-p">({post.joinP}명/{post.totalP}명)</span>
-                    </span>
-                    {
-
-                        (user.id === post.writer || user.id === null) ? null :
+                    </span>{
+                        (user.name === post.writer || user.id === null) ? null :
                             <Button
                                 disabled={post.isApplied}
                                 className="button"
@@ -160,16 +170,22 @@ function StudyPost(props) {
                     }
                 </div>
 
-                <LikeAndComment id={id} liked={post.liked} likes={post.likes} reply={reply} type={'study'}/></div> :
+                <LikeAndComment id={id} liked={post.liked} likes={post.likes} reply={reply} type={'study'} /></div> :
 
                 <div>
                     <div className='StudyCreate' style={{ textAlign: 'start', width: '100%' }}>
                         <h5>스터디 모집글 수정하기</h5>
-                        <h3>{post.title}</h3>
+                        <input className="title-input" type='text' value={post.title} onChange={(event) => {
+                            const updatedTitle = event.target.value;
+                            setPost({
+                                ...post,
+                                title: updatedTitle
+                            });
+                        }} />
                         <hr style={{ width: '100%', margin: '0 auto', marginBottom: '10px' }} />
                         <div className='form-wrapper' style={{ width: '100%' }}>
                             <div style={{ width: '100%' }}>
-                                 <MDEditor height={865} value={post.content} onChange={(value, event) => {
+                                <MDEditor height={865} value={post.content} onChange={(value, event) => {
                                     setPost({
                                         ...post,
                                         content: value

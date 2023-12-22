@@ -1,0 +1,62 @@
+.search-category{
+    text-align: center;
+    margin-top: 23px;
+}
+
+.search-category
+div{
+    cursor: pointer;
+    margin: 5px;
+}
+
+.s-selected{
+    font-weight: 600;
+}
+
+
+.search-area{
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0;
+}
+
+.search-item{
+    margin: 0 auto;
+    height: 40px;
+    cursor: pointer;
+}
+
+.search-id{
+    display: block;
+    float: left;
+    width: 80px;
+    height: 40px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: 5px;
+    text-align: center;
+}
+
+.search-title{
+    display: block;
+    float: left;
+    width: 440px;
+    height: 40px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: 5px;
+    padding-right: 15px;
+}
+
+.search-nickname{
+    display: block;
+    float: left;
+    width: 100px;
+    height: 40px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: 5px;
+}

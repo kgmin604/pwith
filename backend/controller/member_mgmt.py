@@ -1,10 +1,7 @@
 from flask_login import UserMixin
-
-from backend.controller import commit
-from backend.controller import selectOne
+from backend.controller import commit, commitAndGetId, selectOne
 
 class Member(UserMixin):
-
     def __init__(self, id, memId, pw, nickname, email, image, isAdmin):
         self.__id = id
         self.__memId = memId
@@ -13,26 +10,27 @@ class Member(UserMixin):
         self.__email = email
         self.__image = image
         self.__isAdmin = isAdmin
-
-    def get_id(self): # UserMixin's get_id() override
-        return str(self.__id)
-
+    @property
+    def id(self):
+        return self.__id
     @property
     def memId(self):
         return self.__memId
-
-    @property
-    def nickname(self):
-        return self.__nickname
-
-    @property
-    def email(self):
-        return self.__email
-    
     @property
     def password(self):
         return self.__password
+    @property
+    def nickname(self):
+        return self.__nickname
+    @property
+    def email(self):
+        return self.__email
+    @property
+    def image(self):
+        return self.__image
 
+    def get_id(self): # UserMixin's get_id()
+        return self.__id
 
     @staticmethod
     def existsByEmail(email) : # for 이메일 중복 체크
@@ -62,6 +60,20 @@ class Member(UserMixin):
         return True if result == 1 else False
 
     @staticmethod
+    def findBySns(sns_id, sns_type) : # for sns_id 중복 체크 and get
+
+        sql = f"SELECT * FROM member WHERE sns_id = '{sns_id}' AND sns_type = '{sns_type}'"
+
+        mem = selectOne(sql)
+
+        if not mem:
+            return None
+
+        member = Member(mem[0], mem[1], None, mem[3], mem[4], mem[5], mem[8])
+
+        return member
+
+    @staticmethod
     def findById(id):
 
         sql = f"SELECT * FROM member WHERE id = {id}"
@@ -71,7 +83,7 @@ class Member(UserMixin):
         if not mem:
             return None
 
-        member = Member(mem[0], mem[1], mem[2], mem[3], mem[4], mem[5], mem[6])
+        member = Member(mem[0], mem[1], mem[2], mem[3], mem[4], mem[5], mem[8])
 
         return member
 
@@ -85,9 +97,18 @@ class Member(UserMixin):
         if not mem:
             return None
 
-        member = Member(mem[0], mem[1], mem[2], mem[3], mem[4], mem[5], mem[6])
+        member = Member(mem[0], mem[1], mem[2], mem[3], mem[4], mem[5], mem[8])
 
         return member
+
+    @staticmethod
+    def findIdByEmail(email):
+
+        sql = f"SELECT memId FROM member WHERE email = '{email}'"
+
+        memId = selectOne(sql)[0]
+
+        return memId
     
     @staticmethod
     def save(memId, pw, nickname, email):
@@ -99,27 +120,54 @@ class Member(UserMixin):
         return done
 
     @staticmethod
-    def changePw(memId, oldPw, newPw):
+    def saveOauth(email, image, sns_id, sns_type):
 
-        sql = f"UPDATE member SET password = '{newPw}' WHERE memId = '{memId}' and password = '{oldPw}'"
+        sql = f"INSERT INTO member(email, image, sns_id, sns_type) VALUES ('{email}', '{image}', '{sns_id}', '{sns_type}')"
+
+        mem_id = commitAndGetId(sql)
+
+        return mem_id
+
+    @staticmethod
+    def updateOauth(id, memId, nickname):
+
+        sql = f"UPDATE member SET memId = '{memId}', nickname = '{nickname}' WHERE id = {id}"
 
         done = commit(sql)
 
         return done
 
     @staticmethod
-    def changeEmail(memId, newEmail):
+    def updatePassword(id, newPw):
 
-        sql = f"UPDATE member SET email = '{newEmail}' WHERE memId = '{memId}'"
+        sql = f"UPDATE member SET password = '{newPw}' WHERE id = {id}"
 
         done = commit(sql)
 
         return done
 
     @staticmethod
-    def delete(memId):
+    def updateNickname(id, newNick):
 
-        sql = f"DELETE FROM member WHERE memId = '{str(memId)}'"
+        sql = f"UPDATE member SET nickname = '{newNick}' WHERE id = {id}"
+
+        done = commit(sql)
+
+        return done
+
+    @staticmethod
+    def updateImage(id, newImage):
+
+        sql = f"UPDATE member SET image = '{newImage}' WHERE id = {id}"
+
+        done = commit(sql)
+
+        return done
+
+    @staticmethod
+    def deleteById(id):
+
+        sql = f"DELETE FROM member WHERE id = {id}"
 
         done = commit(sql)
 

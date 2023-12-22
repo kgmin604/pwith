@@ -41,7 +41,7 @@ function QnaCreate() {
     function postStudyContent() {
         axios({
             method: "POST",
-            url: "/community/qna/create",
+            url: "/community/qna",
             data: {
                 title: `${post['title']}`,//글 제목->title
                 content: `${post['content']}`,//글 내용->content

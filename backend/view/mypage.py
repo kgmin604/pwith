@@ -1,81 +1,281 @@
-from flask import Flask, Blueprint, request, jsonify, redirect, url_for, session
-from flask_login import login_user, current_user, logout_user, login_required
+from flask_login import current_user, logout_user
+from flask import Blueprint, request
+import bcrypt
+import requests
+
+from backend.view.member import sendAuthCode
 from backend.controller.member_mgmt import Member
 from backend.controller.study_mgmt import studyPost
-from backend.controller.study_mgmt import studyPost
+from backend.controller.community_mgmt import QNAPost
+from backend.controller.replyStudy_mgmt import ReplyStudy
+from backend.controller.replyQna_mgmt import ReplyQna
+from backend.controller.refund_mgmt import Refund
+from backend.view import formatYMD, uploadFileS3, login_required
+from backend.view.member import sendAuthCode
+from backend import config
 
 mypage_bp = Blueprint('mypage', __name__, url_prefix='/mypage')
 
+@mypage_bp.route('/account', methods=['GET'])
 @login_required
-@mypage_bp.route('/account/changepw', methods = ['GET', 'POST'])
-def changePw() :
-    if request.method == 'GET' :
-        print('비밀번호변경!!!!!!!!!!!!!!!!!!!')
-        return jsonify(
-            {'status': 'success'}
-        )   
-    else :
-        data = request.get_json()
-        
-        memId = current_user.get_id()
-        oldPw = data['oldPw']
-        newPw = data['newPw']
+def showAccount(loginMember, new_token) : # 회원 정보
 
-        result = Member.changePw(memId, oldPw, newPw)
+    memId = loginMember.memId
+    memNick = loginMember.nickname
+    memEmail = loginMember.email
+    memImage = loginMember.image
+    
+    return {
+        'data' : {
+            'id' : memId,
+            'nickname' : memNick,
+            'email' : memEmail,
+            'image' : memImage
+        },
+        'access_token' : new_token
+    }
 
-        return jsonify(
-            {'result' : result}
-        )
-
-
+@mypage_bp.route('/account/password', methods = ['PATCH'])
 @login_required
-@mypage_bp.route('/account/email', methods = ['GET', 'POST'])
-def changeEmail() :
-    if request.method == 'POST' : # '완료' 버튼 클릭 시
-        newEmail = request.get_json()['newEmail']
+def changePassword(loginMember, new_token) : # 비밀번호 수정
 
-        # done = Member.changeEmail('a', newEmail)
-        done = Member.changeEmail(current_user.get_id(), newEmail)
-        # done = Member.changeEmail('a', 'a@test.com') # dummy
-        
-        return jsonify({
-            'done': done
-        })
-        
-    else :
-        return jsonify(
-            {'status' : 'success'}
-        )
+    provider = request.cookies.get('provider')
+    if provider is not None:
+        return {
+            'status' : 404,
+            'message' : '소셜 계정',
+            'data' : None,
+            'access_token' : new_token
+        }
 
+    data = request.get_json()
 
+    oldPw = data['oldPw']
+    newPw = data['newPw']
+
+    hashed_pw = loginMember.password
+    isVerified = verifyPassword(oldPw, hashed_pw)
+
+    if isVerified == False :
+        return {
+            'status' : 400,
+            'message' : '잘못된 비밀번호',
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    hashed_new_pw = hashPassword(newPw)
+
+    Member.updatePassword(loginMember.id, hashed_new_pw)
+
+    return {
+        'data' : None,
+        'access_token' : new_token
+    }
+
+@mypage_bp.route('/account/nickname', methods = ['PATCH'])
 @login_required
-@mypage_bp.route('/writinglist', methods = ['GET', 'POST'])
-def myPost() :
-    if request.method == 'GET' :
-        
-        postType = request.args.get('type')
+def changeNickname(loginMember, new_token) : # 닉네임 수정
 
-        writer = current_user.get_id()
-        # writer = 'a' # dummy
+    newNick = request.get_json()['newNick']
 
-        if postType == 'community' :
-            myPosts = studyPost.findByWriter(writer, 1)
-        else : # 모든 예외에서도 study로 설정
-            myPosts = studyPost.findByWriter(writer, 0)
+    Member.updateNickname(loginMember.id, newNick)
+    
+    return {
+        'data' : newNick,
+        'access_token' : new_token
+    }
 
-        result = []
+@mypage_bp.route('/account/image', methods = ['PATCH'])
+@login_required
+def changeImage(loginMember, new_token) : # 프로필 사진 수정
 
-        for i in range(len(myPosts)) :
-            myPost = {
-                'id' : myPosts[i][0],
-                'type' : myPosts[i][1],
-                'title' : myPosts[i][2],
-                'writer' : myPosts[i][3],
-                'content' : myPosts[i][4],
-                'curDate' : myPosts[i][5],
-                'category' : myPosts[i][6],
-                'likes' : myPosts[i][7],
-                'views' : myPosts[i][8]
+    image = request.files['newImage']
+    newImage = uploadFileS3(image, "profile")
+    
+    Member.updateImage(loginMember.id, newImage)
+    
+    return {
+        'data' : newImage,
+        'access_token' : new_token
+    }
+
+@mypage_bp.route('/account', methods = ['POST'])
+@login_required
+def checkEmail(loginMember, new_token) : # 탈퇴 전 이메일 인증
+
+    auth_number = sendAuthCode(loginMember.email)
+
+    return {
+        'auth': auth_number
+    }
+
+@mypage_bp.route('/account', methods = ['DELETE'])
+@login_required
+def deleteAccount(loginMember, new_token) : # 회원 탈퇴 (일반 + 소셜)
+
+    provider = request.cookies.get('provider')
+    access_token = request.cookies.get('access_token')
+
+    if provider is None: # Session
+
+        password = request.get_json()['password']
+
+        hashed_pw = loginMember.password
+        isVerified = verifyPassword(password, hashed_pw)
+
+        if isVerified == False :
+            return {
+                'status' : 400,
+                'message' : '잘못된 비밀번호',
+                'data' : None,
+                'access_token' : new_token
             }
-            result.append(myPost)
-        return jsonify(result)
+
+        Member.deleteById(loginMember.id)
+
+        logout_user()
+
+        return {
+            'data' : None,
+            'access_token' : new_token
+        }
+
+    else: # OAuth
+
+        if provider == 'NAVER':
+            resp = requests.post(
+                config.NAVER_TOKEN_ENDPOINT,
+                params = {
+                    'grant_type' : 'delete',
+                    'service_provider' : 'NAVER',
+                    'client_id' : config.NAVER_CLIENT_ID,
+                    'client_secret' : config.NAVER_CLIENT_SECRET,
+                    'access_token' : access_token
+                },
+                headers = {
+                    'Content-type' : 'application/x-www-form-urlencoded'
+                }
+            )
+        elif provider == 'KAKAO':
+            resp = requests.post(
+                config.KAKAO_DELETE_ENDPOINT,
+                headers = {
+                    'Authorization' : f'Bearer {access_token}'
+                }
+            )
+        elif provider == 'GOOGLE':
+            resp = requests.post(
+                config.GOOGLE_DELETE_ENDPOINT,
+                params = {
+                    'token' : access_token
+                },
+                headers = {
+                    'Content-type' : 'application/x-www-form-urlencoded'
+                }
+            )
+
+        Member.deleteById(loginMember.id)
+
+        return {
+            'status' : 200,
+            'message' : 'logout',
+            'data' : None
+        }
+
+@mypage_bp.route('/writing-list/<category>', methods = ['GET'])
+@login_required
+def listMyPosts(loginMember, new_token, category) :
+
+    if category == 'study' :
+        posts = studyPost.findByWriterId(loginMember.id)
+    else :
+        posts = QNAPost.findByWriterId(loginMember.id)
+
+    result = []
+
+    for post in posts :
+        myPost = {
+            'id' : post.id,
+            'title' : post.title,
+            'date' : formatYMD(post.curDate),
+            'content' : post.content,
+            'like_cnt' : post.likes
+        }
+        result.append(myPost)
+    
+    return {
+        'data' : result,
+        'access_token' : new_token
+    }
+
+@mypage_bp.route('/comment-list/<category>', methods = ['GET'])
+@login_required
+def listMyComments(loginMember, new_token, category) :
+
+    if category == 'study' :
+        replies = ReplyStudy.findByWriterId(loginMember.id)
+    else :
+        replies = ReplyQna.findByWriterId(loginMember.id)
+
+    result = []
+
+    for reply in replies :
+        myReply = {
+            'id' : reply.id,
+            'date' : formatYMD(reply.curDate),
+            'content' : reply.content,
+            'postId' : reply.postId
+        }
+        result.append(myReply)
+    
+    return {
+        'data' : result,
+        'access_token' : new_token
+    }
+
+
+def hashPassword(pw):
+    hashed_pw = bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt())
+    return hashed_pw.decode('utf-8')
+
+def verifyPassword(pw, hashed_pw) : # return boolean
+    return bcrypt.checkpw(pw.encode('utf-8'), hashed_pw.encode('utf-8'))
+
+@mypage_bp.route('/admin', methods = ['GET'])
+@login_required
+def admin(loginMember, new_token):
+    # admin
+    manage = []
+    
+    alldata = Refund.getAllInfo()
+    
+    for info in alldata:
+        manage_data = {
+            'id': info[0],
+            'title': "수업료 환급 요청",
+            'sender' : info[1],
+            'date': formatYMD(info[5]),
+            'check' : info[6],
+            'content' : str(info[2]) + " " +str(info[3]) +" "+ str(info[4]) + " 원 환급 요청합니다"
+        }
+        manage.append(manage_data)
+    
+    return{
+        'data' : manage,
+        'access_token' : new_token
+    }
+    
+@mypage_bp.route('/admin', methods = ['POST'])
+@login_required
+def chkAdmin(loginMember, new_token):
+    
+    data = request.get_json(silent=True)  # silent: parsing fail 에러 방지
+    id = data.get('id')
+
+    done = Refund.chkRefund(id)
+    
+    return {
+        'data': done,
+        'access_tocken' : new_token
+    }
